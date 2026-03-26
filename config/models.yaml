@@ -121,6 +121,44 @@ models:
     last_price_check: "2026-03-26"
     last_health_check: null
 
+  # ── OPENAI CODEX ────────────────────────────────────────────────────────────
+
+  - model_id: "gpt-5-codex"
+    vendor: "openai"
+    tier: 1
+    max_context: 400000
+    input_price: 0.00125
+    output_price: 0.010
+    tokenizer: "tiktoken_o200k"
+    latency_p50_ms: 3500
+    capabilities: [code, agents, reasoning]
+    min_complexity: complex
+    max_complexity: critical
+    is_local: false
+    enabled: true
+    deprecated: false
+    fallbacks: ["o3", "claude-sonnet-4-6", "llama4-maverick-ollama"]
+    last_price_check: "2026-03-26"
+    last_health_check: null
+
+  - model_id: "codex-mini-latest"
+    vendor: "openai"
+    tier: 3
+    max_context: 200000
+    input_price: 0.00075
+    output_price: 0.003
+    tokenizer: "tiktoken_o200k"
+    latency_p50_ms: 1500
+    capabilities: [code, extraction]
+    min_complexity: simple
+    max_complexity: complex
+    is_local: false
+    enabled: true
+    deprecated: false
+    fallbacks: ["gpt-4o-mini", "mistral-small", "llama4-scout-ollama"]
+    last_price_check: "2026-03-26"
+    last_health_check: null
+
   # ── ANTHROPIC CLAUDE ────────────────────────────────────────────────────────
 
   - model_id: "claude-opus-4-6"
