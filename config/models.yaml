@@ -31,40 +31,40 @@ models:
 
   # ── OPENAI GPT ──────────────────────────────────────────────────────────────
 
-  - model_id: "gpt-5"
+  - model_id: "o3"
     vendor: "openai"
     tier: 1
-    max_context: 1000000
-    input_price: 0.015
-    output_price: 0.060
+    max_context: 200000
+    input_price: 0.002
+    output_price: 0.008
     tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 2800
-    capabilities: [chat, code, reasoning, agents, long_context]
+    latency_p50_ms: 2500
+    capabilities: [chat, code, reasoning, agents]
     min_complexity: complex
     max_complexity: critical
     is_local: false
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
-  - model_id: "gpt-5.2"
+  - model_id: "o4-mini"
     vendor: "openai"
-    tier: 1
-    max_context: 1000000
-    input_price: 0.010
-    output_price: 0.040
+    tier: 2
+    max_context: 200000
+    input_price: 0.0011
+    output_price: 0.0044
     tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 2000
-    capabilities: [chat, code, reasoning, agents, long_context]
-    min_complexity: complex
-    max_complexity: critical
+    latency_p50_ms: 1200
+    capabilities: [chat, code, reasoning, extraction]
+    min_complexity: moderate
+    max_complexity: complex
     is_local: false
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "gpt-4.1"
@@ -107,8 +107,8 @@ models:
     vendor: "openai"
     tier: 2
     max_context: 128000
-    input_price: 0.0005
-    output_price: 0.0015
+    input_price: 0.000039
+    output_price: 0.0001
     tokenizer: "tiktoken_o200k"
     latency_p50_ms: 900
     capabilities: [chat, code, reasoning, extraction]
@@ -118,7 +118,7 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4o-mini", "mistral-medium", "llama4-scout-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   # ── ANTHROPIC CLAUDE ────────────────────────────────────────────────────────
@@ -126,9 +126,9 @@ models:
   - model_id: "claude-opus-4-6"
     vendor: "anthropic"
     tier: 1
-    max_context: 200000
-    input_price: 0.015
-    output_price: 0.075
+    max_context: 1000000
+    input_price: 0.005
+    output_price: 0.025
     tokenizer: "anthropic"
     latency_p50_ms: 3000
     capabilities: [chat, code, reasoning, agents, long_context, summarization]
@@ -138,13 +138,13 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["claude-sonnet-4-6", "gpt-4.1", "llama4-maverick-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "claude-sonnet-4-6"
     vendor: "anthropic"
     tier: 2
-    max_context: 200000
+    max_context: 1000000
     input_price: 0.003
     output_price: 0.015
     tokenizer: "anthropic"
@@ -156,15 +156,15 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["claude-haiku-4-5", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "claude-haiku-4-5"
     vendor: "anthropic"
     tier: 3
     max_context: 200000
-    input_price: 0.0008
-    output_price: 0.004
+    input_price: 0.001
+    output_price: 0.005
     tokenizer: "anthropic"
     latency_p50_ms: 300
     capabilities: [chat, extraction, classification, summarization]
@@ -174,7 +174,7 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4o-mini", "mistral-small", "llama4-scout-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   # ── GOOGLE GEMINI ───────────────────────────────────────────────────────────
@@ -183,8 +183,8 @@ models:
     vendor: "google"
     tier: 1
     max_context: 2000000
-    input_price: 0.00125
-    output_price: 0.005
+    input_price: 0.002
+    output_price: 0.012
     tokenizer: "google"
     latency_p50_ms: 1800
     capabilities: [chat, code, reasoning, multimodal, long_context, extraction]
@@ -194,15 +194,15 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gemini-3.1-flash", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "gemini-3.1-flash"
     vendor: "google"
     tier: 3
     max_context: 1000000
-    input_price: 0.000075
-    output_price: 0.0003
+    input_price: 0.00025
+    output_price: 0.0015
     tokenizer: "google"
     latency_p50_ms: 250
     capabilities: [chat, extraction, classification, summarization, multimodal]
@@ -212,7 +212,7 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4o-mini", "claude-haiku-4-5", "llama4-scout-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "gemini-nano"
@@ -239,8 +239,8 @@ models:
     vendor: "mistral"
     tier: 2
     max_context: 128000
-    input_price: 0.002
-    output_price: 0.006
+    input_price: 0.0005
+    output_price: 0.0015
     tokenizer: "sentencepiece"
     latency_p50_ms: 900
     capabilities: [chat, code, reasoning, extraction, summarization]
@@ -250,7 +250,7 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["mistral-medium", "gpt-4o-mini", "mistral-small-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "mistral-medium"
@@ -275,8 +275,8 @@ models:
     vendor: "mistral"
     tier: 3
     max_context: 128000
-    input_price: 0.0001
-    output_price: 0.0003
+    input_price: 0.00007
+    output_price: 0.0002
     tokenizer: "sentencepiece"
     latency_p50_ms: 300
     capabilities: [chat, extraction, classification]
@@ -286,15 +286,15 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4o-mini", "claude-haiku-4-5", "mistral-small-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "codestral"
     vendor: "mistral"
     tier: 2
     max_context: 256000
-    input_price: 0.0003
-    output_price: 0.0009
+    input_price: 0.0002
+    output_price: 0.0006
     tokenizer: "sentencepiece"
     latency_p50_ms: 700
     capabilities: [code]
@@ -304,15 +304,15 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "deepseek-v3"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   - model_id: "devstral"
     vendor: "mistral"
     tier: 2
     max_context: 128000
-    input_price: 0.0002
-    output_price: 0.0006
+    input_price: 0.0004
+    output_price: 0.002
     tokenizer: "sentencepiece"
     latency_p50_ms: 600
     capabilities: [code, agents]
@@ -322,7 +322,7 @@ models:
     enabled: true
     deprecated: false
     fallbacks: ["codestral", "deepseek-v3", "llama4-maverick-ollama"]
-    last_price_check: "2025-01-01"
+    last_price_check: "2026-03-26"
     last_health_check: null
 
   # ── DEEPSEEK ────────────────────────────────────────────────────────────────
