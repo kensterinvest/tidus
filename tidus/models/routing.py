@@ -7,10 +7,11 @@ class RejectionReason(str, Enum):
     """Reason a model candidate was rejected during the 5-stage selection."""
 
     # Stage 1 — hard constraints
-    model_disabled = "model_disabled"           # enabled=False or deprecated=True
-    context_too_large = "context_too_large"     # estimated_input_tokens > max_context
-    domain_not_supported = "domain_not_supported"  # capability not in spec.capabilities
-    privacy_violation = "privacy_violation"     # confidential task routed to cloud model
+    model_disabled = "model_disabled"                 # enabled=False or deprecated=True
+    context_too_large = "context_too_large"           # estimated_input_tokens > max_context
+    domain_not_supported = "domain_not_supported"     # capability not in spec.capabilities
+    privacy_violation = "privacy_violation"           # confidential task routed to cloud model
+    complexity_mismatch = "complexity_mismatch"       # task complexity outside model's designed range
 
     # Stage 2 — guardrails
     agent_depth_exceeded = "agent_depth_exceeded"
