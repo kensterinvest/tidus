@@ -1,4 +1,3 @@
-from datetime import datetime
 from enum import Enum
 from pydantic import BaseModel, Field
 
@@ -41,14 +40,10 @@ class BudgetStatus(BaseModel):
     """Live snapshot of a budget policy's current utilisation."""
 
     policy_id: str
-    scope: BudgetScope
     scope_id: str
-    period: BudgetPeriod
     limit_usd: float
     spent_usd: float
     remaining_usd: float
-    utilization_pct: float
-    is_exceeded: bool
-    is_warning: bool
-    period_start: datetime
-    period_end: datetime
+    utilisation_pct: float
+    is_over_warn_threshold: bool
+    is_hard_stopped: bool
