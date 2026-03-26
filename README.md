@@ -42,7 +42,7 @@ Most AI systems default every request to the most powerful (most expensive) mode
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/lapkei01/tidus.git
+git clone https://github.com/kensterinvest/tidus.git
 cd tidus
 uv sync
 
