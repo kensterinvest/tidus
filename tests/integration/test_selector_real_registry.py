@@ -94,8 +94,8 @@ def _task(
 # ── Config loading ────────────────────────────────────────────────────────────
 
 def test_registry_loads_all_models(registry):
-    """All 26 models defined in models.yaml should load without validation errors."""
-    assert len(registry) == 26
+    """All 28 models defined in models.yaml should load without validation errors."""
+    assert len(registry) == 28
     assert all(s.enabled for s in registry.list_all()), "All models should start enabled"
 
 
