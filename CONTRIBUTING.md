@@ -5,7 +5,7 @@ Thank you for your interest in contributing! This document covers how to set up 
 ## Development Setup
 
 ```bash
-git clone https://github.com/lapkei01/tidus.git
+git clone https://github.com/kensterinvest/tidus.git
 cd tidus
 uv sync --all-extras
 cp .env.example .env

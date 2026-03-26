@@ -23,4 +23,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 <!-- Links will be filled in at first public release -->
-[Unreleased]: https://github.com/lapkei01/tidus/compare/HEAD...HEAD
+[Unreleased]: https://github.com/kensterinvest/tidus/compare/HEAD...HEAD
