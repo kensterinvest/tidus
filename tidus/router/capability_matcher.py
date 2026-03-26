@@ -111,6 +111,16 @@ class CapabilityMatcher:
         if task.privacy == Privacy.confidential and not spec.is_local:
             return RejectionReason.privacy_violation
 
+        # Task complexity must fall within the model's designed operating range.
+        # This prevents routing a "simple" task to a model built for complex
+        # reasoning (wasteful / wrong tool) and catches max_complexity violations
+        # explicitly rather than relying solely on the tier ceiling.
+        task_order = _COMPLEXITY_ORDER[task.complexity]
+        model_min = _COMPLEXITY_ORDER.get(Complexity(spec.min_complexity), 0)
+        model_max = _COMPLEXITY_ORDER.get(Complexity(spec.max_complexity), 3)
+        if task_order < model_min or task_order > model_max:
+            return RejectionReason.complexity_mismatch
+
         return None
 
     # ── Guardrail checks ──────────────────────────────────────────────────────
