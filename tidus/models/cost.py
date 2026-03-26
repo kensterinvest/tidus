@@ -6,10 +6,9 @@ class CostEstimate(BaseModel):
     """Pre-execution cost estimate for a model + task pair."""
 
     model_id: str
-    vendor: str
     raw_input_tokens: int
+    raw_output_tokens: int
     buffered_input_tokens: int
-    estimated_output_tokens: int
     buffered_output_tokens: int
     estimated_cost_usd: float
     buffer_pct: float = Field(0.15, description="Safety buffer fraction applied")
