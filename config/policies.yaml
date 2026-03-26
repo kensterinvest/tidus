@@ -1,0 +1,49 @@
+# Tidus Routing & Guardrail Policies
+# ─────────────────────────────────────────────────────────────────────────────
+
+guardrails:
+  # Maximum depth an agent chain may recurse before being rejected
+  max_agent_depth: 5
+  # Maximum tokens (input + output) allowed in a single step
+  max_tokens_per_step: 8000
+  # Maximum number of retries for a single task before hard rejection
+  max_retries_per_task: 3
+  # Maximum concurrent agent sessions per team
+  max_parallel_sessions_per_team: 10
+
+routing:
+  # Scoring weights — must sum to 1.0
+  cost_weight: 0.70     # primary driver: minimise cost
+  tier_weight: 0.20     # prefer lower tier as tiebreaker
+  latency_weight: 0.10  # secondary: prefer faster models
+
+  # Complexity → maximum tier ceiling
+  # simple tasks may use any tier; critical tasks must use tier 1 only
+  complexity_tier_ceiling:
+    simple: 4
+    moderate: 3
+    complex: 2
+    critical: 1
+
+  # Privacy policy: confidential requests must use local (is_local=true) models
+  confidential_require_local: true
+
+cost:
+  # Safety buffer applied to all cost estimates (5–20% recommended)
+  # Accounts for tokenization variance and output length uncertainty
+  estimate_buffer_pct: 0.15
+
+health:
+  # How often to run the health probe (seconds)
+  probe_interval_seconds: 300   # 5 minutes
+  # Consecutive failures before a model is auto-disabled
+  failure_threshold: 3
+  # Latency degradation ratio triggering a routing weight demotion
+  latency_degradation_threshold: 1.5   # 50% worse than baseline
+
+pricing_sync:
+  # Day of week (0=Monday … 6=Sunday) and UTC hour for weekly price sync
+  day_of_week: 6        # Sunday
+  hour_utc: 2
+  # Minimum price delta (fraction) to log a PriceChangeRecord
+  change_threshold: 0.05  # 5%

@@ -1,0 +1,70 @@
+# Tidus Budget Policies
+# ─────────────────────────────────────────────────────────────────────────────
+# Define per-team and per-workflow spending limits.
+# These are starter examples — configure to match your organisation.
+#
+# Fields:
+#   policy_id    — unique identifier
+#   scope        — "team" or "workflow"
+#   scope_id     — the team_id or workflow_id this policy applies to
+#   period       — daily | weekly | monthly | rolling_30d
+#   limit_usd    — maximum spend in USD for the period
+#   warn_at_pct  — emit a warning alert when spend reaches this fraction (0.0–1.0)
+#   hard_stop    — true = reject requests when limit exceeded; false = warn only
+# ─────────────────────────────────────────────────────────────────────────────
+
+budgets:
+
+  # Engineering team — $500/month with hard stop
+  - policy_id: "team-engineering-monthly"
+    scope: team
+    scope_id: "team-engineering"
+    period: monthly
+    limit_usd: 500.00
+    warn_at_pct: 0.80
+    hard_stop: true
+
+  # Marketing team — $200/month, warn-only
+  - policy_id: "team-marketing-monthly"
+    scope: team
+    scope_id: "team-marketing"
+    period: monthly
+    limit_usd: 200.00
+    warn_at_pct: 0.75
+    hard_stop: false
+
+  # Data team — higher budget for batch workloads
+  - policy_id: "team-data-monthly"
+    scope: team
+    scope_id: "team-data"
+    period: monthly
+    limit_usd: 1000.00
+    warn_at_pct: 0.85
+    hard_stop: true
+
+  # Batch summarisation workflow — tight daily limit
+  - policy_id: "workflow-batch-summarizer-daily"
+    scope: workflow
+    scope_id: "workflow-batch-summarizer"
+    period: daily
+    limit_usd: 20.00
+    warn_at_pct: 0.90
+    hard_stop: true
+
+  # Customer chatbot workflow — rolling 30-day budget
+  - policy_id: "workflow-customer-chat-rolling"
+    scope: workflow
+    scope_id: "workflow-customer-chat"
+    period: rolling_30d
+    limit_usd: 300.00
+    warn_at_pct: 0.80
+    hard_stop: true
+
+  # Nightly report generation — small daily cap
+  - policy_id: "workflow-nightly-reports-daily"
+    scope: workflow
+    scope_id: "workflow-nightly-reports"
+    period: daily
+    limit_usd: 5.00
+    warn_at_pct: 0.95
+    hard_stop: true
