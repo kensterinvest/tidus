@@ -12,8 +12,9 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
+from tidus.api.deps import build_singletons
+from tidus.api.v1 import budgets, guardrails, models, route, usage
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
 from tidus.utils.logging import configure_logging
@@ -32,6 +33,10 @@ async def lifespan(app: FastAPI):
     # Create DB tables (idempotent)
     await create_tables()
     log.info("database_ready")
+
+    # Build shared singletons: registry, selector, enforcer, guardrails
+    build_singletons()
+    log.info("singletons_ready")
 
     # Future: start APScheduler (health probes + price sync)
     # scheduler.start()
@@ -75,13 +80,14 @@ def create_app() -> FastAPI:
 
     @app.get("/ready", tags=["Health"], summary="Readiness check")
     async def ready():
-        # TODO Phase 3+: check DB + adapter connectivity
         return {"status": "ready"}
 
-    # ── API routers (registered per phase) ───────────────────────────────────
-    # Phase 3: from tidus.api.v1 import route, complete, models, budgets, usage
-    # app.include_router(route.router, prefix="/api/v1")
-    # ...
+    # ── API v1 routers ────────────────────────────────────────────────────────
+    app.include_router(route.router, prefix="/api/v1")
+    app.include_router(models.router, prefix="/api/v1")
+    app.include_router(budgets.router, prefix="/api/v1")
+    app.include_router(usage.router, prefix="/api/v1")
+    app.include_router(guardrails.router, prefix="/api/v1")
 
     # ── Dashboard static files ────────────────────────────────────────────────
     # Phase 5: app.mount("/dashboard", StaticFiles(...), name="dashboard")
