@@ -35,11 +35,10 @@ Everything in Community, plus:
 
 ### Business ($499/month)
 Everything in Pro, plus:
-- **Response caching** *(Phase 4)* — exact + semantic cache, 30–50% additional savings
-- **MCP server** *(Phase 6)* — plug Tidus into Claude Desktop, Cursor, and any MCP client
+- **Response caching** — exact + semantic cache, 30–50% additional savings
+- **MCP server** (`tidus-mcp`) — plug Tidus into Claude Desktop, Cursor, and any MCP client
 - **Audit logs** — full routing decision history with rejection reasons
 - **Docker Compose** — one-command production deployment
-- **A2A protocol** *(Phase 6)* — agent interoperability across vendor boundaries
 - Best for: enterprises replacing direct vendor calls with a governed proxy
 
 ### Enterprise (Custom, from $2,000/month)
@@ -79,13 +78,17 @@ Based on 500 users × 200 requests/day × realistic task mix (2026 pricing):
 
 ---
 
-## Charging Unlock by Phase
+## What Is Live
 
-| Phase | Tier Unlocked | What Becomes Available |
-|-------|--------------|----------------------|
-| Phase 2 — Core Logic | Community | Python library: `selector.select_model(task)` |
-| Phase 3 — API Layer | Community fully live | `POST /api/v1/route` as a service |
-| Phase 4 — Adapters + Cache | **Pro** | Full AI proxy via `/api/v1/complete`; Pillar 3 caching |
-| Phase 5 — Dashboard | **Business** | Savings chart, budget bars — the sales demo |
-| Phase 6 — MCP + Docker | Business fully live | MCP tools for any AI agent; A2A interoperability |
-| Phase 7 — Release | **Enterprise** | Public launch, docs site, enterprise sales conversations |
+All features described above are available in v0.1.0:
+
+| Feature | Tier | Status |
+|---------|------|--------|
+| 5-stage model routing | Community | ✅ Live |
+| `/api/v1/complete` (route + execute) | Community | ✅ Live |
+| Budget enforcement + guardrails | Pro | ✅ Live |
+| Dashboard at `/dashboard/` | Pro | ✅ Live |
+| Response caching (exact + semantic) | Business | ✅ Live |
+| MCP server (`tidus-mcp`) | Business | ✅ Live |
+| Docker Compose deployment | Business | ✅ Live |
+| On-prem, SSO/OIDC, RBAC | Enterprise | Roadmap |

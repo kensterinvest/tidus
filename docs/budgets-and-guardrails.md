@@ -118,7 +118,7 @@ These are enforced at **Stage 2** of the 5-stage selector. Any request that viol
 | `max_tokens_per_step` | 8,000 | A single step consuming excessive context |
 | `max_retries_per_task` | 3 | Retry loops that multiply cost without progress |
 
-### Planned Limits (Phase 4)
+### Roadmap Limits
 
 | Limit | Default | What It Prevents |
 |-------|---------|-----------------|
@@ -126,7 +126,7 @@ These are enforced at **Stage 2** of the 5-stage selector. Any request that viol
 | `max_reflection_loops` | 3 | Self-critique spirals (agent critiques its own output repeatedly) |
 | `max_total_tokens_session` | 50,000 | Session-level compute cap across all agents in one workflow |
 
-Reflection loops are particularly dangerous: an agent that critiques its own output 10 times burns 10× the tokens for marginal quality improvement. The `max_reflection_loops` limit caps this at the session level.
+Reflection loops are particularly dangerous: an agent that critiques its own output 10 times burns 10× the tokens for marginal quality improvement. The `max_reflection_loops` limit will cap this at the session level when implemented.
 
 ### Agent Sessions
 

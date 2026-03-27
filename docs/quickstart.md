@@ -28,7 +28,7 @@ Edit `.env` — add at least one vendor key:
 ANTHROPIC_API_KEY=sk-ant-...
 # or
 OPENAI_API_KEY=sk-...
-# or for free local testing:
+# or for free local testing (no API key needed):
 OLLAMA_BASE_URL=http://localhost:11434
 ```
 
@@ -71,7 +71,7 @@ Tidus returns the selected model, estimated cost, and a normalised score (lower 
 }
 ```
 
-`deepseek-v3` wins simple/chat because it is the cheapest tier-2 model with `chat` capability and a complexity range that includes `simple`. The `score` is computed as `cost×0.70 + tier×0.20 + latency×0.10`, normalised to [0, 1].
+`deepseek-v3` wins simple/chat because it is the cheapest tier-2 model with `chat` capability in the `simple–complex` complexity range. The `score` is computed as `cost×0.70 + tier×0.20 + latency×0.10`, normalised to [0, 1].
 
 ## 5. Try with different complexity levels
 
@@ -89,7 +89,7 @@ curl -X POST http://localhost:8000/api/v1/route \
     "messages": [{"role": "user", "content": "Analyse the regulatory implications of this contract."}]
   }'
 
-# confidential task → local model only (privacy enforcement)
+# confidential task → local model only (no data leaves your infrastructure)
 curl -X POST http://localhost:8000/api/v1/route \
   -H "Content-Type: application/json" \
   -d '{
@@ -102,9 +102,9 @@ curl -X POST http://localhost:8000/api/v1/route \
   }'
 ```
 
-## 6. Execute the request (Phase 4)
+## 6. Execute the request
 
-`/api/v1/complete` routes **and** executes in one call — available once vendor adapters are built in Phase 4:
+`/api/v1/complete` routes **and** executes in one call — Tidus selects the model, calls the vendor API, logs the cost, and returns the response:
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/complete \
@@ -114,9 +114,57 @@ curl -X POST http://localhost:8000/api/v1/complete \
     "complexity": "simple",
     "domain": "chat",
     "estimated_input_tokens": 200,
-    "messages": [{"role": "user", "content": "Hello!"}]
+    "messages": [{"role": "user", "content": "Hello! What can you help me with?"}]
   }'
 ```
+
+Response:
+```json
+{
+  "task_id": "b2c3d4e5-...",
+  "chosen_model_id": "deepseek-v3",
+  "content": "I can help you with a wide range of tasks...",
+  "input_tokens": 18,
+  "output_tokens": 42,
+  "cost_usd": 0.0000084,
+  "latency_ms": 612.3
+}
+```
+
+## 7. Open the dashboard
+
+Navigate to **http://localhost:8000/dashboard/** to see:
+- AI spend by model (last 7 days)
+- Budget utilisation per team
+- Active agent sessions
+- Model registry health
+
+## 8. Connect via MCP (Claude Desktop / Cursor)
+
+Start the MCP server to expose Tidus as native tools for any AI agent:
+
+```bash
+tidus-mcp
+```
+
+Add to your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "tidus": {
+      "command": "tidus-mcp",
+      "args": [],
+      "env": {
+        "ANTHROPIC_API_KEY": "sk-ant-...",
+        "OPENAI_API_KEY": "sk-..."
+      }
+    }
+  }
+}
+```
+
+See [MCP Integration](mcp-integration.md) for full setup details.
 
 ## Next Steps
 
@@ -124,4 +172,5 @@ curl -X POST http://localhost:8000/api/v1/complete \
 - [Set up team budgets](budgets-and-guardrails.md)
 - [Understand the selection algorithm](architecture.md)
 - [View all API endpoints](api-reference.md)
-- [Connect via MCP](mcp-integration.md) *(Phase 6)*
+- [Connect via MCP](mcp-integration.md)
+- [Deploy with Docker](deployment.md)
