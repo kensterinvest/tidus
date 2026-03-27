@@ -134,9 +134,9 @@ See [budgets-and-guardrails.md](budgets-and-guardrails.md) for full details.
 guardrails:
   max_agent_depth: 5          # Stage 2 hard constraint
   max_tokens_per_step: 8000   # Stage 2 hard constraint
-  max_retries_per_task: 3     # loaded; enforced in AgentGuard
+  max_retries_per_task: 3     # enforced in AgentGuard
 
-  # Phase 4 additions:
+  # Roadmap:
   # max_concurrent_agents: 10
   # max_reflection_loops: 3
   # max_total_tokens_session: 50000
@@ -195,11 +195,13 @@ DATABASE_URL=sqlite+aiosqlite:///./tidus.db
 LOG_LEVEL=INFO
 ENVIRONMENT=development
 
-# Phase 4 — caching
+# Caching (optional — defaults shown)
+CACHE_EXACT_TTL_SECONDS=3600
+CACHE_SEMANTIC_TTL_SECONDS=900
+SEMANTIC_CACHE_THRESHOLD=0.95
+
+# Redis backend (optional — defaults to in-memory; roadmap)
 # REDIS_URL=redis://localhost:6379/0
-# CACHE_EXACT_TTL_SECONDS=3600
-# CACHE_SEMANTIC_TTL_SECONDS=900
-# SEMANTIC_CACHE_THRESHOLD=0.95
 ```
 
 Only the keys for vendors you intend to use are required. Tidus routes only to models whose vendor adapter has a valid API key (or is local).
