@@ -15,6 +15,7 @@ from tidus.budget.enforcer import BudgetEnforcer
 from tidus.budget.policies import load_budget_policies
 from tidus.cost.counter import SpendCounter
 from tidus.cost.engine import CostEngine
+from tidus.cost.logger import CostLogger
 from tidus.guardrails.agent_guard import AgentGuard
 from tidus.guardrails.session_store import SessionStore
 from tidus.models.guardrails import GuardrailPolicy
@@ -32,6 +33,7 @@ _enforcer: BudgetEnforcer | None = None
 _guardrail_policy: GuardrailPolicy | None = None
 _session_store: SessionStore | None = None
 _agent_guard: AgentGuard | None = None
+_cost_logger: CostLogger | None = None
 
 
 def build_singletons() -> None:
@@ -40,7 +42,7 @@ def build_singletons() -> None:
     Called once from the FastAPI lifespan on startup. Safe to call again
     (re-initializes, useful for testing overrides).
     """
-    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard
+    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger
 
     settings = get_settings()
 
@@ -60,6 +62,9 @@ def build_singletons() -> None:
 
     _session_store = SessionStore()
     _agent_guard = AgentGuard(_guardrail_policy, _session_store)
+
+    from tidus.db.engine import get_session_factory
+    _cost_logger = CostLogger(get_session_factory())
 
 
 # ── Dependency getters (used with FastAPI Depends) ────────────────────────────
@@ -92,3 +97,13 @@ def get_session_store() -> SessionStore:
 def get_agent_guard() -> AgentGuard:
     assert _agent_guard is not None, "Singletons not built — call build_singletons() at startup"
     return _agent_guard
+
+
+def get_cost_logger() -> CostLogger:
+    assert _cost_logger is not None, "Singletons not built — call build_singletons() at startup"
+    return _cost_logger
+
+
+def get_session_factory():
+    from tidus.db.engine import get_session_factory as _get_sf
+    return _get_sf()
