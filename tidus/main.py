@@ -78,6 +78,33 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # ── Root ──────────────────────────────────────────────────────────────────
+    from fastapi.requests import Request
+    from fastapi.responses import HTMLResponse, RedirectResponse
+
+    @app.get("/", include_in_schema=False)
+    async def root(request: Request):
+        """Browser → dashboard redirect; API clients get a JSON index."""
+        accept = request.headers.get("accept", "")
+        if "text/html" in accept:
+            return RedirectResponse("/dashboard/")
+        return {
+            "service": "tidus",
+            "version": "0.1.0",
+            "description": "Enterprise AI Router — routes every request to the cheapest capable model",
+            "links": {
+                "dashboard": "/dashboard/",
+                "docs":      "/docs",
+                "redoc":     "/redoc",
+                "health":    "/health",
+                "route":     "/api/v1/route",
+                "complete":  "/api/v1/complete",
+                "models":    "/api/v1/models",
+                "budgets":   "/api/v1/budgets",
+                "usage":     "/api/v1/usage/summary",
+            },
+        }
+
     # ── Health endpoints ──────────────────────────────────────────────────────
     @app.get("/health", tags=["Health"], summary="Liveness check")
     async def health():
