@@ -13,10 +13,11 @@ import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from tidus.api.deps import build_singletons
-from tidus.api.v1 import budgets, guardrails, models, route, usage
+from tidus.api.deps import build_singletons, get_registry, get_session_factory
+from tidus.api.v1 import budgets, complete, guardrails, models, route, sync, usage
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
+from tidus.sync.scheduler import TidusScheduler
 from tidus.utils.logging import configure_logging
 
 log = structlog.get_logger("tidus.main")
@@ -34,16 +35,20 @@ async def lifespan(app: FastAPI):
     await create_tables()
     log.info("database_ready")
 
-    # Build shared singletons: registry, selector, enforcer, guardrails
+    # Build shared singletons: registry, selector, enforcer, guardrails, cost logger
     build_singletons()
     log.info("singletons_ready")
 
-    # Future: start APScheduler (health probes + price sync)
-    # scheduler.start()
+    # Start background scheduler (health probes every 5 min + weekly price sync)
+    scheduler = TidusScheduler(
+        registry=get_registry(),
+        session_factory=get_session_factory(),
+    )
+    scheduler.start()
 
     yield
 
-    # Future: scheduler.shutdown()
+    scheduler.shutdown()
     log.info("tidus_stopped")
 
 
@@ -84,10 +89,12 @@ def create_app() -> FastAPI:
 
     # ── API v1 routers ────────────────────────────────────────────────────────
     app.include_router(route.router, prefix="/api/v1")
+    app.include_router(complete.router, prefix="/api/v1")
     app.include_router(models.router, prefix="/api/v1")
     app.include_router(budgets.router, prefix="/api/v1")
     app.include_router(usage.router, prefix="/api/v1")
     app.include_router(guardrails.router, prefix="/api/v1")
+    app.include_router(sync.router, prefix="/api/v1")
 
     # ── Dashboard static files ────────────────────────────────────────────────
     # Phase 5: app.mount("/dashboard", StaticFiles(...), name="dashboard")
