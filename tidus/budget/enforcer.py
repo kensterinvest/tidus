@@ -36,6 +36,16 @@ class BudgetEnforcer:
         self._policies = policies
         self._counter = counter
 
+    # ── Policy management ─────────────────────────────────────────────────────
+
+    def list_policies(self) -> list[BudgetPolicy]:
+        """Return all active budget policies."""
+        return list(self._policies)
+
+    def add_policy(self, policy: BudgetPolicy) -> None:
+        """Add a new budget policy (takes effect immediately)."""
+        self._policies.append(policy)
+
     # ── Policy lookup helpers ─────────────────────────────────────────────────
 
     def _team_policy(self, team_id: str) -> BudgetPolicy | None:

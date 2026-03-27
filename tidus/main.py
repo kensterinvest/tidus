@@ -12,10 +12,12 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
 
+from tidus.api.deps import build_singletons, get_registry, get_session_factory
+from tidus.api.v1 import budgets, complete, dashboard, guardrails, models, route, sync, usage
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
+from tidus.sync.scheduler import TidusScheduler
 from tidus.utils.logging import configure_logging
 
 log = structlog.get_logger("tidus.main")
@@ -33,12 +35,20 @@ async def lifespan(app: FastAPI):
     await create_tables()
     log.info("database_ready")
 
-    # Future: start APScheduler (health probes + price sync)
-    # scheduler.start()
+    # Build shared singletons: registry, selector, enforcer, guardrails, cost logger
+    build_singletons()
+    log.info("singletons_ready")
+
+    # Start background scheduler (health probes every 5 min + weekly price sync)
+    scheduler = TidusScheduler(
+        registry=get_registry(),
+        session_factory=get_session_factory(),
+    )
+    scheduler.start()
 
     yield
 
-    # Future: scheduler.shutdown()
+    scheduler.shutdown()
     log.info("tidus_stopped")
 
 
@@ -75,16 +85,29 @@ def create_app() -> FastAPI:
 
     @app.get("/ready", tags=["Health"], summary="Readiness check")
     async def ready():
-        # TODO Phase 3+: check DB + adapter connectivity
         return {"status": "ready"}
 
-    # ── API routers (registered per phase) ───────────────────────────────────
-    # Phase 3: from tidus.api.v1 import route, complete, models, budgets, usage
-    # app.include_router(route.router, prefix="/api/v1")
-    # ...
+    # ── API v1 routers ────────────────────────────────────────────────────────
+    app.include_router(route.router, prefix="/api/v1")
+    app.include_router(complete.router, prefix="/api/v1")
+    app.include_router(models.router, prefix="/api/v1")
+    app.include_router(budgets.router, prefix="/api/v1")
+    app.include_router(usage.router, prefix="/api/v1")
+    app.include_router(guardrails.router, prefix="/api/v1")
+    app.include_router(sync.router, prefix="/api/v1")
+    app.include_router(dashboard.router, prefix="/api/v1")
 
     # ── Dashboard static files ────────────────────────────────────────────────
-    # Phase 5: app.mount("/dashboard", StaticFiles(...), name="dashboard")
+    import pathlib
+    from fastapi.responses import RedirectResponse
+    from fastapi.staticfiles import StaticFiles
+
+    static_dir = pathlib.Path(__file__).parent / "dashboard" / "static"
+    app.mount("/dashboard", StaticFiles(directory=str(static_dir), html=True), name="dashboard")
+
+    @app.get("/dash", include_in_schema=False)
+    async def dash_redirect():
+        return RedirectResponse("/dashboard/index.html")
 
     return app
 
