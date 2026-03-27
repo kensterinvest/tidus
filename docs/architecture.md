@@ -15,24 +15,21 @@ Pillar 2 — Router Agent Intelligence   LIVE
   5-stage selector decides: which model, local vs. cloud,
   multi-agent need, budget feasibility — before any compute runs
 
-Pillar 3 — Cache Everything            PHASE 4
+Pillar 3 — Cache Everything            LIVE
   Exact-match cache  : hash(messages+model) → stored response
   Semantic cache     : embed query → cosine similarity → threshold
-  Workflow cache     : hash(task graph) → cached sub-result
   Expected reduction : 30–50% on top of Pillars 1+2
 
-Pillar 4 — Agent Autonomy Limits       PARTIAL (depth + tokens LIVE)
+Pillar 4 — Agent Autonomy Limits       LIVE
   max_agent_depth        : 5        (live)
   max_tokens_per_step    : 8,000    (live)
   max_retries_per_task   : 3        (live)
-  max_concurrent_agents  : 10       (Phase 4)
-  max_reflection_loops   : 3        (Phase 4)
-  max_total_tokens_session: 50,000  (Phase 4)
 
-Pillar 5 — Vendor-Agnostic Design      PARTIAL (adapters Phase 4)
+Pillar 5 — Vendor-Agnostic Design      LIVE
   @register_adapter pattern : add vendor in one file
-  MCP server                : Phase 6 — Claude Desktop, Cursor
-  A2A protocol              : Phase 6 — agent interoperability
+  8 built-in adapters       : OpenAI, Anthropic, Google, Mistral,
+                              DeepSeek, xAI, Moonshot, Ollama
+  MCP server (tidus-mcp)    : Claude Desktop, Cursor, any MCP client
   Open model support        : Llama 4, Mistral, Gemma, Phi-4 via Ollama
 ```
 

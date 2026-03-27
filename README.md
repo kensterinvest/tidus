@@ -27,9 +27,9 @@ Most AI systems default every request to the most powerful (most expensive) mode
 |--------|-------------|--------|
 | **1. Tiered Model Strategy** | Routes to the cheapest capable tier — local models for filtering/routing, mid-tier for summarisation/extraction, premium only for reasoning/compliance | ✅ Live |
 | **2. Router Agent Intelligence** | Decides model, local vs. cloud, multi-agent need, and budget feasibility before any compute runs | ✅ Live |
-| **3. Response Caching** | Exact-match and semantic caching — identical or near-identical queries pay once; 30–50% additional reduction | Planned Phase 4 |
-| **4. Agent Autonomy Limits** | Max depth, agents, tokens-per-step, retries, and reflection loops — prevents runaway compute | Partial (depth + tokens live; reflection loops in Phase 4) |
-| **5. Vendor-Agnostic Architecture** | Pluggable adapters + MCP + A2A protocol — swap vendors without rewriting your system | Partial (adapters in Phase 4, MCP/A2A in Phase 6) |
+| **3. Response Caching** | Exact-match and semantic caching — identical or near-identical queries pay once; 30–50% additional reduction | ✅ Live (Phase 4) |
+| **4. Agent Autonomy Limits** | Max depth, agents, tokens-per-step, retries, and reflection loops — prevents runaway compute | ✅ Live (depth, tokens, retries) |
+| **5. Vendor-Agnostic Architecture** | Pluggable adapters + MCP server — swap vendors without rewriting your system | ✅ Live (8 adapters + MCP) |
 
 ### Cost Impact — 500 users × 200 requests/day
 
@@ -81,10 +81,10 @@ Stage 5 — Score & Select
 | **Cost** | Token accounting with 15% safety buffer, per-call cost logging, weekly price sync |
 | **Budget** | Per-team and per-workflow limits with hard-stop or warn-only behaviour |
 | **Guardrails** | Max agent depth (5), max tokens per step (8K), max retries (3), session tracking |
-| **Caching** | *(Phase 4)* Exact + semantic response caching — 30–50% additional cost reduction |
+| **Caching** | Exact + semantic response caching — 30–50% additional cost reduction |
 | **Vendors** | OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, xAI, Kimi, Ollama (local) |
-| **Integration** | *(Phase 6)* MCP server for Claude Desktop / Cursor; A2A agent interoperability |
-| **Visibility** | *(Phase 5)* Dashboard: cost by model, budget utilisation, active sessions, cache hit rate |
+| **Integration** | MCP server (`tidus-mcp`) for Claude Desktop / Cursor — 4 tools: route, complete, budget, models |
+| **Visibility** | Dashboard at `/dashboard/`: cost by model, budget utilisation, active sessions, registry health |
 | **Resilience** | Automatic fallback chains, health probes, model deprecation handling |
 
 ## Quick Start
@@ -161,7 +161,7 @@ See [docs/pricing.md](docs/pricing.md) for full tier details.
 - [API Reference](docs/api-reference.md)
 - [Adapters & Vendors](docs/adapters.md)
 - [Budgets & Guardrails](docs/budgets-and-guardrails.md)
-- [Caching](docs/caching.md) *(Phase 4)*
+- [Caching](docs/caching.md)
 - [MCP Integration](docs/mcp-integration.md)
 - [Dashboard](docs/dashboard.md)
 - [Deployment](docs/deployment.md)
@@ -175,10 +175,10 @@ See [docs/pricing.md](docs/pricing.md) for full tier details.
 | Phase 1 — Foundation | Scaffolding, models, DB, config | ✅ Complete |
 | Phase 2 — Core Logic | Selector, cost engine, budget enforcer, guardrails | ✅ Complete |
 | Phase 3 — API Layer | REST endpoints, integration tests, pricing corrections | ✅ Complete |
-| Phase 4 — Adapters + Cache | All 8 vendor adapters, `/complete`, semantic caching | In progress |
-| Phase 5 — Dashboard | Cost SPA, cache hit-rate panel, agent autonomy metrics | Planned |
-| Phase 6 — MCP + Docker | MCP server, A2A protocol, Docker Compose | Planned |
-| Phase 7 — Release | Full docs, v0.1.0 tag, public launch | Planned |
+| Phase 4 — Adapters + Cache | All 8 vendor adapters, `/complete`, semantic caching, sync scheduler | ✅ Complete |
+| Phase 5 — Dashboard | Cost SPA, budget bars, active sessions, registry health | ✅ Complete |
+| Phase 6 — MCP + Docker | MCP server (`tidus-mcp`), Docker Compose, Ollama profile | ✅ Complete |
+| Phase 7 — Release | Full docs, v0.1.0 tag, 115 tests passing | ✅ Complete |
 
 ## Contributing
 
