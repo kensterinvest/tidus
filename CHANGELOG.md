@@ -5,16 +5,41 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] — Phase 4 (Adapters + Caching)
+## [v0.1.0] — 2026-03-27 — MVP Release
 
-### Planned
-- All 8 vendor adapters (Ollama → Anthropic → OpenAI → Google → Mistral → DeepSeek → xAI → Kimi)
-- `POST /api/v1/complete` — route + execute in one call
-- Per-vendor token counting (`tokenizers.py`) with 15% safety buffer
-- Exact-match and semantic response caching (`tidus/cache/`) — **Pillar 3: Cache Everything**
-- Expanded agent autonomy limits: `max_concurrent_agents`, `max_reflection_loops` — **Pillar 4**
-- Health probe scheduler (5-min latency checks, auto-disable on 3 failures)
-- Weekly price sync job (auto-update YAML + DB audit log on >5% change)
+### Added
+
+#### Phase 4 — Vendor Adapters, /complete endpoint, Caching, Sync
+- 8 vendor adapters via `@register_adapter` pattern: Ollama, Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Moonshot — all with `complete()`, `health_check()`, `count_tokens()`
+- `POST /api/v1/complete` — route + execute + log cost in one call; falls back to first fallback model on adapter error
+- `POST /api/v1/sync/health` and `POST /api/v1/sync/prices` — admin-triggered manual sync
+- `ExactCache` — SHA-256 keyed, TTL eviction, team-scoped (**Pillar 3, Layer 1**)
+- `SemanticCache` — sentence-transformers `all-MiniLM-L6-v2`, cosine similarity threshold 0.95 (**Pillar 3, Layer 2**); graceful no-op if package not installed
+- `CostLogger` — writes `CostRecord` to DB after each `/complete` (non-fatal)
+- `TidusScheduler` (APScheduler): health probes every 5 min, price sync weekly Sunday 02:00 UTC
+- `HealthProbe` — rolling P50 latency over 20 probes; auto-disables models after 3 failures
+- `PriceSync` — compares registry vs hardcoded known-prices; writes `PriceChangeRecord` on >5% delta
+- 9 new integration tests for `/complete` endpoint, budget enforcement, privacy routing, fallback, sync admin
+
+#### Phase 5 — Dashboard SPA
+- `GET /api/v1/dashboard/summary` — all dashboard metrics in one API call
+- Vanilla JS/HTML/CSS SPA at `/dashboard/` (no build step):
+  - 6 KPI cards, cost-by-model bar chart (Chart.js, tier colour-coded), budget utilization bars, active sessions table, registry health badges
+  - Auto-refreshes every 30 seconds
+  - All DOM manipulation uses safe DOM API — no innerHTML with external values
+
+#### Phase 6 — MCP Server + Docker
+- MCP server (`tidus-mcp` entry point) with 4 tools: `tidus_route_task`, `tidus_complete_task`, `tidus_get_budget_status`, `tidus_list_models`
+- stdio transport — compatible with Claude Desktop, Cursor, and any MCP client
+- `Dockerfile` — python:3.12-slim + uv, non-root user, SQLite volume at `/app/data`
+- `docker-compose.yml` — tidus + optional Ollama profile (`--profile ollama`) for local inference
+
+#### Phase 7 — Documentation
+- Full content for: `docs/mcp-integration.md`, `docs/deployment.md`, `docs/dashboard.md`, `docs/adapters.md`
+- v0.1.0 CHANGELOG finalized
+
+### Tests
+- **100 tests passing** across unit, integration, and model selection intelligence suites
 
 ---
 
