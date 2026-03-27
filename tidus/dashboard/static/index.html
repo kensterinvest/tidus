@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tidus — AI Cost Dashboard</title>
+  <link rel="stylesheet" href="/dashboard/style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Tidus / Cost Dashboard</h1>
+  <div class="meta">
+    Auto-refreshes every 30s &mdash; Last updated: <span id="last-updated">…</span>
+  </div>
+</header>
+
+<div
+  id="error-banner"
+  hidden
+  style="background:#450a0a;color:#fca5a5;padding:10px 24px;font-size:13px"
+></div>
+
+<main>
+
+  <!-- ── Overview KPIs ─────────────────────────────────────────────────────── -->
+  <section>
+    <div class="overview-grid">
+      <div class="kpi">
+        <div class="label">7-Day Cost</div>
+        <div class="value" id="kpi-total-cost">…</div>
+        <div class="sub">USD, all vendors</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Total Requests</div>
+        <div class="value" id="kpi-total-requests">…</div>
+        <div class="sub">last 7 days</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Requests Today</div>
+        <div class="value" id="kpi-requests-today">…</div>
+        <div class="sub">UTC day</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Avg Cost / Request</div>
+        <div class="value" id="kpi-avg-cost">…</div>
+        <div class="sub">USD</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Most Used Model</div>
+        <div class="value" style="font-size:16px" id="kpi-most-used">…</div>
+        <div class="sub">by request count</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Cheapest Model Used</div>
+        <div class="value" style="font-size:16px" id="kpi-cheapest">…</div>
+        <div class="sub">by avg cost / request</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Cost by Model Chart ────────────────────────────────────────────────── -->
+  <section class="card">
+    <h2>Cost by Model (7 days)</h2>
+    <div class="chart-container">
+      <canvas id="cost-chart"></canvas>
+    </div>
+    <div style="margin-top:10px;font-size:11px;color:#94a3b8">
+      Tier colours:
+      <span style="color:#f87171">&#9632; Premium (1)</span> &nbsp;
+      <span style="color:#fbbf24">&#9632; Mid (2)</span> &nbsp;
+      <span style="color:#4f8ef7">&#9632; Economy (3)</span> &nbsp;
+      <span style="color:#34d399">&#9632; Local/Free (4)</span>
+    </div>
+  </section>
+
+  <!-- ── Budget + Sessions side by side ────────────────────────────────────── -->
+  <div class="two-col">
+
+    <section class="card">
+      <h2>Budget Utilization</h2>
+      <div id="budget-list" class="budget-list"></div>
+    </section>
+
+    <section class="card">
+      <h2>Active Agent Sessions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Session ID</th>
+            <th>Team</th>
+            <th>Depth</th>
+            <th>Steps</th>
+            <th>Tokens</th>
+            <th>Started</th>
+          </tr>
+        </thead>
+        <tbody id="sessions-tbody"></tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <!-- ── Registry Health ───────────────────────────────────────────────────── -->
+  <section class="card">
+    <h2>Model Registry Health &mdash; <span id="health-summary" style="color:#94a3b8;font-weight:400;text-transform:none;letter-spacing:0"></span></h2>
+    <div id="health-list" style="display:flex;flex-wrap:wrap;gap:4px;margin-top:8px"></div>
+  </section>
+
+</main>
+
+<!-- Chart.js from CDN — no build step required -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"
+        integrity="sha384-T6M1ZHmLCf0rfv7vGNGcILd1ORBPiYnv/E/0pJdpFoqkSfHEJwbTvvf6cF3qWt"
+        crossorigin="anonymous"></script>
+<script src="/dashboard/main.js"></script>
+</body>
+</html>
