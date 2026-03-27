@@ -270,8 +270,18 @@ Check guardrails and increment agent depth. Returns `422` if any limit is exceed
 ```json
 {
   "session_id": "session-abc123",
-  "tokens_used": 1200
+  "input_tokens": 1200
 }
+```
+
+**Response 200:**
+```json
+{"allowed": true, "reason": null}
+```
+
+**Response 422 — limit exceeded:**
+```json
+{"detail": "agent_depth_exceeded"}
 ```
 
 ---
@@ -305,7 +315,7 @@ Returns all dashboard metrics in a single call: cost KPIs, cost by model (7-day)
     }
   ],
   "sessions": [
-    {"session_id": "sess-001", "team_id": "team-engineering", "current_depth": 2, "tokens_used": 4800}
+    {"session_id": "sess-001", "team_id": "team-engineering", "current_depth": 2, "total_tokens_used": 4800}
   ],
   "registry_health": [
     {"model_id": "deepseek-v3", "enabled": true, "latency_p50_ms": 820, "last_health_check": "2026-03-27T10:00:00Z"}
