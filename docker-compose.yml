@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  tidus:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      # ── Required for vendor API access ──────────────────────────────────────
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY:-}
+      - MISTRAL_API_KEY=${MISTRAL_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - XAI_API_KEY=${XAI_API_KEY:-}
+      - MOONSHOT_API_KEY=${MOONSHOT_API_KEY:-}
+      # ── Optional: point to a local Ollama instance ──────────────────────────
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+      # ── App settings ────────────────────────────────────────────────────────
+      - DATABASE_URL=sqlite+aiosqlite:////app/data/tidus.db
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+      - TIDUS_TIER=${TIDUS_TIER:-community}
+    volumes:
+      - tidus-data:/app/data
+      - ./config:/app/config:ro  # live config updates without rebuild
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+
+  # Optional: local Ollama service for free/private inference
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+    restart: unless-stopped
+    profiles:
+      - ollama  # opt-in: docker compose --profile ollama up
+
+volumes:
+  tidus-data:
+  ollama-models:
