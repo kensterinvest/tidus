@@ -35,6 +35,19 @@ class Settings(BaseSettings):
     tidus_license_key: str = ""
     tidus_tier: str = "community"  # community | pro | business | enterprise
 
+    # ── OIDC / SSO ───────────────────────────────────────────────────────────
+    # Leave oidc_issuer_url empty to run in dev mode (no auth required).
+    # Supported providers: Okta, Azure Entra ID, Google Workspace, Auth0, generic OIDC.
+    oidc_issuer_url: str = ""          # e.g. https://my.okta.com/oauth2/default
+    oidc_client_id: str = ""           # JWT audience claim value
+    oidc_client_secret: str = ""       # For token introspection if needed (optional)
+    oidc_team_claim: str = "tid"       # JWT claim holding the team_id
+    oidc_role_claim: str = "role"      # JWT claim holding the Tidus role
+
+    # Dev-mode fallback identity (used when oidc_issuer_url is unset)
+    oidc_dev_team_id: str = "team-dev"
+    oidc_dev_role: str = "admin"
+
 
 _settings: Settings | None = None
 

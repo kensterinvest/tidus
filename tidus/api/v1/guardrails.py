@@ -19,6 +19,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from tidus.api.deps import get_agent_guard, get_guardrail_policy, get_session_store
+from tidus.auth.middleware import TokenPayload, get_current_user
+from tidus.auth.rbac import Role, require_role
 from tidus.guardrails.agent_guard import AgentGuard
 from tidus.guardrails.session_store import SessionStore
 from tidus.models.guardrails import AgentSession, GuardrailPolicy
@@ -51,6 +53,9 @@ async def create_session(
     body: CreateSessionRequest,
     store: Annotated[SessionStore, Depends(get_session_store)],
     policy: Annotated[GuardrailPolicy, Depends(get_guardrail_policy)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.developer, Role.team_manager, Role.admin, Role.service_account,
+    ))],
 ) -> AgentSession:
     """Create a new agent session with the current guardrail policy.
 
@@ -70,6 +75,7 @@ async def create_session(
 async def get_session(
     session_id: str,
     store: Annotated[SessionStore, Depends(get_session_store)],
+    _auth: Annotated[TokenPayload, Depends(get_current_user)],
 ) -> AgentSession:
     session = await store.get(session_id)
     if session is None:
@@ -85,6 +91,9 @@ async def get_session(
 async def terminate_session(
     session_id: str,
     store: Annotated[SessionStore, Depends(get_session_store)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.developer, Role.team_manager, Role.admin,
+    ))],
 ) -> None:
     removed = await store.terminate(session_id)
     if not removed:
@@ -98,6 +107,9 @@ async def terminate_session(
 async def advance_session(
     body: AdvanceRequest,
     guard: Annotated[AgentGuard, Depends(get_agent_guard)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.developer, Role.team_manager, Role.admin, Role.service_account,
+    ))],
 ) -> dict:
     """Validate that this agent step is within policy limits and increment depth.
 

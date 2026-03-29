@@ -19,6 +19,8 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from tidus.api.deps import get_enforcer
+from tidus.auth.middleware import TokenPayload
+from tidus.auth.rbac import Role, require_role
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.models.budget import BudgetStatus
 
@@ -40,6 +42,9 @@ class UsageSummary(BaseModel):
 )
 async def usage_summary(
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.read_only, Role.developer, Role.team_manager, Role.admin,
+    ))],
     team_id: str | None = None,
 ) -> list[UsageSummary]:
     """Return spend vs limit for all teams (or a specific team) with budget policies.

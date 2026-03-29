@@ -19,6 +19,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from tidus.api.deps import get_enforcer, get_registry, get_session_store
+from tidus.auth.middleware import TokenPayload, get_current_user
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.guardrails.session_store import SessionStore
 from tidus.router.registry import ModelRegistry
@@ -113,6 +114,7 @@ async def dashboard_summary(
     registry: Annotated[ModelRegistry, Depends(get_registry)],
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
     session_store: Annotated[SessionStore, Depends(get_session_store)],
+    _auth: Annotated[TokenPayload, Depends(get_current_user)],
 ) -> DashboardSummary:
     """Return all metrics needed to render the dashboard in one request."""
     now = datetime.now(timezone.utc)

@@ -14,6 +14,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 
 from tidus.api.deps import get_registry, get_session_factory
+from tidus.auth.middleware import TokenPayload
+from tidus.auth.rbac import Role, require_role
 from tidus.settings import get_settings
 
 router = APIRouter(tags=["Sync (Admin)"])
@@ -26,6 +28,7 @@ router = APIRouter(tags=["Sync (Admin)"])
 )
 async def trigger_health_probe(
     registry=Depends(get_registry),
+    _auth: Annotated[TokenPayload, Depends(require_role(Role.admin))] = None,
 ):
     """Run a health probe against all enabled models immediately.
 
@@ -52,6 +55,7 @@ async def trigger_health_probe(
 )
 async def trigger_price_sync(
     registry=Depends(get_registry),
+    _auth: Annotated[TokenPayload, Depends(require_role(Role.admin))] = None,
 ):
     """Run a price sync against the known-prices reference immediately.
 

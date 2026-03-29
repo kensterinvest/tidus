@@ -17,6 +17,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from tidus.api.deps import get_enforcer
+from tidus.auth.middleware import TokenPayload
+from tidus.auth.rbac import Role, require_role
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope, BudgetStatus
 
@@ -44,6 +46,9 @@ class CreateBudgetRequest(BaseModel):
 )
 async def list_budgets(
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.read_only, Role.developer, Role.team_manager, Role.admin,
+    ))],
 ) -> list[BudgetPolicy]:
     return enforcer.list_policies()
 
@@ -57,6 +62,7 @@ async def list_budgets(
 async def create_budget(
     body: CreateBudgetRequest,
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
+    _auth: Annotated[TokenPayload, Depends(require_role(Role.team_manager, Role.admin))],
 ) -> BudgetPolicy:
     """Add a new budget policy to the in-memory registry.
 
@@ -84,6 +90,9 @@ async def create_budget(
 async def get_team_budget_status(
     team_id: str,
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
+    _auth: Annotated[TokenPayload, Depends(require_role(
+        Role.read_only, Role.developer, Role.team_manager, Role.admin,
+    ))],
 ) -> BudgetStatus:
     """Return current spend, limit, and utilisation for the given team.
 
