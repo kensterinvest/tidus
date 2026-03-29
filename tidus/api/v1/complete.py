@@ -15,11 +15,13 @@ from pydantic import BaseModel, Field
 
 from tidus.adapters.adapter_factory import get_adapter
 from tidus.api.deps import (
+    get_audit_logger,
     get_cost_logger,
     get_enforcer,
     get_registry,
     get_selector,
 )
+from tidus.audit.logger import AuditLogger
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
 from tidus.budget.enforcer import BudgetEnforcer
@@ -73,6 +75,7 @@ async def complete(
     registry: Annotated[ModelRegistry, Depends(get_registry)],
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
     cost_logger: Annotated[CostLogger, Depends(get_cost_logger)],
+    audit: Annotated[AuditLogger, Depends(get_audit_logger)],
     _auth: Annotated[TokenPayload, Depends(require_role(
         Role.developer, Role.team_manager, Role.admin, Role.service_account,
     ))],
@@ -184,6 +187,23 @@ async def complete(
 
     # Log cost to DB (non-fatal)
     await cost_logger.record(task, decision, response, spec.vendor)
+
+    # Audit trail (non-fatal)
+    await audit.record(
+        actor=_auth,
+        action="complete",
+        resource_type="task",
+        resource_id=task.task_id,
+        outcome="success",
+        metadata={
+            "chosen_model_id": response.model_id,
+            "vendor": spec.vendor,
+            "cost_usd": round(actual_cost, 6),
+            "input_tokens": response.input_tokens,
+            "output_tokens": response.output_tokens,
+            "fallback_from": decision.fallback_from,
+        },
+    )
 
     log.info(
         "complete_success",

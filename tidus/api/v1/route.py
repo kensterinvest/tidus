@@ -18,7 +18,8 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from tidus.api.deps import get_selector
+from tidus.api.deps import get_audit_logger, get_selector
+from tidus.audit.logger import AuditLogger
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
 from tidus.models.routing import RejectionReason, RoutingDecision
@@ -83,6 +84,7 @@ class RouteResponse(BaseModel):
 async def route_task(
     body: RouteRequest,
     selector: Annotated[ModelSelector, Depends(get_selector)],
+    audit: Annotated[AuditLogger, Depends(get_audit_logger)],
     _auth: Annotated[TokenPayload, Depends(require_role(
         Role.developer, Role.team_manager, Role.admin, Role.service_account,
     ))],
@@ -118,6 +120,15 @@ async def route_task(
             stage=exc.stage,
             rejection_count=len(exc.rejections),
         )
+        await audit.record(
+            actor=_auth,
+            action="route",
+            resource_type="task",
+            resource_id=task.task_id,
+            outcome="rejected",
+            rejection_reason=str(exc),
+            metadata={"stage": exc.stage},
+        )
         raise HTTPException(
             status_code=422,
             detail={
@@ -131,6 +142,15 @@ async def route_task(
                 ],
             },
         ) from exc
+
+    await audit.record(
+        actor=_auth,
+        action="route",
+        resource_type="task",
+        resource_id=decision.task_id,
+        outcome="success",
+        metadata={"chosen_model_id": decision.chosen_model_id, "estimated_cost_usd": decision.estimated_cost_usd},
+    )
 
     return RouteResponse(
         task_id=decision.task_id,

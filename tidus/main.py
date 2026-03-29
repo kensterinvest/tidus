@@ -14,7 +14,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from tidus.api.deps import build_singletons, get_registry, get_session_factory
-from tidus.api.v1 import budgets, complete, dashboard, guardrails, models, route, sync, usage
+from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, models, route, sync, usage
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
 from tidus.sync.scheduler import TidusScheduler
@@ -123,6 +123,7 @@ def create_app() -> FastAPI:
     app.include_router(guardrails.router, prefix="/api/v1")
     app.include_router(sync.router, prefix="/api/v1")
     app.include_router(dashboard.router, prefix="/api/v1")
+    app.include_router(audit.router, prefix="/api/v1")
 
     # ── Dashboard static files ────────────────────────────────────────────────
     import pathlib
