@@ -1,0 +1,49 @@
+# Production overlay — high availability, external secrets, real domain
+replicaCount: 3
+
+image:
+  pullPolicy: IfNotPresent
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 60
+
+config:
+  environment: production
+  logLevel: INFO
+  tidusTier: enterprise
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "1Gi"
+  limits:
+    cpu: "2000m"
+    memory: "2Gi"
+
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: true
+
+postgresql:
+  primary:
+    persistence:
+      size: 100Gi
+  readReplicas:
+    replicaCount: 1
+
+redis:
+  architecture: replication
+  master:
+    persistence:
+      size: 10Gi

@@ -1,0 +1,116 @@
+# Default values for tidus Helm chart.
+# Override with values.dev.yaml or values.prod.yaml.
+
+replicaCount: 3
+
+image:
+  repository: tidus
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  name: ""
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8000
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+  hosts:
+    - host: tidus.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls:
+    - secretName: tidus-tls
+      hosts:
+        - tidus.example.com
+
+resources:
+  requests:
+    cpu: "250m"
+    memory: "512Mi"
+  limits:
+    cpu: "1000m"
+    memory: "1Gi"
+
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+
+# Application environment config
+config:
+  environment: production
+  logLevel: INFO
+  tidusTier: enterprise
+  ollamaBaseUrl: "http://ollama:11434"
+
+# Secrets — set via --set or external secrets operator in production
+secrets:
+  openaiApiKey: ""
+  anthropicApiKey: ""
+  googleApiKey: ""
+  mistralApiKey: ""
+  deepseekApiKey: ""
+  xaiApiKey: ""
+  moonshotApiKey: ""
+  oidcIssuerUrl: ""
+  oidcClientId: ""
+  oidcClientSecret: ""
+
+# In-cluster PostgreSQL (via Bitnami chart)
+postgresql:
+  enabled: true
+  auth:
+    username: tidus
+    password: changeme
+    database: tidus
+  primary:
+    persistence:
+      size: 20Gi
+
+# In-cluster Redis (via Bitnami chart)
+redis:
+  enabled: true
+  architecture: standalone
+  auth:
+    enabled: false
+  master:
+    persistence:
+      size: 2Gi
+
+# Prometheus metrics scraping
+metrics:
+  enabled: true
+  serviceMonitor:
+    enabled: false    # set true if Prometheus Operator is installed
+    namespace: monitoring
+    interval: 30s
+
+# Pod topology spread (prefer spreading across nodes)
+topologySpreadConstraints:
+  enabled: true
+
+# Probes
+readinessProbe:
+  path: /ready
+  initialDelaySeconds: 10
+  periodSeconds: 10
+
+livenessProbe:
+  path: /health
+  initialDelaySeconds: 30
+  periodSeconds: 30

@@ -1,0 +1,27 @@
+apiVersion: v2
+name: tidus
+description: Enterprise AI Router — routes every AI request to the cheapest capable model, enforces budgets, and provides governance for multi-agent systems.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - ai
+  - llm
+  - router
+  - cost-optimization
+  - enterprise
+home: https://github.com/kensterinvest/tidus
+sources:
+  - https://github.com/kensterinvest/tidus
+maintainers:
+  - name: Kenny Wong
+    email: lapkei01@gmail.com
+dependencies:
+  - name: postgresql
+    version: "15.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: postgresql.enabled
+  - name: redis
+    version: "19.x.x"
+    repository: "https://charts.bitnami.com/bitnami"
+    condition: redis.enabled

@@ -12,6 +12,7 @@ from contextlib import asynccontextmanager
 import structlog
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from tidus.api.deps import build_singletons, get_registry, get_session_factory
 from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, models, route, sync, usage
@@ -124,6 +125,13 @@ def create_app() -> FastAPI:
     app.include_router(sync.router, prefix="/api/v1")
     app.include_router(dashboard.router, prefix="/api/v1")
     app.include_router(audit.router, prefix="/api/v1")
+
+    # ── Prometheus metrics ────────────────────────────────────────────────────
+    Instrumentator(
+        should_group_status_codes=True,
+        should_ignore_untemplated=True,
+        excluded_handlers=["/health", "/ready", "/metrics"],
+    ).instrument(app).expose(app, include_in_schema=False, tags=["Observability"])
 
     # ── Dashboard static files ────────────────────────────────────────────────
     import pathlib

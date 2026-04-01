@@ -52,6 +52,7 @@ dependencies = [
     "structlog>=24.1.0",
     # Auth / SSO
     "pyjwt[crypto]>=2.8.0",
+    "prometheus-fastapi-instrumentator>=7.1.0",
 ]
 
 [project.optional-dependencies]

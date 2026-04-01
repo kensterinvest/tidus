@@ -1,0 +1,36 @@
+# Development overlay — single replica, debug logging, no TLS
+replicaCount: 1
+
+image:
+  pullPolicy: Always
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 1
+
+config:
+  environment: development
+  logLevel: DEBUG
+  tidusTier: community
+
+ingress:
+  enabled: false
+
+resources:
+  requests:
+    cpu: "100m"
+    memory: "256Mi"
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+
+postgresql:
+  primary:
+    persistence:
+      size: 5Gi
+
+redis:
+  master:
+    persistence:
+      size: 512Mi

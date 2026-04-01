@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tidus
+  labels:
+    app.kubernetes.io/name: tidus
+    app.kubernetes.io/managed-by: helm
