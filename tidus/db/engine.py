@@ -1,7 +1,7 @@
 from collections.abc import AsyncGenerator
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Float, Integer, String, Text, func,
+    Boolean, Column, DateTime, Float, Integer, JSON, String, Text, func,
 )
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
@@ -77,6 +77,29 @@ class RoutingDecisionORM(Base):
     timestamp = Column(DateTime, server_default=func.now(), nullable=False, index=True)
 
 
+class AuditLogORM(Base):
+    """Tamper-evident audit log for SOC 2 / ISO 27001 / HIPAA compliance.
+
+    Records who (actor_team_id + actor_role + actor_sub) did what (action)
+    to which resource (resource_type + resource_id), and whether it succeeded.
+    """
+
+    __tablename__ = "audit_logs"
+
+    id = Column(String, primary_key=True)
+    timestamp = Column(DateTime, server_default=func.now(), nullable=False, index=True)
+    actor_team_id = Column(String, nullable=False, index=True)
+    actor_role = Column(String, nullable=False)
+    actor_sub = Column(String, nullable=False)           # JWT sub / "dev" in dev-mode
+    action = Column(String, nullable=False, index=True)  # e.g. "route", "complete", "budget.create"
+    resource_type = Column(String, nullable=True)        # e.g. "task", "budget_policy"
+    resource_id = Column(String, nullable=True, index=True)
+    outcome = Column(String, nullable=False)             # "success" | "rejected" | "error"
+    rejection_reason = Column(String, nullable=True)
+    ip_address = Column(String, nullable=True)
+    metadata_ = Column("metadata", JSON, nullable=True)  # arbitrary extra context
+
+
 # ── Engine & Session Factory ──────────────────────────────────────────────────
 
 _engine = None
@@ -87,11 +110,21 @@ def get_engine():
     global _engine
     if _engine is None:
         settings = get_settings()
-        connect_args = {"check_same_thread": False} if "sqlite" in settings.database_url else {}
+        is_sqlite = "sqlite" in settings.database_url
+        connect_args = {"check_same_thread": False} if is_sqlite else {}
+        pool_kwargs: dict = {}
+        if not is_sqlite:
+            # PostgreSQL production pool settings
+            pool_kwargs = {
+                "pool_size": 10,
+                "max_overflow": 20,
+                "pool_pre_ping": True,
+            }
         _engine = create_async_engine(
             settings.database_url,
             connect_args=connect_args,
             echo=settings.environment == "development",
+            **pool_kwargs,
         )
     return _engine
 

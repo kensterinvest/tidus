@@ -86,6 +86,43 @@ Select the best model for a task without executing it. Returns a routing decisio
 
 ---
 
+## Completion
+
+### POST /api/v1/complete
+
+Route **and** execute in one call. Tidus selects the best model, calls the vendor adapter, logs the cost, and returns the response.
+
+**Request body:** Same as `/api/v1/route`, plus:
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `estimated_output_tokens` | int | No | Expected output length (default: 256) |
+| `agent_depth` | int | No | Current recursive agent depth (default: 0) |
+
+**Response 200:**
+
+```json
+{
+  "task_id": "b2c3d4e5-...",
+  "chosen_model_id": "deepseek-v3",
+  "content": "Here is the answer...",
+  "vendor": "deepseek",
+  "input_tokens": 18,
+  "output_tokens": 42,
+  "cost_usd": 0.0000084,
+  "latency_ms": 612.3
+}
+```
+
+**Response 422 — no capable model:** Same structure as `/api/v1/route` rejection.
+
+**Response 422 — adapter error:**
+```json
+{"detail": "Adapter error: <message>"}
+```
+
+---
+
 ## Models
 
 ### GET /api/v1/models
@@ -233,8 +270,82 @@ Check guardrails and increment agent depth. Returns `422` if any limit is exceed
 ```json
 {
   "session_id": "session-abc123",
-  "tokens_used": 1200
+  "input_tokens": 1200
 }
+```
+
+**Response 200:**
+```json
+{"allowed": true, "reason": null}
+```
+
+**Response 422 — limit exceeded:**
+```json
+{"detail": "agent_depth_exceeded"}
+```
+
+---
+
+## Dashboard
+
+### GET /api/v1/dashboard/summary
+
+Returns all dashboard metrics in a single call: cost KPIs, cost by model (7-day), budget utilisation, active sessions, and registry health.
+
+```json
+{
+  "cost": {
+    "total_7d_usd": 12.45,
+    "total_30d_usd": 48.20,
+    "requests_7d": 14230,
+    "avg_cost_per_request_usd": 0.000875,
+    "estimated_monthly_usd": 208.50
+  },
+  "cost_by_model": [
+    {"model_id": "deepseek-v3", "vendor": "deepseek", "tier": 2, "total_usd": 5.20, "requests": 8400},
+    {"model_id": "claude-sonnet-4-6", "vendor": "anthropic", "tier": 2, "total_usd": 4.10, "requests": 2100}
+  ],
+  "budgets": [
+    {
+      "team_id": "team-engineering",
+      "spent_usd": 123.45,
+      "limit_usd": 500.0,
+      "utilisation_pct": 24.69,
+      "is_hard_stopped": false
+    }
+  ],
+  "sessions": [
+    {"session_id": "sess-001", "team_id": "team-engineering", "current_depth": 2, "total_tokens_used": 4800}
+  ],
+  "registry_health": [
+    {"model_id": "deepseek-v3", "enabled": true, "latency_p50_ms": 820, "last_health_check": "2026-03-27T10:00:00Z"}
+  ],
+  "generated_at": "2026-03-27T10:05:00Z"
+}
+```
+
+The dashboard SPA at `/dashboard/` calls this endpoint every 30 seconds.
+
+---
+
+## Sync (Admin)
+
+### POST /api/v1/sync/health
+
+Trigger a health probe for all enabled models immediately (normally runs every 5 minutes automatically).
+
+```json
+{"probed": 28, "healthy": 25, "unhealthy": 3}
+```
+
+### POST /api/v1/sync/prices
+
+Trigger a price sync for all models immediately (normally runs weekly).
+
+```json
+{"changes_detected": 2, "changes": [
+  {"model_id": "gpt-4o-mini", "field": "input_price", "old": 0.00015, "new": 0.00012}
+]}
 ```
 
 ---

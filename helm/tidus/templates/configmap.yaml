@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "tidus.fullname" . }}-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "tidus.labels" . | nindent 4 }}
+data:
+  ENVIRONMENT: {{ .Values.config.environment | quote }}
+  LOG_LEVEL: {{ .Values.config.logLevel | quote }}
+  TIDUS_TIER: {{ .Values.config.tidusTier | quote }}
+  OLLAMA_BASE_URL: {{ .Values.config.ollamaBaseUrl | quote }}
+  DATABASE_URL: {{ printf "postgresql+asyncpg://tidus@%s:5432/tidus" (include "tidus.postgresHost" .) | quote }}
+  REDIS_URL: {{ printf "redis://%s:6379/0" (include "tidus.redisHost" .) | quote }}

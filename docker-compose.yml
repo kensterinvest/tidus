@@ -16,20 +16,61 @@ services:
       - MOONSHOT_API_KEY=${MOONSHOT_API_KEY:-}
       # ── Optional: point to a local Ollama instance ──────────────────────────
       - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://ollama:11434}
+      # ── Database (PostgreSQL in production, SQLite in dev/community) ─────────
+      - DATABASE_URL=${DATABASE_URL:-postgresql+asyncpg://tidus:tidus@postgres:5432/tidus}
+      - REDIS_URL=${REDIS_URL:-redis://redis:6379/0}
+      # ── SSO / OIDC (leave empty for dev mode) ────────────────────────────────
+      - OIDC_ISSUER_URL=${OIDC_ISSUER_URL:-}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-}
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-}
       # ── App settings ────────────────────────────────────────────────────────
-      - DATABASE_URL=sqlite+aiosqlite:////app/data/tidus.db
       - ENVIRONMENT=production
       - LOG_LEVEL=INFO
       - TIDUS_TIER=${TIDUS_TIER:-community}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     volumes:
-      - tidus-data:/app/data
       - ./config:/app/config:ro  # live config updates without rebuild
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 15s
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tidus
+      POSTGRES_PASSWORD: tidus
+      POSTGRES_DB: tidus
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tidus -d tidus"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
       start_period: 10s
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
 
   # Optional: local Ollama service for free/private inference
@@ -44,5 +85,6 @@ services:
       - ollama  # opt-in: docker compose --profile ollama up
 
 volumes:
-  tidus-data:
+  postgres-data:
+  redis-data:
   ollama-models:

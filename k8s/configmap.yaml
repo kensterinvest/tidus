@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tidus-config
+  namespace: tidus
+  labels:
+    app.kubernetes.io/name: tidus
+    app.kubernetes.io/component: api
+data:
+  ENVIRONMENT: "production"
+  LOG_LEVEL: "INFO"
+  TIDUS_TIER: "enterprise"
+  OLLAMA_BASE_URL: "http://ollama:11434"
+  # Database — points to in-cluster PostgreSQL
+  DATABASE_URL: "postgresql+asyncpg://tidus:$(POSTGRES_PASSWORD)@tidus-postgres:5432/tidus"
+  # Redis — points to in-cluster Redis
+  REDIS_URL: "redis://tidus-redis:6379/0"

@@ -34,12 +34,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `Dockerfile` — python:3.12-slim + uv, non-root user, SQLite volume at `/app/data`
 - `docker-compose.yml` — tidus + optional Ollama profile (`--profile ollama`) for local inference
 
-#### Phase 7 — Documentation
+#### Phase 7 — Documentation + MCP Tests
 - Full content for: `docs/mcp-integration.md`, `docs/deployment.md`, `docs/dashboard.md`, `docs/adapters.md`
+- `README.md` updated: all phases marked complete, pillar statuses live, feature table current
 - v0.1.0 CHANGELOG finalized
 
+### Fixed
+- `tidus/mcp/server.py` `_handle_route`: `decision.vendor`/`decision.tier` don't exist on `RoutingDecision` — now resolved via `registry.get(decision.chosen_model_id)`
+- `tidus/mcp/server.py` `_handle_budget_status`: `enforcer.status()` never returns `None` — now detects no-policy via `status.policy_id == "none"` sentinel
+
 ### Tests
-- **100 tests passing** across unit, integration, and model selection intelligence suites
+- **115 tests passing** across unit, integration, model selection intelligence, and MCP protocol suites
+- `tests/unit/test_mcp_server.py` — 15 new tests: MCP tool registration, `tidus_list_models`, `tidus_route_task` (simple/confidential/budget-rejection), `tidus_get_budget_status` (with/without policy), `tidus_complete_task`
 
 ---
 

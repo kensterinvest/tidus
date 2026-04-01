@@ -107,18 +107,25 @@ async def _count_anthropic(model_id: str, messages: list[dict]) -> int:
     global _anthropic_client
     try:
         import anthropic  # type: ignore[import-untyped]
-    except ImportError as exc:
-        raise RuntimeError("anthropic not installed: pip install anthropic") from exc
+    except ImportError:
+        return _fallback_count(messages)
 
     settings = get_settings()
-    if _anthropic_client is None:
-        _anthropic_client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+    if not settings.anthropic_api_key or settings.anthropic_api_key.startswith("sk-ant-..."):
+        return _fallback_count(messages)
 
-    response = await _anthropic_client.messages.count_tokens(
-        model=model_id,
-        messages=messages,
-    )
-    return response.input_tokens
+    try:
+        if _anthropic_client is None:
+            _anthropic_client = anthropic.AsyncAnthropic(api_key=settings.anthropic_api_key)
+
+        response = await _anthropic_client.messages.count_tokens(
+            model=model_id,
+            messages=messages,
+        )
+        return response.input_tokens
+    except Exception:
+        # Auth failure, network error, or quota — fall back to local approximation
+        return _fallback_count(messages)
 
 
 # ── Google ────────────────────────────────────────────────────────────────────
@@ -126,22 +133,23 @@ async def _count_anthropic(model_id: str, messages: list[dict]) -> int:
 def _count_google(model_id: str, messages: list[dict]) -> int:
     try:
         import google.generativeai as genai  # type: ignore[import-untyped]
-    except ImportError as exc:
-        raise RuntimeError(
-            "google-generativeai not installed: pip install google-generativeai"
-        ) from exc
+    except ImportError:
+        return _fallback_count(messages)
 
     settings = get_settings()
-    genai.configure(api_key=settings.google_api_key)
+    if not settings.google_api_key or settings.google_api_key.startswith("AIza..."):
+        return _fallback_count(messages)
 
-    if model_id not in _google_models:
-        _google_models[model_id] = genai.GenerativeModel(model_id)
-
-    gm = _google_models[model_id]
-    # Google SDK accepts a list of dicts with role/parts
-    parts = [{"role": m.get("role", "user"), "parts": [m.get("content", "")]} for m in messages]
-    result = gm.count_tokens(parts)
-    return result.total_tokens
+    try:
+        genai.configure(api_key=settings.google_api_key)
+        if model_id not in _google_models:
+            _google_models[model_id] = genai.GenerativeModel(model_id)
+        gm = _google_models[model_id]
+        parts = [{"role": m.get("role", "user"), "parts": [m.get("content", "")]} for m in messages]
+        result = gm.count_tokens(parts)
+        return result.total_tokens
+    except Exception:
+        return _fallback_count(messages)
 
 
 # ── Sentencepiece (Mistral) ───────────────────────────────────────────────────
@@ -186,12 +194,43 @@ async def _count_ollama(model_id: str, messages: list[dict]) -> int:
     base_url = settings.ollama_base_url.rstrip("/")
     prompt = _flatten_messages(messages)
 
-    async with httpx.AsyncClient(timeout=10.0) as client:
-        resp = await client.post(
-            f"{base_url}/api/tokenize",
-            json={"model": model_id, "prompt": prompt},
-        )
-        resp.raise_for_status()
-        data = resp.json()
-        tokens: list[int] = data.get("tokens", [])
-        return len(tokens)
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            resp = await client.post(
+                f"{base_url}/api/tokenize",
+                json={"model": model_id, "prompt": prompt},
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            tokens: list[int] = data.get("tokens", [])
+            return len(tokens)
+    except Exception:
+        # Ollama not running or unreachable — fall back to local approximation
+        return _fallback_count(messages)
+
+
+# ── Fallback ──────────────────────────────────────────────────────────────────
+
+def _fallback_count(messages: list[dict]) -> int:
+    """Local token count approximation using tiktoken cl100k_base.
+
+    Used when the vendor tokenizer is unavailable (no API key, network error,
+    or SDK not installed). Accurate enough for cost estimation within the
+    existing 15% safety buffer.
+    """
+    try:
+        import tiktoken  # type: ignore[import-untyped]
+        if "cl100k_base" not in _tiktoken_encoders:
+            _tiktoken_encoders["cl100k_base"] = tiktoken.get_encoding("cl100k_base")
+        enc = _tiktoken_encoders["cl100k_base"]
+        total = 0
+        for msg in messages:
+            content = msg.get("content", "")
+            if isinstance(content, list):
+                content = " ".join(p.get("text", "") for p in content if isinstance(p, dict))
+            total += len(enc.encode(content)) + 3
+        return total
+    except Exception:
+        # Last resort: character-based approximation (~4 chars per token)
+        flat = _flatten_messages(messages)
+        return max(1, len(flat) // 4)

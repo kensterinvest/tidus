@@ -20,6 +20,8 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from tidus.api.deps import get_registry
+from tidus.auth.middleware import TokenPayload, get_current_user
+from tidus.auth.rbac import Role, require_role
 from tidus.models.model_registry import ModelSpec
 from tidus.router.registry import ModelRegistry
 
@@ -42,6 +44,7 @@ class ModelPatchRequest(BaseModel):
 )
 async def list_models(
     registry: Annotated[ModelRegistry, Depends(get_registry)],
+    _auth: Annotated[TokenPayload, Depends(get_current_user)],
     enabled_only: bool = False,
     tier: int | None = None,
 ) -> list[ModelSpec]:
@@ -60,6 +63,7 @@ async def list_models(
 async def get_model(
     model_id: str,
     registry: Annotated[ModelRegistry, Depends(get_registry)],
+    _auth: Annotated[TokenPayload, Depends(get_current_user)],
 ) -> ModelSpec:
     spec = registry.get(model_id)
     if spec is None:
@@ -76,6 +80,7 @@ async def patch_model(
     model_id: str,
     body: ModelPatchRequest,
     registry: Annotated[ModelRegistry, Depends(get_registry)],
+    _auth: Annotated[TokenPayload, Depends(require_role(Role.admin))],
 ) -> ModelSpec:
     """Enable/disable a model or update its measured latency.
 

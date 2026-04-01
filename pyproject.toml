@@ -50,6 +50,9 @@ dependencies = [
     # Utilities
     "python-dotenv>=1.0.0",
     "structlog>=24.1.0",
+    # Auth / SSO
+    "pyjwt[crypto]>=2.8.0",
+    "prometheus-fastapi-instrumentator>=7.1.0",
 ]
 
 [project.optional-dependencies]
@@ -60,6 +63,9 @@ dev = [
     "httpx>=0.27.0",
     "ruff>=0.4.0",
     "mypy>=1.10.0",
+]
+load = [
+    "locust>=2.29.0",
 ]
 
 [project.scripts]
@@ -96,4 +102,5 @@ dev = [
     "anyio>=4.13.0",
     "pytest>=9.0.2",
     "pytest-asyncio>=1.3.0",
+    "pytest-cov>=7.1.0",
 ]

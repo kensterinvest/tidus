@@ -32,9 +32,7 @@ log = structlog.get_logger(__name__)
 
 async def _handle_route(args: dict) -> str:
     """Handle tidus_route_task — returns routing decision as JSON string."""
-    from tidus.api.deps import build_singletons, get_enforcer, get_registry, get_selector
-    from tidus.budget.enforcer import BudgetEnforcer
-    from tidus.cost.engine import CostEngine
+    from tidus.api.deps import build_singletons, get_registry, get_selector
     from tidus.db.engine import create_tables
     from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
     from tidus.router.selector import ModelSelectionError
@@ -42,6 +40,7 @@ async def _handle_route(args: dict) -> str:
     await create_tables()
     build_singletons()
     selector = get_selector()
+    registry = get_registry()
 
     task = TaskDescriptor(
         team_id=args["team_id"],
@@ -56,12 +55,13 @@ async def _handle_route(args: dict) -> str:
 
     try:
         decision = await selector.select(task)
+        spec = registry.get(decision.chosen_model_id)
         return json.dumps({
             "chosen_model_id": decision.chosen_model_id,
-            "vendor": decision.vendor,
+            "vendor": spec.vendor if spec else None,
             "estimated_cost_usd": decision.estimated_cost_usd,
-            "tier": decision.tier,
-            "rejection_summary": [],
+            "tier": int(spec.tier) if spec else None,
+            "score": decision.score,
         })
     except ModelSelectionError as exc:
         return json.dumps({
@@ -147,14 +147,15 @@ async def _handle_budget_status(args: dict) -> str:
     await create_tables()
     build_singletons()
     enforcer = get_enforcer()
-    status = await enforcer.status(team_id=args["team_id"])
-    if status is None:
-        return json.dumps({"error": f"No budget policy for team '{args['team_id']}'"})
+    team_id = args["team_id"]
+    status = await enforcer.status(team_id=team_id)
+    has_policy = status.policy_id != "none"
     return json.dumps({
-        "team_id": args["team_id"],
+        "team_id": team_id,
+        "has_policy": has_policy,
         "spent_usd": status.spent_usd,
-        "limit_usd": status.limit_usd,
-        "utilisation_pct": status.utilisation_pct,
+        "limit_usd": status.limit_usd if has_policy else None,
+        "utilisation_pct": status.utilisation_pct if has_policy else None,
         "is_hard_stopped": status.is_hard_stopped,
     })
 
