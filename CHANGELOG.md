@@ -5,6 +5,36 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.0.0-community] — 2026-04-02 — Community Release
+
+This is the first public community release of Tidus. The codebase is production-ready and open-sourced under Apache 2.0.
+
+### Highlights
+- **Free community tier** — up to 10K requests/month, model routing with no budget enforcement required
+- **One-command install** — `pip install tidus` (PyPI) or `docker run -p 8000:8000 tidus/tidus:latest`
+- **28 models across 8 vendors** — OpenAI, Anthropic, Google, Mistral, DeepSeek, xAI, Kimi, Ollama (local)
+- **87–96% AI cost reduction** via 5-pillar cost-control strategy (tiered routing, caching, guardrails)
+- **MCP server** (`tidus-mcp`) compatible with Claude Desktop, Cursor, and any MCP client
+- **Kubernetes-ready** — Helm chart, Prometheus/Grafana dashboards, HPA included (Phase 11)
+- **Audit logs + PostgreSQL/Redis** production config (Phase 9–10)
+- **SSO/OIDC + RBAC** for enterprise deployments (Phase 8)
+
+### Added since v0.1.0
+- Phase 8 — SSO/OIDC authentication + RBAC (role-based access control)
+- Phase 9 — Structured audit logging with queryable log trail
+- Phase 10 — PostgreSQL + Redis production configuration (SQLite remains default for dev)
+- Phase 11 — Kubernetes manifests, Helm chart, Prometheus metrics, Grafana dashboards, HPA
+- End-to-end load tests, cache correctness tests, and multi-tenant isolation tests
+- Marketing website at `www/`
+- Full how-to-use guide (`docs/how-to-use.md`)
+- Community release preparation: repo URL cleanup, version bump to 1.0.0, PyPI + Docker Hub publish
+
+### Changed
+- Version bumped from `0.1.0` → `1.0.0` to signal production readiness
+- GitHub repository canonical URL corrected to `github.com/kensterinvest/tidus`
+
+---
+
 ## [v0.1.0] — 2026-03-27 — MVP Release
 
 ### Added
@@ -139,7 +169,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 <!-- Links -->
-[Unreleased]: https://github.com/lapkei01/tidus/compare/v0.1-phase3...HEAD
-[v0.1-phase3]: https://github.com/lapkei01/tidus/compare/v0.1-phase2...v0.1-phase3
-[v0.1-phase2]: https://github.com/lapkei01/tidus/compare/v0.1-phase1...v0.1-phase2
-[v0.1-phase1]: https://github.com/lapkei01/tidus/releases/tag/v0.1-phase1
+[Unreleased]: https://github.com/kensterinvest/tidus/compare/v1.0.0-community...HEAD
+[v1.0.0-community]: https://github.com/kensterinvest/tidus/compare/v0.1.0...v1.0.0-community
+[v0.1.0]: https://github.com/kensterinvest/tidus/releases/tag/v0.1.0
+[v0.1-phase3]: https://github.com/kensterinvest/tidus/compare/v0.1-phase2...v0.1-phase3
+[v0.1-phase2]: https://github.com/kensterinvest/tidus/compare/v0.1-phase1...v0.1-phase2
+[v0.1-phase1]: https://github.com/kensterinvest/tidus/releases/tag/v0.1-phase1

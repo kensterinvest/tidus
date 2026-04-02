@@ -87,19 +87,37 @@ Stage 5 — Score & Select
 | **Visibility** | Dashboard at `/dashboard/`: cost by model, budget utilisation, active sessions, registry health |
 | **Resilience** | Automatic fallback chains, health probes, model deprecation handling |
 
+## Install
+
+```bash
+# pip (recommended)
+pip install tidus
+
+# Docker
+docker run -p 8000:8000 \
+  -e ANTHROPIC_API_KEY=sk-ant-... \
+  tidus/tidus:latest
+
+# From source (uv)
+git clone https://github.com/kensterinvest/tidus.git && cd tidus && uv sync
+```
+
 ## Quick Start
 
 ```bash
-# 1. Clone and install
-git clone https://github.com/lapkei01/tidus.git
-cd tidus
-uv sync
+# 1. Install
+pip install tidus
 
-# 2. Configure
-cp .env.example .env
-# Edit .env — add your API keys
+# 2. Configure — create .env with your API keys
+cat > .env << 'EOF'
+ANTHROPIC_API_KEY=sk-ant-...
+OPENAI_API_KEY=sk-...
+EOF
 
 # 3. Run
+tidus
+
+# or with uvicorn directly:
 uvicorn tidus.main:app --reload
 
 # 4. Route a request (selects best model — no execution)
@@ -179,6 +197,11 @@ See [docs/pricing.md](docs/pricing.md) for full tier details.
 | Phase 5 — Dashboard | Cost SPA, budget bars, active sessions, registry health | ✅ Complete |
 | Phase 6 — MCP + Docker | MCP server (`tidus-mcp`), Docker Compose, Ollama profile | ✅ Complete |
 | Phase 7 — Release | Full docs, v0.1.0 tag, 115 tests passing | ✅ Complete |
+| Phase 8 — SSO/OIDC + RBAC | Enterprise auth, role-based access control | ✅ Complete |
+| Phase 9 — Audit Logs | Structured audit trail, queryable log records | ✅ Complete |
+| Phase 10 — PostgreSQL/Redis | Production database + cache config | ✅ Complete |
+| Phase 11 — Kubernetes + Helm | K8s manifests, Helm chart, Prometheus/Grafana, HPA | ✅ Complete |
+| v1.0.0-community — Public Release | PyPI publish, Docker Hub images, community open-source launch | ✅ Complete |
 
 ## Contributing
 
