@@ -19,6 +19,7 @@ from tidus.cost.engine import CostEngine
 from tidus.cost.logger import CostLogger
 from tidus.guardrails.agent_guard import AgentGuard
 from tidus.guardrails.session_store import SessionStore
+from tidus.metering.service import MeteringService
 from tidus.models.guardrails import GuardrailPolicy
 from tidus.router.capability_matcher import CapabilityMatcher
 from tidus.router.registry import ModelRegistry
@@ -36,6 +37,7 @@ _session_store: SessionStore | None = None
 _agent_guard: AgentGuard | None = None
 _cost_logger: CostLogger | None = None
 _audit_logger: AuditLogger | None = None
+_metering: MeteringService | None = None
 
 
 def build_singletons() -> None:
@@ -44,7 +46,7 @@ def build_singletons() -> None:
     Called once from the FastAPI lifespan on startup. Safe to call again
     (re-initializes, useful for testing overrides).
     """
-    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger
+    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering
 
     settings = get_settings()
 
@@ -68,6 +70,7 @@ def build_singletons() -> None:
     from tidus.db.engine import get_session_factory
     _cost_logger = CostLogger(get_session_factory())
     _audit_logger = AuditLogger(get_session_factory())
+    _metering = MeteringService(get_session_factory())
 
 
 # ── Dependency getters (used with FastAPI Depends) ────────────────────────────
@@ -110,6 +113,11 @@ def get_cost_logger() -> CostLogger:
 def get_audit_logger() -> AuditLogger:
     assert _audit_logger is not None, "Singletons not built — call build_singletons() at startup"
     return _audit_logger
+
+
+def get_metering() -> MeteringService:
+    assert _metering is not None, "Singletons not built — call build_singletons() at startup"
+    return _metering
 
 
 def get_session_factory():
