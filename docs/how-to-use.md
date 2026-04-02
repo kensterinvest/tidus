@@ -49,7 +49,7 @@ powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
 ## 2. Install Tidus
 
 ```bash
-git clone https://github.com/lapkei01/tidus.git
+git clone https://github.com/kensterinvest/tidus.git
 cd tidus
 uv sync
 ```
@@ -536,4 +536,4 @@ Now that Tidus is running at home, explore these features:
 
 ---
 
-**Questions?** Open an issue at [github.com/lapkei01/tidus](https://github.com/lapkei01/tidus) or check the [full documentation index](index.md).
+**Questions?** Open an issue at [github.com/kensterinvest/tidus](https://github.com/kensterinvest/tidus) or check the [full documentation index](index.md).

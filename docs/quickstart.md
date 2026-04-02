@@ -11,7 +11,7 @@ Get Tidus routing AI requests in under 5 minutes.
 ## 1. Install
 
 ```bash
-git clone https://github.com/lapkei01/tidus.git
+git clone https://github.com/kensterinvest/tidus.git
 cd tidus
 uv sync
 ```

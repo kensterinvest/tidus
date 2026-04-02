@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "tidus"
-version = "0.1.0"
+version = "1.0.0"
 description = "Vendor-agnostic, enterprise-grade, cost-aware AI model router and governance system"
 readme = "README.md"
 license = { text = "Apache-2.0" }

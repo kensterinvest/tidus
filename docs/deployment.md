@@ -9,7 +9,7 @@
 ### Start Tidus
 
 ```bash
-git clone https://github.com/lapkei01/tidus.git
+git clone https://github.com/kensterinvest/tidus.git
 cd tidus
 cp .env.example .env
 # Edit .env with your API keys
