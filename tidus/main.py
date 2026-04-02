@@ -14,8 +14,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from tidus.api.deps import build_singletons, get_registry, get_session_factory
-from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, models, route, sync, usage
+from tidus.api.deps import build_singletons, get_metering, get_registry, get_session_factory
+from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, metering, models, route, sync, usage
+from tidus.metering.middleware import MeteringMiddleware
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
 from tidus.sync.scheduler import TidusScheduler
@@ -63,7 +64,7 @@ def create_app() -> FastAPI:
             "Routes every AI request to the cheapest capable model, enforces budgets, "
             "and prevents runaway multi-agent loops."
         ),
-        version="0.1.0",
+        version="1.0.0",
         contact={"name": "Kenny Wong", "email": "lapkei01@gmail.com"},
         license_info={"name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0"},
         lifespan=lifespan,
@@ -79,6 +80,11 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
+    # Metering middleware — records AI user events on /route and /complete.
+    # The MeteringService singleton is resolved lazily via get_metering() on the
+    # first request; this avoids a circular dependency with the lifespan startup.
+    app.add_middleware(MeteringMiddleware, metering_getter=get_metering)
+
     # ── Root ──────────────────────────────────────────────────────────────────
     from fastapi.requests import Request
     from fastapi.responses import HTMLResponse, RedirectResponse
@@ -91,7 +97,7 @@ def create_app() -> FastAPI:
             return RedirectResponse("/dashboard/")
         return {
             "service": "tidus",
-            "version": "0.1.0",
+            "version": "1.0.0",
             "description": "Enterprise AI Router — routes every request to the cheapest capable model",
             "links": {
                 "dashboard": "/dashboard/",
@@ -103,6 +109,7 @@ def create_app() -> FastAPI:
                 "models":    "/api/v1/models",
                 "budgets":   "/api/v1/budgets",
                 "usage":     "/api/v1/usage/summary",
+                "metering":  "/api/v1/metering/status",
             },
         }
 
@@ -125,6 +132,7 @@ def create_app() -> FastAPI:
     app.include_router(sync.router, prefix="/api/v1")
     app.include_router(dashboard.router, prefix="/api/v1")
     app.include_router(audit.router, prefix="/api/v1")
+    app.include_router(metering.router, prefix="/api/v1")
 
     # ── Prometheus metrics ────────────────────────────────────────────────────
     Instrumentator(

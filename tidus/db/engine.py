@@ -1,7 +1,7 @@
 from collections.abc import AsyncGenerator
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Float, Integer, JSON, String, Text, func,
+    Boolean, Column, DateTime, Float, Index, Integer, JSON, String, Text, func,
 )
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
@@ -98,6 +98,29 @@ class AuditLogORM(Base):
     rejection_reason = Column(String, nullable=True)
     ip_address = Column(String, nullable=True)
     metadata_ = Column("metadata", JSON, nullable=True)  # arbitrary extra context
+
+
+class AiUserEventORM(Base):
+    """One row per AI routing event, used to count unique callers in a rolling window.
+
+    Deduplication happens at query time (COUNT DISTINCT caller_id WHERE timestamp > cutoff)
+    so we preserve historical shape for trend analytics without maintaining a live counter.
+    Health-check and system requests are excluded by the caller at record time.
+    """
+
+    __tablename__ = "ai_user_events"
+
+    id = Column(String, primary_key=True)
+    caller_id = Column(String, nullable=False)   # resolved identity (header / api-key / ip-hash)
+    caller_source = Column(String, nullable=False)  # "header" | "api_key" | "ip_hash"
+    team_id = Column(String, nullable=True, index=True)
+    path = Column(String, nullable=True)          # request path for filtering
+    timestamp = Column(DateTime, server_default=func.now(), nullable=False)
+
+    __table_args__ = (
+        Index("ix_ai_user_events_caller_ts", "caller_id", "timestamp"),
+        Index("ix_ai_user_events_ts", "timestamp"),
+    )
 
 
 # ── Engine & Session Factory ──────────────────────────────────────────────────
