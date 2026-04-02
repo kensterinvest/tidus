@@ -1,8 +1,30 @@
-# How to Use Tidus — Step-by-Step Guide for Home Users
+# How to Use Tidus — Step-by-Step Guide for New Users
 
-> Get Tidus running at home for **free** in under 10 minutes. No credit card needed.
+> Get Tidus running for **free** in under 10 minutes. No credit card needed — free for individuals, hobbyists, and small organisations (under 1,000 AI users).
 
 Tidus is an AI router — it sits between your apps/scripts and AI models, automatically picking the **cheapest capable model** for every request. This guide gets you from zero to routing real AI requests using either free local models or a single low-cost API key.
+
+> **Demo screencast coming soon** — a short walkthrough video/GIF will be embedded here once Marketing produces the recording. In the meantime, follow the steps below.
+
+---
+
+## Freemium Model — What's Free vs. Enterprise
+
+| | Free (Community) | Enterprise |
+|---|---|---|
+| **Who it's for** | Individuals, hobbyists, small orgs (< 1,000 AI users) | Organisations with 1,000+ AI users |
+| **Model routing** | ✅ Full 5-stage routing | ✅ Full 5-stage routing |
+| **Budget enforcement** | ❌ | ✅ |
+| **Dashboard & analytics** | Limited | Full |
+| **MCP integration** | ✅ | ✅ |
+| **Caching** | Basic | Advanced (semantic caching) |
+| **On-prem / VPC deployment** | ❌ | ✅ |
+| **SSO / OIDC / RBAC** | ❌ | ✅ |
+| **SLA & data residency** | ❌ | ✅ |
+| **Dedicated support** | Community | Dedicated + SLA |
+| **Price** | **Free** | Contact sales |
+
+> **Need enterprise?** Open an inquiry at [github.com/kensterinvest/tidus/issues](https://github.com/kensterinvest/tidus/issues) or email the team directly. We'll scope a deployment plan for your organisation.
 
 ---
 
@@ -22,6 +44,7 @@ Tidus is an AI router — it sits between your apps/scripts and AI models, autom
 12. [Understanding the Routing Logic](#12-understanding-the-routing-logic)
 13. [Troubleshooting](#13-troubleshooting)
 14. [What's Next](#14-whats-next)
+15. [Enterprise Tier](#15-enterprise-tier)
 
 ---
 
@@ -537,3 +560,38 @@ Now that Tidus is running at home, explore these features:
 ---
 
 **Questions?** Open an issue at [github.com/kensterinvest/tidus](https://github.com/kensterinvest/tidus) or check the [full documentation index](index.md).
+
+---
+
+## 15. Enterprise Tier
+
+Tidus is **free** for individuals and small organisations with fewer than 1,000 AI users. When your organisation grows beyond that threshold — or when you need on-premises deployment, compliance guarantees, or a dedicated SLA — the Enterprise tier is designed for you.
+
+### What's Included in Enterprise
+
+| Feature | Details |
+|---|---|
+| **On-prem / VPC deployment** | Run Tidus inside your own infrastructure — no data leaves your network |
+| **SSO / OIDC / RBAC** | Integrate with your existing identity provider (Okta, Azure AD, Google Workspace) |
+| **Advanced semantic caching** | Reduce repeat compute costs by up to 50% with cluster-wide semantic cache |
+| **Full budget enforcement** | Per-team, per-workflow, per-agent budget policies with hard stop or warn modes |
+| **Audit logs & compliance** | Full request/response audit trail for GDPR, SOC 2, HIPAA, or internal governance |
+| **Data residency** | Choose which cloud region (or your own servers) processes and stores your data |
+| **Dedicated SLA** | Uptime guarantees, priority incident response, dedicated Slack channel |
+| **Custom model registry** | Add private or fine-tuned models to the routing tier system |
+| **Enterprise onboarding** | Assisted deployment, configuration review, and team training |
+
+### Who Should Upgrade
+
+- Organisations routing AI requests for **1,000+ users**
+- Teams handling sensitive/regulated data that cannot leave your perimeter
+- Engineering orgs that need SSO and RBAC across multiple teams
+- Companies that need a formal SLA for production AI infrastructure
+
+### How to Get Started
+
+1. Open an inquiry at **[github.com/kensterinvest/tidus/issues](https://github.com/kensterinvest/tidus/issues)** (label: `enterprise-inquiry`)
+2. Describe your scale (number of users, request volume, deployment environment)
+3. We'll respond with a scoping call and pricing estimate
+
+Enterprise pricing is usage-based and scoped to your deployment. There are no surprise per-seat fees — you pay for what you route.

@@ -162,17 +162,24 @@ See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/
 
 ## Pricing
 
-| Tier | Price | Requests/month | Key Features |
-|------|-------|---------------|-------------|
-| Community | Free | 10K | Model routing only, no budget enforcement |
-| Pro | $99/month | 100K | Budget enforcement, dashboard, guardrails |
-| Business | $499/month | 1M | MCP integration, caching, audit logs, Docker |
-| Enterprise | Custom | Unlimited | On-prem/VPC, SSO/OIDC, RBAC, SLA, data residency |
+Tidus is **free** for individuals and small organisations (< 1,000 AI users). Enterprise pricing applies at scale.
 
-See [docs/pricing.md](docs/pricing.md) for full tier details.
+| Tier | Users | Price | Key Features |
+|------|-------|-------|-------------|
+| **Community (Free)** | < 1,000 AI users | **Free** | Full 5-stage routing, MCP integration, basic dashboard |
+| **Enterprise** | 1,000+ AI users | Contact sales | On-prem/VPC, SSO/OIDC, RBAC, advanced caching, SLA, data residency, audit logs |
+
+See [docs/pricing.md](docs/pricing.md) for full tier details, or the [How to Use guide](docs/how-to-use.md#15-enterprise-tier) for enterprise onboarding steps.
+
+## Get Started
+
+**New to Tidus?** → [How to Use Tidus — Step-by-Step Guide for New Users](docs/how-to-use.md)
+
+Free for individuals and small organisations (< 1,000 AI users). No credit card needed.
 
 ## Documentation
 
+- [**How to Use Tidus (New User Guide)**](docs/how-to-use.md) ← Start here
 - [Quickstart](docs/quickstart.md)
 - [Architecture](docs/architecture.md)
 - [Configuration Reference](docs/configuration.md)
