@@ -5,6 +5,7 @@
 
 const REFRESH_INTERVAL_MS = 30_000;
 let costChart = null;
+let activeDays = 7;
 
 // ── Safety: HTML escape to prevent XSS ────────────────────────────────────────
 
@@ -16,15 +17,33 @@ function esc(str) {
 
 // ── Fetch ──────────────────────────────────────────────────────────────────────
 
-async function fetchSummary() {
-  const resp = await fetch("/api/v1/dashboard/summary");
+async function fetchSummary(days) {
+  const resp = await fetch(`/api/v1/dashboard/summary?days=${days}`);
   if (!resp.ok) throw new Error(`API error ${resp.status}`);
   return resp.json();
 }
 
+// ── Days toggle ────────────────────────────────────────────────────────────────
+
+function initDaysToggle() {
+  document.getElementById("days-toggle").addEventListener("click", (e) => {
+    const btn = e.target.closest(".toggle-btn");
+    if (!btn) return;
+    activeDays = parseInt(btn.dataset.days, 10);
+    document.querySelectorAll(".toggle-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    refresh();
+  });
+}
+
 // ── Overview KPIs ──────────────────────────────────────────────────────────────
 
-function renderOverview(cost) {
+function renderOverview(cost, savings, days) {
+  const dayLabel = days === 1 ? "today" : `last ${days} days`;
+  document.getElementById("kpi-cost-label").textContent  = `${days}d Cost`;
+  document.getElementById("kpi-requests-label").textContent = "Total Requests";
+  document.getElementById("kpi-requests-sub").textContent   = dayLabel;
+
   document.getElementById("kpi-total-cost").textContent =
     `$${cost.total_cost_usd.toFixed(4)}`;
   document.getElementById("kpi-total-requests").textContent =
@@ -35,18 +54,40 @@ function renderOverview(cost) {
     `$${cost.avg_cost_per_request_usd.toFixed(6)}`;
   document.getElementById("kpi-most-used").textContent =
     cost.most_used_model ?? "—";
-  document.getElementById("kpi-cheapest").textContent =
-    cost.cheapest_model_used ?? "—";
+
+  // Savings KPI
+  if (savings && savings.savings_usd > 0) {
+    const savedFmt = savings.savings_usd >= 1
+      ? `$${savings.savings_usd.toFixed(2)}`
+      : `$${savings.savings_usd.toFixed(4)}`;
+    document.getElementById("kpi-savings-usd").textContent =
+      `${savedFmt} (${savings.savings_pct.toFixed(1)}%)`;
+    document.getElementById("kpi-baseline-model").textContent =
+      savings.baseline_model_id;
+  } else if (cost.total_requests === 0) {
+    document.getElementById("kpi-savings-usd").textContent = "—";
+  } else {
+    document.getElementById("kpi-savings-usd").textContent = "$0.00 (0%)";
+  }
+}
+
+// ── Empty state ────────────────────────────────────────────────────────────────
+
+function setEmptyState(isEmpty) {
+  document.getElementById("empty-state").hidden  = !isEmpty;
+  document.getElementById("chart-section").hidden = isEmpty;
 }
 
 // ── Cost-by-Model Chart ────────────────────────────────────────────────────────
 
-function renderCostChart(rows) {
-  // Only show models with at least 1 request, sorted by cost desc
+function renderCostChart(rows, days) {
+  document.getElementById("chart-title").textContent =
+    `Cost by Model (${days === 1 ? "today" : days + " days"})`;
+
   const active = rows
     .filter(r => r.requests > 0)
     .sort((a, b) => b.total_cost_usd - a.total_cost_usd)
-    .slice(0, 12);  // cap at 12 bars for readability
+    .slice(0, 12);
 
   const labels = active.map(r => r.model_id);
   const data   = active.map(r => r.total_cost_usd);
@@ -58,6 +99,7 @@ function renderCostChart(rows) {
     costChart.data.labels = labels;
     costChart.data.datasets[0].data = data;
     costChart.data.datasets[0].backgroundColor = colors;
+    costChart.data.datasets[0].label = `Cost (USD, ${days}d)`;
     costChart.update();
     return;
   }
@@ -67,7 +109,7 @@ function renderCostChart(rows) {
     data: {
       labels,
       datasets: [{
-        label: "Cost (USD, 7d)",
+        label: `Cost (USD, ${days}d)`,
         data,
         backgroundColor: colors,
         borderRadius: 4,
@@ -122,7 +164,6 @@ function renderBudgets(budgets) {
     return;
   }
 
-  // Build each budget row using DOM API (no innerHTML with external values)
   el.textContent = "";
   el.className = "budget-list";
 
@@ -245,12 +286,20 @@ function renderHealth(healthMap) {
 
 async function refresh() {
   try {
-    const data = await fetchSummary();
-    renderOverview(data.cost);
-    renderCostChart(data.cost_by_model);
+    const data = await fetchSummary(activeDays);
+    const isEmpty = data.cost.total_requests === 0;
+
+    renderOverview(data.cost, data.savings, activeDays);
+    setEmptyState(isEmpty);
+
+    if (!isEmpty) {
+      renderCostChart(data.cost_by_model, activeDays);
+    }
+
     renderBudgets(data.budgets);
     renderSessions(data.sessions);
     renderHealth(data.registry_health);
+
     document.getElementById("last-updated").textContent =
       new Date().toLocaleTimeString();
     document.getElementById("error-banner").hidden = true;
@@ -265,6 +314,7 @@ async function refresh() {
 // ── Bootstrap ──────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
+  initDaysToggle();
   refresh();
   setInterval(refresh, REFRESH_INTERVAL_MS);
 });

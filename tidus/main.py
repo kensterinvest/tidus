@@ -14,8 +14,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from tidus.api.deps import build_singletons, get_metering, get_registry, get_session_factory
-from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, metering, models, route, sync, usage
+from tidus.api.deps import build_singletons, get_enforcer, get_metering, get_registry, get_session_factory
+from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, metering, models, reports, route, sync, usage
 from tidus.metering.middleware import MeteringMiddleware
 from tidus.db.engine import create_tables
 from tidus.settings import get_settings
@@ -41,10 +41,11 @@ async def lifespan(app: FastAPI):
     build_singletons()
     log.info("singletons_ready")
 
-    # Start background scheduler (health probes every 5 min + weekly price sync)
+    # Start background scheduler (health probes + weekly price sync + monthly budget reset)
     scheduler = TidusScheduler(
         registry=get_registry(),
         session_factory=get_session_factory(),
+        enforcer=get_enforcer(),
     )
     scheduler.start()
 
@@ -56,6 +57,15 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     settings = get_settings()
+
+    # Per-IP rate limiting (non-fatal import — slowapi is an optional dep)
+    try:
+        from slowapi import Limiter, _rate_limit_exceeded_handler
+        from slowapi.errors import RateLimitExceeded
+        from slowapi.util import get_remote_address
+        _limiter = Limiter(key_func=get_remote_address)
+    except ImportError:  # pragma: no cover
+        _limiter = None
 
     app = FastAPI(
         title="Tidus — Enterprise AI Router",
@@ -71,6 +81,12 @@ def create_app() -> FastAPI:
         docs_url="/docs",
         redoc_url="/redoc",
     )
+
+    if _limiter is not None:
+        from slowapi.errors import RateLimitExceeded
+        from slowapi import _rate_limit_exceeded_handler
+        app.state.limiter = _limiter
+        app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
     _cors_origins = (
         ["*"] if settings.environment == "development"
@@ -137,6 +153,7 @@ def create_app() -> FastAPI:
     app.include_router(dashboard.router, prefix="/api/v1")
     app.include_router(audit.router, prefix="/api/v1")
     app.include_router(metering.router, prefix="/api/v1")
+    app.include_router(reports.router, prefix="/api/v1")
 
     # ── Prometheus metrics ────────────────────────────────────────────────────
     Instrumentator(

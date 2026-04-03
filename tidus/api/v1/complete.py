@@ -10,7 +10,7 @@ import uuid
 from typing import Annotated, Optional
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from tidus.adapters.adapter_factory import get_adapter
@@ -70,6 +70,7 @@ class CompleteResponse(BaseModel):
 
 @router.post("/complete", response_model=CompleteResponse)
 async def complete(
+    request: Request,
     req: CompleteRequest,
     selector: Annotated[ModelSelector, Depends(get_selector)],
     registry: Annotated[ModelRegistry, Depends(get_registry)],

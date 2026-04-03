@@ -156,6 +156,31 @@ class BudgetEnforcer:
                         limit_usd=wf_policy.limit_usd,
                     )
 
+    async def reset_period(self, period: "BudgetPeriod") -> int:
+        """Reset spend counters for all policies whose period matches *period*.
+
+        Called by the monthly scheduler job on the 1st of each month so that
+        teams start each billing period with a clean slate.
+
+        Returns:
+            The number of counters that were reset.
+        """
+        from tidus.models.budget import BudgetPeriod as _BP
+        count = 0
+        for policy in self._policies:
+            if policy.period == _BP(period) if isinstance(period, str) else policy.period == period:
+                await self._counter.reset(policy.scope_id, None)
+                log.info(
+                    "budget_period_reset",
+                    policy_id=policy.policy_id,
+                    scope_id=policy.scope_id,
+                    period=str(period),
+                )
+                count += 1
+        if count:
+            log.info("budget_period_reset_complete", reset_count=count, period=str(period))
+        return count
+
     async def status(self, team_id: str, workflow_id: str | None = None) -> BudgetStatus:
         """Return the current BudgetStatus for a team (and optionally workflow).
 

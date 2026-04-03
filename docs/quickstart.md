@@ -34,6 +34,15 @@ OLLAMA_BASE_URL=http://localhost:11434
 
 ## 3. Start the server
 
+Run the automated setup wizard — it detects your keys, creates a team budget, and tests vendor connectivity:
+
+```bash
+uv run tidus-setup
+# Non-interactive (Docker / CI):
+uv run tidus-setup --defaults
+```
+
+Then start the server:
 ```bash
 uvicorn tidus.main:app --reload
 ```
@@ -131,13 +140,27 @@ Response:
 }
 ```
 
-## 7. Open the dashboard
+## 7. Open the dashboard and see your savings
 
 Navigate to **http://localhost:8000/dashboard/** to see:
-- AI spend by model (last 7 days)
+- **Saved vs Baseline** — estimated savings vs routing everything to Claude Opus (typically 92–98%)
+- AI spend by model — toggle between 7d / 30d / 90d views
 - Budget utilisation per team
 - Active agent sessions
 - Model registry health
+
+After your first few requests, the green **Saved vs Baseline** KPI shows your real-time savings.
+
+## 8. Generate your first monthly savings report
+
+```bash
+curl "http://localhost:8000/api/v1/reports/monthly" | python -m json.tool
+```
+
+This shows total spend, estimated savings vs the premium baseline, per-day breakdown,
+and top models by traffic. All data stays on your server — nothing is sent externally.
+
+See [docs/savings-report.md](savings-report.md) for the full report reference.
 
 ## 8. Connect via MCP (Claude Desktop / Cursor)
 
@@ -168,9 +191,12 @@ See [MCP Integration](mcp-integration.md) for full setup details.
 
 ## Next Steps
 
+- [First 15 Minutes guide](first-15-minutes.md) — outcome-oriented walkthrough
 - [Configure your model registry](configuration.md)
 - [Set up team budgets](budgets-and-guardrails.md)
+- [Monthly savings report](savings-report.md)
 - [Understand the selection algorithm](architecture.md)
 - [View all API endpoints](api-reference.md)
 - [Connect via MCP](mcp-integration.md)
 - [Deploy with Docker](deployment.md)
+- [Troubleshooting](troubleshooting.md)

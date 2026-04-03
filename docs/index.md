@@ -21,6 +21,7 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | Document | Description | Status |
 |----------|-------------|--------|
 | [Quickstart](quickstart.md) | Up and running in 5 minutes | ✅ Live |
+| [First 15 Minutes](first-15-minutes.md) | Outcome-oriented onboarding: see savings in minutes | ✅ Live |
 | [Architecture](architecture.md) | System design, five pillars, data flow | ✅ Live |
 | [Configuration](configuration.md) | models.yaml, budgets.yaml, policies.yaml reference | ✅ Live |
 | [API Reference](api-reference.md) | All REST endpoints with request/response schemas | ✅ Live |
@@ -32,6 +33,8 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | [Deployment](deployment.md) | Docker, production setup, PostgreSQL migration | ✅ Live |
 | [Pricing](pricing.md) | Tidus subscription tiers | Live |
 | [ROI Calculator](roi-calculator.md) | Calculate your enterprise savings | Live |
+| [Savings Report](savings-report.md) | Monthly AI savings report API — local, no external dependency | ✅ Live |
+| [Troubleshooting](troubleshooting.md) | Top 10 first-run issues with exact fixes | ✅ Live |
 | [Enterprise: RBAC](enterprise/rbac.md) | Role-based access control | Roadmap |
 | [Enterprise: SSO](enterprise/sso.md) | SSO/OIDC integration | Roadmap |
 | [Enterprise: Data Residency](enterprise/data-residency.md) | On-prem/VPC deployment | Roadmap |

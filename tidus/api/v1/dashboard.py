@@ -15,7 +15,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
 from tidus.api.deps import get_enforcer, get_registry, get_session_store
@@ -68,27 +68,42 @@ class SessionRow(BaseModel):
     started_at: str
 
 
+class SavingsSummary(BaseModel):
+    actual_cost_usd: float
+    baseline_cost_usd: float   # if all requests went to claude-opus-4-6
+    savings_usd: float
+    savings_pct: float
+    baseline_model_id: str
+    period_days: int
+
+
 class DashboardSummary(BaseModel):
     cost: CostSummary
     cost_by_model: list[ModelCostRow]
     budgets: list[BudgetRow]
     sessions: list[SessionRow]
     registry_health: dict  # {model_id: enabled}
+    savings: SavingsSummary
     generated_at: str
 
 
 # ── Helpers ────────────────────────────────────────────────────────────────────
 
-async def _get_cost_records_7d() -> list[dict]:
-    """Fetch cost records from DB for the past 7 days."""
+_BASELINE_MODEL = "claude-opus-4-6"
+_FALLBACK_INPUT_PRICE = 0.005
+_FALLBACK_OUTPUT_PRICE = 0.025
+
+
+async def _get_cost_records(days: int = 7) -> list[dict]:
+    """Fetch cost records from DB for the past N days."""
     try:
         from tidus.db.engine import CostRecordORM, get_session_factory
+        from sqlalchemy import select
 
         session_factory = get_session_factory()
-        cutoff = datetime.now(timezone.utc) - timedelta(days=7)
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
 
         async with session_factory() as session:
-            from sqlalchemy import select
             stmt = select(CostRecordORM).where(CostRecordORM.timestamp >= cutoff)
             result = await session.execute(stmt)
             rows = result.scalars().all()
@@ -99,6 +114,8 @@ async def _get_cost_records_7d() -> list[dict]:
                     "cost_usd": r.cost_usd,
                     "latency_ms": r.latency_ms,
                     "timestamp": r.timestamp,
+                    "input_tokens": r.input_tokens or 0,
+                    "output_tokens": r.output_tokens or 0,
                 }
                 for r in rows
             ]
@@ -115,13 +132,14 @@ async def dashboard_summary(
     enforcer: Annotated[BudgetEnforcer, Depends(get_enforcer)],
     session_store: Annotated[SessionStore, Depends(get_session_store)],
     _auth: Annotated[TokenPayload, Depends(get_current_user)],
+    days: int = Query(default=7, ge=1, le=90, description="Lookback window in days (7, 30, or 90)"),
 ) -> DashboardSummary:
     """Return all metrics needed to render the dashboard in one request."""
     now = datetime.now(timezone.utc)
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # ── Cost records from DB ───────────────────────────────────────────────────
-    records = await _get_cost_records_7d()
+    records = await _get_cost_records(days)
 
     total_cost = sum(r["cost_usd"] for r in records)
     total_requests = len(records)
@@ -205,11 +223,35 @@ async def dashboard_summary(
         for spec in registry.list_all()
     }
 
+    # ── Savings vs baseline ────────────────────────────────────────────────────
+    baseline_spec = registry.get(_BASELINE_MODEL)
+    in_price = baseline_spec.input_price if baseline_spec else _FALLBACK_INPUT_PRICE
+    out_price = baseline_spec.output_price if baseline_spec else _FALLBACK_OUTPUT_PRICE
+
+    total_input_tokens = sum(r.get("input_tokens", 0) for r in records)
+    total_output_tokens = sum(r.get("output_tokens", 0) for r in records)
+    baseline_cost = (
+        total_input_tokens / 1000 * in_price
+        + total_output_tokens / 1000 * out_price
+    )
+    savings_usd = max(0.0, baseline_cost - total_cost)
+    savings_pct = (savings_usd / baseline_cost * 100) if baseline_cost > 0 else 0.0
+
+    savings_summary = SavingsSummary(
+        actual_cost_usd=round(total_cost, 6),
+        baseline_cost_usd=round(baseline_cost, 6),
+        savings_usd=round(savings_usd, 4),
+        savings_pct=round(savings_pct, 1),
+        baseline_model_id=_BASELINE_MODEL,
+        period_days=days,
+    )
+
     return DashboardSummary(
         cost=cost_summary,
         cost_by_model=cost_by_model,
         budgets=budget_rows,
         sessions=session_rows,
         registry_health=registry_health,
+        savings=savings_summary,
         generated_at=now.isoformat(),
     )

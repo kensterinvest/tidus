@@ -15,7 +15,7 @@ from __future__ import annotations
 from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from tidus.api.deps import get_audit_logger, get_selector
@@ -82,6 +82,7 @@ class RouteResponse(BaseModel):
     response_description="The routing decision for the described task",
 )
 async def route_task(
+    request: Request,
     body: RouteRequest,
     selector: Annotated[ModelSelector, Depends(get_selector)],
     audit: Annotated[AuditLogger, Depends(get_audit_logger)],

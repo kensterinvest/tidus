@@ -10,8 +10,16 @@
 
 <header>
   <h1>Tidus / Cost Dashboard</h1>
-  <div class="meta">
-    Auto-refreshes every 30s &mdash; Last updated: <span id="last-updated">…</span>
+  <div style="display:flex;align-items:center;gap:16px">
+    <!-- Time-range toggle -->
+    <div class="toggle-group" id="days-toggle" role="group" aria-label="Time range">
+      <button class="toggle-btn active" data-days="7">7d</button>
+      <button class="toggle-btn" data-days="30">30d</button>
+      <button class="toggle-btn" data-days="90">90d</button>
+    </div>
+    <div class="meta">
+      Last updated: <span id="last-updated">…</span>
+    </div>
   </div>
 </header>
 
@@ -27,14 +35,14 @@
   <section>
     <div class="overview-grid">
       <div class="kpi">
-        <div class="label">7-Day Cost</div>
+        <div class="label" id="kpi-cost-label">7-Day Cost</div>
         <div class="value" id="kpi-total-cost">…</div>
         <div class="sub">USD, all vendors</div>
       </div>
       <div class="kpi">
-        <div class="label">Total Requests</div>
+        <div class="label" id="kpi-requests-label">Total Requests</div>
         <div class="value" id="kpi-total-requests">…</div>
-        <div class="sub">last 7 days</div>
+        <div class="sub" id="kpi-requests-sub">last 7 days</div>
       </div>
       <div class="kpi">
         <div class="label">Requests Today</div>
@@ -51,17 +59,39 @@
         <div class="value" style="font-size:16px" id="kpi-most-used">…</div>
         <div class="sub">by request count</div>
       </div>
-      <div class="kpi">
-        <div class="label">Cheapest Model Used</div>
-        <div class="value" style="font-size:16px" id="kpi-cheapest">…</div>
-        <div class="sub">by avg cost / request</div>
+      <!-- ★ Savings KPI — the headline number -->
+      <div class="kpi kpi-savings">
+        <div class="label">Saved vs Baseline</div>
+        <div class="value" id="kpi-savings-usd" style="color:var(--green)">…</div>
+        <div class="sub" id="kpi-savings-sub">vs <span id="kpi-baseline-model">claude-opus-4-6</span></div>
       </div>
     </div>
   </section>
 
+  <!-- ── Empty state (shown when no requests have been sent yet) ───────────── -->
+  <section id="empty-state" hidden class="card empty-state-card">
+    <h2>No requests yet</h2>
+    <p style="margin-bottom:16px;color:var(--text-dim)">
+      Send your first routing call to see live AI cost savings on this dashboard.
+    </p>
+    <pre class="code-block">curl -X POST http://localhost:8000/api/v1/complete \
+  -H "Content-Type: application/json" \
+  -d '{
+    "team_id": "team-default",
+    "complexity": "simple",
+    "domain": "chat",
+    "estimated_input_tokens": 500,
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</pre>
+    <p style="margin-top:12px;font-size:12px;color:var(--text-dim)">
+      After your first request, this dashboard shows real-time spend, model selection
+      breakdown, and estimated savings vs always routing to a premium model.
+    </p>
+  </section>
+
   <!-- ── Cost by Model Chart ────────────────────────────────────────────────── -->
-  <section class="card">
-    <h2>Cost by Model (7 days)</h2>
+  <section id="chart-section" class="card">
+    <h2 id="chart-title">Cost by Model (7 days)</h2>
     <div class="chart-container">
       <canvas id="cost-chart"></canvas>
     </div>

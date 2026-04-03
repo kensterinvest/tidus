@@ -53,6 +53,8 @@ dependencies = [
     # Auth / SSO
     "pyjwt[crypto]>=2.8.0",
     "prometheus-fastapi-instrumentator>=7.1.0",
+    # Rate limiting
+    "slowapi>=0.1.9",
 ]
 
 [project.optional-dependencies]
@@ -71,6 +73,7 @@ load = [
 [project.scripts]
 tidus = "tidus.main:run"
 tidus-mcp = "tidus.mcp.server:main"
+tidus-setup = "tidus.cli.setup_wizard:main"
 
 [project.urls]
 Homepage = "https://github.com/kensterinvest/tidus"

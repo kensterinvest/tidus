@@ -60,9 +60,14 @@ docker compose restart tidus
 | `MOONSHOT_API_KEY` | Optional | — | Kimi K2.5 |
 | `OLLAMA_BASE_URL` | Optional | `http://localhost:11434` | Local Ollama endpoint |
 | `DATABASE_URL` | Optional | SQLite in `/app/data` | SQLAlchemy async URL |
-| `ENVIRONMENT` | Optional | `development` | `development` or `production` |
+| `ENVIRONMENT` | Optional | `production` | `development` or `production` |
 | `LOG_LEVEL` | Optional | `INFO` | `DEBUG`, `INFO`, `WARNING`, `ERROR` |
 | `TIDUS_TIER` | Optional | `community` | `community`, `pro`, `business`, `enterprise` |
+| `CORS_ALLOWED_ORIGINS` | Optional | `""` | Comma-separated allowed origins (e.g. `https://app.example.com`) |
+| `OIDC_ISSUER_URL` | Production required | `""` | e.g. `https://your-okta.example.com/oauth2/default` |
+| `OIDC_CLIENT_ID` | Optional | `""` | JWT audience claim value |
+| `OIDC_TEAM_CLAIM` | Optional | `tid` | JWT claim holding the `team_id` |
+| `OIDC_ROLE_CLAIM` | Optional | `role` | JWT claim holding the Tidus role |
 
 You only need API keys for the vendors you want to use. Tidus gracefully skips vendors with no key.
 
@@ -153,7 +158,10 @@ See [docs/pricing-sync.md](pricing-sync.md) for the full architecture and setup 
 
 ## Production Checklist
 
+- [ ] Run `tidus-setup --defaults` to auto-configure before first start
 - [ ] Set `ENVIRONMENT=production`
+- [ ] Configure `OIDC_ISSUER_URL` (required in production mode)
+- [ ] Set `CORS_ALLOWED_ORIGINS` to your dashboard domain(s)
 - [ ] Use PostgreSQL for `DATABASE_URL` (multi-instance)
 - [ ] Set all required vendor API keys
 - [ ] Configure `config/budgets.yaml` with team limits
@@ -161,3 +169,4 @@ See [docs/pricing-sync.md](pricing-sync.md) for the full architecture and setup 
 - [ ] Monitor `/health` and `/api/v1/dashboard/summary`
 - [ ] Review `config/policies.yaml` guardrail limits
 - [ ] Verify pricing sync is running (`GET /api/v1/audit/events?action=price_change`)
+- [ ] Schedule monthly savings reports: `GET /api/v1/reports/monthly`

@@ -175,3 +175,61 @@ tr:last-child td { border-bottom: none; }
 }
 
 #last-updated { font-weight: 600; color: var(--text); }
+
+/* ── Savings KPI card ───────────────────────────────────────────────────────── */
+.kpi-savings {
+  border-color: rgba(52, 211, 153, 0.30);
+  background: rgba(52, 211, 153, 0.04);
+}
+
+/* ── Days toggle ────────────────────────────────────────────────────────────── */
+.toggle-group {
+  display: flex;
+  gap: 2px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-dim);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.toggle-btn:hover { background: var(--border); color: var(--text); }
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ── Empty state ────────────────────────────────────────────────────────────── */
+.empty-state-card { text-align: left; }
+
+.empty-state-card h2 {
+  color: var(--text);
+  font-size: 16px;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.code-block {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--green);
+  font-family: "Fira Code", "Cascadia Code", monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  overflow-x: auto;
+  padding: 14px 18px;
+  white-space: pre;
+}

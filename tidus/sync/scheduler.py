@@ -20,11 +20,18 @@ log = structlog.get_logger(__name__)
 
 
 class TidusScheduler:
-    """Wraps APScheduler to run health probes and price sync."""
+    """Wraps APScheduler to run health probes, price sync, and monthly budget resets."""
 
-    def __init__(self, registry, session_factory=None, policies_path: str = "config/policies.yaml") -> None:
+    def __init__(
+        self,
+        registry,
+        session_factory=None,
+        enforcer=None,
+        policies_path: str = "config/policies.yaml",
+    ) -> None:
         self._registry = registry
         self._session_factory = session_factory
+        self._enforcer = enforcer
         self._policies_path = policies_path
         self._scheduler = None
 
@@ -69,6 +76,15 @@ class TidusScheduler:
             misfire_grace_time=3600,
         )
 
+        # Monthly budget reset — 1st of each month at 00:05 UTC
+        self._scheduler.add_job(
+            self._run_monthly_budget_reset,
+            trigger=CronTrigger(day=1, hour=0, minute=5, timezone="UTC"),
+            id="monthly_budget_reset",
+            name="Monthly budget period reset",
+            misfire_grace_time=3600,
+        )
+
         self._scheduler.start()
         log.info(
             "scheduler_started",
@@ -92,6 +108,17 @@ class TidusScheduler:
             log.info("health_probe_run", healthy=healthy, total=total)
         except Exception as exc:
             log.error("health_probe_failed", error=str(exc))
+
+    async def _run_monthly_budget_reset(self) -> None:
+        if self._enforcer is None:
+            log.warning("monthly_budget_reset_skipped", reason="no enforcer configured")
+            return
+        try:
+            from tidus.models.budget import BudgetPeriod
+            count = await self._enforcer.reset_period(BudgetPeriod.monthly)
+            log.info("monthly_budget_reset_run", reset_count=count)
+        except Exception as exc:
+            log.error("monthly_budget_reset_failed", error=str(exc))
 
     async def _run_price_sync(self) -> None:
         try:
