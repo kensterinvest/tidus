@@ -64,6 +64,31 @@ class SpendCounter:
         async with self._lock:
             self._totals[key] = 0.0
 
+    async def check_and_add(
+        self,
+        team_id: str,
+        workflow_id: str | None,
+        amount_usd: float,
+        limit_usd: float,
+    ) -> tuple[bool, float]:
+        """Atomically check the limit and add amount if within budget.
+
+        Holds the lock across both the comparison and the increment so that
+        concurrent requests cannot both pass the check and then both deduct,
+        overrunning the limit.
+
+        Returns:
+            (allowed, new_total) — allowed is False if adding amount_usd would
+            exceed limit_usd; new_total is the value after addition (if allowed).
+        """
+        key = (team_id, workflow_id)
+        async with self._lock:
+            current = self._totals[key]
+            if current + amount_usd > limit_usd:
+                return False, current
+            self._totals[key] += amount_usd
+            return True, self._totals[key]
+
     async def get_all(self) -> dict[tuple[str, str | None], float]:
         """Return a snapshot of all counters. Used by the budget status endpoint."""
         async with self._lock:

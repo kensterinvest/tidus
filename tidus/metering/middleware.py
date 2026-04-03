@@ -67,12 +67,17 @@ class MeteringMiddleware(BaseHTTPMiddleware):
         )
 
         # Fire-and-forget — never block the response path
-        asyncio.ensure_future(
+        task = asyncio.create_task(
             self._get_service().record_event(
                 caller_id=caller_id,
                 caller_source=caller_source,
                 team_id=team_id,
                 path=path,
+            )
+        )
+        task.add_done_callback(
+            lambda t: t.exception() and __import__("structlog").get_logger(__name__).warning(
+                "metering_record_failed", error=str(t.exception())
             )
         )
 

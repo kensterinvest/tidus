@@ -94,9 +94,16 @@ def _task(
 # ── Config loading ────────────────────────────────────────────────────────────
 
 def test_registry_loads_all_models(registry):
-    """All 28 models defined in models.yaml should load without validation errors."""
-    assert len(registry) == 28
-    assert all(s.enabled for s in registry.list_all()), "All models should start enabled"
+    """All models defined in models.yaml should load without validation errors.
+
+    43 models are enabled (active adapters); 10 are intentionally disabled
+    (pending adapter implementations: Cohere, Groq, Qwen, Perplexity, Together AI).
+    """
+    assert len(registry) == 53
+    enabled = [s for s in registry.list_all() if s.enabled]
+    disabled = [s for s in registry.list_all() if not s.enabled]
+    assert len(enabled) == 43, f"Expected 43 enabled models, got {len(enabled)}"
+    assert len(disabled) == 10, f"Expected 10 disabled (pending) models, got {len(disabled)}"
 
 
 def test_guardrail_policy_matches_yaml_values(guardrail_policy):

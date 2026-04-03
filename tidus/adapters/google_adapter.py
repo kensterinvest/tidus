@@ -124,10 +124,12 @@ class GoogleAdapter(AbstractModelAdapter):
 
     async def count_tokens(self, model_id: str, messages: list[dict]) -> int:
         try:
+            import asyncio
             genai = _get_genai()
             model = genai.GenerativeModel(model_id)
             _, history = _to_genai_messages(messages)
-            result = model.count_tokens(history)
+            # count_tokens is a synchronous network call — run in thread pool
+            result = await asyncio.to_thread(model.count_tokens, history)
             return result.total_tokens
         except Exception:
             total = sum(len(m.get("content", "")) for m in messages)

@@ -29,7 +29,10 @@ class Settings(BaseSettings):
 
     # ── Service ──────────────────────────────────────────────────────────────
     log_level: str = "INFO"
-    environment: str = "development"
+    environment: str = "production"
+    # Explicit CORS origin allowlist. Use "*" only in development.
+    # Example: "https://app.example.com,https://admin.example.com"
+    cors_allowed_origins: str = ""
 
     # ── Tidus Licensing ──────────────────────────────────────────────────────
     tidus_license_key: str = ""

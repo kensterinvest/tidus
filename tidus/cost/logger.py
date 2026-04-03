@@ -36,23 +36,21 @@ class CostLogger:
         decision: RoutingDecision,
         response: AdapterResponse,
         vendor: str,
+        actual_cost: float,
     ) -> CostRecord:
         """Build and persist a CostRecord.
 
         Args:
-            task:     The original task descriptor.
-            decision: The routing decision that selected this model.
-            response: The adapter response containing actual token counts.
-            vendor:   The vendor string from the model spec.
+            task:        The original task descriptor.
+            decision:    The routing decision that selected this model.
+            response:    The adapter response containing actual token counts.
+            vendor:      The vendor string from the model spec.
+            actual_cost: Real cost computed from response token counts and model
+                         pricing — must be passed by the caller, not estimated.
 
         Returns:
             The persisted CostRecord.
         """
-        from tidus.router.registry import ModelRegistry
-        # Compute actual cost from real token counts
-        # We rely on the registry being accessible via the decision; if not,
-        # fall back to the estimated cost from the decision.
-        actual_cost = decision.estimated_cost_usd or 0.0
 
         record = CostRecord(
             id=str(uuid.uuid4()),

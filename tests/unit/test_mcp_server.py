@@ -102,10 +102,10 @@ class TestToolRegistration:
 # ── tidus_list_models ──────────────────────────────────────────────────────────
 
 class TestListModels:
-    async def test_returns_all_28_models(self, mcp_server):
+    async def test_returns_all_models(self, mcp_server):
         result = await _call(mcp_server, "tidus_list_models", {"enabled_only": False})
         assert isinstance(result, list)
-        assert len(result) == 28
+        assert len(result) == 53
 
     async def test_each_model_has_required_fields(self, mcp_server):
         result = await _call(mcp_server, "tidus_list_models", {})

@@ -97,7 +97,14 @@ async def get_team_budget_status(
     """Return current spend, limit, and utilisation for the given team.
 
     Returns a 404 if no budget policy exists for this team.
+    Non-admin/team_manager callers can only query their own team.
     """
+    if _auth.role not in (Role.admin, Role.team_manager) and _auth.team_id != team_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Access denied: you may only view your own team's budget.",
+        )
+
     has_policy = any(
         p.scope_id == team_id for p in enforcer.list_policies()
     )

@@ -36,11 +36,12 @@ class CacheEntry:
 
 
 class ExactCache:
-    """In-memory exact-match cache with TTL eviction."""
+    """In-memory exact-match cache with TTL eviction and max-size cap."""
 
-    def __init__(self, ttl_seconds: int = 3600) -> None:
+    def __init__(self, ttl_seconds: int = 3600, max_size: int = 10_000) -> None:
         self._store: dict[str, CacheEntry] = {}
         self._ttl = ttl_seconds
+        self._max_size = max_size
         self.hits: int = 0
         self.misses: int = 0
 
@@ -67,7 +68,12 @@ class ExactCache:
         return entry.content
 
     async def set(self, key: str, content: str, model_id: str) -> None:
-        """Store a response."""
+        """Store a response. Evicts oldest entries when max_size is reached."""
+        if len(self._store) >= self._max_size:
+            # Evict the 10% oldest entries by insertion order (dict is ordered in 3.7+)
+            evict_count = max(1, self._max_size // 10)
+            for old_key in list(self._store.keys())[:evict_count]:
+                del self._store[old_key]
         self._store[key] = CacheEntry(
             content=content,
             model_id=model_id,

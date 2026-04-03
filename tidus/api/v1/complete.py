@@ -172,11 +172,21 @@ async def complete(
                     )
                 except Exception as fallback_exc:
                     log.error("fallback_also_failed", error=str(fallback_exc))
-                    raise HTTPException(status_code=502, detail=f"Adapter error: {exc}; fallback also failed: {fallback_exc}")
+                    raise HTTPException(
+                        status_code=502,
+                        detail="Upstream model unavailable and fallback also failed. "
+                               "Check server logs for details.",
+                    )
             else:
-                raise HTTPException(status_code=502, detail=f"Adapter error: {exc}")
+                raise HTTPException(
+                    status_code=502,
+                    detail="Upstream model unavailable. Check server logs for details.",
+                )
         else:
-            raise HTTPException(status_code=502, detail=f"Adapter error: {exc}")
+            raise HTTPException(
+                status_code=502,
+                detail="Upstream model unavailable. Check server logs for details.",
+            )
 
     # Deduct actual cost from budget
     actual_cost = (
@@ -185,8 +195,8 @@ async def complete(
     )
     await enforcer.deduct(effective_team_id, req.workflow_id, actual_cost)
 
-    # Log cost to DB (non-fatal)
-    await cost_logger.record(task, decision, response, spec.vendor)
+    # Log cost to DB (non-fatal) — pass actual_cost so DB reflects real billed amount
+    await cost_logger.record(task, decision, response, spec.vendor, actual_cost)
 
     # Audit trail (non-fatal)
     await audit.record(

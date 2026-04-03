@@ -92,6 +92,20 @@ async def get_current_user(
     """
     # ── Dev / no-OIDC fallback ────────────────────────────────────────────────
     if not settings.oidc_issuer_url:
+        if settings.environment == "production":
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=(
+                    "OIDC_ISSUER_URL is not configured but ENVIRONMENT=production. "
+                    "Set OIDC_ISSUER_URL or switch to ENVIRONMENT=development."
+                ),
+            )
+        log.warning(
+            "auth_dev_mode_active",
+            team_id=settings.oidc_dev_team_id,
+            role=settings.oidc_dev_role,
+            warning="All requests granted admin access — do not use in production",
+        )
         return TokenPayload(
             sub="dev",
             team_id=settings.oidc_dev_team_id,

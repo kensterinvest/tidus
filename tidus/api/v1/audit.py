@@ -11,7 +11,7 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tidus.auth.middleware import TokenPayload
@@ -80,8 +80,8 @@ async def list_audit_events(
     if until:
         stmt = stmt.where(AuditLogORM.timestamp <= until)
 
-    count_result = await db.execute(stmt.with_only_columns(AuditLogORM.id))
-    total = len(count_result.scalars().all())
+    count_result = await db.execute(select(func.count()).select_from(stmt.subquery()))
+    total = count_result.scalar_one()
 
     stmt = stmt.order_by(AuditLogORM.timestamp.desc()).offset(offset).limit(limit)
     result = await db.execute(stmt)

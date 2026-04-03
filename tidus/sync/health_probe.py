@@ -79,15 +79,14 @@ class HealthProbe:
             if healthy:
                 self._consecutive_failures[spec.model_id] = 0
                 self._latency_history[spec.model_id].append(latency_ms)
-                # Update P50 in registry
                 history = list(self._latency_history[spec.model_id])
                 if history:
-                    spec.latency_p50_ms = int(median(history))
+                    new_p50 = int(median(history))
+                    self._registry.update_latency(spec.model_id, new_p50)
                 log.debug(
                     "health_probe_ok",
                     model_id=spec.model_id,
                     latency_ms=round(latency_ms, 1),
-                    p50_ms=spec.latency_p50_ms,
                 )
             else:
                 self._consecutive_failures[spec.model_id] += 1
@@ -99,7 +98,7 @@ class HealthProbe:
                     threshold=failure_threshold,
                 )
                 if failures >= failure_threshold:
-                    spec.enabled = False
+                    self._registry.set_enabled(spec.model_id, False)
                     log.error(
                         "model_auto_disabled",
                         model_id=spec.model_id,

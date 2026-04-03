@@ -80,8 +80,10 @@ class BudgetEnforcer:
         """
         team_policy = self._team_policy(team_id)
         if team_policy and team_policy.hard_stop:
-            current = await self._counter.get(team_id, None)
-            if current + amount_usd > team_policy.limit_usd:
+            allowed, current = await self._counter.check_and_add(
+                team_id, None, amount_usd, team_policy.limit_usd
+            )
+            if not allowed:
                 log.warning(
                     "budget_hard_stop",
                     team_id=team_id,
@@ -90,12 +92,16 @@ class BudgetEnforcer:
                     limit_usd=team_policy.limit_usd,
                 )
                 return False
+            # Undo the tentative deduction — deduct() will commit the real cost later
+            await self._counter.add(team_id, None, -amount_usd)
 
         if workflow_id:
             wf_policy = self._workflow_policy(workflow_id)
             if wf_policy and wf_policy.hard_stop:
-                current = await self._counter.get(team_id, workflow_id)
-                if current + amount_usd > wf_policy.limit_usd:
+                allowed, current = await self._counter.check_and_add(
+                    team_id, workflow_id, amount_usd, wf_policy.limit_usd
+                )
+                if not allowed:
                     log.warning(
                         "workflow_budget_hard_stop",
                         workflow_id=workflow_id,
@@ -104,6 +110,7 @@ class BudgetEnforcer:
                         limit_usd=wf_policy.limit_usd,
                     )
                     return False
+                await self._counter.add(team_id, workflow_id, -amount_usd)
 
         return True
 
