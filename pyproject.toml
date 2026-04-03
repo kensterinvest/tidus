@@ -94,6 +94,10 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
+ignore = [
+    "E501",   # line too long — descriptions and test assertions are intentionally verbose
+    "UP042",  # str+Enum → StrEnum — deferred; changing 7 production enums is out of scope
+]
 
 [tool.mypy]
 python_version = "3.12"

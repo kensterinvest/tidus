@@ -14,7 +14,7 @@ Usage:
 
 from __future__ import annotations
 
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 from tidus.adapters.base import AbstractModelAdapter, AdapterResponse
 
@@ -71,7 +71,7 @@ class FailingAdapter(AbstractModelAdapter):
 
     async def stream_complete(self, model_id: str, task) -> AsyncIterator[str]:  # type: ignore[override]
         raise RuntimeError(self._error_msg)
-        yield  # make it a generator  # noqa: unreachable
+        yield  # make it a generator  # noqa
 
     async def health_check(self, model_id: str) -> bool:
         return False

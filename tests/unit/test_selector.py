@@ -6,7 +6,7 @@ run fast with no network calls or vendor SDK dependencies.
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, date
+from datetime import date
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,7 +14,7 @@ import pytest
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.counter import SpendCounter
 from tidus.cost.engine import CostEngine
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 from tidus.models.cost import CostEstimate
 from tidus.models.guardrails import GuardrailPolicy
 from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
@@ -23,7 +23,6 @@ from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
 from tidus.router.capability_matcher import CapabilityMatcher
 from tidus.router.registry import ModelRegistry
 from tidus.router.selector import ModelSelectionError, ModelSelector
-
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
@@ -284,7 +283,6 @@ async def test_scoring_picks_cheapest_among_equals():
     matcher = CapabilityMatcher(GuardrailPolicy())
 
     engine = MagicMock(spec=CostEngine)
-    call_count = 0
 
     async def side_effect(model, task):
         costs = {"mid": 0.003, "cheap": 0.0001}
