@@ -14,7 +14,7 @@ Prices verified: 2026-04-03
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
 
@@ -103,7 +103,7 @@ async def run_price_sync(
     threshold = raw.get("pricing_sync", {}).get("change_threshold", 0.05)
 
     changes = []
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     for spec in registry.list_all():
         known = _KNOWN_PRICES.get(spec.model_id)
@@ -157,8 +157,8 @@ async def run_price_sync(
 
 
 async def _write_price_record(session_factory, model_id: str, vendor: str, change: dict) -> None:
-    from tidus.models.cost import PriceChangeRecord
     from tidus.db.engine import PriceChangeLogORM
+    from tidus.models.cost import PriceChangeRecord
 
     record = PriceChangeRecord(
         id=str(uuid.uuid4()),

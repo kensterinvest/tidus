@@ -11,7 +11,7 @@ GET /api/v1/dashboard/sessions — active agent sessions
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 import structlog
@@ -97,11 +97,12 @@ _FALLBACK_OUTPUT_PRICE = 0.025
 async def _get_cost_records(days: int = 7) -> list[dict]:
     """Fetch cost records from DB for the past N days."""
     try:
-        from tidus.db.engine import CostRecordORM, get_session_factory
         from sqlalchemy import select
 
+        from tidus.db.engine import CostRecordORM, get_session_factory
+
         session_factory = get_session_factory()
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        cutoff = datetime.now(UTC) - timedelta(days=days)
 
         async with session_factory() as session:
             stmt = select(CostRecordORM).where(CostRecordORM.timestamp >= cutoff)
@@ -135,7 +136,7 @@ async def dashboard_summary(
     days: int = Query(default=7, ge=1, le=90, description="Lookback window in days (7, 30, or 90)"),
 ) -> DashboardSummary:
     """Return all metrics needed to render the dashboard in one request."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
     # ── Cost records from DB ───────────────────────────────────────────────────
@@ -145,7 +146,7 @@ async def dashboard_summary(
     total_requests = len(records)
     requests_today = sum(
         1 for r in records
-        if r["timestamp"] and r["timestamp"].replace(tzinfo=timezone.utc) >= today_start
+        if r["timestamp"] and r["timestamp"].replace(tzinfo=UTC) >= today_start
     )
 
     # Per-model aggregation

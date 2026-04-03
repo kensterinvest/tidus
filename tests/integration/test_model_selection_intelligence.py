@@ -26,7 +26,6 @@ The -s flag prints the savings table to stdout.
 
 from __future__ import annotations
 
-import math
 from typing import NamedTuple
 from unittest.mock import AsyncMock, patch
 
@@ -147,10 +146,10 @@ class TestComplexityEnforcement:
         (all min_complexity=complex) to isolate the check without interference
         from budget or domain filters.
         """
+        from tidus.budget.enforcer import BudgetEnforcer
         from tidus.cost.counter import SpendCounter
         from tidus.cost.engine import CostEngine
         from tidus.router.capability_matcher import CapabilityMatcher
-        from tidus.budget.enforcer import BudgetEnforcer
 
         raw = load_yaml(POLICIES_YAML)
         gp = GuardrailPolicy.model_validate(raw["guardrails"])
@@ -324,13 +323,14 @@ class TestScoringFormula:
     async def test_single_candidate_scores_zero(self, registry):
         """When exactly one model survives all stages, score must be 0.0
         (min-max normalisation of a single value returns 0.0)."""
-        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from datetime import date
+
+        from tidus.budget.enforcer import BudgetEnforcer
         from tidus.cost.counter import SpendCounter
         from tidus.cost.engine import CostEngine
-        from tidus.router.registry import ModelRegistry
+        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from tidus.router.capability_matcher import CapabilityMatcher
-        from tidus.budget.enforcer import BudgetEnforcer
+        from tidus.router.registry import ModelRegistry
 
         raw = load_yaml(POLICIES_YAML)
         gp = GuardrailPolicy.model_validate(raw["guardrails"])
@@ -520,12 +520,13 @@ class TestRegressionGuard:
         Uses a minimal two-model registry to isolate the context window check
         from the guardrail token-per-step limit (which caps at 8K).
         """
-        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from datetime import date
+
+        from tidus.budget.enforcer import BudgetEnforcer
         from tidus.cost.counter import SpendCounter
         from tidus.cost.engine import CostEngine
+        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from tidus.router.capability_matcher import CapabilityMatcher
-        from tidus.budget.enforcer import BudgetEnforcer
 
         raw = load_yaml(POLICIES_YAML)
         gp = GuardrailPolicy.model_validate(raw["guardrails"])
@@ -618,13 +619,14 @@ class TestRegressionGuard:
     async def test_complexity_mismatch_rejection_in_log(self, registry):
         """When a simple task is attempted on a registry with ONLY complex-min models,
         the rejection log must contain complexity_mismatch reasons — not empty."""
-        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from datetime import date
+
+        from tidus.budget.enforcer import BudgetEnforcer
         from tidus.cost.counter import SpendCounter
         from tidus.cost.engine import CostEngine
-        from tidus.router.registry import ModelRegistry
+        from tidus.models.model_registry import Capability, ModelSpec, ModelTier, TokenizerType
         from tidus.router.capability_matcher import CapabilityMatcher
-        from tidus.budget.enforcer import BudgetEnforcer
+        from tidus.router.registry import ModelRegistry
 
         raw = load_yaml(POLICIES_YAML)
         gp = GuardrailPolicy.model_validate(raw["guardrails"])

@@ -7,7 +7,7 @@ Environment:
 from __future__ import annotations
 
 import time
-from typing import AsyncIterator
+from collections.abc import AsyncIterator
 
 import structlog
 
@@ -100,9 +100,17 @@ class MistralAdapter(AbstractModelAdapter):
     async def count_tokens(self, model_id: str, messages: list[dict]) -> int:
         # Mistral doesn't expose a token count endpoint; use sentencepiece approximation
         try:
-            from mistral_common.tokens.tokenizers.mistral import MistralTokenizer  # type: ignore[import-untyped]
-            from mistral_common.protocol.instruct.messages import UserMessage, AssistantMessage, SystemMessage  # type: ignore[import-untyped]
-            from mistral_common.protocol.instruct.request import ChatCompletionRequest  # type: ignore[import-untyped]
+            from mistral_common.protocol.instruct.messages import (  # type: ignore[import-untyped]
+                AssistantMessage,
+                SystemMessage,
+                UserMessage,
+            )
+            from mistral_common.protocol.instruct.request import (
+                ChatCompletionRequest,  # type: ignore[import-untyped]
+            )
+            from mistral_common.tokens.tokenizers.mistral import (
+                MistralTokenizer,  # type: ignore[import-untyped]
+            )
 
             tokenizer = MistralTokenizer.v3()
             mistral_messages = []

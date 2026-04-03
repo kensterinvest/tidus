@@ -10,17 +10,17 @@ Usage:
 
 from __future__ import annotations
 
+import tidus.adapters.anthropic_adapter  # noqa: F401
+import tidus.adapters.deepseek_adapter  # noqa: F401
+import tidus.adapters.google_adapter  # noqa: F401
+import tidus.adapters.mistral_adapter  # noqa: F401
+import tidus.adapters.moonshot_adapter  # noqa: F401
+
 # Import all adapters to trigger @register_adapter side effects.
 # Order: local first (no API key needed) → cloud adapters.
-import tidus.adapters.ollama_adapter      # noqa: F401
-import tidus.adapters.anthropic_adapter   # noqa: F401
-import tidus.adapters.openai_adapter      # noqa: F401
-import tidus.adapters.google_adapter      # noqa: F401
-import tidus.adapters.mistral_adapter     # noqa: F401
-import tidus.adapters.deepseek_adapter    # noqa: F401
-import tidus.adapters.xai_adapter         # noqa: F401
-import tidus.adapters.moonshot_adapter    # noqa: F401
-
+import tidus.adapters.ollama_adapter  # noqa: F401
+import tidus.adapters.openai_adapter  # noqa: F401
+import tidus.adapters.xai_adapter  # noqa: F401
 from tidus.adapters.base import get_adapter, list_adapters  # noqa: F401
 
 __all__ = ["get_adapter", "list_adapters"]

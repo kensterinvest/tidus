@@ -19,11 +19,10 @@ from __future__ import annotations
 
 import pytest
 
+from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cache.exact_cache import ExactCache
 from tidus.cost.counter import SpendCounter
-from tidus.budget.enforcer import BudgetEnforcer
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
-
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
 # ── SpendCounter: negative-add (undo) correctness ────────────────────────────
 

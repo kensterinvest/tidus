@@ -10,10 +10,9 @@ Example:
 from __future__ import annotations
 
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import structlog
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from tidus.adapters.base import AdapterResponse
 from tidus.db.repositories.cost_repo import CostRepository
@@ -66,7 +65,7 @@ class CostLogger:
             output_tokens=response.output_tokens,
             cost_usd=actual_cost,
             latency_ms=response.latency_ms,
-            timestamp=datetime.now(timezone.utc),
+            timestamp=datetime.now(UTC),
             fallback_used=decision.fallback_from is not None,
             fallback_from=decision.fallback_from,
         )

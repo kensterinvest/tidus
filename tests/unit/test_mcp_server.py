@@ -10,7 +10,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-
 # ── Fixtures ────────────────────────────────────────────────────────────────────
 
 @pytest.fixture(scope="module")
@@ -18,6 +17,7 @@ def mcp_server():
     """Build a fresh MCP Server with all handlers registered (same code path as server.py)."""
     from mcp.server import Server
     from mcp.types import TextContent, Tool
+
     from tidus.mcp.tools import TOOLS
 
     server = Server("tidus-test")

@@ -17,13 +17,12 @@ from __future__ import annotations
 
 import hashlib
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 import structlog
-from sqlalchemy import func, select, text
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
+from sqlalchemy import func, select
+from sqlalchemy.ext.asyncio import async_sessionmaker
 
 from tidus.db.engine import AiUserEventORM
 
@@ -76,10 +75,10 @@ class MeteringStatus:
 # ── Caller identity resolution ────────────────────────────────────────────────
 
 def resolve_caller_id(
-    user_id_header: Optional[str],
-    api_key_sub: Optional[str],
-    client_ip: Optional[str],
-    user_agent: Optional[str],
+    user_id_header: str | None,
+    api_key_sub: str | None,
+    client_ip: str | None,
+    user_agent: str | None,
 ) -> tuple[str, str]:
     """Resolve caller identity per TIT-32 spec.
 
@@ -119,8 +118,8 @@ class MeteringService:
         self,
         caller_id: str,
         caller_source: str,
-        team_id: Optional[str] = None,
-        path: Optional[str] = None,
+        team_id: str | None = None,
+        path: str | None = None,
     ) -> None:
         """Persist one AI user event. Non-fatal — logs and swallows DB errors."""
         try:
@@ -139,7 +138,7 @@ class MeteringService:
 
     async def get_active_user_count(self) -> int:
         """Count unique caller_ids in the rolling 30-day window."""
-        cutoff = datetime.now(timezone.utc) - timedelta(days=_ROLLING_WINDOW_DAYS)
+        cutoff = datetime.now(UTC) - timedelta(days=_ROLLING_WINDOW_DAYS)
         try:
             async with self._sf() as session:
                 result = await session.execute(
@@ -154,7 +153,7 @@ class MeteringService:
 
     async def get_trend_7d(self) -> list[int]:
         """Return daily unique user counts for each of the last 7 days (oldest first)."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         counts: list[int] = []
         try:
             async with self._sf() as session:
@@ -177,7 +176,7 @@ class MeteringService:
 
     async def get_status(self) -> MeteringStatus:
         """Return a full metering snapshot including count, stage, and 7-day trend."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         count, trend = await self.get_active_user_count(), await self.get_trend_7d()
 
         if count >= _RED_THRESHOLD:

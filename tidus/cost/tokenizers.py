@@ -16,8 +16,6 @@ Example:
 
 from __future__ import annotations
 
-import json
-
 import httpx
 
 from tidus.models.model_registry import ModelSpec, TokenizerType
@@ -157,9 +155,17 @@ def _count_google(model_id: str, messages: list[dict]) -> int:
 def _count_sentencepiece(messages: list[dict]) -> int:
     global _mistral_tokenizer
     try:
-        from mistral_common.tokens.tokenizers.mistral import MistralTokenizer  # type: ignore[import-untyped]
-        from mistral_common.protocol.instruct.messages import UserMessage, AssistantMessage, SystemMessage  # type: ignore[import-untyped]
-        from mistral_common.protocol.instruct.request import ChatCompletionRequest  # type: ignore[import-untyped]
+        from mistral_common.protocol.instruct.messages import (  # type: ignore[import-untyped]
+            AssistantMessage,
+            SystemMessage,
+            UserMessage,
+        )
+        from mistral_common.protocol.instruct.request import (
+            ChatCompletionRequest,  # type: ignore[import-untyped]
+        )
+        from mistral_common.tokens.tokenizers.mistral import (
+            MistralTokenizer,  # type: ignore[import-untyped]
+        )
     except ImportError:
         # Fall back to approximate count if mistral_common is not available
         flat = _flatten_messages(messages)

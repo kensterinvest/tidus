@@ -7,7 +7,7 @@ calls the vendor adapter, logs the cost, and deducts from the budget.
 from __future__ import annotations
 
 import uuid
-from typing import Annotated, Optional
+from typing import Annotated
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -46,10 +46,10 @@ class CompleteRequest(BaseModel):
     privacy: Privacy = Privacy.public
     estimated_output_tokens: int = Field(256, ge=1)
     agent_depth: int = Field(0, ge=0, le=5)
-    preferred_model_id: Optional[str] = None
-    max_cost_usd: Optional[float] = None
-    workflow_id: Optional[str] = None
-    agent_session_id: Optional[str] = None
+    preferred_model_id: str | None = None
+    max_cost_usd: float | None = None
+    workflow_id: str | None = None
+    agent_session_id: str | None = None
     stream: bool = False
 
 
@@ -63,7 +63,7 @@ class CompleteResponse(BaseModel):
     cost_usd: float
     latency_ms: float
     finish_reason: str
-    fallback_from: Optional[str] = None
+    fallback_from: str | None = None
 
 
 # ── Endpoint ──────────────────────────────────────────────────────────────────

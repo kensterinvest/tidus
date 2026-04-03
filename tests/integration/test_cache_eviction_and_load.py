@@ -19,10 +19,7 @@ from __future__ import annotations
 import asyncio
 import time
 
-import pytest
-
 from tidus.cache.exact_cache import ExactCache
-
 
 # ── Max-size eviction ─────────────────────────────────────────────────────────
 

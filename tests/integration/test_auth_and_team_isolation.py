@@ -14,12 +14,11 @@ from __future__ import annotations
 
 import pytest
 
-from tidus.auth.middleware import TokenPayload, get_current_user
+from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.counter import SpendCounter
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
-
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
 # ── TokenPayload construction ─────────────────────────────────────────────────
 

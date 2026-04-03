@@ -20,7 +20,6 @@ import pytest
 
 from tidus.cache.exact_cache import ExactCache
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 @pytest.fixture

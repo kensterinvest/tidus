@@ -20,8 +20,7 @@ import pytest
 
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.counter import SpendCounter
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
-
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 

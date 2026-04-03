@@ -12,8 +12,6 @@ Example:
 
 from __future__ import annotations
 
-import asyncio
-
 import structlog
 
 log = structlog.get_logger(__name__)
@@ -38,9 +36,13 @@ class TidusScheduler:
     def start(self) -> None:
         """Start background scheduler jobs."""
         try:
-            from apscheduler.schedulers.asyncio import AsyncIOScheduler  # type: ignore[import-untyped]
+            from apscheduler.schedulers.asyncio import (
+                AsyncIOScheduler,  # type: ignore[import-untyped]
+            )
             from apscheduler.triggers.cron import CronTrigger  # type: ignore[import-untyped]
-            from apscheduler.triggers.interval import IntervalTrigger  # type: ignore[import-untyped]
+            from apscheduler.triggers.interval import (
+                IntervalTrigger,  # type: ignore[import-untyped]
+            )
         except ImportError:
             log.warning(
                 "scheduler_disabled",

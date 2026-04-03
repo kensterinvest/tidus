@@ -2,21 +2,18 @@
 
 from __future__ import annotations
 
-import asyncio
-from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
 from tidus.metering.service import (
+    _ORANGE_THRESHOLD,
+    _RED_THRESHOLD,
+    _YELLOW_THRESHOLD,
     MeteringService,
     MeteringStage,
     resolve_caller_id,
-    _YELLOW_THRESHOLD,
-    _ORANGE_THRESHOLD,
-    _RED_THRESHOLD,
 )
-
 
 # ── resolve_caller_id ──────────────────────────────────────────────────────────
 

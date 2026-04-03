@@ -22,7 +22,7 @@ import pytest
 
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.counter import SpendCounter
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
 
 def _policy(policy_id, scope_id, limit_usd, hard_stop=True, scope=BudgetScope.team):

@@ -17,7 +17,6 @@ from fastapi.testclient import TestClient
 
 from tidus.main import create_app
 
-
 # ── Fixtures ───────────────────────────────────────────────────────────────────
 
 @pytest.fixture(scope="module")

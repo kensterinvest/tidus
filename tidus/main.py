@@ -14,10 +14,28 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from prometheus_fastapi_instrumentator import Instrumentator
 
-from tidus.api.deps import build_singletons, get_enforcer, get_metering, get_registry, get_session_factory
-from tidus.api.v1 import audit, budgets, complete, dashboard, guardrails, metering, models, reports, route, sync, usage
-from tidus.metering.middleware import MeteringMiddleware
+from tidus.api.deps import (
+    build_singletons,
+    get_enforcer,
+    get_metering,
+    get_registry,
+    get_session_factory,
+)
+from tidus.api.v1 import (
+    audit,
+    budgets,
+    complete,
+    dashboard,
+    guardrails,
+    metering,
+    models,
+    reports,
+    route,
+    sync,
+    usage,
+)
 from tidus.db.engine import create_tables
+from tidus.metering.middleware import MeteringMiddleware
 from tidus.settings import get_settings
 from tidus.sync.scheduler import TidusScheduler
 from tidus.utils.logging import configure_logging
@@ -83,8 +101,8 @@ def create_app() -> FastAPI:
     )
 
     if _limiter is not None:
-        from slowapi.errors import RateLimitExceeded
         from slowapi import _rate_limit_exceeded_handler
+        from slowapi.errors import RateLimitExceeded
         app.state.limiter = _limiter
         app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
@@ -107,7 +125,7 @@ def create_app() -> FastAPI:
 
     # ── Root ──────────────────────────────────────────────────────────────────
     from fastapi.requests import Request
-    from fastapi.responses import HTMLResponse, RedirectResponse
+    from fastapi.responses import RedirectResponse
 
     @app.get("/", include_in_schema=False)
     async def root(request: Request):
@@ -164,7 +182,7 @@ def create_app() -> FastAPI:
 
     # ── Dashboard static files ────────────────────────────────────────────────
     import pathlib
-    from fastapi.responses import RedirectResponse
+
     from fastapi.staticfiles import StaticFiles
 
     static_dir = pathlib.Path(__file__).parent / "dashboard" / "static"

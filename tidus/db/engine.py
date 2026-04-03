@@ -1,7 +1,16 @@
 from collections.abc import AsyncGenerator
 
 from sqlalchemy import (
-    Boolean, Column, DateTime, Float, Index, Integer, JSON, String, Text, func,
+    JSON,
+    Boolean,
+    Column,
+    DateTime,
+    Float,
+    Index,
+    Integer,
+    String,
+    Text,
+    func,
 )
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase

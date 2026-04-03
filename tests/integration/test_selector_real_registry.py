@@ -207,7 +207,7 @@ async def test_exhausted_budget_blocks_paid_models_routes_to_free(registry, guar
     This is correct: free local models never consume budget, so they always
     remain available regardless of the team's spending limit.
     """
-    from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
+    from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
     tiny_policy = BudgetPolicy(
         policy_id="tiny",
@@ -240,7 +240,7 @@ async def test_exhausted_budget_blocks_paid_models_routes_to_free(registry, guar
 @pytest.mark.asyncio
 async def test_exhausted_budget_and_no_local_models_raises(registry, guardrail_policy, buffer_pct):
     """When budget is exhausted AND the task requires cloud-only models, raise ModelSelectionError."""
-    from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
+    from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 
     tiny_policy = BudgetPolicy(
         policy_id="tiny-critical",

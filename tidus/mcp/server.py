@@ -198,7 +198,7 @@ async def run_mcp_server() -> None:
     """Run the Tidus MCP server over stdio."""
     from mcp.server import Server
     from mcp.server.stdio import stdio_server
-    from mcp.types import CallToolResult, TextContent, Tool
+    from mcp.types import TextContent, Tool
 
     configure_logging("INFO")
     server = Server("tidus")

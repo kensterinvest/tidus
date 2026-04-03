@@ -18,17 +18,16 @@ Example:
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 
-from tidus.api.deps import get_enforcer, get_registry
+from tidus.api.deps import get_registry
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
-from tidus.budget.enforcer import BudgetEnforcer
 from tidus.router.registry import ModelRegistry
 
 log = structlog.get_logger(__name__)
@@ -80,15 +79,16 @@ class MonthlySavingsReport(BaseModel):
 async def _fetch_records(year: int, month: int, team_id: str | None) -> list[dict]:
     """Fetch cost records from DB for the given calendar month."""
     try:
-        from tidus.db.engine import CostRecordORM, get_session_factory
         from sqlalchemy import select
 
-        start = datetime(year, month, 1, tzinfo=timezone.utc)
+        from tidus.db.engine import CostRecordORM, get_session_factory
+
+        start = datetime(year, month, 1, tzinfo=UTC)
         # First day of next month
         if month == 12:
-            end = datetime(year + 1, 1, 1, tzinfo=timezone.utc)
+            end = datetime(year + 1, 1, 1, tzinfo=UTC)
         else:
-            end = datetime(year, month + 1, 1, tzinfo=timezone.utc)
+            end = datetime(year, month + 1, 1, tzinfo=UTC)
 
         session_factory = get_session_factory()
         async with session_factory() as session:
@@ -156,7 +156,7 @@ async def monthly_savings_report(
 
     The report is purely local — no data is sent to any external service.
     """
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     report_year = year if year is not None else now.year
     report_month = month if month is not None else now.month
 

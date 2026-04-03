@@ -116,6 +116,7 @@ async def _check_vendor(vendor: str) -> tuple[bool, float]:
     """Quick adapter health check. Returns (is_healthy, latency_ms)."""
     try:
         import time
+
         from tidus.adapters.adapter_factory import get_adapter
         adapter = get_adapter(vendor)
         start = time.monotonic()
@@ -180,7 +181,7 @@ async def _run_wizard(defaults: bool, skip_checks: bool) -> None:
     budgets_path = config_dir / "budgets.yaml"
 
     if budgets_path.exists():
-        print(_ok(f"config/budgets.yaml already exists — skipping (delete it to reconfigure)"))
+        print(_ok("config/budgets.yaml already exists — skipping (delete it to reconfigure)"))
         team_name = "team-default"
         limit_usd = 500.0
     else:
@@ -227,8 +228,8 @@ async def _run_wizard(defaults: bool, skip_checks: bool) -> None:
     print( "    http://localhost:8000/dashboard/")
     print()
     print(f"  {_GREEN}Send your first request:{_RESET}")
-    print(f'    curl -s -X POST http://localhost:8000/api/v1/complete \\')
-    print(f'      -H "Content-Type: application/json" \\')
+    print('    curl -s -X POST http://localhost:8000/api/v1/complete \\')
+    print('      -H "Content-Type: application/json" \\')
     print(f'      -d \'{{"team_id":"{team_name}","complexity":"simple","domain":"chat",')
     print( '           "estimated_input_tokens":500,')
     print( '           "messages":[{"role":"user","content":"Hello!"}]}}\'')

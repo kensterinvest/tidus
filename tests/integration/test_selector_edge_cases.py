@@ -19,7 +19,7 @@ import pytest
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.counter import SpendCounter
 from tidus.cost.engine import CostEngine
-from tidus.models.budget import BudgetPolicy, BudgetPeriod, BudgetScope
+from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope
 from tidus.models.guardrails import GuardrailPolicy
 from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
 from tidus.router.capability_matcher import CapabilityMatcher

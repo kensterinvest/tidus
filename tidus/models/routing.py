@@ -1,6 +1,6 @@
 from enum import Enum
-from typing import Optional
-from pydantic import BaseModel, Field
+
+from pydantic import BaseModel
 
 
 class RejectionReason(str, Enum):
@@ -52,10 +52,10 @@ class RoutingDecision(BaseModel):
 
     task_id: str
     chosen_model_id: str  # model that was selected or that was rejected
-    rejection_reason: Optional[RejectionReason] = None
-    score: Optional[float] = None           # normalised score (lower = better)
-    estimated_cost_usd: Optional[float] = None
-    fallback_from: Optional[str] = None     # set when this is a fallback decision
+    rejection_reason: RejectionReason | None = None
+    score: float | None = None           # normalised score (lower = better)
+    estimated_cost_usd: float | None = None
+    fallback_from: str | None = None     # set when this is a fallback decision
 
     @property
     def accepted(self) -> bool:

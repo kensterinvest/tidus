@@ -27,7 +27,6 @@ import random
 
 from locust import HttpUser, between, task
 
-
 # ── Shared payloads ───────────────────────────────────────────────────────────
 
 ROUTE_SIMPLE = {

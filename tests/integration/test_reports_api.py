@@ -14,8 +14,6 @@ from __future__ import annotations
 import pytest
 
 from tidus.api.v1.reports import _baseline_prices
-from tidus.budget.enforcer import BudgetEnforcer
-from tidus.cost.counter import SpendCounter
 from tidus.router.registry import ModelRegistry
 
 MODELS_YAML = "config/models.yaml"
@@ -48,7 +46,7 @@ class TestMonthlySavingsReport:
     async def test_report_structure_has_required_fields(self):
         """Even with zero records the response has all required fields."""
         from tidus.api.v1.reports import (
-            MonthlySavingsReport, DailyBreakdown, TopModel,
+            MonthlySavingsReport,
         )
         # Build a minimal report directly (unit-level, no HTTP)
         report = MonthlySavingsReport(
