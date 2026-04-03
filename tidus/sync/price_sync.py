@@ -8,7 +8,7 @@ and a PriceChangeRecord is written to the database for audit.
 In production this would call vendor pricing APIs. For v0.1 we maintain
 a verified-prices dict updated on each release and use it as the source.
 
-Prices verified: 2026-03-26
+Prices verified: 2026-04-03
 """
 
 from __future__ import annotations
@@ -27,8 +27,25 @@ log = structlog.get_logger(__name__)
 # Source: official vendor pricing pages, verified 2026-04-03.
 # Automatically updated weekly by the host's sync_pricing.py script.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
-    # OpenAI
-    "o3":                        {"input": 0.010,     "output": 0.040},
+    "claude-opus-4-6":     {"input": 0.015, "output": 0.075},
+    "deepseek-r1":         {"input": 0.0007, "output": 0.0025},
+    "deepseek-v3":         {"input": 0.00032, "output": 0.00089},
+    "gemini-2.5-flash":    {"input": 0.0003, "output": 0.0025},
+    "gemini-2.5-pro":      {"input": 0.00125, "output": 0.01},
+    "gpt-4.1":             {"input": 0.002, "output": 0.008},
+    "gpt-4.1-mini":        {"input": 0.0004, "output": 0.0016},
+    "gpt-4.1-nano":        {"input": 0.0001, "output": 0.0004},
+    "gpt-4o":              {"input": 0.0025, "output": 0.01},
+    "gpt-4o-mini":         {"input": 0.00015, "output": 0.0006},
+    "gpt-5-codex":         {"input": 0.00125, "output": 0.01},
+    "grok-3":              {"input": 0.003, "output": 0.015},
+    "o3":                  {"input": 0.002, "output": 0.008},
+    "o4-mini":             {"input": 0.0011, "output": 0.0044},
+    "qwen-max":            {"input": 0.00104, "output": 0.00416},
+    "qwen-plus":           {"input": 0.00026, "output": 0.00078},
+    "sonar":               {"input": 0.001, "output": 0.001},
+    "sonar-pro":           {"input": 0.003, "output": 0.015},
+},
     "o4-mini":                   {"input": 0.0011,    "output": 0.0044},
     "gpt-4.1":                   {"input": 0.002,     "output": 0.008},
     "gpt-4.1-mini":              {"input": 0.0001,    "output": 0.0004},
