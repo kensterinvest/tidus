@@ -24,30 +24,62 @@ from tidus.utils.yaml_loader import load_yaml
 log = structlog.get_logger(__name__)
 
 # Last-verified prices (USD per 1K tokens). Update on each release.
-# Source: official vendor pricing pages, verified 2026-03-26.
+# Source: official vendor pricing pages, verified 2026-04-03.
+# Automatically updated weekly by the host's sync_pricing.py script.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
-    "o3":                    {"input": 0.010,     "output": 0.040},
-    "o4-mini":               {"input": 0.001,     "output": 0.004},
-    "gpt-4.1":               {"input": 0.002,     "output": 0.008},
-    "gpt-4o-mini":           {"input": 0.00015,   "output": 0.00060},
-    "gpt-oss-120b":          {"input": 0.000039,  "output": 0.0001},
-    "gpt-5-codex":           {"input": 0.00125,   "output": 0.010},
-    "codex-mini-latest":     {"input": 0.00075,   "output": 0.003},
-    "claude-opus-4-6":       {"input": 0.005,     "output": 0.025},
-    "claude-sonnet-4-6":     {"input": 0.003,     "output": 0.015},
-    "claude-haiku-4-5":      {"input": 0.001,     "output": 0.005},
-    "gemini-3.1-pro":        {"input": 0.002,     "output": 0.012},
-    "gemini-3.1-flash":      {"input": 0.00025,   "output": 0.0015},
-    "gemini-nano":            {"input": 0.0,       "output": 0.0},
-    "mistral-large-3":       {"input": 0.0005,    "output": 0.0015},
-    "mistral-medium":        {"input": 0.0004,    "output": 0.002},
-    "mistral-small":         {"input": 0.00007,   "output": 0.0002},
-    "codestral":             {"input": 0.0002,    "output": 0.0006},
-    "devstral":              {"input": 0.0004,    "output": 0.002},
-    "deepseek-r1":           {"input": 0.00055,   "output": 0.00219},
-    "deepseek-v3":           {"input": 0.000014,  "output": 0.000028},
-    "grok-3":                {"input": 0.003,     "output": 0.015},
-    "kimi-k2.5":             {"input": 0.0006,    "output": 0.0025},
+    # OpenAI
+    "o3":                        {"input": 0.010,     "output": 0.040},
+    "o4-mini":                   {"input": 0.0011,    "output": 0.0044},
+    "gpt-4.1":                   {"input": 0.002,     "output": 0.008},
+    "gpt-4.1-mini":              {"input": 0.0001,    "output": 0.0004},
+    "gpt-4.1-nano":              {"input": 0.00005,   "output": 0.0002},
+    "gpt-4o":                    {"input": 0.0025,    "output": 0.010},
+    "gpt-4o-mini":               {"input": 0.00015,   "output": 0.00060},
+    "gpt-oss-120b":              {"input": 0.000039,  "output": 0.0001},
+    "gpt-5-codex":               {"input": 0.00125,   "output": 0.010},
+    "codex-mini-latest":         {"input": 0.00075,   "output": 0.003},
+    # Anthropic
+    "claude-opus-4-6":           {"input": 0.005,     "output": 0.025},
+    "claude-sonnet-4-6":         {"input": 0.003,     "output": 0.015},
+    "claude-haiku-4-5":          {"input": 0.001,     "output": 0.005},
+    # Google
+    "gemini-3.1-pro":            {"input": 0.002,     "output": 0.012},
+    "gemini-3.1-flash":          {"input": 0.001,     "output": 0.004},
+    "gemini-2.5-pro":            {"input": 0.0013,    "output": 0.010},
+    "gemini-2.5-flash":          {"input": 0.00075,   "output": 0.003},
+    "gemini-2.0-flash":          {"input": 0.00075,   "output": 0.003},
+    # Mistral
+    "mistral-large-3":           {"input": 0.002,     "output": 0.006},
+    "mistral-medium":            {"input": 0.0004,    "output": 0.002},
+    "mistral-small":             {"input": 0.001,     "output": 0.003},
+    "mistral-nemo":              {"input": 0.00002,   "output": 0.00004},
+    "codestral":                 {"input": 0.0002,    "output": 0.0006},
+    "devstral":                  {"input": 0.0004,    "output": 0.002},
+    "devstral-small":            {"input": 0.0001,    "output": 0.0003},
+    # DeepSeek
+    "deepseek-r1":               {"input": 0.00055,   "output": 0.00219},
+    "deepseek-v3":               {"input": 0.00028,   "output": 0.00084},
+    "deepseek-v4":               {"input": 0.00030,   "output": 0.00050},
+    # xAI
+    "grok-3":                    {"input": 0.003,     "output": 0.015},
+    "grok-3-fast":               {"input": 0.005,     "output": 0.025},
+    # Moonshot / Kimi
+    "kimi-k2.5":                 {"input": 0.0006,    "output": 0.0025},
+    # Cohere (adapter pending)
+    "command-r-plus":            {"input": 0.0025,    "output": 0.010},
+    "command-r":                 {"input": 0.0005,    "output": 0.0015},
+    # Qwen / Alibaba (adapter pending)
+    "qwen-max":                  {"input": 0.010,     "output": 0.030},
+    "qwen-plus":                 {"input": 0.003,     "output": 0.009},
+    "qwen-flash":                {"input": 0.0004,    "output": 0.0012},
+    # Perplexity (adapter pending)
+    "sonar-pro":                 {"input": 0.003,     "output": 0.015},
+    "sonar":                     {"input": 0.001,     "output": 0.001},
+    # Together AI (adapter pending)
+    "together-llama4-maverick":  {"input": 0.00027,   "output": 0.00085},
+    # Groq (adapter pending)
+    "groq-llama4-maverick":      {"input": 0.0005,    "output": 0.0015},
+    "groq-deepseek-r1":          {"input": 0.001,     "output": 0.003},
 }
 
 

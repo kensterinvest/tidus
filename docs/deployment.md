@@ -117,6 +117,40 @@ server {
 }
 ```
 
+## Automated Pricing Sync
+
+Tidus includes a two-layer system that keeps model prices accurate automatically.
+Accurate prices matter because the routing score weights cost at **70%**.
+
+### Layer 1 — Server-side sync (built-in)
+
+`TidusScheduler` runs `POST /api/v1/sync/prices` automatically every Sunday at 02:00 UTC.
+No configuration needed — it starts with the server.
+
+To trigger manually:
+```bash
+curl -X POST http://localhost:8000/api/v1/sync/prices \
+  -H "Authorization: Bearer <admin-token>"
+```
+
+To adjust the schedule, edit `config/policies.yaml`:
+```yaml
+pricing_sync:
+  day_of_week: 6      # 0=Monday … 6=Sunday
+  hour_utc: 2
+  change_threshold: 0.05
+```
+
+### Layer 2 — External host script (optional, recommended)
+
+For maintainers who push pricing updates to GitHub, a standalone `sync_pricing.py`
+can be scheduled locally (e.g. Windows Task Scheduler, cron) to:
+- Fetch live prices from the OpenRouter public API
+- Update `config/models.yaml` and `tidus/sync/price_sync.py`
+- Git commit and push to GitHub so all deployments stay in sync
+
+See [docs/pricing-sync.md](pricing-sync.md) for the full architecture and setup guide.
+
 ## Production Checklist
 
 - [ ] Set `ENVIRONMENT=production`
@@ -126,3 +160,4 @@ server {
 - [ ] Set up reverse proxy with TLS
 - [ ] Monitor `/health` and `/api/v1/dashboard/summary`
 - [ ] Review `config/policies.yaml` guardrail limits
+- [ ] Verify pricing sync is running (`GET /api/v1/audit/events?action=price_change`)
