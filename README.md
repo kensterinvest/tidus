@@ -12,8 +12,9 @@ Tidus is a vendor-agnostic, enterprise-grade, cost-aware AI model router and gov
 │  Response Caching        │  Agent Autonomy Limits              │
 │  Vendor-Agnostic Design  │  Budget + Policy Enforcement        │
 ├───────────────────────────────────────────────────────────────┤
-│  OpenAI │ Anthropic │ Google │ Mistral │ DeepSeek              │
+│  OpenAI │ Anthropic │ Google  │ Mistral  │ DeepSeek            │
 │  xAI    │ Kimi      │ Ollama (local/on-prem)                   │
+│  Cohere │ Groq      │ Qwen    │ Perplexity │ Together AI        │
 └───────────────────────────────────────────────────────────────┘
 ```
 
@@ -82,7 +83,7 @@ Stage 5 — Score & Select
 | **Budget** | Per-team and per-workflow limits with hard-stop or warn-only behaviour |
 | **Guardrails** | Max agent depth (5), max tokens per step (8K), max retries (3), session tracking |
 | **Caching** | Exact + semantic response caching — 30–50% additional cost reduction |
-| **Vendors** | OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, xAI, Kimi, Ollama (local) |
+| **Vendors** | OpenAI, Anthropic, Google Gemini, Mistral, DeepSeek, xAI, Kimi, Ollama (local) + Cohere, Groq, Qwen, Perplexity, Together AI (adapters in progress) |
 | **Integration** | MCP server (`tidus-mcp`) for Claude Desktop / Cursor — 4 tools: route, complete, budget, models |
 | **Visibility** | Dashboard at `/dashboard/`: cost by model, budget utilisation, active sessions, registry health |
 | **Resilience** | Automatic fallback chains, health probes, model deprecation handling |
@@ -145,20 +146,26 @@ Response:
 
 See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/v1/complete` (route + execute).
 
-## Supported Models (28 total, prices verified 2026-03-26)
+## Supported Models (53 total across 11 vendors, prices verified 2026-04-03)
 
-| Family | Models | Tier | Notes |
-|--------|--------|------|-------|
-| OpenAI GPT | o3, GPT-4.1, GPT-4o mini, GPT-OSS 120B | 1–3 | o3 replaces GPT-5 |
-| OpenAI GPT | o4-mini | 1 | Compact reasoning |
-| OpenAI Codex | gpt-5-codex, codex-mini-latest | 1, 3 | Specialised code models |
-| Anthropic Claude | Opus 4.6, Sonnet 4.6, Haiku 4.5 | 1–3 | 1M context on Opus/Sonnet |
-| Google Gemini | 3.1 Pro, 3.1 Flash, Nano | 1, 3, 4 | Nano is local/free |
-| Mistral | Large 3, Medium, Small, Codestral, Devstral | 2–3 | Codestral/Devstral for code |
-| DeepSeek | R1 (tier 1), V3 (tier 2) | 1–2 | R1: cheapest tier-1 reasoning |
-| xAI | Grok 3 | 1 | |
-| Kimi | K2.5 | 2 | 1M context |
-| Local (Ollama) | Llama 4 Maverick, Llama 4 Scout, Mistral Small, Phi-4, Gemma 3 | 4 | Free, on-prem |
+**8 production adapters live. 5 adapters in progress (models registered, adapters coming).**
+
+| Family | Models | Tier | Adapter |
+|--------|--------|------|---------|
+| OpenAI GPT | o3, o4-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini, gpt-oss-120b | 1–3 | ✅ Live |
+| OpenAI Codex | gpt-5-codex, codex-mini-latest | 1, 3 | ✅ Live |
+| Anthropic Claude | Opus 4.6, Sonnet 4.6, Haiku 4.5 | 1–3 | ✅ Live |
+| Google Gemini | 3.1 Pro, 3.1 Flash, 2.5 Pro, 2.5 Flash, 2.0 Flash | 1–3 | ✅ Live |
+| Mistral | Large 3, Medium, Small, Nemo, Codestral, Devstral, Devstral Small | 2–3 | ✅ Live |
+| DeepSeek | R1, V3, V4 | 1–2 | ✅ Live |
+| xAI | Grok 3, Grok 3 Fast | 1 | ✅ Live |
+| Kimi | K2.5 | 2 | ✅ Live |
+| Local (Ollama) | Llama 4 Maverick, Llama 4 Scout, Mistral Small, Phi-4, Gemma 3, DeepSeek Coder V2, Qwen 2.5, Qwen 2.5 Coder, Falcon 11B | 4 | ✅ Live |
+| Cohere | Command R, Command R+ | 2–3 | 🔧 In progress |
+| Groq | Llama 4 Maverick, DeepSeek R1 | 3–1 | 🔧 In progress |
+| Qwen / Alibaba | Qwen Max, Qwen Plus, Qwen Flash | 1–3 | 🔧 In progress |
+| Perplexity | Sonar Pro, Sonar | 1–3 | 🔧 In progress |
+| Together AI | Llama 4 Maverick | 3 | 🔧 In progress |
 
 ## Pricing
 

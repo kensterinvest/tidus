@@ -2,18 +2,32 @@
 
 Tidus uses a vendor-agnostic adapter layer so every AI provider is called through the same interface. Adding a new vendor requires one file and a YAML entry — zero changes to the router, API, or cost engine.
 
-## Built-in Adapters (v0.1.0)
+## Built-in Adapters (v1.0.0-community)
+
+### Production Adapters (8 live)
 
 | Adapter | Vendor | Auth Env Var | Token Counting | Models |
 |---|---|---|---|---|
-| `openai_adapter.py` | OpenAI | `OPENAI_API_KEY` | `tiktoken` (local) | gpt-4.1, gpt-4o-mini, o3, o4-mini, gpt-oss-120b, gpt-5-codex, codex-mini-latest |
+| `openai_adapter.py` | OpenAI | `OPENAI_API_KEY` | `tiktoken` (local) | o3, o4-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini, gpt-oss-120b, gpt-5-codex, codex-mini-latest |
 | `anthropic_adapter.py` | Anthropic | `ANTHROPIC_API_KEY` | Anthropic count_tokens API | claude-opus-4-6, claude-sonnet-4-6, claude-haiku-4-5 |
-| `google_adapter.py` | Google | `GOOGLE_API_KEY` | google-generativeai SDK | gemini-3.1-pro, gemini-3.1-flash, gemini-nano |
-| `mistral_adapter.py` | Mistral | `MISTRAL_API_KEY` | sentencepiece (local) | mistral-large-3, mistral-medium, mistral-small, codestral, devstral |
-| `deepseek_adapter.py` | DeepSeek | `DEEPSEEK_API_KEY` | tiktoken cl100k (local) | deepseek-r1, deepseek-v3 |
-| `xai_adapter.py` | xAI | `XAI_API_KEY` | tiktoken cl100k (local) | grok-3 |
+| `google_adapter.py` | Google | `GOOGLE_API_KEY` | google-generativeai SDK | gemini-3.1-pro, gemini-3.1-flash, gemini-2.5-pro, gemini-2.5-flash, gemini-2.0-flash |
+| `mistral_adapter.py` | Mistral | `MISTRAL_API_KEY` | sentencepiece (local) | mistral-large-3, mistral-medium, mistral-small, mistral-nemo, codestral, devstral, devstral-small |
+| `deepseek_adapter.py` | DeepSeek | `DEEPSEEK_API_KEY` | tiktoken cl100k (local) | deepseek-r1, deepseek-v3, deepseek-v4 |
+| `xai_adapter.py` | xAI | `XAI_API_KEY` | tiktoken cl100k (local) | grok-3, grok-3-fast |
 | `moonshot_adapter.py` | Moonshot AI | `MOONSHOT_API_KEY` | tiktoken cl100k (local) | kimi-k2.5 |
-| `ollama_adapter.py` | Ollama (local) | none | Ollama tokenize endpoint | llama4-maverick, llama4-scout, mistral-small-ollama, phi-4-ollama, gemma-3-ollama |
+| `ollama_adapter.py` | Ollama (local) | none | Ollama tokenize endpoint | llama4-maverick, llama4-scout, mistral-small-ollama, mistral-nemo-ollama, phi-4-ollama, gemma-3-ollama, deepseek-r1-ollama, deepseek-coder-v2-ollama, qwen2.5-ollama, qwen2.5-coder-ollama, falcon-11b-ollama |
+
+### Adapters In Progress (5 — models registered in registry, adapters coming)
+
+| Adapter | Vendor | Auth Env Var | Models |
+|---|---|---|---|
+| `cohere_adapter.py` | Cohere | `COHERE_API_KEY` | command-r, command-r-plus |
+| `groq_adapter.py` | Groq | `GROQ_API_KEY` | groq-llama4-maverick, groq-deepseek-r1 |
+| `qwen_adapter.py` | Qwen / Alibaba | `QWEN_API_KEY` | qwen-max, qwen-plus, qwen-flash |
+| `perplexity_adapter.py` | Perplexity | `PERPLEXITY_API_KEY` | sonar-pro, sonar |
+| `together_adapter.py` | Together AI | `TOGETHER_API_KEY` | together-llama4-maverick |
+
+These vendors are included in `config/models.yaml` with `enabled: false`. Once adapters are built, set `enabled: true` to activate routing to them.
 
 ## Adapter Interface
 

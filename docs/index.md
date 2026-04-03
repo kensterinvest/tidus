@@ -14,7 +14,7 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | 2. Router Agent Intelligence | 5-stage selector decides model before compute runs | ✅ Live |
 | 3. Cache Everything | Exact + semantic caching prevents paying twice | ✅ Live |
 | 4. Agent Autonomy Limits | Depth, tokens, retries, reflection loops | ✅ Live |
-| 5. Vendor-Agnostic Design | 8 adapters + MCP server — swap vendors without rewriting your system | ✅ Live |
+| 5. Vendor-Agnostic Design | 8 production adapters + 5 in progress + MCP server — swap vendors without rewriting your system | ✅ Live |
 
 ## Table of Contents
 
