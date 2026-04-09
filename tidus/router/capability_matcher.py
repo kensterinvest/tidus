@@ -94,8 +94,10 @@ class CapabilityMatcher:
     ) -> RejectionReason | None:
         """Return a RejectionReason if the model fails any hard constraint."""
 
-        # Must be enabled and not deprecated
-        if not spec.enabled or spec.deprecated:
+        # Must be enabled. Deprecated models are intentionally NOT rejected here —
+        # they remain routable during the deprecation window and receive a score
+        # penalty in ModelSelector._score_and_pick() instead.
+        if not spec.enabled:
             return RejectionReason.model_disabled
 
         # Context window must fit the estimated input tokens

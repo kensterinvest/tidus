@@ -5,6 +5,100 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.1.0] — 2026-04-06 — Multi-Source Self-Healing Registry
+
+### Highlights
+
+- **Versioned, audited registry** — model catalog changes create DB revisions with full source provenance; no more silent in-memory mutations
+- **Layered merge architecture** — three-layer merge (base catalog → overrides → telemetry) with deterministic precedence rules
+- **Scoped overrides** — RBAC-controlled overrides (price_multiplier, hard_disable, force_tier_ceiling, emergency_freeze) replace direct YAML edits
+- **Multi-source consensus pricing** — MAD-based outlier detection across pluggable pricing sources
+- **Drift detection + auto-remediation** — four detectors auto-disable models whose runtime behaviour diverges from catalog
+- **Billing reconciliation** — upload provider invoice CSVs to flag cost leakage
+- **Prometheus observability** — 9 custom metrics (6 Gauges, 3 Counters); alerting rules; runbooks
+
+### Added
+
+#### Phase 1 — DB Schema, Alembic Formalization, YAML Seeding
+
+- `tidus/db/registry_orm.py` — 5 new ORM tables: `model_catalog_revisions`, `model_catalog_entries`, `model_overrides`, `model_telemetry`, `model_drift_events`
+- `tidus/registry/seeder.py` — `RegistrySeeder.seed_from_yaml()` — idempotent YAML → DB import; creates revision 0 on first run
+- Alembic catch-up migration for pre-existing tables; new migration for registry tables
+- `ModelSpec` gains `cache_read_price`, `cache_write_price` (default 0.0), `retired_at`, `retirement_reason`
+- `POST /api/v1/models/{id}/retire` — admin-only model retirement endpoint
+
+#### Phase 2 — Layered Registry, Override Engine, API
+
+- `tidus/registry/effective_registry.py` — `EffectiveRegistry`: drop-in `ModelRegistry` replacement with 3-layer merge; revision-aware cache key `(active_revision_id, override_generation)`
+- `tidus/registry/merge.py` — pure merge functions: `merge_spec()`, `apply_price_multiplier()`
+- `tidus/registry/override_manager.py` — `OverrideManager` with RBAC enforcement, conflict detection, and audit trail
+- `tidus/registry/telemetry_reader.py` — `TelemetryReader` with 3-tier staleness: fresh (<24h), unknown (24–72h, base fallback), expired (>72h, excluded)
+- `tidus/sync/override_expiry.py` — `OverrideExpiryJob` — deactivates expired overrides every 15 min; writes audit entries
+- New registry API router (`/api/v1/registry`): revision CRUD, override CRUD (team_manager scoped), drift event listing, revision diff, revision preview
+
+#### Phase 3 — Multi-Source Pricing Pipeline
+
+- `tidus/sync/pricing/` — pluggable `PricingSource` abstraction: `HardcodedSource`, `TidusPricingFeedSource` (HMAC-SHA256 verified, circuit breaker), `PriceConsensus` (MAD outlier detection)
+- `tidus/registry/pipeline.py` — `RegistryPipeline` with 3-tier validation (Schema → Invariant → Canary), atomic 2-phase write, PostgreSQL advisory lock for k8s multi-replica safety
+- `tidus/registry/validators.py` — `SchemaValidator`, `InvariantValidator`, `CanaryProbe` with retry logic
+- `pricing_ingestion_runs` table — full source provenance per sync cycle
+- `POST /api/v1/sync/prices?dry_run=true` — validate consensus without writing a revision
+- `TIDUS_PRICING_FEED_URL`, `TIDUS_PRICING_FEED_SIGNING_KEY`, `PRICING_FEED_FAILURE_THRESHOLD`, `PRICING_FEED_RESET_TIMEOUT_SECONDS` settings
+
+#### Phase 4 — Drift Detection + Telemetry Persistence
+
+- `tidus/sync/drift/detectors.py` — 4 drift detectors: `LatencyDriftDetector`, `ContextDriftDetector`, `TokenizationDriftDetector`, `PriceDriftDetector`
+- `tidus/sync/drift/engine.py` — `DriftEngine`: concurrent detection, auto-disable on critical drift, auto-recovery after 3 consecutive healthy probes
+- `tidus/sync/telemetry_writer.py` — `TelemetryWriter.write()` — persists health probe output to `model_telemetry` (survives restarts)
+- 3-tier health probe sampling: Tier A (always live), Tier B (synthetic-first), Tier C (10% sample, synthetic-first)
+- `probe_type: synthetic|live` tracked per telemetry row for cost attribution
+
+#### Phase 5 — Billing Reconciliation
+
+- `tidus/billing/reconciler.py` — `BillingReconciler` with matched/warning/critical classification
+- `tidus/billing/csv_parser.py` — normalized billing CSV parser (UTF-8 BOM safe, duplicate-row deduplication)
+- `billing_reconciliations` DB table
+- Billing API (`/api/v1/billing`): `POST /reconcile`, `GET /reconciliations`, `GET /reconciliations/summary`
+
+#### Phase 6 — Prometheus Metrics + Observability
+
+- `tidus/observability/registry_metrics.py` — 9 custom metrics (see below)
+- `tidus/observability/metrics_updater.py` — `MetricsUpdater`: refreshes 6 Gauges every 5 min and at startup
+- `monitoring/alerting-rules.yaml` — 5 Prometheus alerting rules
+- `monitoring/README.md` — metrics reference, alert setup, Grafana import instructions
+- `docs/runbooks/emergency-freeze.md`, `drift-incident.md`, `override-abuse.md` — operational runbooks
+
+### Metrics Added
+
+| Metric | Type | Description |
+|---|---|---|
+| `tidus_registry_last_successful_sync_timestamp` | Gauge | Unix timestamp of last successful price sync |
+| `tidus_registry_active_revision_activated_timestamp` | Gauge | Unix timestamp of active revision promotion |
+| `tidus_registry_model_last_price_update_timestamp` | Gauge (per model) | Last price update time |
+| `tidus_registry_model_confidence` | Gauge (per model) | 1.0 (fresh) or 0.5 (stale >8 days) |
+| `tidus_registry_active_revision_id` | Gauge | Deterministic int hash of active revision UUID |
+| `tidus_registry_models_stale_count` | Gauge | Models with stale price data |
+| `tidus_probe_live_calls_total` | Counter | Live health probe calls by model and result |
+| `tidus_probe_synthetic_calls_total` | Counter | Synthetic probe calls by model and result |
+| `tidus_registry_drift_events_total` | Counter | Drift events by model, type, and severity |
+
+### Changed
+
+- `build_singletons()` is now `async` — `EffectiveRegistry.build()` requires a DB session
+- `TidusScheduler` gains 5 new background jobs: registry_refresh (60s), override_expiry (15min), drift_engine (5min), metrics_updater (5min), monthly_budget_reset (1st of month)
+- `HealthProbe` gains `session_factory` optional param; persists telemetry after every probe
+- Price sync response enriched with `revision_id`, `sources_used`, `ingestion_run_ids` (backward-compatible)
+
+### Settings Added
+
+- `TIDUS_PRICING_FEED_URL` — optional remote pricing feed endpoint
+- `TIDUS_PRICING_FEED_SIGNING_KEY` — HMAC-SHA256 signing key for feed verification
+- `PRICING_FEED_FAILURE_THRESHOLD` — circuit breaker trip count (default 5)
+- `PRICING_FEED_RESET_TIMEOUT_SECONDS` — circuit breaker reset window (default 300)
+- `REGISTRY_REVISION_RETENTION_DAYS` — SUPERSEDED revision retention window (default 90)
+
+---
+
 ## [v1.0.0-community] — 2026-04-02 — Community Release
 
 This is the first public community release of Tidus. The codebase is production-ready and open-sourced under Apache 2.0.

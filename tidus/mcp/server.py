@@ -38,7 +38,7 @@ async def _handle_route(args: dict) -> str:
     from tidus.router.selector import ModelSelectionError
 
     await create_tables()
-    build_singletons()
+    await build_singletons()
     selector = get_selector()
     registry = get_registry()
 
@@ -83,7 +83,7 @@ async def _handle_complete(args: dict) -> str:
     from tidus.router.selector import ModelSelectionError
 
     await create_tables()
-    build_singletons()
+    await build_singletons()
     selector = get_selector()
     registry = get_registry()
     enforcer = get_enforcer()
@@ -145,7 +145,7 @@ async def _handle_budget_status(args: dict) -> str:
     from tidus.db.engine import create_tables
 
     await create_tables()
-    build_singletons()
+    await build_singletons()
     enforcer = get_enforcer()
     team_id = args["team_id"]
     status = await enforcer.status(team_id=team_id)
@@ -166,7 +166,7 @@ async def _handle_list_models(args: dict) -> str:
     from tidus.db.engine import create_tables
 
     await create_tables()
-    build_singletons()
+    await build_singletons()
     registry = get_registry()
 
     enabled_only = args.get("enabled_only", False)

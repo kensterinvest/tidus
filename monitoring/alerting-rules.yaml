@@ -1,0 +1,57 @@
+groups:
+  - name: tidus-registry
+    rules:
+      - alert: TidusRegistrySyncStale
+        expr: (time() - tidus_registry_last_successful_sync_timestamp) > 172800
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Registry sync has not completed in >2 days"
+          description: >
+            The last successful pricing sync was more than 2 days ago.
+            Model prices may be stale. Check the scheduler and pricing sources.
+
+      - alert: TidusRegistrySyncCriticallyStale
+        expr: (time() - tidus_registry_last_successful_sync_timestamp) > 604800
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Registry sync has not completed in >7 days"
+          description: >
+            The last successful pricing sync was more than 7 days ago.
+            Cost estimates are unreliable. Investigate pipeline failures immediately.
+
+      - alert: TidusRegistryStaleModelCount
+        expr: tidus_registry_models_stale_count > 10
+        for: 30m
+        labels:
+          severity: warning
+        annotations:
+          summary: "{{ $value }} models have stale price data (>8 days)"
+          description: >
+            More than 10 models have not had a price update in over 8 days.
+            Routing quality and cost estimates may be degraded.
+
+      - alert: TidusActiveRevisionAged
+        expr: (time() - tidus_registry_active_revision_activated_timestamp) > 2592000
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "Active revision is older than 30 days"
+          description: >
+            The active registry revision has not been updated in over 30 days.
+            Consider triggering a manual price sync to refresh model catalog data.
+
+      - alert: TidusProbeHighFailureRate
+        expr: rate(tidus_probe_live_calls_total{result="fail"}[10m]) > 0.5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Health probe failure rate >50% for 5 minutes"
+          description: >
+            More than 50% of live health probes are failing over the last 10 minutes.
+            Models may be auto-disabled. Check model_drift_events and provider status.

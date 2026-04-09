@@ -1,7 +1,7 @@
 from datetime import date, datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ModelTier(int, Enum):
@@ -37,6 +37,10 @@ class Capability(str, Enum):
 class ModelSpec(BaseModel):
     """Full specification for a single AI model in the registry.
 
+    extra='ignore' ensures that spec_json entries with fields added in future
+    schema versions are silently dropped when loaded by an older router,
+    preserving backward compatibility during rolling upgrades.
+
     Example:
         spec = ModelSpec(
             model_id="claude-haiku-4-5",
@@ -52,6 +56,8 @@ class ModelSpec(BaseModel):
         )
     """
 
+    model_config = ConfigDict(extra="ignore")
+
     model_id: str = Field(..., description="Unique identifier matching adapter lookup")
     display_name: str = Field("", description="Human-readable name shown in dashboard")
     vendor: str = Field(..., description="Matches AbstractModelAdapter.vendor constant")
@@ -61,6 +67,8 @@ class ModelSpec(BaseModel):
     max_context: int = Field(..., gt=0, description="Maximum context window in tokens")
     input_price: float = Field(..., ge=0.0, description="USD per 1K input tokens")
     output_price: float = Field(..., ge=0.0, description="USD per 1K output tokens")
+    cache_read_price: float = Field(0.0, ge=0.0, description="USD per 1K cache-read tokens (0.0 if unsupported)")
+    cache_write_price: float = Field(0.0, ge=0.0, description="USD per 1K cache-write tokens (0.0 if unsupported)")
 
     tokenizer: TokenizerType
     latency_p50_ms: int = Field(1000, gt=0, description="Baseline median latency; updated by health probe")
@@ -80,6 +88,10 @@ class ModelSpec(BaseModel):
 
     last_price_check: date = Field(default_factory=date.today, description="Date of last price sync")
     last_health_check: datetime | None = None
+
+    # Model lifecycle
+    retired_at: datetime | None = Field(None, description="Set when model is retired; excluded from routing")
+    retirement_reason: str | None = Field(None, description="Human-readable reason for retirement")
 
     @property
     def is_free(self) -> bool:

@@ -197,20 +197,30 @@ class ModelSelector:
 
 # ── Scoring ────────────────────────────────────────────────────────────────────
 
+_DEPRECATED_SCORE_PENALTY = 0.15  # added to normalised score when model is deprecated
+
+# Penalty is intentionally modest: deprecated models should lose to equally-priced
+# non-deprecated models but still win if they are significantly cheaper or faster.
+# Logged as routing_deprecated_model when a deprecated model is selected.
+
+
 def _score_and_pick(
     costed: list[tuple[ModelSpec, float]],
 ) -> tuple[ModelSpec, float, float]:
     """Score each candidate and return (best_spec, best_cost, best_score).
 
-    Score = cost_norm×0.70 + tier_norm×0.20 + latency_norm×0.10
+    Score = cost_norm×0.70 + tier_norm×0.20 + latency_norm×0.10 [+ deprecated_penalty]
     Lower score = better (minimum cost wins).
 
     Each dimension is normalised to [0, 1] across the candidate set so that
     the weights have consistent meaning regardless of the units involved.
     A single-candidate set always gets score 0.0.
+    Deprecated models receive a flat 0.15 penalty added after normalisation.
     """
     if len(costed) == 1:
         spec, cost = costed[0]
+        if spec.deprecated:
+            log.warning("routing_deprecated_model", model_id=spec.model_id)
         return spec, cost, 0.0
 
     costs = [c for _, c in costed]
@@ -227,10 +237,15 @@ def _score_and_pick(
 
     for i, (spec, cost) in enumerate(costed):
         score = cost_norm[i] * 0.70 + tier_norm[i] * 0.20 + lat_norm[i] * 0.10
+        if spec.deprecated:
+            score += _DEPRECATED_SCORE_PENALTY
         if score < best_score:
             best_score = score
             best_spec = spec
             best_cost = cost
+
+    if best_spec.deprecated:
+        log.warning("routing_deprecated_model", model_id=best_spec.model_id, score=round(best_score, 4))
 
     return best_spec, best_cost, best_score
 

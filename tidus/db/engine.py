@@ -178,3 +178,16 @@ async def create_tables() -> None:
     """Create all tables. Called at app startup."""
     async with get_engine().begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+
+# Register registry ORM classes with Base.metadata so Alembic autogenerate
+# picks them up. Import at bottom to avoid circular import: registry_orm
+# imports Base from this module, and Base must be defined first.
+from tidus.db.registry_orm import (  # noqa: E402, F401
+    ModelCatalogEntryORM,
+    ModelCatalogRevisionORM,
+    ModelDriftEventORM,
+    ModelOverrideORM,
+    ModelTelemetryORM,
+    PricingIngestionRunORM,
+)

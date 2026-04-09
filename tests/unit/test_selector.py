@@ -314,3 +314,86 @@ async def test_agent_depth_exceeded_raises():
         await selector.select(task)
     rejections = {r.chosen_model_id: r.rejection_reason for r in exc_info.value.rejections}
     assert rejections["chat-model"] == RejectionReason.agent_depth_exceeded
+
+
+# ── Deprecated model routing (score penalty) ──────────────────────────────────
+
+@pytest.mark.asyncio
+async def test_deprecated_model_included_in_routing():
+    """Deprecated models must still be routed (only disabled models are excluded).
+
+    If the deprecated model is the only option, it must be returned.
+    """
+    spec = _make_spec("old-model", tier=2, input_price=0.001, output_price=0.002, deprecated=True)
+    selector = _build_selector([spec])
+    decision = await selector.select(_make_task())
+    assert decision.chosen_model_id == "old-model"
+
+
+@pytest.mark.asyncio
+async def test_deprecated_model_loses_to_equivalent_non_deprecated():
+    """A non-deprecated model wins over a deprecated one with identical pricing and tier."""
+    deprecated_spec = _make_spec(
+        "old-model", tier=2, input_price=0.001, output_price=0.002, deprecated=True
+    )
+    fresh_spec = _make_spec(
+        "new-model", tier=2, input_price=0.001, output_price=0.002, deprecated=False
+    )
+    selector = _build_selector([deprecated_spec, fresh_spec])
+    decision = await selector.select(_make_task())
+    assert decision.chosen_model_id == "new-model"
+
+
+def test_deprecated_model_score_penalty_value():
+    """The deprecated score penalty is exactly 0.15 (matches _DEPRECATED_SCORE_PENALTY).
+
+    Tests _score_and_pick() directly — the public selector uses a mock engine that
+    assigns the same cost to all models, which would collapse the score spread to 0.
+    """
+    from tidus.router.selector import _score_and_pick
+
+    deprecated = _make_spec(
+        "deprecated", tier=2, input_price=1.0, output_price=2.0, deprecated=True
+    )
+    fresh = _make_spec(
+        "fresh", tier=2, input_price=1.0, output_price=2.0, deprecated=False
+    )
+
+    # Single deprecated model: score is always 0.0 (single candidate baseline)
+    _, _, score_solo = _score_and_pick([(deprecated, 1.0)])
+    assert score_solo == pytest.approx(0.0)
+
+    # Two identical models at same cost/tier/latency → normalised score = 0.0 for both dims;
+    # fresh wins with score=0.0; deprecated has effective internal score=0.15 and loses.
+    winner_spec, _, winner_score = _score_and_pick([(fresh, 1.0), (deprecated, 1.0)])
+    assert winner_spec.model_id == "fresh", "fresh model must beat deprecated at equal cost"
+    assert winner_score == pytest.approx(0.0)
+
+    # Same result regardless of input order
+    winner_spec2, _, _ = _score_and_pick([(deprecated, 1.0), (fresh, 1.0)])
+    assert winner_spec2.model_id == "fresh"
+
+
+def test_very_cheap_deprecated_beats_expensive_non_deprecated():
+    """Deprecated model wins when cost advantage overwhelms the 0.15 penalty.
+
+    Uses _score_and_pick() directly with real cost values so that normalisation
+    produces meaningful cost spread — bypasses the mock engine's uniform pricing.
+    """
+    from tidus.router.selector import _score_and_pick
+
+    cheap_deprecated = _make_spec(
+        "cheap-deprecated", tier=3, input_price=0.00001, output_price=0.00002, deprecated=True
+    )
+    expensive_fresh = _make_spec(
+        "expensive-fresh", tier=2, input_price=10.0, output_price=20.0, deprecated=False
+    )
+
+    # cheap-deprecated costs $0.00001; expensive-fresh costs $10.00
+    winner_spec, _, _ = _score_and_pick([
+        (cheap_deprecated, 0.00001),
+        (expensive_fresh, 10.0),
+    ])
+    assert winner_spec.model_id == "cheap-deprecated", (
+        "overwhelming cost advantage should outweigh the 0.15 deprecated penalty"
+    )

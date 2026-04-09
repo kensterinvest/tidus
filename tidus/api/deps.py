@@ -21,15 +21,16 @@ from tidus.guardrails.agent_guard import AgentGuard
 from tidus.guardrails.session_store import SessionStore
 from tidus.metering.service import MeteringService
 from tidus.models.guardrails import GuardrailPolicy
+from tidus.registry.effective_registry import EffectiveRegistry
+from tidus.registry.override_manager import OverrideManager
 from tidus.router.capability_matcher import CapabilityMatcher
-from tidus.router.registry import ModelRegistry
 from tidus.router.selector import ModelSelector
 from tidus.settings import get_settings
 from tidus.utils.yaml_loader import load_yaml
 
 # ── Module-level singletons ───────────────────────────────────────────────────
 
-_registry: ModelRegistry | None = None
+_registry: EffectiveRegistry | None = None
 _selector: ModelSelector | None = None
 _enforcer: BudgetEnforcer | None = None
 _guardrail_policy: GuardrailPolicy | None = None
@@ -38,23 +39,30 @@ _agent_guard: AgentGuard | None = None
 _cost_logger: CostLogger | None = None
 _audit_logger: AuditLogger | None = None
 _metering: MeteringService | None = None
+_override_manager: OverrideManager | None = None
 
 
-def build_singletons() -> None:
+async def build_singletons() -> None:
     """Initialize all shared singletons from config files.
 
-    Called once from the FastAPI lifespan on startup. Safe to call again
-    (re-initializes, useful for testing overrides).
+    Async because EffectiveRegistry.build() queries the DB for the active
+    revision. Called once from the FastAPI lifespan on startup. Safe to call
+    again (re-initializes, useful for testing overrides).
     """
-    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering
+    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering, _override_manager
 
     settings = get_settings()
+
+    from tidus.db.engine import get_session_factory as _get_sf
+    sf = _get_sf()
 
     raw_policies = load_yaml(settings.policies_config_path)
     _guardrail_policy = GuardrailPolicy.model_validate(raw_policies["guardrails"])
     buffer_pct = raw_policies["cost"]["estimate_buffer_pct"]
 
-    _registry = ModelRegistry.load(settings.models_config_path)
+    # Build the layered registry: DB revision + overrides + telemetry.
+    # Falls back to YAML load if no active revision exists (e.g. test environments).
+    _registry = await EffectiveRegistry.build(sf, settings.models_config_path)
 
     budgets = load_budget_policies(settings.budgets_config_path)
     counter = SpendCounter()
@@ -67,15 +75,15 @@ def build_singletons() -> None:
     _session_store = SessionStore()
     _agent_guard = AgentGuard(_guardrail_policy, _session_store)
 
-    from tidus.db.engine import get_session_factory
-    _cost_logger = CostLogger(get_session_factory())
-    _audit_logger = AuditLogger(get_session_factory())
-    _metering = MeteringService(get_session_factory())
+    _cost_logger = CostLogger(sf)
+    _audit_logger = AuditLogger(sf)
+    _metering = MeteringService(sf)
+    _override_manager = OverrideManager(sf, audit_logger=_audit_logger)
 
 
 # ── Dependency getters (used with FastAPI Depends) ────────────────────────────
 
-def get_registry() -> ModelRegistry:
+def get_registry() -> EffectiveRegistry:
     assert _registry is not None, "Singletons not built — call build_singletons() at startup"
     return _registry
 
@@ -118,6 +126,11 @@ def get_audit_logger() -> AuditLogger:
 def get_metering() -> MeteringService:
     assert _metering is not None, "Singletons not built — call build_singletons() at startup"
     return _metering
+
+
+def get_override_manager() -> OverrideManager:
+    assert _override_manager is not None, "Singletons not built — call build_singletons() at startup"
+    return _override_manager
 
 
 def get_session_factory():

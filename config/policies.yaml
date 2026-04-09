@@ -40,6 +40,28 @@ health:
   failure_threshold: 3
   # Latency degradation ratio triggering a routing weight demotion
   latency_degradation_threshold: 1.5   # 50% worse than baseline
+  # Use synthetic (count_tokens) probe first for Tier B/C models to reduce API cost
+  synthetic_probe_first: true
+
+drift:
+  latency:
+    # Ratio of measured_p50 / catalog_p50 triggering drift
+    warning_ratio: 1.5    # 50% slower than catalog baseline
+    critical_ratio: 2.5   # 150% slower than catalog baseline
+  context:
+    # Fraction of avg input_tokens / max_context triggering drift
+    warning_rate: 0.05    # avg requests use ≥5% of context window
+    critical_rate: 0.15   # avg requests use ≥15% of context window
+    lookback_days: 7
+  tokenization:
+    # Avg |token_delta_pct| from model_telemetry over lookback window
+    warning_threshold: 0.25   # 25% avg tokenization discrepancy
+    critical_threshold: 0.50  # 50% avg tokenization discrepancy
+    lookback_days: 7
+  price:
+    max_changes_30d: 3       # more than 3 price changes in 30 days = warning
+    deviation_warning: 0.15  # single change of ≥15% delta = warning
+    lookback_days: 30
 
 pricing_sync:
   # Day of week (0=Monday … 6=Sunday) and UTC hour for weekly price sync

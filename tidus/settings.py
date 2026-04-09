@@ -51,6 +51,31 @@ class Settings(BaseSettings):
     oidc_dev_team_id: str = "team-dev"
     oidc_dev_role: str = "admin"
 
+    # ── Registry (v1.1.0) ────────────────────────────────────────────────────
+    # Optional pricing feed URL. When set, TidusPricingFeedSource pulls price
+    # data from this endpoint. No customer data is sent — only schema_version.
+    # Leave empty to use the built-in hardcoded price table only.
+    tidus_pricing_feed_url: str = ""
+
+    # How long to retain SUPERSEDED revisions before cleanup (days).
+    registry_revision_retention_days: int = 90
+
+    # HMAC-SHA256 signing key for the override export bundle.
+    # When set, GET /api/v1/registry/overrides/export includes an
+    # X-Tidus-Signature header. Leave empty to export unsigned (with a warning).
+    tidus_registry_export_signing_key: str = ""
+
+    # HMAC-SHA256 key for verifying pricing feed responses.
+    # When set, feed responses without a valid X-Tidus-Signature are rejected.
+    # Leave empty to accept unsigned responses (logs a warning).
+    tidus_pricing_feed_signing_key: str = ""
+
+    # Circuit breaker: open after this many consecutive feed failures.
+    pricing_feed_failure_threshold: int = 5
+
+    # Circuit breaker: seconds before transitioning OPEN → HALF-OPEN.
+    pricing_feed_reset_timeout_seconds: int = 300
+
 
 _settings: Settings | None = None
 

@@ -21,14 +21,17 @@ from tidus.api.deps import (
     get_registry,
     get_session_factory,
 )
+from tidus.registry.seeder import RegistrySeeder
 from tidus.api.v1 import (
     audit,
+    billing,
     budgets,
     complete,
     dashboard,
     guardrails,
     metering,
     models,
+    registry,
     reports,
     route,
     sync,
@@ -55,11 +58,30 @@ async def lifespan(app: FastAPI):
     await create_tables()
     log.info("database_ready")
 
-    # Build shared singletons: registry, selector, enforcer, guardrails, cost logger
-    build_singletons()
+    # Build shared singletons: EffectiveRegistry (DB-backed), selector, enforcer, etc.
+    await build_singletons()
     log.info("singletons_ready")
 
-    # Start background scheduler (health probes + weekly price sync + monthly budget reset)
+    # Seed the model catalog DB from models.yaml if no active revision exists.
+    # Idempotent: no-op when a revision is already present (e.g. after the first run).
+    await RegistrySeeder().seed_from_yaml(
+        get_session_factory(),
+        settings.models_config_path,
+    )
+    log.info("registry_seeder_complete")
+
+    # Populate Prometheus Gauges before the first scrape so dashboards don't
+    # start with empty series.  Counters (probe calls, drift events) are
+    # incremented at the point of each operation — no startup seeding needed.
+    try:
+        from tidus.observability.metrics_updater import MetricsUpdater
+        await MetricsUpdater().update(get_registry(), get_session_factory())
+        log.info("metrics_initialized")
+    except Exception as exc:
+        log.warning("metrics_init_failed", error=str(exc))
+
+    # Start background scheduler (health probes, price sync, budget reset,
+    # registry refresh, override expiry)
     scheduler = TidusScheduler(
         registry=get_registry(),
         session_factory=get_session_factory(),
@@ -92,7 +114,7 @@ def create_app() -> FastAPI:
             "Routes every AI request to the cheapest capable model, enforces budgets, "
             "and prevents runaway multi-agent loops."
         ),
-        version="1.0.0",
+        version="1.1.0",
         contact={"name": "Kenny Wong", "email": "lapkei01@gmail.com"},
         license_info={"name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0"},
         lifespan=lifespan,
@@ -135,7 +157,7 @@ def create_app() -> FastAPI:
             return RedirectResponse("/dashboard/")
         return {
             "service": "tidus",
-            "version": "1.0.0",
+            "version": "1.1.0",
             "description": "Enterprise AI Router — routes every request to the cheapest capable model",
             "links": {
                 "dashboard": "/dashboard/",
@@ -172,6 +194,8 @@ def create_app() -> FastAPI:
     app.include_router(audit.router, prefix="/api/v1")
     app.include_router(metering.router, prefix="/api/v1")
     app.include_router(reports.router, prefix="/api/v1")
+    app.include_router(registry.router, prefix="/api/v1")
+    app.include_router(billing.router, prefix="/api/v1")
 
     # ── Prometheus metrics ────────────────────────────────────────────────────
     Instrumentator(
