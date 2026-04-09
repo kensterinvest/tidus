@@ -56,6 +56,8 @@ dependencies = [
     # Rate limiting
     "slowapi>=0.1.9",
     "prometheus-client>=0.24.1",
+    # Email delivery (pricing reports)
+    "resend>=2.0.0",
 ]
 
 [project.optional-dependencies]
