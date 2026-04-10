@@ -237,6 +237,35 @@ footer{background:#0a0f1e;padding:48px}
 .footer-bottom p{font-size:12px;color:rgba(255,255,255,.28)}
 .footer-bottom a{color:var(--violet)}
 
+/* SOURCES */
+.sources{background:var(--light)}
+.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:40px}
+.src-card{background:#fff;border-radius:14px;padding:26px;border:1px solid #e9ecef}
+.src-badge{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;
+           letter-spacing:1.5px;padding:3px 8px;border-radius:6px;margin-bottom:12px}
+.src-badge.always{background:rgba(34,197,94,.1);color:#166534}
+.src-badge.optional{background:rgba(83,52,131,.1);color:var(--purple)}
+.src-badge.algo{background:rgba(15,52,96,.1);color:var(--navy)}
+.src-title{font-size:17px;font-weight:800;color:#1a1a2e;margin-bottom:5px}
+.src-conf{font-size:12px;color:#999;margin-bottom:12px;font-family:monospace}
+.src-desc{font-size:13.5px;color:#555;line-height:1.8}
+.vendor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:32px}
+.v-card{background:#fff;border-radius:10px;padding:12px 16px;border:1px solid #e9ecef;
+        display:flex;align-items:center;justify-content:space-between;gap:8px}
+.v-name{font-size:12.5px;font-weight:700;color:#1a1a2e}
+.v-count{font-size:11px;font-weight:700;color:var(--violet);background:rgba(167,139,250,.1);
+         padding:2px 8px;border-radius:8px;white-space:nowrap}
+.why-box{background:#fff;border-radius:14px;padding:24px 28px;border:1px solid #e9ecef;
+         border-left:4px solid var(--purple);margin-top:28px}
+.why-box p{font-size:14px;color:#555;line-height:1.8;margin-bottom:10px}
+.why-box p:last-child{margin-bottom:0}
+.add-model{background:rgba(83,52,131,.05);border:1px solid rgba(83,52,131,.15);
+           border-radius:10px;padding:16px 20px;margin-top:20px;
+           display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.add-model span{font-size:13px;color:#555}
+.add-model code{background:#e9ecef;padding:3px 8px;border-radius:5px;
+                font-family:monospace;font-size:12.5px;color:#1a1a2e}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   nav{padding:0 20px}
@@ -256,6 +285,8 @@ footer{background:#0a0f1e;padding:48px}
   .footer-inner{grid-template-columns:1fr 1fr}
   .mag-body{padding:20px 24px}
   hr.divider{margin:0 20px}
+  .src-grid{grid-template-columns:1fr}
+  .vendor-grid{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
@@ -266,9 +297,10 @@ footer{background:#0a0f1e;padding:48px}
   <div class="nav-logo">tidus<span>.</span></div>
   <div class="nav-links">
     <a href="#about">About</a>
-    <a href="#pillars">Pillars</a>
+    <a href="#pillars">Cost Pillars</a>
     <a href="#how">How It Works</a>
-    <a href="#pricing">Pricing</a>
+    <a href="#sources">Sources</a>
+    <a href="#pricing">Models</a>
     <a href="#magazine">Report</a>
   </div>
   <a href="#subscribe" class="nav-cta">Subscribe Free</a>
@@ -288,7 +320,7 @@ footer{background:#0a0f1e;padding:48px}
       <div class="stat-card"><div class="stat-val">41+</div><div class="stat-lbl">Models Tracked</div></div>
       <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">AI Vendors</div></div>
       <div class="stat-card"><div class="stat-val">70%</div><div class="stat-lbl">Cost Weight in Routing</div></div>
-      <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Validation Tiers</div></div>
+      <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Cost-Control Pillars</div></div>
     </div>
   </div>
 </section>
@@ -345,63 +377,61 @@ footer{background:#0a0f1e;padding:48px}
 <!-- PILLARS -->
 <section id="pillars">
   <div class="section-inner">
-    <p class="section-tag">Five Pillars</p>
-    <h2 class="section-title">Everything routing needs to work in production</h2>
-    <p class="section-sub">Tidus v1.1.0 delivers five integrated capabilities — from real-time routing to weekly market intelligence.</p>
+    <p class="section-tag">Five Cost-Control Pillars</p>
+    <h2 class="section-title">Every way AI spend spirals — and how Tidus stops it</h2>
+    <p class="section-sub">AI costs grow in five distinct ways. Tidus addresses each one with a dedicated, automated control — no manual monitoring required.</p>
     <div class="pillars-grid">
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 1</div>
-        <div class="pillar-icon">🧭</div>
-        <div class="pillar-title">Intelligent Model Routing</div>
-        <div class="pillar-desc">A 5-factor scoring algorithm evaluates every eligible model on cost (70%), tier (20%), and latency (10%). Complexity tiers (simple → critical) define which model tiers are eligible. Capability matching filters models by required features — multimodal, code, function-calling. Budget guardrails cut off models that would exceed team spend limits.</div>
+        <div class="pillar-icon">💰</div>
+        <div class="pillar-title">Cost-First Routing</div>
+        <div class="pillar-desc">The single biggest lever: <em>always route to the cheapest model that can do the job</em>. Tidus scores every eligible model with cost weighted at <strong>70%</strong>, capability tier at 20%, and latency at 10%. A simple classification task routing to Gemini 2.0 Flash ($0.10/1M) instead of Claude Opus ($15/1M) is a 99.3% saving per request. At a million requests per month, that's the difference between a $15,000 bill and a $100 bill.</div>
         <div class="tags">
-          <span class="tag">MAD scoring</span>
+          <span class="tag">70% cost weight</span>
+          <span class="tag">Complexity tiers</span>
           <span class="tag">Capability matching</span>
-          <span class="tag">Tier ceiling</span>
-          <span class="tag">Privacy routing</span>
-          <span class="tag">Local-first</span>
+          <span class="tag">Privacy-forced local</span>
         </div>
       </div>
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 2</div>
         <div class="pillar-icon">🏛️</div>
-        <div class="pillar-title">Self-Healing Pricing Registry</div>
-        <div class="pillar-desc">Prices drive 70% of the routing score — stale prices cause systematic misspending. The registry syncs from multiple sources every Sunday using MAD-based outlier detection. Changes create versioned, audited DB revisions via atomic two-phase write. Rollback to any previous revision in one API call. Overrides let teams adjust pricing, disable models, or pin providers without touching config files.</div>
+        <div class="pillar-title">Accurate Pricing Registry</div>
+        <div class="pillar-desc">Routing 70% on cost only works if prices are correct. Stale or wrong prices produce systematically wrong routing — and you overpay silently for weeks. Tidus maintains a versioned pricing registry that syncs from multiple verified sources every Sunday using MAD-based consensus. Any price change ≥5% creates an audited DB revision via atomic two-phase write. If prices become stale, a drift warning fires before routing quality degrades.</div>
         <div class="tags">
-          <span class="tag">Multi-source consensus</span>
-          <span class="tag">MAD outlier detection</span>
-          <span class="tag">Atomic revisions</span>
-          <span class="tag">90-day audit trail</span>
-          <span class="tag">RBAC overrides</span>
+          <span class="tag">Multi-source sync</span>
+          <span class="tag">MAD consensus</span>
+          <span class="tag">Versioned revisions</span>
+          <span class="tag">Stale-price alerting</span>
         </div>
       </div>
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 3</div>
         <div class="pillar-icon">🛡️</div>
-        <div class="pillar-title">Budget Guardrails</div>
-        <div class="pillar-desc">Set hard spend limits per team, per model, or globally. Every routed request records actual token usage and cost in real time. Overages trigger alerts and optionally fall back to cheaper models within the same tier. Billing reconciliation ingests provider CSV exports and flags mismatches between Tidus cost records and actual invoices — catching silent cost leakage before it compounds.</div>
+        <div class="pillar-title">Hard Budget Guardrails</div>
+        <div class="pillar-desc">Routing cheap is not enough if individual teams run unchecked. Set hard spend limits per team, per model, or globally. Every routed request records actual token usage in real time — before billing. A request that would breach a budget ceiling is blocked or rerouted to a cheaper tier before it executes. Monthly billing reconciliation against provider CSV invoices flags any gap between Tidus cost records and what vendors actually charged.</div>
         <div class="tags">
           <span class="tag">Per-team limits</span>
-          <span class="tag">Real-time enforcement</span>
-          <span class="tag">Overage alerting</span>
-          <span class="tag">CSV reconciliation</span>
+          <span class="tag">Pre-execution enforcement</span>
+          <span class="tag">Overage blocking</span>
+          <span class="tag">Invoice reconciliation</span>
         </div>
       </div>
 
       <div class="pillar-card wide">
         <div class="pillar-num">Pillar 4</div>
         <div class="pillar-icon">🔬</div>
-        <div class="pillar-title">Drift Detection &amp; Auto-Remediation</div>
-        <div class="pillar-desc">AI models change behaviour without notice — latency spikes, context limits shift, tokenization diverges, prices move. Tidus runs four drift detectors on a 5-minute cycle: <strong>Latency</strong> (measured P50 vs catalog baseline), <strong>Context</strong> (overflow rate in recent requests), <strong>Tokenization</strong> (estimated vs actual token divergence over 7 days), and <strong>Price</strong> (unusual change frequency or magnitude). Warning events escalate the model to priority probing. Critical events auto-create a <code>hard_disable</code> override and remove the model from routing immediately. After 3 consecutive healthy probe cycles, the override is automatically lifted and the model returns to rotation. Every event is linked to the exact registry revision that was active at detection time — enabling precise postmortems.</div>
+        <div class="pillar-title">Drift-Triggered Auto-Remediation</div>
+        <div class="pillar-desc">Cost overruns hide in model behaviour drift that no dashboard catches in time. Tidus runs four detectors every 5 minutes: <strong>Latency drift</strong> — when measured P50 exceeds the catalog baseline by 50%, throughput falls and queue costs rise. <strong>Context drift</strong> — rising context overflow rate means tokens are being wasted on truncated prompts. <strong>Tokenization drift</strong> — when estimated vs actual token counts diverge by 25%+, your cost model is broken and every budget calculation is wrong. <strong>Price drift</strong> — more than 3 price changes in 30 days signals an unstable vendor; single changes ≥15% trigger re-evaluation. Warning severity escalates the model to priority probing. Critical severity auto-creates a <code>hard_disable</code> override — the model is removed from routing immediately, with zero manual intervention. After 3 consecutive healthy probe cycles, the override is lifted automatically and routing resumes.</div>
         <div class="tags">
-          <span class="tag">4 drift detectors</span>
-          <span class="tag">5-min probe cycle</span>
-          <span class="tag">Auto-disable</span>
-          <span class="tag">Auto-recovery</span>
-          <span class="tag">Revision-linked events</span>
+          <span class="tag">Latency detector</span>
+          <span class="tag">Context detector</span>
+          <span class="tag">Tokenization detector</span>
+          <span class="tag">Price detector</span>
+          <span class="tag">Auto-disable + auto-recover</span>
           <span class="tag">Prometheus metrics</span>
         </div>
       </div>
@@ -409,12 +439,12 @@ footer{background:#0a0f1e;padding:48px}
       <div class="pillar-card">
         <div class="pillar-num">Pillar 5</div>
         <div class="pillar-icon">📰</div>
-        <div class="pillar-title">Weekly Market Intelligence</div>
-        <div class="pillar-desc">Every Sunday at 02:00 UTC, Tidus syncs prices and emails your team a market intelligence report. The magazine highlights price drops (savings opportunities), price increases (cost risk), new model additions, and models with stale data. Delivered as a richly-formatted HTML email — no third-party analytics, no tracking pixels.</div>
+        <div class="pillar-title">Market-Aware Price Intelligence</div>
+        <div class="pillar-desc">AI pricing is volatile. DeepSeek cut prices 3.6% last week. Gemini 2.5 Flash dropped 14% the week before. If your routing doesn't pick that up, you keep paying the old rate indefinitely. Every Sunday, Tidus syncs prices and emails your team a market intelligence report surfacing drops, rises, and models where you're routing above the cheapest capable alternative — before the savings opportunity passes.</div>
         <div class="tags">
-          <span class="tag">Weekly pricing sync</span>
-          <span class="tag">HTML email magazine</span>
-          <span class="tag">Price history</span>
+          <span class="tag">Sunday 02:00 UTC sync</span>
+          <span class="tag">Drop/rise alerts</span>
+          <span class="tag">Savings opportunities</span>
           <span class="tag">41 models tracked</span>
         </div>
       </div>
@@ -468,12 +498,91 @@ footer{background:#0a0f1e;padding:48px}
 
 <hr class="divider">
 
+<!-- SOURCES SECTION -->
+<section class="sources" id="sources">
+  <div class="section-inner">
+    <p class="section-tag">Model Discovery &amp; Pricing Sources</p>
+    <h2 class="section-title">41 curated models — not the entire market. Here's why.</h2>
+    <p class="section-sub">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Tidus tracks 41 of them. The curation is deliberate — and the pricing data comes from two independent sources that cross-check each other.</p>
+
+    <div class="why-box">
+      <p><strong>Why 41, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
+      <p>The catalog grows continuously. Adding a new model is 3 lines in <code>hardcoded_source.py</code> — the model ID, input price, and output price. Community pull requests are welcome. If a vendor releases a new stable model, open a PR and it will be tracked in the next weekly sync.</p>
+      <div class="add-model">
+        <span>➕ To add a model:</span>
+        <code>"gemini-4.0-flash": {"input": 0.0002, "output": 0.0008}</code>
+        <span style="color:#aaa">— one entry in hardcoded_source.py · priced in $/1K tokens</span>
+      </div>
+    </div>
+
+    <div style="margin-top:36px">
+      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">12 Vendors Currently Tracked</h3>
+      <p style="font-size:14px;color:#888;margin-bottom:16px">Model counts reflect the active catalog as of April 2026.</p>
+      <div class="vendor-grid">
+        <div class="v-card"><span class="v-name">Anthropic</span><span class="v-count">3 models</span></div>
+        <div class="v-card"><span class="v-name">OpenAI</span><span class="v-count">10 models</span></div>
+        <div class="v-card"><span class="v-name">Google</span><span class="v-count">5 models</span></div>
+        <div class="v-card"><span class="v-name">Mistral AI</span><span class="v-count">7 models</span></div>
+        <div class="v-card"><span class="v-name">DeepSeek</span><span class="v-count">3 models</span></div>
+        <div class="v-card"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">3 models</span></div>
+        <div class="v-card"><span class="v-name">xAI</span><span class="v-count">2 models</span></div>
+        <div class="v-card"><span class="v-name">Groq</span><span class="v-count">2 models</span></div>
+        <div class="v-card"><span class="v-name">Cohere</span><span class="v-count">2 models</span></div>
+        <div class="v-card"><span class="v-name">Perplexity</span><span class="v-count">2 models</span></div>
+        <div class="v-card"><span class="v-name">Moonshot</span><span class="v-count">1 model</span></div>
+        <div class="v-card"><span class="v-name">Together AI</span><span class="v-count">1 model</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:40px">
+      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">How Pricing Data Is Obtained</h3>
+      <p style="font-size:14px;color:#888;margin-bottom:20px">Two independent sources are queried every Sunday. A MAD-based consensus algorithm cross-checks them and rejects outliers before any revision is created.</p>
+      <div class="src-grid">
+
+        <div class="src-card">
+          <div class="src-badge always">Always Available</div>
+          <div class="src-title">HardcodedSource</div>
+          <div class="src-conf">confidence = 0.70</div>
+          <div class="src-desc">A built-in verified price table covering all 41 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+        </div>
+
+        <div class="src-card">
+          <div class="src-badge optional">Optional — Env Var</div>
+          <div class="src-title">TidusPricingFeedSource</div>
+          <div class="src-conf">confidence = 0.85</div>
+          <div class="src-desc">Enabled by setting <code style="background:#f0f2f5;padding:2px 5px;border-radius:4px;font-size:12px">TIDUS_PRICING_FEED_URL</code>. Sends a single <code style="background:#f0f2f5;padding:2px 5px;border-radius:4px;font-size:12px">GET /prices?schema_version=1</code> — no customer data, no messages, no team IDs. Supports HMAC-SHA256 signature verification to prevent feed tampering. A circuit breaker opens after 5 consecutive failures and resets after 5 minutes, so a feed outage never blocks routing.</div>
+        </div>
+
+        <div class="src-card">
+          <div class="src-badge algo">Consensus Algorithm</div>
+          <div class="src-title">MAD Outlier Detection</div>
+          <div class="src-conf">Modified Z-Score · threshold = 3.5</div>
+          <div class="src-desc">When both sources provide a quote for the same model, the Modified Z-Score (Median Absolute Deviation) detects statistical outliers and rejects them. If one source shows $0.27/1M and the other shows $2.70/1M, the outlier is discarded — not averaged. If all sources agree exactly (MAD = 0), all are accepted. Only after consensus passes does a new versioned revision get written to the DB.</div>
+        </div>
+
+      </div>
+    </div>
+
+    <div style="margin-top:28px;padding:20px 24px;background:#fff;border-radius:12px;
+                border:1px solid #e9ecef;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="font-size:22px">🔒</div>
+      <div>
+        <div style="font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:3px">Your data never leaves your infrastructure</div>
+        <div style="font-size:13px;color:#666">The pricing feed only receives <em>pricing queries</em> — never your messages, prompts, team names, or usage data. Routing computation always runs locally. This is the npm-registry model: pricing data is centralised, execution is on-prem.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
 <!-- PRICING TABLE -->
 <section id="pricing">
   <div class="section-inner">
     <p class="section-tag">Model Catalog</p>
-    <h2 class="section-title">41 models across 12 vendors — prices updated weekly</h2>
-    <p class="section-sub">All prices USD per 1M tokens. Verified April 9, 2026. Ranked by input price — highest first.</p>
+    <h2 class="section-title">41 production-ready models across 12 vendors</h2>
+    <p class="section-sub">All prices USD per 1M tokens. Verified April 9, 2026. Ranked by input price — highest first. Only commercially stable, publicly-priced models are listed.</p>
 
     <div style="margin-top:32px">
       <div class="pricing-legend">
