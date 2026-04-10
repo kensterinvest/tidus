@@ -413,7 +413,7 @@ async def export_overrides(
     headers: dict[str, str] = {"Content-Type": "application/yaml"}
     signing_key = settings.tidus_registry_export_signing_key
     if signing_key:
-        sig = hmac.new(signing_key.encode(), yaml_bytes, hashlib.sha256).hexdigest()
+        sig = hmac.digest(signing_key.encode(), yaml_bytes, hashlib.sha256).hex()
         headers["X-Tidus-Signature"] = f"hmac-sha256={sig}"
     else:
         log.warning("registry_export_unsigned", reason="TIDUS_REGISTRY_EXPORT_SIGNING_KEY not set")

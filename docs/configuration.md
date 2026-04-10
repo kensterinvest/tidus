@@ -202,6 +202,52 @@ SEMANTIC_CACHE_THRESHOLD=0.95
 
 # Redis backend (optional — defaults to in-memory; roadmap)
 # REDIS_URL=redis://localhost:6379/0
+
+# ── Email delivery (weekly pricing reports) ──────────────────────────────────
+# Resend (recommended — no SMTP config needed)
+RESEND_API_KEY=re_...
+# Fallback SMTP (optional — used if RESEND_API_KEY is not set)
+# SMTP_HOST=smtp.yourprovider.com
+# SMTP_PORT=587
+# SMTP_USER=you@yourprovider.com
+# SMTP_PASS=yourpassword
+# SMTP_FROM=reports@yourdomain.com
+
+# ── Registry & pricing feed (v1.1.0) ─────────────────────────────────────────
+# Optional remote pricing feed URL (disabled by default — no customer data sent)
+# TIDUS_PRICING_FEED_URL=https://pricing.tidus.ai/prices
+# HMAC-SHA256 key for verifying feed response signatures (recommended if URL set)
+# TIDUS_PRICING_FEED_SIGNING_KEY=your-secret-key
+# HMAC-SHA256 key for signing the /registry/overrides/export bundle
+# TIDUS_REGISTRY_EXPORT_SIGNING_KEY=your-secret-key
+# How many days to retain SUPERSEDED revisions (default: 90)
+# REGISTRY_REVISION_RETENTION_DAYS=90
+
+# CORS allowed origins (comma-separated; leave empty to disallow all cross-origin requests)
+# CORS_ALLOWED_ORIGINS=https://app.yourdomain.com,https://dashboard.yourdomain.com
 ```
 
 Only the keys for vendors you intend to use are required. Tidus routes only to models whose vendor adapter has a valid API key (or is local).
+
+---
+
+## Subscribers
+
+The weekly pricing report subscriber list lives in `config/subscribers.yaml`:
+
+```yaml
+subscribers:
+  - active: true
+    email: you@company.com
+    name: Your Name
+    subscribed_at: '2026-04-09'
+```
+
+**To subscribe:** `POST /api/v1/subscribe` with `{"email": "...", "name": "..."}`, or use the web form at `GET /subscribe`.
+
+**To unsubscribe:** Set `active: false` for the entry in `config/subscribers.yaml`, or call `DELETE` on the subscriber entry (admin). The weekly job skips all entries where `active: false`.
+
+**Email delivery priority:**
+1. Resend API (`RESEND_API_KEY` set) — HTML + plain-text, no SMTP config
+2. SMTP fallback (`SMTP_HOST` set) — plain-text only
+3. Dev fallback (neither set) — report saved to `reports/` directory only

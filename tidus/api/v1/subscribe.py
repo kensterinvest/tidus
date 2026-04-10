@@ -7,10 +7,14 @@ Routes:
 
 from __future__ import annotations
 
-from fastapi import APIRouter, HTTPException
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse, JSONResponse
 from pydantic import BaseModel, field_validator
 
+from tidus.auth.middleware import TokenPayload
+from tidus.auth.rbac import Role, require_role
 from tidus.reporting.subscribers import add_subscriber, load_subscribers
 
 router = APIRouter(tags=["Reports"])
@@ -169,8 +173,10 @@ async def subscribe(req: SubscribeRequest) -> JSONResponse:
 
 
 @router.get("/subscribers", summary="List active subscribers (admin)")
-async def list_subscribers() -> dict:
-    """Return count and email list of active subscribers."""
+async def list_subscribers(
+    _: Annotated[TokenPayload, Depends(require_role(Role.admin))],
+) -> dict:
+    """Return count and email list of active subscribers. Admin only."""
     subs = load_subscribers()
     return {
         "count": len(subs),
