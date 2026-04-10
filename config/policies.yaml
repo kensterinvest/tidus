@@ -69,3 +69,12 @@ pricing_sync:
   hour_utc: 2
   # Minimum price delta (fraction) to log a PriceChangeRecord
   change_threshold: 0.05  # 5%
+
+canary:
+  # Number of randomly sampled models to probe before promoting a revision.
+  # Set to 0 in local dev (no API keys). In production, 3 is recommended.
+  # Override via TIDUS_CANARY_SAMPLE_SIZE env var or set here.
+  sample_size: 3
+  max_attempts: 3
+  retry_delay_seconds: 30
+  pass_rate: 0.67

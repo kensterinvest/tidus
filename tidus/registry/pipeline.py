@@ -102,10 +102,16 @@ class RegistryPipeline:
             DryRunResult    — when dry_run=True (no DB writes).
             None            — no changes, validation failed, or canary failed.
         """
+        import os
+
         from tidus.utils.yaml_loader import load_yaml
         raw = load_yaml(policies_path)
         threshold = raw.get("pricing_sync", {}).get("change_threshold", 0.05)
         canary_cfg = raw.get("canary", {})
+        # Allow TIDUS_CANARY_SAMPLE_SIZE=0 in dev to skip Tier 3 without editing policies.yaml
+        env_sample = os.environ.get("TIDUS_CANARY_SAMPLE_SIZE")
+        if env_sample is not None:
+            canary_cfg = {**canary_cfg, "sample_size": int(env_sample)}
 
         lock_session = None
         lock_held = False
