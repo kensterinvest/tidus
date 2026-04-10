@@ -34,6 +34,7 @@ from tidus.api.v1 import (
     registry,
     reports,
     route,
+    subscribe,
     sync,
     usage,
 )
@@ -196,6 +197,9 @@ def create_app() -> FastAPI:
     app.include_router(reports.router, prefix="/api/v1")
     app.include_router(registry.router, prefix="/api/v1")
     app.include_router(billing.router, prefix="/api/v1")
+    app.include_router(subscribe.router, prefix="/api/v1")
+    # Subscribe page also reachable directly at /subscribe (no /api/v1 prefix)
+    app.include_router(subscribe.router)
 
     # ── Prometheus metrics ────────────────────────────────────────────────────
     Instrumentator(

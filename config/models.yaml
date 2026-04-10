@@ -1,1088 +1,1248 @@
-# Tidus Model Registry
-# ─────────────────────────────────────────────────────────────────────────────
-# This file is the single source of truth for all AI model pricing, tiers,
-# and capabilities. It is read at startup and refreshed weekly by the
-# price_sync job. Price changes are written back here and logged to the DB.
-#
-# Fields:
-#   model_id          — unique identifier (used in API requests)
-#   vendor            — matches the adapter class vendor constant
-#   tier              — 1 (premium/expensive) → 4 (local/free)
-#   max_context       — maximum context window in tokens
-#   input_price       — USD per 1K input tokens  (0.0 for local models)
-#   output_price      — USD per 1K output tokens (0.0 for local models)
-#   tokenizer         — tiktoken_cl100k | tiktoken_o200k | anthropic |
-#                       sentencepiece | google | ollama
-#   latency_p50_ms    — baseline median latency; updated by health probes
-#   capabilities      — list from: chat, code, reasoning, extraction,
-#                       classification, summarization, creative, multimodal,
-#                       long_context, agents
-#   min_complexity    — simple | moderate | complex | critical
-#   max_complexity    — simple | moderate | complex | critical
-#   is_local          — true = self-hosted, no API key, zero cost
-#   enabled           — false = excluded from routing (auto-set on failure)
-#   deprecated        — true = vendor EOL; route via fallbacks only
-#   fallbacks         — ordered list: cheaper → mid → premium → local
-#   last_price_check  — ISO 8601 date; updated by weekly sync job
-#   last_health_check — ISO 8601 datetime; updated by health probe
-#
-# ADAPTER STATUS:
-#   ✅ openai       — tidus/adapters/openai_adapter.py
-#   ✅ anthropic    — tidus/adapters/anthropic_adapter.py
-#   ✅ google       — tidus/adapters/google_adapter.py
-#   ✅ mistral      — tidus/adapters/mistral_adapter.py
-#   ✅ deepseek     — tidus/adapters/deepseek_adapter.py
-#   ✅ xai          — tidus/adapters/xai_adapter.py
-#   ✅ moonshot     — tidus/adapters/moonshot_adapter.py
-#   ✅ ollama       — tidus/adapters/ollama_adapter.py
-#   🔧 cohere       — adapter not yet built (community contribution welcome)
-#   🔧 qwen         — adapter not yet built; OpenAI-compatible API
-#   🔧 perplexity   — adapter not yet built; search-augmented generation
-#   🔧 together     — adapter not yet built; OpenAI-compatible API
-#   🔧 groq         — adapter not yet built; OpenAI-compatible API
-#
-# PRICING AUDIT: 2026-04-03
-#   Sources: openai.com/api/pricing · platform.claude.com · ai.google.dev
-#            mistral.ai/pricing · api-docs.deepseek.com · docs.x.ai
-#            platform.moonshot.ai · cohere.com/pricing
-#            alibabacloud.com/help/en/model-studio/model-pricing
-#            docs.perplexity.ai · together.ai/pricing · groq.com/pricing
-# ─────────────────────────────────────────────────────────────────────────────
-
 models:
-
-  # ── OPENAI ──────────────────────────────────────────────────────────────────
-  # Globally available. Widest model range. Premium and budget tiers covered.
-  # gpt-4o added — still widely deployed baseline for multimodal work.
-  # gpt-4.1-mini and gpt-4.1-nano added — ultra-cheap 1M-context options.
-
-  - model_id: "o3"
-    vendor: "openai"
-    tier: 1
-    max_context: 200000
-    input_price: 0.010      # $10/1M — corrected from 0.002 (was 5× underpriced)
-    output_price: 0.040     # $40/1M — reasoning models bill heavily on output
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 2500
-    capabilities: [chat, code, reasoning, agents]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "o4-mini"
-    vendor: "openai"
-    tier: 2
-    max_context: 200000
-    input_price: 0.0011     # $1.10/1M
-    output_price: 0.0044    # $4.40/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 1200
-    capabilities: [chat, code, reasoning, extraction]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-4.1"
-    vendor: "openai"
-    tier: 1
-    max_context: 1000000
-    input_price: 0.002      # $2/1M
-    output_price: 0.008     # $8/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 1200
-    capabilities: [chat, code, reasoning, extraction, agents, long_context]
-    min_complexity: moderate
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1-mini", "claude-haiku-4-5", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-4.1-mini"
-    vendor: "openai"
-    tier: 3
-    max_context: 1000000
-    input_price: 0.0001     # $0.10/1M — ultra-cheap, 1M context
-    output_price: 0.0004    # $0.40/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 500
-    capabilities: [chat, extraction, classification, summarization, long_context]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1-nano", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-4.1-nano"
-    vendor: "openai"
-    tier: 3
-    max_context: 1000000
-    input_price: 0.00005    # $0.05/1M — smallest/cheapest OpenAI model
-    output_price: 0.0002    # $0.20/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 200
-    capabilities: [chat, classification, extraction]
-    min_complexity: simple
-    max_complexity: simple
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-scout-ollama", "phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-4o"
-    vendor: "openai"
-    tier: 2
-    max_context: 128000
-    input_price: 0.0025     # $2.50/1M — widely deployed multimodal baseline
-    output_price: 0.010     # $10/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 800
-    capabilities: [chat, code, reasoning, multimodal, extraction, summarization]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1-mini", "claude-haiku-4-5", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-4o-mini"
-    vendor: "openai"
-    tier: 3
-    max_context: 128000
-    input_price: 0.00015    # $0.15/1M
-    output_price: 0.00060   # $0.60/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 400
-    capabilities: [chat, extraction, classification, summarization]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1-nano", "claude-haiku-4-5", "mistral-small-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gpt-oss-120b"
-    vendor: "openai"
-    tier: 2
-    max_context: 128000
-    input_price: 0.000039   # $0.039/1M — open-weight via OpenAI API
-    output_price: 0.0001    # $0.10/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 900
-    capabilities: [chat, code, reasoning, extraction]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4o-mini", "mistral-medium", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── OPENAI CODEX ────────────────────────────────────────────────────────────
-
-  - model_id: "gpt-5-codex"
-    vendor: "openai"
-    tier: 1
-    max_context: 400000
-    input_price: 0.00125    # $1.25/1M
-    output_price: 0.010     # $10/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 3500
-    capabilities: [code, agents, reasoning]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["o3", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "codex-mini-latest"
-    vendor: "openai"
-    tier: 3
-    max_context: 200000
-    input_price: 0.00075    # $0.75/1M
-    output_price: 0.003     # $3/1M
-    tokenizer: "tiktoken_o200k"
-    latency_p50_ms: 1500
-    capabilities: [code, extraction]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4o-mini", "mistral-small", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── ANTHROPIC CLAUDE ────────────────────────────────────────────────────────
-  # Globally available. 50% batch processing discount on all models.
-  # Strong on reasoning, long-context, and agentic workloads.
-
-  - model_id: "claude-opus-4-6"
-    vendor: "anthropic"
-    tier: 1
-    max_context: 1000000
-    input_price: 0.005      # $5/1M
-    output_price: 0.025     # $25/1M
-    tokenizer: "anthropic"
-    latency_p50_ms: 3000
-    capabilities: [chat, code, reasoning, agents, long_context, summarization]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["claude-sonnet-4-6", "gpt-4.1", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "claude-sonnet-4-6"
-    vendor: "anthropic"
-    tier: 2
-    max_context: 1000000
-    input_price: 0.003      # $3/1M
-    output_price: 0.015     # $15/1M
-    tokenizer: "anthropic"
-    latency_p50_ms: 1000
-    capabilities: [chat, code, reasoning, extraction, summarization, agents]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["claude-haiku-4-5", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "claude-haiku-4-5"
-    vendor: "anthropic"
-    tier: 3
-    max_context: 200000
-    input_price: 0.001      # $1/1M
-    output_price: 0.005     # $5/1M
-    tokenizer: "anthropic"
-    latency_p50_ms: 300
-    capabilities: [chat, extraction, classification, summarization]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4o-mini", "mistral-small", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── GOOGLE GEMINI ───────────────────────────────────────────────────────────
-  # Globally available via Google AI Studio and Vertex AI.
-  # Note: Pro models double in price for prompts >200K tokens.
-  # gemini-2.5-pro and gemini-2.5-flash added — current production generation.
-  # gemini-2.0-flash added — very popular, same price as 2.5-flash.
-  # gemini-3.1-flash price corrected (was 4× underpriced).
-
-  - model_id: "gemini-3.1-pro"
-    vendor: "google"
-    tier: 1
-    max_context: 2000000
-    input_price: 0.002      # $2/1M (≤200K); doubles above 200K
-    output_price: 0.012     # $12/1M
-    tokenizer: "google"
-    latency_p50_ms: 1800
-    capabilities: [chat, code, reasoning, multimodal, long_context, extraction]
-    min_complexity: moderate
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gemini-3.1-flash", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemini-3.1-flash"
-    vendor: "google"
-    tier: 3
-    max_context: 1000000
-    input_price: 0.001      # $1/1M — corrected from 0.00025 (was 4× underpriced)
-    output_price: 0.004     # $4/1M — corrected from 0.0015
-    tokenizer: "google"
-    latency_p50_ms: 250
-    capabilities: [chat, extraction, classification, summarization, multimodal]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4o-mini", "claude-haiku-4-5", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemini-2.5-pro"
-    vendor: "google"
-    tier: 1
-    max_context: 1000000
-    input_price: 0.0013     # $1.30/1M (≤200K); $2.50/1M above 200K
-    output_price: 0.010     # $10/1M
-    tokenizer: "google"
-    latency_p50_ms: 1500
-    capabilities: [chat, code, reasoning, multimodal, long_context, extraction, agents]
-    min_complexity: moderate
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gemini-2.5-flash", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemini-2.5-flash"
-    vendor: "google"
-    tier: 2
-    max_context: 1000000
-    input_price: 0.00075    # $0.75/1M
-    output_price: 0.003     # $3/1M
-    tokenizer: "google"
-    latency_p50_ms: 300
-    capabilities: [chat, code, extraction, summarization, multimodal, long_context]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gemini-3.1-flash", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemini-2.0-flash"
-    vendor: "google"
-    tier: 3
-    max_context: 1000000
-    input_price: 0.00075    # $0.75/1M — widely deployed previous generation
-    output_price: 0.003     # $3/1M
-    tokenizer: "google"
-    latency_p50_ms: 350
-    capabilities: [chat, extraction, classification, summarization, multimodal]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gemini-2.5-flash", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemini-nano"
-    vendor: "google"
-    tier: 4
-    max_context: 32000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "google"
-    latency_p50_ms: 100
-    capabilities: [chat, classification]
-    min_complexity: simple
-    max_complexity: simple
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: []
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── MISTRAL ─────────────────────────────────────────────────────────────────
-  # EU-based — ideal for GDPR / European data residency requirements.
-  # mistral-large-3 price corrected (was 4× underpriced).
-  # mistral-nemo added — extremely cheap 12B (NVIDIA partnership).
-  # mistral-small updated to small-4 spec (256K context, MoE hybrid).
-  # devstral-small added — budget code agent.
-
-  - model_id: "mistral-large-3"
-    vendor: "mistral"
-    tier: 2
-    max_context: 128000
-    input_price: 0.002      # $2/1M — corrected from 0.0005 (was 4× underpriced)
-    output_price: 0.006     # $6/1M — corrected from 0.0015
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 900
-    capabilities: [chat, code, reasoning, extraction, summarization]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["mistral-small", "gpt-4o-mini", "mistral-small-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "mistral-medium"
-    vendor: "mistral"
-    tier: 2
-    max_context: 128000
-    input_price: 0.0004     # $0.40/1M
-    output_price: 0.002     # $2/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 600
-    capabilities: [chat, code, extraction, summarization]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["mistral-small", "gpt-4o-mini", "mistral-small-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "mistral-small"
-    vendor: "mistral"
-    tier: 3
-    max_context: 256000     # updated to small-4 spec (was 128K)
-    input_price: 0.001      # $1/1M — updated to small-4 pricing
-    output_price: 0.003     # $3/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 300
-    capabilities: [chat, extraction, classification, summarization]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["mistral-nemo", "gpt-4o-mini", "mistral-small-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "mistral-nemo"
-    vendor: "mistral"
-    tier: 3
-    max_context: 128000
-    input_price: 0.00002    # $0.02/1M — one of the cheapest API models available
-    output_price: 0.00004   # $0.04/1M — NVIDIA partnership 12B model
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 220
-    capabilities: [chat, extraction, classification]
-    min_complexity: simple
-    max_complexity: simple
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-scout-ollama", "phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "codestral"
-    vendor: "mistral"
-    tier: 2
-    max_context: 256000
-    input_price: 0.0002     # $0.20/1M
-    output_price: 0.0006    # $0.60/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 700
-    capabilities: [code]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "deepseek-v3"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "devstral"
-    vendor: "mistral"
-    tier: 2
-    max_context: 128000
-    input_price: 0.0004     # $0.40/1M
-    output_price: 0.002     # $2/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 600
-    capabilities: [code, agents]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["codestral", "deepseek-v3", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "devstral-small"
-    vendor: "mistral"
-    tier: 3
-    max_context: 128000
-    input_price: 0.0001     # $0.10/1M — budget code agent
-    output_price: 0.0003    # $0.30/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 400
-    capabilities: [code]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["mistral-nemo", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── DEEPSEEK ────────────────────────────────────────────────────────────────
-  # Globally available; also on Azure AI Foundry.
-  # 90% cache discount on input tokens available.
-  # deepseek-v3 output price corrected ($0.00028 → $0.00084).
-  # deepseek-v4 added (March 2026 release).
-
-  - model_id: "deepseek-r1"
-    vendor: "deepseek"
-    tier: 1
-    max_context: 128000
-    input_price: 0.00055    # $0.55/1M
-    output_price: 0.00219   # $2.19/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 2000
-    capabilities: [reasoning, code, chat]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["deepseek-v3", "claude-sonnet-4-6", "deepseek-r1-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "deepseek-v3"
-    vendor: "deepseek"
-    tier: 2
-    max_context: 128000
-    input_price: 0.00028    # $0.28/1M — corrected from 0.00014
-    output_price: 0.00084   # $0.84/1M — corrected from 0.00028 (was 3× off)
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 800
-    capabilities: [chat, code, extraction, reasoning]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["mistral-medium", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "deepseek-v4"
-    vendor: "deepseek"
-    tier: 2
-    max_context: 128000
-    input_price: 0.00030    # $0.30/1M — March 2026 release
-    output_price: 0.00050   # $0.50/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 700
-    capabilities: [chat, code, reasoning, extraction, agents]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["deepseek-v3", "gpt-4o-mini", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── xAI GROK ────────────────────────────────────────────────────────────────
-  # Globally available. 50% batch API discount available.
-  # grok-3-fast added — higher price but significantly lower latency.
-
-  - model_id: "grok-3"
-    vendor: "xai"
-    tier: 1
-    max_context: 131072
-    input_price: 0.003      # $3/1M
-    output_price: 0.015     # $15/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 1500
-    capabilities: [chat, code, reasoning, agents]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gpt-4.1", "claude-sonnet-4-6", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "grok-3-fast"
-    vendor: "xai"
-    tier: 1
-    max_context: 131072
-    input_price: 0.005      # $5/1M — faster variant, premium price
-    output_price: 0.025     # $25/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 600
-    capabilities: [chat, code, reasoning, agents]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["grok-3", "gpt-4.1", "claude-sonnet-4-6"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── KIMI (MOONSHOT AI) ──────────────────────────────────────────────────────
-  # Primary focus Asia-Pacific; accessible globally via API.
-  # 75% automatic context caching discount. Web search add-on: $0.005/call.
-  # 4–17× cheaper than GPT-5.4 for comparable tasks.
-
-  - model_id: "kimi-k2.5"
-    vendor: "moonshot"
-    tier: 2
-    max_context: 1000000
-    input_price: 0.0006     # $0.60/1M
-    output_price: 0.0025    # $2.50/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 1100
-    capabilities: [chat, code, reasoning, long_context, agents]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: true
-    deprecated: false
-    fallbacks: ["gemini-2.5-flash", "deepseek-v3", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── COHERE ──────────────────────────────────────────────────────────────────
-  # Globally available; EU VPC deployment for data residency.
-  # Specialises in RAG, tool-use, and structured output extraction.
-  # 🔧 STATUS: enabled: false — adapter not yet built.
-  #    Contribution guide: tidus/adapters/base.py
-
-  - model_id: "command-r-plus"
-    vendor: "cohere"
-    tier: 2
-    max_context: 128000
-    input_price: 0.0025     # $2.50/1M
-    output_price: 0.010     # $10/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 900
-    capabilities: [chat, code, reasoning, extraction, summarization, agents]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["command-r", "mistral-large-3", "gpt-4o"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "command-r"
-    vendor: "cohere"
-    tier: 3
-    max_context: 128000
-    input_price: 0.0005     # $0.50/1M
-    output_price: 0.0015    # $1.50/1M
-    tokenizer: "sentencepiece"
-    latency_p50_ms: 500
-    capabilities: [chat, extraction, summarization, classification]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["mistral-small", "gpt-4o-mini", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── ALIBABA QWEN ────────────────────────────────────────────────────────────
-  # Dominant in China and Southeast Asia; globally accessible via Alibaba Cloud.
-  # Batch invocation at 50% of real-time pricing.
-  # OpenAI-compatible API — adapter should be straightforward to build.
-  # qwen2.5 is the most popular Ollama model in Asia-Pacific.
-  # 🔧 STATUS: enabled: false — adapter not yet built.
-
-  - model_id: "qwen-max"
-    vendor: "qwen"
-    tier: 1
-    max_context: 1000000
-    input_price: 0.010      # $10/1M
-    output_price: 0.030     # $30/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 2000
-    capabilities: [chat, code, reasoning, multimodal, long_context, agents]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["qwen-plus", "deepseek-v3", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "qwen-plus"
-    vendor: "qwen"
-    tier: 2
-    max_context: 131072
-    input_price: 0.003      # $3/1M
-    output_price: 0.009     # $9/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 900
-    capabilities: [chat, code, extraction, summarization, reasoning]
-    min_complexity: moderate
-    max_complexity: complex
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["qwen-flash", "deepseek-v3", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "qwen-flash"
-    vendor: "qwen"
-    tier: 3
-    max_context: 1000000
-    input_price: 0.0004     # $0.40/1M — very cheap with 1M context
-    output_price: 0.0012    # $1.20/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 350
-    capabilities: [chat, extraction, classification, summarization, long_context]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["mistral-nemo", "gpt-4o-mini", "qwen2.5-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── PERPLEXITY SONAR ────────────────────────────────────────────────────────
-  # Globally available. Search-augmented generation — answers grounded in
-  # live web results with citations. Unique capability for real-time info.
-  # Citation tokens not billed (2026). Search requests: $5/1K calls.
-  # 🔧 STATUS: enabled: false — adapter not yet built.
-
-  - model_id: "sonar-pro"
-    vendor: "perplexity"
-    tier: 1
-    max_context: 200000
-    input_price: 0.003      # $3/1M — plus $5/1K search requests
-    output_price: 0.015     # $15/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 2000
-    capabilities: [chat, reasoning, summarization, extraction]
-    min_complexity: moderate
-    max_complexity: critical
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["sonar", "gpt-4.1", "claude-sonnet-4-6"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "sonar"
-    vendor: "perplexity"
-    tier: 3
-    max_context: 127072
-    input_price: 0.001      # $1/1M — plus $5/1K search requests
-    output_price: 0.001     # $1/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 1200
-    capabilities: [chat, summarization, extraction]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["gpt-4o-mini", "mistral-small", "llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── TOGETHER AI ─────────────────────────────────────────────────────────────
-  # Globally available. 200+ open-source models on one API.
-  # Llama 4 Maverick via Together: GPT-4 class at ~10× lower cost.
-  # OpenAI-compatible API — adapter should be straightforward to build.
-  # 🔧 STATUS: enabled: false — adapter not yet built.
-
-  - model_id: "together-llama4-maverick"
-    vendor: "together"
-    tier: 2
-    max_context: 1000000
-    input_price: 0.00027    # $0.27/1M — GPT-4 class at fraction of cost
-    output_price: 0.00085   # $0.85/1M
-    tokenizer: "ollama"
-    latency_p50_ms: 700
-    capabilities: [chat, code, reasoning, multimodal, extraction]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["deepseek-v3", "gpt-4o-mini", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── GROQ ────────────────────────────────────────────────────────────────────
-  # Globally available. Inference-only provider running open models on LPU.
-  # Sub-200ms latency for 70B+ models — fastest inference available.
-  # Use for latency-critical routing where speed > frontier capability.
-  # OpenAI-compatible API — adapter should be straightforward to build.
-  # 50% batch discount; developer tier: 10× rate limits + 25% discount.
-  # 🔧 STATUS: enabled: false — adapter not yet built.
-
-  - model_id: "groq-llama4-maverick"
-    vendor: "groq"
-    tier: 2
-    max_context: 131072
-    input_price: 0.0005     # $0.50/1M — fast inference premium
-    output_price: 0.0015    # $1.50/1M
-    tokenizer: "ollama"
-    latency_p50_ms: 150     # LPU hardware — fastest available
-    capabilities: [chat, code, extraction, summarization, classification]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["deepseek-v3", "gpt-4o-mini", "llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "groq-deepseek-r1"
-    vendor: "groq"
-    tier: 1
-    max_context: 131072
-    input_price: 0.0010     # $1/1M — fast reasoning via LPU
-    output_price: 0.0030    # $3/1M
-    tokenizer: "tiktoken_cl100k"
-    latency_p50_ms: 300     # fast even for a reasoning model
-    capabilities: [reasoning, code, chat]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: false
-    enabled: false          # 🔧 adapter not yet built
-    deprecated: false
-    fallbacks: ["deepseek-r1", "claude-sonnet-4-6", "deepseek-r1-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  # ── LOCAL / SELF-HOSTED via Ollama ──────────────────────────────────────────
-  # Zero cost, privacy-first, no API key required.
-  # ollama pull <model-name> — use the model_id without the -ollama suffix.
-  # Extended for global coverage:
-  #   - qwen2.5 and qwen2.5-coder: most popular Ollama models in Asia-Pacific
-  #   - deepseek-r1: runs locally for privacy-sensitive reasoning
-  #   - deepseek-coder-v2: popular local code model globally
-  #   - mistral-nemo: ultra-cheap inference locally
-
-  - model_id: "llama4-maverick-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 10000000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 600
-    capabilities: [chat, code, reasoning, multimodal, extraction]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "llama4-scout-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 300
-    capabilities: [chat, classification, extraction, summarization]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "deepseek-r1-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 2500    # slow locally — CPU-bound reasoning model
-    capabilities: [reasoning, code, chat]
-    min_complexity: complex
-    max_complexity: critical
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "qwen2.5-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 400
-    capabilities: [chat, code, extraction, summarization, classification]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-scout-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null    # Most popular Ollama model in Asia-Pacific
-
-  - model_id: "qwen2.5-coder-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 500
-    capabilities: [code, extraction]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["llama4-maverick-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "deepseek-coder-v2-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 600
-    capabilities: [code, extraction]
-    min_complexity: simple
-    max_complexity: complex
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["qwen2.5-coder-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "mistral-small-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 32000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 250
-    capabilities: [chat, extraction, classification]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "mistral-nemo-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 128000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 200
-    capabilities: [chat, classification, extraction]
-    min_complexity: simple
-    max_complexity: simple
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "phi-4-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 16000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 200
-    capabilities: [chat, classification, extraction]
-    min_complexity: simple
-    max_complexity: simple
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: []
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "gemma-3-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 32000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 220
-    capabilities: [chat, summarization, extraction]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
-
-  - model_id: "falcon-11b-ollama"
-    vendor: "ollama"
-    tier: 4
-    max_context: 32000
-    input_price: 0.0
-    output_price: 0.0
-    tokenizer: "ollama"
-    latency_p50_ms: 350
-    capabilities: [chat, summarization, classification]
-    min_complexity: simple
-    max_complexity: moderate
-    is_local: true
-    enabled: true
-    deprecated: false
-    fallbacks: ["phi-4-ollama"]
-    last_price_check: "2026-04-03"
-    last_health_check: null
+- model_id: o3
+  vendor: openai
+  tier: 1
+  max_context: 200000
+  input_price: 0.01
+  output_price: 0.04
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 2500
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: o4-mini
+  vendor: openai
+  tier: 2
+  max_context: 200000
+  input_price: 0.0011
+  output_price: 0.0044
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 1200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-4.1
+  vendor: openai
+  tier: 1
+  max_context: 1000000
+  input_price: 0.002
+  output_price: 0.008
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 1200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - agents
+  - long_context
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1-mini
+  - claude-haiku-4-5
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-4.1-mini
+  vendor: openai
+  tier: 3
+  max_context: 1000000
+  input_price: 0.0004
+  output_price: 0.0016
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 500
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  - long_context
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1-nano
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-4.1-nano
+  vendor: openai
+  tier: 3
+  max_context: 1000000
+  input_price: 0.0001
+  output_price: 0.0004
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 200
+  capabilities:
+  - chat
+  - classification
+  - extraction
+  min_complexity: simple
+  max_complexity: simple
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-scout-ollama
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-4o
+  vendor: openai
+  tier: 2
+  max_context: 128000
+  input_price: 0.0025
+  output_price: 0.01
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - extraction
+  - summarization
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1-mini
+  - claude-haiku-4-5
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-4o-mini
+  vendor: openai
+  tier: 3
+  max_context: 128000
+  input_price: 0.00015
+  output_price: 0.0006
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 400
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1-nano
+  - claude-haiku-4-5
+  - mistral-small-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-oss-120b
+  vendor: openai
+  tier: 2
+  max_context: 128000
+  input_price: 3.9e-05
+  output_price: 0.0001
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 900
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4o-mini
+  - mistral-medium
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gpt-5-codex
+  vendor: openai
+  tier: 1
+  max_context: 400000
+  input_price: 0.00125
+  output_price: 0.01
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 3500
+  capabilities:
+  - code
+  - agents
+  - reasoning
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - o3
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: codex-mini-latest
+  vendor: openai
+  tier: 3
+  max_context: 200000
+  input_price: 0.00075
+  output_price: 0.003
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 1500
+  capabilities:
+  - code
+  - extraction
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4o-mini
+  - mistral-small
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: claude-opus-4-6
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.015
+  output_price: 0.075
+  tokenizer: anthropic
+  latency_p50_ms: 3000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  - long_context
+  - summarization
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-sonnet-4-6
+  - gpt-4.1
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: claude-sonnet-4-6
+  vendor: anthropic
+  tier: 2
+  max_context: 1000000
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: anthropic
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  - agents
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-haiku-4-5
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: claude-haiku-4-5
+  vendor: anthropic
+  tier: 3
+  max_context: 200000
+  input_price: 0.0008
+  output_price: 0.004
+  tokenizer: anthropic
+  latency_p50_ms: 300
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4o-mini
+  - mistral-small
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-3.1-pro
+  vendor: google
+  tier: 1
+  max_context: 2000000
+  input_price: 0.002
+  output_price: 0.012
+  tokenizer: google
+  latency_p50_ms: 1800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - extraction
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-3.1-flash
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-3.1-flash
+  vendor: google
+  tier: 3
+  max_context: 1000000
+  input_price: 0.001
+  output_price: 0.004
+  tokenizer: google
+  latency_p50_ms: 250
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  - multimodal
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4o-mini
+  - claude-haiku-4-5
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-2.5-pro
+  vendor: google
+  tier: 1
+  max_context: 1000000
+  input_price: 0.00125
+  output_price: 0.01
+  tokenizer: google
+  latency_p50_ms: 1500
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - extraction
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-2.5-flash
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-2.5-flash
+  vendor: google
+  tier: 2
+  max_context: 1000000
+  input_price: 0.0003
+  output_price: 0.0025
+  tokenizer: google
+  latency_p50_ms: 300
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - summarization
+  - multimodal
+  - long_context
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-3.1-flash
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-2.0-flash
+  vendor: google
+  tier: 3
+  max_context: 1000000
+  input_price: 0.0001
+  output_price: 0.0004
+  tokenizer: google
+  latency_p50_ms: 350
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  - multimodal
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-2.5-flash
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemini-nano
+  vendor: google
+  tier: 4
+  max_context: 32000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: google
+  latency_p50_ms: 100
+  capabilities:
+  - chat
+  - classification
+  min_complexity: simple
+  max_complexity: simple
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks: []
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-large-3
+  vendor: mistral
+  tier: 2
+  max_context: 128000
+  input_price: 0.002
+  output_price: 0.006
+  tokenizer: sentencepiece
+  latency_p50_ms: 900
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-small
+  - gpt-4o-mini
+  - mistral-small-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-medium
+  vendor: mistral
+  tier: 2
+  max_context: 128000
+  input_price: 0.0004
+  output_price: 0.002
+  tokenizer: sentencepiece
+  latency_p50_ms: 600
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - summarization
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-small
+  - gpt-4o-mini
+  - mistral-small-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-small
+  vendor: mistral
+  tier: 3
+  max_context: 256000
+  input_price: 0.0001
+  output_price: 0.0003
+  tokenizer: sentencepiece
+  latency_p50_ms: 300
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-nemo
+  - gpt-4o-mini
+  - mistral-small-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-nemo
+  vendor: mistral
+  tier: 3
+  max_context: 128000
+  input_price: 0.00015
+  output_price: 0.00015
+  tokenizer: sentencepiece
+  latency_p50_ms: 220
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  min_complexity: simple
+  max_complexity: simple
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-scout-ollama
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: codestral
+  vendor: mistral
+  tier: 2
+  max_context: 256000
+  input_price: 0.0002
+  output_price: 0.0006
+  tokenizer: sentencepiece
+  latency_p50_ms: 700
+  capabilities:
+  - code
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1
+  - claude-sonnet-4-6
+  - deepseek-v3
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: devstral
+  vendor: mistral
+  tier: 2
+  max_context: 128000
+  input_price: 0.0004
+  output_price: 0.002
+  tokenizer: sentencepiece
+  latency_p50_ms: 600
+  capabilities:
+  - code
+  - agents
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - codestral
+  - deepseek-v3
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: devstral-small
+  vendor: mistral
+  tier: 3
+  max_context: 128000
+  input_price: 0.0001
+  output_price: 0.0003
+  tokenizer: sentencepiece
+  latency_p50_ms: 400
+  capabilities:
+  - code
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-nemo
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: deepseek-r1
+  vendor: deepseek
+  tier: 1
+  max_context: 128000
+  input_price: 0.00055
+  output_price: 0.00219
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 2000
+  capabilities:
+  - reasoning
+  - code
+  - chat
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - deepseek-v3
+  - claude-sonnet-4-6
+  - deepseek-r1-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: deepseek-v3
+  vendor: deepseek
+  tier: 2
+  max_context: 128000
+  input_price: 0.00027
+  output_price: 0.00089
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 800
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - reasoning
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-medium
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: deepseek-v4
+  vendor: deepseek
+  tier: 2
+  max_context: 128000
+  input_price: 0.0003
+  output_price: 0.0005
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 700
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - agents
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - deepseek-v3
+  - gpt-4o-mini
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: grok-3
+  vendor: xai
+  tier: 1
+  max_context: 131072
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1500
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1
+  - claude-sonnet-4-6
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: grok-3-fast
+  vendor: xai
+  tier: 1
+  max_context: 131072
+  input_price: 0.005
+  output_price: 0.025
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 600
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-3
+  - gpt-4.1
+  - claude-sonnet-4-6
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: kimi-k2.5
+  vendor: moonshot
+  tier: 2
+  max_context: 1000000
+  input_price: 0.0006
+  output_price: 0.0025
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1100
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - long_context
+  - agents
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-2.5-flash
+  - deepseek-v3
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: command-r-plus
+  vendor: cohere
+  tier: 2
+  max_context: 128000
+  input_price: 0.0025
+  output_price: 0.01
+  tokenizer: sentencepiece
+  latency_p50_ms: 900
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  - agents
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - command-r
+  - mistral-large-3
+  - gpt-4o
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: command-r
+  vendor: cohere
+  tier: 3
+  max_context: 128000
+  input_price: 0.00015
+  output_price: 0.0006
+  tokenizer: sentencepiece
+  latency_p50_ms: 500
+  capabilities:
+  - chat
+  - extraction
+  - summarization
+  - classification
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - mistral-small
+  - gpt-4o-mini
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: qwen-max
+  vendor: qwen
+  tier: 1
+  max_context: 1000000
+  input_price: 0.00104
+  output_price: 0.00416
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 2000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - qwen-plus
+  - deepseek-v3
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: qwen-plus
+  vendor: qwen
+  tier: 2
+  max_context: 131072
+  input_price: 0.00026
+  output_price: 0.00078
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 900
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - summarization
+  - reasoning
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - qwen-flash
+  - deepseek-v3
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: qwen-flash
+  vendor: qwen
+  tier: 3
+  max_context: 1000000
+  input_price: 0.0004
+  output_price: 0.0012
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 350
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  - long_context
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - mistral-nemo
+  - gpt-4o-mini
+  - qwen2.5-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: sonar-pro
+  vendor: perplexity
+  tier: 1
+  max_context: 200000
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 2000
+  capabilities:
+  - chat
+  - reasoning
+  - summarization
+  - extraction
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - sonar
+  - gpt-4.1
+  - claude-sonnet-4-6
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: sonar
+  vendor: perplexity
+  tier: 3
+  max_context: 127072
+  input_price: 0.001
+  output_price: 0.001
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1200
+  capabilities:
+  - chat
+  - summarization
+  - extraction
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - gpt-4o-mini
+  - mistral-small
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: together-llama4-maverick
+  vendor: together
+  tier: 2
+  max_context: 1000000
+  input_price: 0.00027
+  output_price: 0.00085
+  tokenizer: ollama
+  latency_p50_ms: 700
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - extraction
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - deepseek-v3
+  - gpt-4o-mini
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: groq-llama4-maverick
+  vendor: groq
+  tier: 2
+  max_context: 131072
+  input_price: 0.0005
+  output_price: 0.0015
+  tokenizer: ollama
+  latency_p50_ms: 150
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - summarization
+  - classification
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - deepseek-v3
+  - gpt-4o-mini
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: groq-deepseek-r1
+  vendor: groq
+  tier: 1
+  max_context: 131072
+  input_price: 0.001
+  output_price: 0.003
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 300
+  capabilities:
+  - reasoning
+  - code
+  - chat
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: false
+  deprecated: false
+  fallbacks:
+  - deepseek-r1
+  - claude-sonnet-4-6
+  - deepseek-r1-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: llama4-maverick-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 10000000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 600
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - extraction
+  min_complexity: simple
+  max_complexity: complex
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: llama4-scout-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 300
+  capabilities:
+  - chat
+  - classification
+  - extraction
+  - summarization
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: deepseek-r1-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 2500
+  capabilities:
+  - reasoning
+  - code
+  - chat
+  min_complexity: complex
+  max_complexity: critical
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: qwen2.5-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 400
+  capabilities:
+  - chat
+  - code
+  - extraction
+  - summarization
+  - classification
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-scout-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: qwen2.5-coder-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 500
+  capabilities:
+  - code
+  - extraction
+  min_complexity: simple
+  max_complexity: complex
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - llama4-maverick-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: deepseek-coder-v2-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 600
+  capabilities:
+  - code
+  - extraction
+  min_complexity: simple
+  max_complexity: complex
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - qwen2.5-coder-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-small-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 32000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 250
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: mistral-nemo-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 128000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 200
+  capabilities:
+  - chat
+  - classification
+  - extraction
+  min_complexity: simple
+  max_complexity: simple
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: phi-4-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 16000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 200
+  capabilities:
+  - chat
+  - classification
+  - extraction
+  min_complexity: simple
+  max_complexity: simple
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks: []
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: gemma-3-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 32000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 220
+  capabilities:
+  - chat
+  - summarization
+  - extraction
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null
+- model_id: falcon-11b-ollama
+  vendor: ollama
+  tier: 4
+  max_context: 32000
+  input_price: 0.0
+  output_price: 0.0
+  tokenizer: ollama
+  latency_p50_ms: 350
+  capabilities:
+  - chat
+  - summarization
+  - classification
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: true
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - phi-4-ollama
+  last_price_check: '2026-04-03'
+  last_health_check: null

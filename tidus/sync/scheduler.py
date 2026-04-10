@@ -223,6 +223,7 @@ class TidusScheduler:
                     report_markdown=report.markdown,
                     subject=f"Tidus AI Pricing Update — {report.report_date}",
                     subscribers=subscribers,
+                    report_html=report.html,
                 )
                 log.info("pricing_report_delivered", recipients=n)
         except Exception as exc:

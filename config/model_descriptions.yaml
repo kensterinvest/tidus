@@ -1,0 +1,334 @@
+# Tidus model description database
+# Used in the weekly AI pricing report to introduce each model.
+# Fields:
+#   tagline   — one-sentence summary
+#   strengths — bullet points (what it excels at)
+#   context   — market context or background note
+
+models:
+  # ── Anthropic ──────────────────────────────────────────────────────────────
+  claude-opus-4-6:
+    tagline: "Anthropic's flagship frontier model — the gold standard for complex reasoning, deep analysis, and high-stakes tasks."
+    strengths:
+      - "Long-form document analysis and synthesis"
+      - "Multi-step reasoning and research workflows"
+      - "Nuanced instruction following with minimal hallucination"
+      - "1M token context window — fit an entire codebase"
+    context: "Opus 4.6 is Anthropic's highest-capability model. At $15/$75 per 1M tokens it is positioned as a premium reasoning engine, not an everyday workhorse."
+
+  claude-sonnet-4-6:
+    tagline: "Anthropic's workhorse — strikes the best balance of capability and cost in the Claude family."
+    strengths:
+      - "Strong coding and debugging across all major languages"
+      - "Reliable summarization and extraction"
+      - "Fast enough for interactive applications"
+      - "1M token context at $3/$15 per 1M — excellent value for complex tasks"
+    context: "Sonnet 4.6 is the model Claude Code (the tool you're using right now) runs on. Anthropic positioned it as the everyday high-quality model while Opus handles the hardest problems."
+
+  claude-haiku-4-5:
+    tagline: "Anthropic's fastest and most affordable Claude — purpose-built for high-volume, latency-sensitive workloads."
+    strengths:
+      - "Sub-second response times for chat and classification"
+      - "Cost-efficient at $0.80/$4 per 1M tokens"
+      - "200K context — handles most enterprise documents"
+      - "Strong at routing, triage, and pre-processing tasks"
+    context: "Haiku 4.5 is designed to replace GPT-3.5-level tasks at a fraction of the cost while maintaining Anthropic's safety standards."
+
+  # ── OpenAI ─────────────────────────────────────────────────────────────────
+  o3:
+    tagline: "OpenAI's most powerful reasoning model — built for tasks that require deliberate, multi-step thinking."
+    strengths:
+      - "Mathematics, physics, and scientific reasoning"
+      - "Complex coding challenges and architecture design"
+      - "Legal and financial document analysis"
+      - "Chain-of-thought reasoning that shows its work"
+    context: "o3 uses 'thinking tokens' internally before answering. Slower than GPT-4 series but significantly more accurate on hard reasoning problems. At $10/$40/1M it is priced for selective use."
+
+  o4-mini:
+    tagline: "A compact reasoning model from OpenAI — brings o-series thinking to budget-conscious workloads."
+    strengths:
+      - "Mathematical reasoning at a fraction of o3's cost"
+      - "Code generation with self-correction"
+      - "200K context for structured document tasks"
+    context: "o4-mini delivers ~80% of o3's reasoning quality at ~11% of the cost ($1.10/$4.40/1M). Best for high-volume reasoning tasks where full o3 budget is impractical."
+
+  gpt-4.1:
+    tagline: "OpenAI's instruction-following powerhouse — optimised for reliability and long-context tasks."
+    strengths:
+      - "1M token context — the longest of any GPT-4 series model"
+      - "Precise instruction following and structured output"
+      - "Complex tool use and function calling"
+    context: "GPT-4.1 replaced GPT-4-turbo as OpenAI's flagship non-reasoning model. At $2/$8/1M it competes directly with Claude Sonnet."
+
+  gpt-4.1-mini:
+    tagline: "OpenAI's mid-range workhorse — capable 1M context at a developer-friendly price."
+    strengths:
+      - "Versatile across chat, code, and extraction tasks"
+      - "1M context window at just $0.40/$1.60 per 1M"
+      - "Fast enough for interactive use cases"
+    context: "GPT-4.1-mini fills the gap between the nano and the full 4.1. Priced at 4× less than GPT-4.1, it is OpenAI's recommended default for most production applications."
+
+  gpt-4.1-nano:
+    tagline: "The most affordable GPT-4 family model — designed for high-throughput, low-latency classification and routing."
+    strengths:
+      - "Extremely low cost: $0.10/$0.40 per 1M tokens"
+      - "Fast classification, sentiment analysis, and tagging"
+      - "1M token context despite nano pricing"
+    context: "GPT-4.1-nano targets the tier previously occupied by GPT-3.5, but with better quality. At this price point it is essentially free for classification-heavy pipelines."
+
+  gpt-4o:
+    tagline: "OpenAI's multimodal flagship — text, image, and audio in a single model."
+    strengths:
+      - "Native image understanding (screenshots, diagrams, charts)"
+      - "Audio input/output capabilities"
+      - "Strong at structured extraction from visual documents"
+    context: "GPT-4o ('omni') was OpenAI's first natively multimodal model. At $2.50/$10/1M it is priced between GPT-4.1 and GPT-4.1-mini for text tasks, but uniquely enables vision workflows."
+
+  gpt-4o-mini:
+    tagline: "Budget multimodal from OpenAI — brings vision capability to high-volume applications."
+    strengths:
+      - "Image analysis at scale ($0.15/$0.60 per 1M)"
+      - "Good all-round chat and summarization"
+      - "Widely supported in third-party integrations"
+    context: "GPT-4o-mini is the most widely deployed OpenAI model by volume. Its low price and reliable quality make it the default choice when GPT-4 level reasoning is not required."
+
+  gpt-5-codex:
+    tagline: "OpenAI's specialized code model — trained specifically for software engineering tasks."
+    strengths:
+      - "Code generation, refactoring, and review"
+      - "400K context for large codebase analysis"
+      - "Understands repository structure and dependencies"
+    context: "Codex-based models have historically been OpenAI's strongest at code. GPT-5-codex continues this lineage with a focus on agentic coding workflows."
+
+  codex-mini-latest:
+    tagline: "Compact code-specialized model from OpenAI — fast code completion at low cost."
+    strengths:
+      - "Rapid code autocomplete and inline generation"
+      - "200K context for file-level analysis"
+      - "Optimised for latency in IDE integrations"
+    context: "codex-mini-latest targets the Copilot-style use case: sub-100ms suggestions at a cost that makes per-keystroke billing feasible."
+
+  gpt-oss-120b:
+    tagline: "OpenAI's open-weights 120B model — enterprise-deployable with strong general capability."
+    strengths:
+      - "On-premise deployment option"
+      - "Strong reasoning at open-source pricing"
+      - "128K context for document workloads"
+    context: "OpenAI's first significant open-weights release. Intended for enterprises that need data residency or cannot use cloud APIs. Comparable to Llama 4 Scout in capability."
+
+  # ── Google ─────────────────────────────────────────────────────────────────
+  gemini-3.1-pro:
+    tagline: "Google's latest frontier model — 2M token context and native multimodality at the top tier."
+    strengths:
+      - "2M token context — largest available window"
+      - "Native image, audio, and video understanding"
+      - "Deep integration with Google Search and tools"
+      - "Strong multilingual capability"
+    context: "Gemini 3.1 Pro is Google's answer to Claude Opus and GPT-4o at the frontier tier. At 2M context it can ingest entire codebases or document libraries in a single prompt."
+
+  gemini-3.1-flash:
+    tagline: "Google's latest fast model — 1M context with 3.1-generation quality at Flash pricing."
+    strengths:
+      - "Extremely fast responses — sub-500ms typical"
+      - "1M context at competitive economy-tier pricing"
+      - "Strong at structured extraction and summarization"
+    context: "Gemini 3.1 Flash is Google's 'speed-first' offering for the 3.x generation. Targets the same segment as Claude Haiku and GPT-4.1-nano but with Google's multimodal capabilities."
+
+  gemini-2.5-pro:
+    tagline: "Google's most capable 2.5 model — deep reasoning with a 1M token context window."
+    strengths:
+      - "Advanced reasoning comparable to o3 and Claude Opus"
+      - "1M context for long-document analysis"
+      - "Strong at coding and multi-step problem solving"
+    context: "Gemini 2.5 Pro introduced Google's 'thinking' mode — extended chain-of-thought before answering, similar to o-series models. At $1.25/$10/1M it is significantly cheaper than comparable reasoning models."
+
+  gemini-2.5-flash:
+    tagline: "Google's price-performance champion — thinking-capable at economy-tier cost."
+    strengths:
+      - "Thinking mode for complex reasoning at $0.30/$2.50/1M"
+      - "1M context for large document processing"
+      - "Excellent coding and extraction tasks"
+    context: "Gemini 2.5 Flash is widely considered the best value model in the market as of Q1 2026. Google aggressively cut its price from $0.75 to $0.30/1M, undercutting most competitors."
+
+  gemini-2.0-flash:
+    tagline: "Google's ultra-affordable Flash — the go-to model for high-volume, cost-sensitive workloads."
+    strengths:
+      - "Lowest price in the tracked catalog: $0.10/$0.40 per 1M"
+      - "Fast, reliable for classification and summarization"
+      - "1M context at near-free cost"
+    context: "Google cut Gemini 2.0 Flash from $0.75 to $0.10/1M — an 87% reduction — as part of a broader strategy to commoditize the market and grow API adoption."
+
+  # ── DeepSeek ───────────────────────────────────────────────────────────────
+  deepseek-r1:
+    tagline: "DeepSeek's reasoning model — rivals o1/o3 at a fraction of the cost."
+    strengths:
+      - "Mathematical and scientific reasoning comparable to o3"
+      - "Open-weights: can be self-hosted for data-sensitive workloads"
+      - "Strong at competitive programming and algorithmic problems"
+    context: "DeepSeek-R1 caused significant market disruption in early 2026. Its performance on reasoning benchmarks matched OpenAI's o1 at ~5% of the API cost, forcing price cuts across the industry."
+
+  deepseek-v3:
+    tagline: "DeepSeek's general-purpose model — GPT-4-class quality at developing-world pricing."
+    strengths:
+      - "Strong coding, analysis, and instruction following"
+      - "128K context at $0.27/$0.89/1M — 10× cheaper than GPT-4.1"
+      - "Open-weights with commercial licence"
+    context: "DeepSeek-V3 is widely considered the best price-performance model for general tasks. Its release triggered a significant repricing wave across OpenAI and Google offerings."
+
+  deepseek-v4:
+    tagline: "DeepSeek's latest generation — building on V3's breakthrough with improved capabilities."
+    strengths:
+      - "Enhanced instruction following over V3"
+      - "Stronger at long-context reasoning"
+      - "Continued aggressive pricing strategy"
+    context: "DeepSeek-V4 extends the V3 architecture with refinements announced in Q1 2026. Pricing details are still being verified."
+
+  # ── xAI ────────────────────────────────────────────────────────────────────
+  grok-3:
+    tagline: "xAI's flagship — trained on real-time X (Twitter) data with a wit that sets it apart."
+    strengths:
+      - "Real-time world knowledge via X integration"
+      - "Strong analysis and conversational reasoning"
+      - "131K context for enterprise document tasks"
+    context: "Grok-3 is xAI's (Elon Musk's AI company) production model. Its unique differentiator is access to the X platform's real-time data stream, useful for trend analysis and news-aware tasks."
+
+  grok-3-fast:
+    tagline: "xAI's high-speed inference tier — same Grok-3 intelligence at accelerated throughput."
+    strengths:
+      - "Higher tokens-per-second than standard Grok-3"
+      - "Lower latency for interactive applications"
+      - "Same real-time X data access"
+    context: "Grok-3-fast uses dedicated high-throughput infrastructure. Priced at $5/$25/1M — higher than standard — it targets latency-sensitive enterprise applications where speed justifies cost."
+
+  # ── Mistral ────────────────────────────────────────────────────────────────
+  mistral-large-3:
+    tagline: "Mistral's top-tier model — European-built with strong multilingual and reasoning capabilities."
+    strengths:
+      - "Native French, Spanish, Italian, German, and more"
+      - "GDPR-compliant EU data residency options"
+      - "Strong function calling and tool use"
+    context: "Mistral Large is the French AI lab's answer to GPT-4. It's the preferred choice for European enterprises needing GDPR-compliant AI with strong multilingual support."
+
+  mistral-medium:
+    tagline: "Mistral's mid-tier — balances capability and cost for European enterprise workloads."
+    strengths:
+      - "Solid general-purpose reasoning"
+      - "Multilingual with European language focus"
+      - "Good at structured data extraction"
+    context: "Mistral Medium fills the gap between Small and Large in Mistral's lineup. Suited for document processing and chat applications that need European language quality."
+
+  mistral-small:
+    tagline: "Mistral's lightweight entry — efficient, multilingual, and open-weights available."
+    strengths:
+      - "256K context at economy pricing"
+      - "Available as open-weights for self-hosting"
+      - "Low latency for chat applications"
+    context: "Mistral Small is Mistral's value offering. It outperforms models of its size class on European languages and is popular for on-premise deployments in regulated industries."
+
+  codestral:
+    tagline: "Mistral's dedicated code model — trained specifically on programming languages and repositories."
+    strengths:
+      - "Supports 80+ programming languages"
+      - "256K context for large codebase analysis"
+      - "Strong at code completion, refactoring, and review"
+    context: "Codestral is Mistral's specialized coding model, competing with GitHub Copilot and GPT-4.1. European enterprises use it for on-prem code generation within GDPR boundaries."
+
+  devstral:
+    tagline: "Mistral's agentic coding model — purpose-built for autonomous software engineering workflows."
+    strengths:
+      - "Multi-file editing and repository-level changes"
+      - "Tool use and code execution integration"
+      - "Strong at following long coding instructions"
+    context: "Devstral was built specifically for AI coding agents. Where Codestral does completion, Devstral handles full agentic tasks: writing tests, refactoring modules, and opening PRs."
+
+  devstral-small:
+    tagline: "Compact agentic coder from Mistral — brings Devstral capabilities to cost-constrained pipelines."
+    strengths:
+      - "Efficient agentic coding at lower cost than full Devstral"
+      - "Good for lightweight automation and script generation"
+    context: "Devstral Small is the economy version of Mistral's agent-focused coding model. Suitable for high-volume code generation tasks where full Devstral capability isn't needed."
+
+  # ── Moonshot ───────────────────────────────────────────────────────────────
+  kimi-k2.5:
+    tagline: "Moonshot AI's Kimi model — Chinese frontier model with exceptional long-context capability."
+    strengths:
+      - "1M token context window"
+      - "Strong at Chinese and English bilingual tasks"
+      - "Document understanding and multi-document synthesis"
+    context: "Kimi from Moonshot AI is China's strong entry in the long-context race. It competes directly with Claude and Gemini on very long document tasks and is popular for legal/financial analysis in Asia."
+
+  # ── Qwen ───────────────────────────────────────────────────────────────────
+  qwen-max:
+    tagline: "Alibaba's top Qwen model — frontier-tier reasoning with aggressive pricing after the 2026 cuts."
+    strengths:
+      - "1M context window at $1.04/1M input — ~14× cheaper than Claude Opus"
+      - "Strong at Chinese and multilingual tasks"
+      - "Good reasoning and instruction following"
+    context: "Qwen-Max was repriced from $10 to $1.04/1M input in Q1 2026 — a 90% cut — as Alibaba accelerated investment in AI to compete with DeepSeek and OpenAI in the Chinese market."
+
+  qwen-plus:
+    tagline: "Alibaba's mid-range Qwen — solid capability at near-commodity pricing."
+    strengths:
+      - "131K context at $0.26/$0.78 per 1M — one of the cheapest capable models"
+      - "Reliable at standard chat, coding, and extraction tasks"
+      - "Strong multilingual including Chinese, Japanese, Korean"
+    context: "Qwen-Plus was repriced from $3 to $0.26/1M — a 91% cut — making it the lowest-cost non-trivial model in the tracked catalog for general-purpose tasks."
+
+  # ── Perplexity ─────────────────────────────────────────────────────────────
+  sonar-pro:
+    tagline: "Perplexity's premium search-grounded model — real-time web knowledge in every response."
+    strengths:
+      - "Live internet search grounding — always up-to-date"
+      - "Citation-backed answers for research and fact-checking"
+      - "200K context with real-time augmentation"
+    context: "Sonar Pro is unique: it's an LLM with a search engine built in. Every response is grounded in current web data with citations. At $3/$15/1M it competes on the use case rather than raw capability."
+
+  sonar:
+    tagline: "Perplexity's standard search model — web-grounded answers at economy pricing."
+    strengths:
+      - "Real-time web search grounding at $1/$1 per 1M"
+      - "Flat input/output pricing (unusual — simplifies cost modeling)"
+      - "Good for quick factual lookups and news-aware tasks"
+    context: "Sonar's flat $1/$1 pricing is distinctive in the market. It's designed for applications where search grounding matters more than raw reasoning depth."
+
+  # ── Cohere ─────────────────────────────────────────────────────────────────
+  command-r-plus:
+    tagline: "Cohere's enterprise RAG model — purpose-built for retrieval-augmented generation at scale."
+    strengths:
+      - "Best-in-class RAG with native document grounding"
+      - "Strong at structured enterprise data extraction"
+      - "128K context with reliable citation"
+    context: "Command R+ is Cohere's enterprise flagship, targeting the RAG pipeline market. Many enterprises choose it specifically for document Q&A systems where citation accuracy is critical."
+
+  command-r:
+    tagline: "Cohere's standard RAG model — solid retrieval capability at accessible pricing."
+    strengths:
+      - "Reliable document grounding and citation"
+      - "Good at structured extraction from enterprise documents"
+      - "128K context"
+    context: "Command R is the economy version of Cohere's RAG-optimized lineup. It delivers solid retrieval performance at a price point that works for high-volume document processing pipelines."
+
+  # ── Together AI / Groq ─────────────────────────────────────────────────────
+  together-llama4-maverick:
+    tagline: "Meta's Llama 4 Maverick served via Together AI — open-weights power at commercial convenience."
+    strengths:
+      - "1M context — remarkable for an open-weights model"
+      - "Strong general capability from Meta's latest Llama generation"
+      - "Good price-performance for code and reasoning tasks"
+    context: "Together AI provides optimized inference for Meta's Llama 4 series. Maverick is Meta's mid-range Llama 4 model, positioned between Scout (economy) and the upcoming large variant."
+
+  groq-llama4-maverick:
+    tagline: "Llama 4 Maverick on Groq's LPU — the fastest inference available for this model."
+    strengths:
+      - "Ultra-low latency via Groq's Language Processing Unit hardware"
+      - "Real-time applications where sub-100ms response is required"
+      - "Same Llama 4 Maverick quality as Together AI"
+    context: "Groq's LPU (Language Processing Unit) provides the fastest AI inference available. Groq-hosted models are the go-to for latency-critical applications like voice AI and real-time assistants."
+
+  groq-deepseek-r1:
+    tagline: "DeepSeek-R1's reasoning power on Groq's ultra-fast hardware — best of both worlds."
+    strengths:
+      - "o3-comparable reasoning at DeepSeek-R1 pricing"
+      - "Groq LPU makes reasoning responses 3-5× faster than standard DeepSeek hosting"
+      - "131K context"
+    context: "The combination of DeepSeek-R1's top-tier reasoning quality and Groq's fastest-in-market inference speed makes this the best option for latency-sensitive complex reasoning tasks."

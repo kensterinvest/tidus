@@ -115,7 +115,13 @@ class ReportDelivery:
             return "smtp"
         return "dev"
 
-    def deliver(self, report_markdown: str, subject: str, subscribers: list[Subscriber]) -> int:
+    def deliver(
+        self,
+        report_markdown: str,
+        subject: str,
+        subscribers: list[Subscriber],
+        report_html: str = "",
+    ) -> int:
         """Deliver report to all active subscribers. Returns count delivered."""
         if not subscribers:
             log.info("report_delivery_skipped", reason="no active subscribers")
@@ -131,9 +137,9 @@ class ReportDelivery:
         for subscriber in subscribers:
             try:
                 if self.provider == "resend":
-                    self._send_resend(subscriber, subject, report_markdown)
+                    self._send_resend(subscriber, subject, report_markdown, report_html)
                 else:
-                    self._send_smtp(subscriber, subject, report_markdown)
+                    self._send_smtp(subscriber, subject, report_markdown, report_html)
                 delivered += 1
                 log.info("report_delivered", provider=self.provider,
                          email=subscriber.email)
@@ -144,7 +150,9 @@ class ReportDelivery:
 
     # ── Resend ────────────────────────────────────────────────────────────────
 
-    def _send_resend(self, subscriber: Subscriber, subject: str, markdown_body: str) -> None:
+    def _send_resend(
+        self, subscriber: Subscriber, subject: str, markdown_body: str, html_body: str = ""
+    ) -> None:
         import resend  # type: ignore[import-untyped]
         resend.api_key = self._resend_key
 
@@ -153,18 +161,20 @@ class ReportDelivery:
             "to": [subscriber.email],
             "subject": subject,
             "text": markdown_body,
-            "html": self._to_html(markdown_body, subscriber.name),
+            "html": html_body or self._to_html(markdown_body, subscriber.name),
         })
 
     # ── SMTP fallback ─────────────────────────────────────────────────────────
 
-    def _send_smtp(self, subscriber: Subscriber, subject: str, markdown_body: str) -> None:
+    def _send_smtp(
+        self, subscriber: Subscriber, subject: str, markdown_body: str, html_body: str = ""
+    ) -> None:
         msg = MIMEMultipart("alternative")
         msg["Subject"] = subject
         msg["From"]    = self._from_addr
         msg["To"]      = subscriber.email
         msg.attach(MIMEText(markdown_body, "plain", "utf-8"))
-        msg.attach(MIMEText(self._to_html(markdown_body, subscriber.name), "html", "utf-8"))
+        msg.attach(MIMEText(html_body or self._to_html(markdown_body, subscriber.name), "html", "utf-8"))
 
         ctx = ssl.create_default_context()
         with smtplib.SMTP(self._smtp_host, self._smtp_port) as server:

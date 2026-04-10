@@ -185,14 +185,14 @@ class RegistryPipeline:
                     if old_val == 0 and new_val == 0:
                         continue
                     ref = old_val if old_val != 0 else new_val
-                    delta = abs(new_val - old_val) / ref
-                    if delta >= threshold:
+                    delta = (new_val - old_val) / ref   # signed: negative = price drop
+                    if abs(delta) >= threshold:
                         changes.append({
                             "model_id": model_id,
                             "field": field_name,
                             "old_value": old_val,
                             "new_value": new_val,
-                            "delta_pct": round(delta * 100, 2),
+                            "delta_pct": round(delta * 100, 2),   # signed %
                             "detected_at": now,
                         })
 

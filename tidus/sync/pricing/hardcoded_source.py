@@ -49,6 +49,43 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     # ── Perplexity (disabled in YAML but prices tracked) ─────────────────────
     "sonar":               {"input": 0.001,    "output": 0.001},   # $1/$1 per 1M
     "sonar-pro":           {"input": 0.003,    "output": 0.015},   # $3/$15 per 1M
+
+    # ── Mistral (full suite) ──────────────────────────────────────────────────
+    "codestral":           {"input": 0.0002,   "output": 0.0006},  # $0.20/$0.60 per 1M
+    "devstral":            {"input": 0.0004,   "output": 0.002},   # $0.40/$2.00 per 1M
+    "devstral-small":      {"input": 0.0001,   "output": 0.0003},  # $0.10/$0.30 per 1M
+    "mistral-large-3":     {"input": 0.002,    "output": 0.006},   # $2/$6 per 1M
+    "mistral-medium":      {"input": 0.0004,   "output": 0.002},   # $0.40/$2 per 1M
+    "mistral-nemo":        {"input": 0.00015,  "output": 0.00015}, # $0.15/$0.15 per 1M
+    "mistral-small":       {"input": 0.0001,   "output": 0.0003},  # $0.10/$0.30 per 1M (v3.1)
+
+    # ── OpenAI (additional models) ────────────────────────────────────────────
+    "codex-mini-latest":   {"input": 0.00075,  "output": 0.003},   # $0.75/$3 per 1M
+    "gpt-oss-120b":        {"input": 0.000039, "output": 0.0001},  # $0.039/$0.10 per 1M
+
+    # ── Google (next-gen Gemini) ──────────────────────────────────────────────
+    "gemini-3.1-flash":    {"input": 0.001,    "output": 0.004},   # $1/$4 per 1M
+    "gemini-3.1-pro":      {"input": 0.002,    "output": 0.012},   # $2/$12 per 1M
+
+    # ── DeepSeek (additional) ─────────────────────────────────────────────────
+    "deepseek-v4":         {"input": 0.0003,   "output": 0.0005},  # $0.30/$0.50 per 1M
+
+    # ── Cohere (disabled in YAML but prices tracked) ──────────────────────────
+    "command-r":           {"input": 0.00015,  "output": 0.0006},  # $0.15/$0.60 per 1M
+    "command-r-plus":      {"input": 0.0025,   "output": 0.01},    # $2.50/$10 per 1M
+
+    # ── Groq (hosted inference) ───────────────────────────────────────────────
+    "groq-deepseek-r1":    {"input": 0.001,    "output": 0.003},   # $1/$3 per 1M
+    "groq-llama4-maverick":{"input": 0.0005,   "output": 0.0015},  # $0.50/$1.50 per 1M
+
+    # ── Moonshot ─────────────────────────────────────────────────────────────
+    "kimi-k2.5":           {"input": 0.0006,   "output": 0.0025},  # $0.60/$2.50 per 1M
+
+    # ── Together AI (hosted inference) ───────────────────────────────────────
+    "together-llama4-maverick": {"input": 0.00027, "output": 0.00085},  # $0.27/$0.85 per 1M
+
+    # ── Qwen (additional) ─────────────────────────────────────────────────────
+    "qwen-flash":          {"input": 0.0004,   "output": 0.0012},  # $0.40/$1.20 per 1M
 }
 
 _EFFECTIVE_DATE = date(2026, 4, 9)
