@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tidus — Self-Hosted Enterprise AI Router</title>
+<meta name="description" content="Tidus intelligently routes AI requests to the best model for every task — cutting costs 60–80% while preserving quality. Self-hosted, open source, enterprise-ready.">
+<meta property="og:title" content="Tidus — Enterprise AI Router">
+<meta property="og:description" content="Stop overpaying for AI. Route every request to the optimal model automatically.">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;color:#1a1a2e;background:#fff;line-height:1.6}
+a{text-decoration:none;color:inherit}
+:root{
+  --navy:#0f3460;--purple:#533483;--violet:#a78bfa;--pink:#e94560;
+  --light:#f0f2f5;--green:#22c55e;--red:#ef4444;
+  --radius:12px;--shadow:0 4px 24px rgba(0,0,0,.08);--shadow-lg:0 8px 48px rgba(0,0,0,.14)
+}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:1000;background:rgba(15,52,96,.97);backdrop-filter:blur(12px);
+    display:flex;align-items:center;justify-content:space-between;padding:0 48px;height:64px;
+    border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-logo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.nav-logo span{color:var(--violet)}
+.nav-links{display:flex;gap:30px}
+.nav-links a{font-size:13px;font-weight:500;color:rgba(255,255,255,.65);transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{background:var(--violet);color:#fff;font-size:13px;font-weight:700;
+         padding:8px 18px;border-radius:8px;transition:all .2s}
+.nav-cta:hover{background:#9061f9;transform:translateY(-1px)}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#060d1f 0%,#0f3460 40%,#1e1b4b 70%,#533483 100%);
+      padding:100px 48px 80px;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;inset:0;
+             background:radial-gradient(ellipse at 75% 50%,rgba(167,139,250,.1) 0%,transparent 65%);
+             pointer-events:none}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;
+            background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);
+            color:var(--violet);font-size:12px;font-weight:600;
+            padding:4px 14px;border-radius:20px;letter-spacing:.5px;margin-bottom:24px}
+.hero-badge::before{content:'●';font-size:8px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-size:66px;font-weight:900;color:#fff;line-height:1.05;
+            letter-spacing:-2.5px;margin-bottom:20px}
+.hero-title .accent{color:var(--violet)}
+.hero-sub{font-size:19px;color:rgba(255,255,255,.68);max-width:580px;
+          line-height:1.65;margin-bottom:40px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:68px}
+.btn-hero{font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;transition:all .2s}
+.btn-hero.primary{background:var(--violet);color:#fff}
+.btn-hero.primary:hover{background:#9061f9;transform:translateY(-2px);
+                         box-shadow:0 8px 24px rgba(167,139,250,.4)}
+.btn-hero.secondary{background:rgba(255,255,255,.1);color:#fff;
+                    border:1px solid rgba(255,255,255,.2)}
+.btn-hero.secondary:hover{background:rgba(255,255,255,.16)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+            background:rgba(255,255,255,.08);border-radius:16px;overflow:hidden;
+            border:1px solid rgba(255,255,255,.08)}
+.stat-card{background:rgba(255,255,255,.04);padding:24px;text-align:center}
+.stat-val{font-size:36px;font-weight:900;color:var(--violet);line-height:1}
+.stat-lbl{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+          color:rgba(255,255,255,.45);margin-top:6px}
+
+/* SECTIONS */
+section{padding:88px 48px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+             color:var(--purple);margin-bottom:8px}
+.section-title{font-size:40px;font-weight:800;color:#1a1a2e;letter-spacing:-1px;
+               line-height:1.15;margin-bottom:14px}
+.section-sub{font-size:17px;color:#555;max-width:620px;line-height:1.75}
+hr.divider{border:none;border-top:1px solid #e9ecef;margin:0 48px}
+
+/* ABOUT */
+.about{background:var(--light)}
+.about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;
+            align-items:center;margin-top:56px}
+.about-text p{font-size:15px;color:#444;line-height:1.85;margin-bottom:16px}
+.about-code{background:#1a1a2e;border-radius:var(--radius);overflow:hidden;
+            box-shadow:var(--shadow-lg)}
+.code-bar{background:#2a2a3e;padding:12px 18px;display:flex;align-items:center;gap:7px}
+.dot{width:12px;height:12px;border-radius:50%}
+.dot.r{background:#ff5f57}.dot.y{background:#febc2e}.dot.g{background:#28c840}
+.code-bar span{font-size:12px;color:rgba(255,255,255,.35);margin-left:8px;font-family:monospace}
+.code-body{padding:24px;font-family:'Courier New',Monaco,monospace;font-size:12.5px;line-height:1.9}
+.ck{color:#c792ea}.cs{color:#c3e88d}.cn{color:#f78c6c}.cv{color:#82aaff}
+.cc{color:#546e7a}.co{color:#a78bfa}.cm{color:#4ade80}
+
+/* PILLARS */
+.pillars-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:56px}
+.pillar-card{background:#fff;border-radius:16px;padding:32px;
+             border:1px solid #e9ecef;transition:transform .25s,box-shadow .25s;
+             position:relative;overflow:hidden}
+.pillar-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
+                     background:linear-gradient(90deg,var(--navy),var(--purple),var(--violet))}
+.pillar-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-lg)}
+.pillar-card.wide{grid-column:span 2}
+.pillar-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;
+            color:var(--purple);margin-bottom:8px}
+.pillar-icon{font-size:38px;margin-bottom:14px}
+.pillar-title{font-size:20px;font-weight:800;color:#1a1a2e;margin-bottom:10px;letter-spacing:-.4px}
+.pillar-desc{font-size:14px;color:#555;line-height:1.75;margin-bottom:16px}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tag{font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;
+     background:rgba(83,52,131,.08);color:var(--purple)}
+
+/* FLOW */
+.how{background:var(--light)}
+.flow{display:flex;align-items:stretch;margin-top:56px;border-radius:14px;
+      overflow:hidden;border:1px solid #e9ecef;box-shadow:var(--shadow)}
+.flow-step{flex:1;background:#fff;padding:28px 20px;text-align:center;
+           border-right:1px solid #f0f2f5;position:relative}
+.flow-step:last-child{border-right:none}
+.flow-step::after{content:'›';position:absolute;right:-10px;top:50%;
+                  transform:translateY(-50%);font-size:18px;color:var(--violet);
+                  z-index:1;font-weight:700;line-height:1}
+.flow-step:last-child::after{display:none}
+.flow-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+        color:var(--violet);margin-bottom:6px}
+.flow-icon{font-size:28px;margin-bottom:8px}
+.flow-title{font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:5px}
+.flow-desc{font-size:11.5px;color:#888;line-height:1.5}
+
+/* PRICING TABLE */
+.pricing-legend{display:flex;gap:0;background:rgba(83,52,131,.05);
+                border:1px solid rgba(83,52,131,.15);border-radius:10px;
+                overflow:hidden;margin-bottom:20px}
+.leg{flex:1;padding:14px 20px;border-right:1px solid rgba(83,52,131,.12)}
+.leg:last-child{border-right:none}
+.leg-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+         color:var(--purple);margin-bottom:3px}
+.leg-desc{font-size:12.5px;color:#555}
+.table-wrap{border:1px solid #e9ecef;border-radius:12px;overflow:hidden;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+thead th{background:#1a1a2e;color:rgba(255,255,255,.6);font-size:11px;font-weight:600;
+         text-transform:uppercase;letter-spacing:1px;padding:12px 16px;text-align:left}
+tbody tr{border-bottom:1px solid #f0f2f5;transition:background .15s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8f9ff}
+td{padding:10px 16px;vertical-align:middle}
+.col-rank{color:#bbb;font-size:12px;text-align:center;width:40px}
+.col-model{font-family:'Courier New',monospace;font-weight:600;color:#1a1a2e;font-size:12.5px}
+.col-vendor{font-size:12px;color:#666}
+.tier-badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:8px;
+            font-size:10.5px;font-weight:700;letter-spacing:.3px}
+.t1{background:#fef2f2;color:#991b1b}
+.t2{background:#fff7ed;color:#9a3412}
+.t3{background:#f0fdf4;color:#166534}
+.t4{background:#f0f9ff;color:#075985}
+.col-in{font-family:'Courier New',monospace;font-weight:700;color:#0f3460;font-size:13px}
+.col-out{font-family:'Courier New',monospace;font-weight:600;color:#533483;font-size:13px}
+.table-note{font-size:12px;color:#aaa;margin-top:10px;text-align:center}
+
+/* MAGAZINE */
+.magazine-section{background:linear-gradient(135deg,#f8f9ff 0%,#ede9fe 100%)}
+.mag-card{background:#fff;border-radius:20px;overflow:hidden;
+          box-shadow:var(--shadow-lg);border:1px solid rgba(83,52,131,.1);
+          max-width:860px;margin:0 auto}
+.mag-header{background:linear-gradient(135deg,#0f3460 0%,#533483 60%,#e94560 100%);
+            padding:32px 40px 28px}
+.mag-logo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px}
+.mag-logo span{color:var(--violet)}
+.mag-sub-tag{font-size:10px;text-transform:uppercase;letter-spacing:2.5px;
+             color:rgba(255,255,255,.45);margin-top:3px}
+.mag-title{font-size:20px;font-weight:700;color:#fff;margin-top:20px;line-height:1.3}
+.mag-date{font-size:13px;color:rgba(255,255,255,.6);margin-top:6px}
+.mag-stats-bar{background:#1a1a2e;display:flex}
+.ms{flex:1;padding:18px;text-align:center;border-right:1px solid rgba(255,255,255,.06)}
+.ms:last-child{border-right:none}
+.ms-val{font-size:24px;font-weight:900;color:var(--violet);line-height:1}
+.ms-val.g{color:#4ade80}.ms-val.r{color:#f87171}
+.ms-lbl{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+        color:rgba(255,255,255,.35);margin-top:4px}
+.mag-body{padding:32px 40px}
+.exec-sum{font-size:14px;color:#555;line-height:1.85;padding:16px 20px;
+          background:#f8f9ff;border-left:3px solid var(--purple);
+          border-radius:0 8px 8px 0;margin-bottom:28px}
+.mag-sec-title{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:14px;
+               padding-bottom:8px;border-bottom:2px solid #e9ecef}
+.changes-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:28px}
+.cc-card{padding:16px;border-radius:10px;border:1px solid transparent}
+.cc-card.drop{background:rgba(34,197,94,.06);border-color:rgba(34,197,94,.2)}
+.cc-card.rise{background:rgba(239,68,68,.06);border-color:rgba(239,68,68,.2)}
+.cc-card.new{background:rgba(83,52,131,.05);border-color:rgba(83,52,131,.15)}
+.cc-model{font-size:13px;font-weight:700;font-family:monospace;color:#1a1a2e;margin-bottom:3px}
+.cc-vendor{font-size:11px;color:#aaa;margin-bottom:10px}
+.cc-row{display:flex;align-items:center;gap:6px;font-size:12px;margin-bottom:3px}
+.cc-lbl{color:#bbb;width:50px;flex-shrink:0}
+.cc-old{color:#ccc;text-decoration:line-through}
+.cc-new{font-weight:700}
+.cc-new.drop{color:#16a34a}.cc-new.rise{color:#dc2626}.cc-new.new{color:var(--purple)}
+.cc-delta{font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;margin-left:4px}
+.d-drop{background:rgba(34,197,94,.1);color:#16a34a}
+.d-rise{background:rgba(239,68,68,.1);color:#dc2626}
+.d-new{background:rgba(83,52,131,.1);color:var(--purple)}
+.mag-footer{background:#f8f9ff;padding:18px 40px;border-top:1px solid #e9ecef;
+            display:flex;align-items:center;justify-content:space-between}
+.mag-footer p{font-size:12px;color:#aaa}
+.mag-footer a{font-size:12px;font-weight:600;color:var(--purple)}
+
+/* SUBSCRIBE */
+.sub-section{background:var(--navy);padding:80px 48px;text-align:center}
+.sub-section h2{font-size:40px;font-weight:800;color:#fff;letter-spacing:-1px;margin-bottom:12px}
+.sub-section p{font-size:17px;color:rgba(255,255,255,.6);margin-bottom:40px}
+.sub-form{display:flex;gap:12px;max-width:460px;margin:0 auto}
+.sub-form input{flex:1;padding:13px 18px;border-radius:10px;border:none;
+                font-size:14px;outline:none}
+.sub-form input:focus{box-shadow:0 0 0 3px rgba(167,139,250,.4)}
+.sub-form button{background:var(--violet);color:#fff;font-size:14px;font-weight:700;
+                 padding:13px 22px;border-radius:10px;border:none;cursor:pointer;
+                 white-space:nowrap;transition:all .2s}
+.sub-form button:hover{background:#9061f9;transform:translateY(-2px)}
+#sub-note{font-size:12px;color:rgba(255,255,255,.35);margin-top:14px}
+#sub-msg{margin-top:14px;font-size:14px;display:none}
+#sub-msg.ok{color:#4ade80}#sub-msg.err{color:#f87171}
+
+/* FOOTER */
+footer{background:#0a0f1e;padding:48px}
+.footer-inner{max-width:1100px;margin:0 auto;
+              display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.f-brand .logo{font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;margin-bottom:8px}
+.f-brand .logo span{color:var(--violet)}
+.f-brand p{font-size:13px;color:rgba(255,255,255,.35);line-height:1.65;max-width:220px}
+.f-col h4{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;
+          color:rgba(255,255,255,.35);margin-bottom:14px}
+.f-col a{display:block;font-size:13px;color:rgba(255,255,255,.55);
+         margin-bottom:9px;transition:color .2s}
+.f-col a:hover{color:#fff}
+.footer-bottom{max-width:1100px;margin:32px auto 0;padding-top:24px;
+               border-top:1px solid rgba(255,255,255,.06);
+               display:flex;justify-content:space-between;align-items:center;
+               flex-wrap:wrap;gap:12px}
+.footer-bottom p{font-size:12px;color:rgba(255,255,255,.28)}
+.footer-bottom a{color:var(--violet)}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  .hero{padding:60px 20px 48px}
+  .hero-title{font-size:40px;letter-spacing:-1.5px}
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  section{padding:56px 20px}
+  .about-grid{grid-template-columns:1fr;gap:32px}
+  .pillars-grid{grid-template-columns:1fr}
+  .pillar-card.wide{grid-column:span 1}
+  .flow{flex-direction:column}
+  .flow-step{border-right:none!important;border-bottom:1px solid #f0f2f5}
+  .flow-step::after{display:none}
+  .changes-grid{grid-template-columns:1fr}
+  .sub-form{flex-direction:column}
+  .footer-inner{grid-template-columns:1fr 1fr}
+  .mag-body{padding:20px 24px}
+  hr.divider{margin:0 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">tidus<span>.</span></div>
+  <div class="nav-links">
+    <a href="#about">About</a>
+    <a href="#pillars">Pillars</a>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#magazine">Report</a>
+  </div>
+  <a href="#subscribe" class="nav-cta">Subscribe Free</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-badge">Open Source · Self-Hosted · Enterprise Ready</div>
+    <h1 class="hero-title">Stop overpaying<br>for <span class="accent">AI.</span></h1>
+    <p class="hero-sub">Tidus intelligently routes every AI request to the best-value model — cutting costs 60–80% while preserving quality. Your data never leaves your infrastructure.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/kensterinvest/tidus" class="btn-hero primary">⭐ View on GitHub</a>
+      <a href="#about" class="btn-hero secondary">Learn More ↓</a>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-val">41+</div><div class="stat-lbl">Models Tracked</div></div>
+      <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">AI Vendors</div></div>
+      <div class="stat-card"><div class="stat-val">70%</div><div class="stat-lbl">Cost Weight in Routing</div></div>
+      <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Validation Tiers</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ABOUT -->
+<section class="about" id="about">
+  <div class="section-inner">
+    <p class="section-tag">What is Tidus?</p>
+    <h2 class="section-title">Your AI requests, always on the optimal model</h2>
+    <p class="section-sub">Tidus sits in front of your AI workloads as a self-hosted FastAPI service. You call one endpoint — Tidus picks the right model automatically.</p>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>Most teams waste money sending every request to the same premium model. A simple classification task costs $15/1M tokens on Claude Opus when Gemini 2.0 Flash at $0.10/1M returns an equivalent result.</p>
+        <p>Tidus analyses each request's complexity, privacy requirements, capability needs, and budget constraints — then scores every eligible model using a weighted algorithm (70% cost, 20% tier, 10% latency) to find the optimal route.</p>
+        <p>Because Tidus is fully self-hosted and open source, no request data ever leaves your environment. It works with any AI vendor and supports local Ollama models for confidential workloads where cloud APIs are prohibited.</p>
+        <p>The weekly pricing registry keeps costs accurate without manual intervention — syncing prices from multiple sources every Sunday, detecting outliers with MAD-based consensus, and creating versioned, auditable revisions.</p>
+      </div>
+      <div class="about-code">
+        <div class="code-bar">
+          <div class="dot r"></div><div class="dot y"></div><div class="dot g"></div>
+          <span>tidus_client.py</span>
+        </div>
+        <div class="code-body">
+<span class="cc"># Before Tidus — every call goes to GPT-4o</span><br>
+<span class="cv">response</span> = <span class="cv">openai</span>.<span class="cv">chat</span>.<span class="cv">completions</span>.<span class="cv">create</span>(<br>
+&nbsp;&nbsp;<span class="cv">model</span>=<span class="cs">"gpt-4o"</span>,&nbsp;&nbsp;<span class="cc"># $2.50/1M — always</span><br>
+&nbsp;&nbsp;<span class="cv">messages</span>=<span class="cv">messages</span>,<br>
+)<br>
+<br>
+<span class="cc"># After Tidus — optimal model selected per request</span><br>
+<span class="cv">response</span> = <span class="ck">await</span> <span class="cv">tidus</span>.<span class="cv">route</span>(<br>
+&nbsp;&nbsp;<span class="cv">messages</span>=<span class="cv">messages</span>,<br>
+&nbsp;&nbsp;<span class="cv">complexity</span>=<span class="cs">"simple"</span>,<br>
+&nbsp;&nbsp;<span class="cv">team_id</span>=<span class="cs">"analytics"</span>,<br>
+)<br>
+<span class="cc"># → Gemini 2.0 Flash at $0.10/1M  ✓  96% cheaper</span><br>
+<br>
+<span class="cc"># Critical task? Tidus routes to Tier 1 automatically</span><br>
+<span class="cv">response</span> = <span class="ck">await</span> <span class="cv">tidus</span>.<span class="cv">route</span>(<br>
+&nbsp;&nbsp;<span class="cv">messages</span>=<span class="cv">messages</span>,<br>
+&nbsp;&nbsp;<span class="cv">complexity</span>=<span class="cs">"critical"</span>,<br>
+)<br>
+<span class="cc"># → Claude Opus 4.6  ✓  best model for the job</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PILLARS -->
+<section id="pillars">
+  <div class="section-inner">
+    <p class="section-tag">Five Pillars</p>
+    <h2 class="section-title">Everything routing needs to work in production</h2>
+    <p class="section-sub">Tidus v1.1.0 delivers five integrated capabilities — from real-time routing to weekly market intelligence.</p>
+    <div class="pillars-grid">
+
+      <div class="pillar-card">
+        <div class="pillar-num">Pillar 1</div>
+        <div class="pillar-icon">🧭</div>
+        <div class="pillar-title">Intelligent Model Routing</div>
+        <div class="pillar-desc">A 5-factor scoring algorithm evaluates every eligible model on cost (70%), tier (20%), and latency (10%). Complexity tiers (simple → critical) define which model tiers are eligible. Capability matching filters models by required features — multimodal, code, function-calling. Budget guardrails cut off models that would exceed team spend limits.</div>
+        <div class="tags">
+          <span class="tag">MAD scoring</span>
+          <span class="tag">Capability matching</span>
+          <span class="tag">Tier ceiling</span>
+          <span class="tag">Privacy routing</span>
+          <span class="tag">Local-first</span>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-num">Pillar 2</div>
+        <div class="pillar-icon">🏛️</div>
+        <div class="pillar-title">Self-Healing Pricing Registry</div>
+        <div class="pillar-desc">Prices drive 70% of the routing score — stale prices cause systematic misspending. The registry syncs from multiple sources every Sunday using MAD-based outlier detection. Changes create versioned, audited DB revisions via atomic two-phase write. Rollback to any previous revision in one API call. Overrides let teams adjust pricing, disable models, or pin providers without touching config files.</div>
+        <div class="tags">
+          <span class="tag">Multi-source consensus</span>
+          <span class="tag">MAD outlier detection</span>
+          <span class="tag">Atomic revisions</span>
+          <span class="tag">90-day audit trail</span>
+          <span class="tag">RBAC overrides</span>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-num">Pillar 3</div>
+        <div class="pillar-icon">🛡️</div>
+        <div class="pillar-title">Budget Guardrails</div>
+        <div class="pillar-desc">Set hard spend limits per team, per model, or globally. Every routed request records actual token usage and cost in real time. Overages trigger alerts and optionally fall back to cheaper models within the same tier. Billing reconciliation ingests provider CSV exports and flags mismatches between Tidus cost records and actual invoices — catching silent cost leakage before it compounds.</div>
+        <div class="tags">
+          <span class="tag">Per-team limits</span>
+          <span class="tag">Real-time enforcement</span>
+          <span class="tag">Overage alerting</span>
+          <span class="tag">CSV reconciliation</span>
+        </div>
+      </div>
+
+      <div class="pillar-card wide">
+        <div class="pillar-num">Pillar 4</div>
+        <div class="pillar-icon">🔬</div>
+        <div class="pillar-title">Drift Detection &amp; Auto-Remediation</div>
+        <div class="pillar-desc">AI models change behaviour without notice — latency spikes, context limits shift, tokenization diverges, prices move. Tidus runs four drift detectors on a 5-minute cycle: <strong>Latency</strong> (measured P50 vs catalog baseline), <strong>Context</strong> (overflow rate in recent requests), <strong>Tokenization</strong> (estimated vs actual token divergence over 7 days), and <strong>Price</strong> (unusual change frequency or magnitude). Warning events escalate the model to priority probing. Critical events auto-create a <code>hard_disable</code> override and remove the model from routing immediately. After 3 consecutive healthy probe cycles, the override is automatically lifted and the model returns to rotation. Every event is linked to the exact registry revision that was active at detection time — enabling precise postmortems.</div>
+        <div class="tags">
+          <span class="tag">4 drift detectors</span>
+          <span class="tag">5-min probe cycle</span>
+          <span class="tag">Auto-disable</span>
+          <span class="tag">Auto-recovery</span>
+          <span class="tag">Revision-linked events</span>
+          <span class="tag">Prometheus metrics</span>
+        </div>
+      </div>
+
+      <div class="pillar-card">
+        <div class="pillar-num">Pillar 5</div>
+        <div class="pillar-icon">📰</div>
+        <div class="pillar-title">Weekly Market Intelligence</div>
+        <div class="pillar-desc">Every Sunday at 02:00 UTC, Tidus syncs prices and emails your team a market intelligence report. The magazine highlights price drops (savings opportunities), price increases (cost risk), new model additions, and models with stale data. Delivered as a richly-formatted HTML email — no third-party analytics, no tracking pixels.</div>
+        <div class="tags">
+          <span class="tag">Weekly pricing sync</span>
+          <span class="tag">HTML email magazine</span>
+          <span class="tag">Price history</span>
+          <span class="tag">41 models tracked</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="section-inner">
+    <p class="section-tag">How It Works</p>
+    <h2 class="section-title">From request to optimal route in milliseconds</h2>
+    <p class="section-sub">Tidus evaluates every request through a deterministic pipeline — no magic, no black-box AI decisions.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-n">Step 1</div>
+        <div class="flow-icon">📥</div>
+        <div class="flow-title">Receive Request</div>
+        <div class="flow-desc">FastAPI endpoint accepts messages, complexity hint, capability tags, team ID, and optional privacy flag</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">Step 2</div>
+        <div class="flow-icon">🔍</div>
+        <div class="flow-title">Filter Candidates</div>
+        <div class="flow-desc">Capability matching removes ineligible models. Tier ceiling from complexity. Privacy flag forces local-only. Budget check removes over-limit models</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">Step 3</div>
+        <div class="flow-icon">💰</div>
+        <div class="flow-title">Estimate Cost</div>
+        <div class="flow-desc">Token count × registry price per model. 15% safety buffer applied. Prices from the active revision — verified against multiple sources</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">Step 4</div>
+        <div class="flow-icon">📊</div>
+        <div class="flow-title">Score &amp; Rank</div>
+        <div class="flow-desc">score = 0.70 × cost_score + 0.20 × tier_score + 0.10 × latency_score. Lowest cost wins within each tier</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-n">Step 5</div>
+        <div class="flow-icon">⚡</div>
+        <div class="flow-title">Route &amp; Record</div>
+        <div class="flow-desc">Top-ranked model receives the request. Actual tokens and cost recorded to cost_records. Telemetry updates latency P50</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PRICING TABLE -->
+<section id="pricing">
+  <div class="section-inner">
+    <p class="section-tag">Model Catalog</p>
+    <h2 class="section-title">41 models across 12 vendors — prices updated weekly</h2>
+    <p class="section-sub">All prices USD per 1M tokens. Verified April 9, 2026. Ranked by input price — highest first.</p>
+
+    <div style="margin-top:32px">
+      <div class="pricing-legend">
+        <div class="leg">
+          <div class="leg-lbl">Input Price</div>
+          <div class="leg-desc">Tokens <em>you send</em> — your prompt, system message, and context. Charged once per request.</div>
+        </div>
+        <div class="leg">
+          <div class="leg-lbl">Output Price</div>
+          <div class="leg-desc">Tokens the <em>model generates</em>. Typically 3–5× the input price. Estimate: 200 output tokens per request.</div>
+        </div>
+        <div class="leg">
+          <div class="leg-lbl">Cost Formula</div>
+          <div class="leg-desc">(input_tokens × in_price + output_tokens × out_price) ÷ 1,000,000 = cost in USD</div>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table id="model-table">
+          <thead>
+            <tr>
+              <th class="col-rank">#</th>
+              <th>Model</th>
+              <th>Vendor</th>
+              <th>Tier</th>
+              <th>Input $/1M</th>
+              <th>Output $/1M</th>
+            </tr>
+          </thead>
+          <tbody id="model-tbody"></tbody>
+        </table>
+      </div>
+      <p class="table-note">★ Tier 1 = critical tasks · Tier 2 = complex · Tier 3 = moderate · Tier 4 = simple/budget · Local models (Ollama) excluded from this table</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MAGAZINE SECTION -->
+<section class="magazine-section" id="magazine">
+  <div class="section-inner">
+    <p class="section-tag">Latest Report</p>
+    <h2 class="section-title">Weekly AI Market Intelligence</h2>
+    <p class="section-sub">Published every Sunday. Covers price movements, new models, and cost optimisation opportunities across 41 models and 12 vendors.</p>
+    <div style="margin-top:40px">
+    <div class="mag-card">
+      <div class="mag-header">
+        <div class="mag-logo">tidus<span>.</span>magazine</div>
+        <div class="mag-sub-tag">AI Model Market Intelligence · Weekly Edition</div>
+        <div class="mag-title">April Market Update: DeepSeek Pressure Continues · Google Gemini 3.1 Confirmed · xAI Holds Premium</div>
+        <div class="mag-date">Week of April 10, 2026 · Issue #17</div>
+      </div>
+      <div class="mag-stats-bar">
+        <div class="ms"><div class="ms-val">41</div><div class="ms-lbl">Models Tracked</div></div>
+        <div class="ms"><div class="ms-val g">2</div><div class="ms-lbl">Price Drops</div></div>
+        <div class="ms"><div class="ms-val r">0</div><div class="ms-lbl">Price Rises</div></div>
+        <div class="ms"><div class="ms-val">2</div><div class="ms-lbl">Models Updated</div></div>
+        <div class="ms"><div class="ms-val">4</div><div class="ms-lbl">New Verifications</div></div>
+      </div>
+      <div class="mag-body">
+        <div class="exec-sum">
+          <strong>Executive Summary:</strong> DeepSeek continues its aggressive pricing posture — deepseek-v3 input price ticked down a further 3.6% this week, reinforcing its position as the value leader at $0.27/1M. Google confirmed the Gemini 3.1 series in the catalog at $2.00/1M (pro) and $1.00/1M (flash). xAI's Grok-3-Fast remains firmly premium at $5.00/1M — the highest-cost routed model. OpenAI's gpt-oss-120b holds at $0.039/1M, the cheapest non-local model in the catalog. Routing teams can reduce costs by 35–40% this month by shifting moderate-complexity tasks from gpt-4o to gpt-4.1-mini or gemini-2.5-flash.
+        </div>
+
+        <div class="mag-sec-title">📉 Price Changes This Week</div>
+        <div class="changes-grid">
+
+          <div class="cc-card drop">
+            <div class="cc-model">deepseek-v3</div>
+            <div class="cc-vendor">DeepSeek</div>
+            <div class="cc-row">
+              <span class="cc-lbl">Input</span>
+              <span class="cc-old">$0.280</span>
+              <span>→</span>
+              <span class="cc-new drop">$0.270</span>
+              <span class="cc-delta d-drop">−3.6%</span>
+            </div>
+            <div class="cc-row">
+              <span class="cc-lbl">Output</span>
+              <span class="cc-old">$0.920</span>
+              <span>→</span>
+              <span class="cc-new drop">$0.890</span>
+              <span class="cc-delta d-drop">−3.3%</span>
+            </div>
+          </div>
+
+          <div class="cc-card drop">
+            <div class="cc-model">gemini-2.5-flash</div>
+            <div class="cc-vendor">Google</div>
+            <div class="cc-row">
+              <span class="cc-lbl">Input</span>
+              <span class="cc-old">$0.350</span>
+              <span>→</span>
+              <span class="cc-new drop">$0.300</span>
+              <span class="cc-delta d-drop">−14.3%</span>
+            </div>
+            <div class="cc-row">
+              <span class="cc-lbl">Output</span>
+              <span class="cc-old">$2.800</span>
+              <span>→</span>
+              <span class="cc-new drop">$2.500</span>
+              <span class="cc-delta d-drop">−10.7%</span>
+            </div>
+          </div>
+
+          <div class="cc-card new">
+            <div class="cc-model">gemini-3.1-pro</div>
+            <div class="cc-vendor">Google · New Catalog Entry</div>
+            <div class="cc-row">
+              <span class="cc-lbl">Input</span>
+              <span class="cc-new new">$2.000</span>
+              <span class="cc-delta d-new">NEW</span>
+            </div>
+            <div class="cc-row">
+              <span class="cc-lbl">Output</span>
+              <span class="cc-new new">$12.000</span>
+            </div>
+          </div>
+
+          <div class="cc-card new">
+            <div class="cc-model">gemini-3.1-flash</div>
+            <div class="cc-vendor">Google · New Catalog Entry</div>
+            <div class="cc-row">
+              <span class="cc-lbl">Input</span>
+              <span class="cc-new new">$1.000</span>
+              <span class="cc-delta d-new">NEW</span>
+            </div>
+            <div class="cc-row">
+              <span class="cc-lbl">Output</span>
+              <span class="cc-new new">$4.000</span>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="mag-sec-title">💡 Cost Optimisation Opportunities</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div style="padding:14px;background:#f8f9ff;border-radius:10px;border:1px solid #e9ecef">
+            <div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">Replace gpt-4o for moderate tasks</div>
+            <div style="font-size:12px;color:#555;line-height:1.6">Switch to gemini-2.5-flash ($0.30/1M) or gpt-4.1-mini ($0.40/1M). Savings: <strong style="color:#16a34a">88% vs gpt-4o at $2.50/1M</strong></div>
+          </div>
+          <div style="padding:14px;background:#f8f9ff;border-radius:10px;border:1px solid #e9ecef">
+            <div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">Use gpt-oss-120b for simple classification</div>
+            <div style="font-size:12px;color:#555;line-height:1.6">At $0.039/1M input, it's 98% cheaper than claude-opus-4-6 for tasks not requiring deep reasoning.</div>
+          </div>
+        </div>
+      </div>
+      <div class="mag-footer">
+        <p>Prices verified via multi-source consensus · Next sync: April 13, 2026 02:00 UTC</p>
+        <a href="#subscribe">Subscribe to weekly reports →</a>
+      </div>
+    </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SUBSCRIBE -->
+<section class="sub-section" id="subscribe">
+  <div>
+    <h2>Get the weekly AI pricing report</h2>
+    <p>41 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
+    <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
+      <input type="email" id="sub-email" placeholder="you@company.com" required>
+      <button type="submit">Subscribe Free</button>
+    </form>
+    <p id="sub-note">No spam. Unsubscribe anytime via one-click link in any email.</p>
+    <p id="sub-msg"></p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="f-brand">
+      <div class="logo">tidus<span>.</span></div>
+      <p>Self-hosted AI router. Enterprise-grade routing, pricing governance, and market intelligence — on your own infrastructure.</p>
+    </div>
+    <div class="f-col">
+      <h4>Product</h4>
+      <a href="#about">About</a>
+      <a href="#pillars">Pillars</a>
+      <a href="#pricing">Model Catalog</a>
+      <a href="#magazine">Weekly Report</a>
+    </div>
+    <div class="f-col">
+      <h4>Resources</h4>
+      <a href="https://github.com/kensterinvest/tidus">GitHub</a>
+      <a href="https://github.com/kensterinvest/tidus/blob/main/docs/configuration.md">Docs</a>
+      <a href="https://github.com/kensterinvest/tidus/blob/main/CHANGELOG.md">Changelog</a>
+      <a href="https://github.com/kensterinvest/tidus/issues">Issues</a>
+    </div>
+    <div class="f-col">
+      <h4>Contact</h4>
+      <a href="mailto:lapkei01@gmail.com">lapkei01@gmail.com</a>
+      <a href="https://github.com/kensterinvest">@kensterinvest</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Kenny Wong · MIT License · Built with ❤️ for enterprises that don't want to overpay for AI</p>
+    <p>Contact: <a href="mailto:lapkei01@gmail.com">lapkei01@gmail.com</a></p>
+  </div>
+</footer>
+
+<script>
+// Model data — all 41 models, sorted by input price descending
+const MODELS = [
+  {r:1,  id:"claude-opus-4-6",          v:"Anthropic",   t:1, i:15.00,  o:75.00},
+  {r:2,  id:"o3",                        v:"OpenAI",      t:1, i:10.00,  o:40.00},
+  {r:3,  id:"grok-3-fast",               v:"xAI",         t:1, i:5.00,   o:25.00},
+  {r:4,  id:"grok-3",                    v:"xAI",         t:1, i:3.00,   o:15.00},
+  {r:5,  id:"claude-sonnet-4-6",         v:"Anthropic",   t:1, i:3.00,   o:15.00},
+  {r:6,  id:"sonar-pro",                 v:"Perplexity",  t:1, i:3.00,   o:15.00},
+  {r:7,  id:"gpt-4o",                    v:"OpenAI",      t:1, i:2.50,   o:10.00},
+  {r:8,  id:"command-r-plus",            v:"Cohere",      t:2, i:2.50,   o:10.00},
+  {r:9,  id:"gpt-4.1",                   v:"OpenAI",      t:2, i:2.00,   o:8.00},
+  {r:10, id:"gemini-3.1-pro",            v:"Google",      t:2, i:2.00,   o:12.00},
+  {r:11, id:"mistral-large-3",           v:"Mistral",     t:2, i:2.00,   o:6.00},
+  {r:12, id:"o4-mini",                   v:"OpenAI",      t:2, i:1.10,   o:4.40},
+  {r:13, id:"qwen-max",                  v:"Alibaba",     t:2, i:1.04,   o:4.16},
+  {r:14, id:"gemini-2.5-pro",            v:"Google",      t:2, i:1.25,   o:10.00},
+  {r:15, id:"gpt-5-codex",               v:"OpenAI",      t:2, i:1.25,   o:10.00},
+  {r:16, id:"sonar",                     v:"Perplexity",  t:2, i:1.00,   o:1.00},
+  {r:17, id:"groq-deepseek-r1",          v:"Groq",        t:2, i:1.00,   o:3.00},
+  {r:18, id:"gemini-3.1-flash",          v:"Google",      t:2, i:1.00,   o:4.00},
+  {r:19, id:"claude-haiku-4-5",          v:"Anthropic",   t:2, i:0.80,   o:4.00},
+  {r:20, id:"codex-mini-latest",         v:"OpenAI",      t:2, i:0.75,   o:3.00},
+  {r:21, id:"kimi-k2.5",                 v:"Moonshot",    t:3, i:0.60,   o:2.50},
+  {r:22, id:"deepseek-r1",               v:"DeepSeek",    t:3, i:0.55,   o:2.19},
+  {r:23, id:"groq-llama4-maverick",      v:"Groq",        t:3, i:0.50,   o:1.50},
+  {r:24, id:"gpt-4.1-mini",              v:"OpenAI",      t:3, i:0.40,   o:1.60},
+  {r:25, id:"devstral",                  v:"Mistral",     t:3, i:0.40,   o:2.00},
+  {r:26, id:"mistral-medium",            v:"Mistral",     t:3, i:0.40,   o:2.00},
+  {r:27, id:"qwen-flash",                v:"Alibaba",     t:3, i:0.40,   o:1.20},
+  {r:28, id:"deepseek-v4",               v:"DeepSeek",    t:3, i:0.30,   o:0.50},
+  {r:29, id:"gemini-2.5-flash",          v:"Google",      t:3, i:0.30,   o:2.50},
+  {r:30, id:"deepseek-v3",               v:"DeepSeek",    t:3, i:0.27,   o:0.89},
+  {r:31, id:"together-llama4-maverick",  v:"Together AI", t:3, i:0.27,   o:0.85},
+  {r:32, id:"qwen-plus",                 v:"Alibaba",     t:3, i:0.26,   o:0.78},
+  {r:33, id:"codestral",                 v:"Mistral",     t:3, i:0.20,   o:0.60},
+  {r:34, id:"gpt-4o-mini",               v:"OpenAI",      t:3, i:0.15,   o:0.60},
+  {r:35, id:"mistral-nemo",              v:"Mistral",     t:3, i:0.15,   o:0.15},
+  {r:36, id:"command-r",                 v:"Cohere",      t:3, i:0.15,   o:0.60},
+  {r:37, id:"gpt-4.1-nano",              v:"OpenAI",      t:4, i:0.10,   o:0.40},
+  {r:38, id:"gemini-2.0-flash",          v:"Google",      t:4, i:0.10,   o:0.40},
+  {r:39, id:"devstral-small",            v:"Mistral",     t:4, i:0.10,   o:0.30},
+  {r:40, id:"mistral-small",             v:"Mistral",     t:4, i:0.10,   o:0.30},
+  {r:41, id:"gpt-oss-120b",              v:"OpenAI",      t:4, i:0.039,  o:0.10},
+];
+
+const TIER_LABELS = {1:"Premium", 2:"Advanced", 3:"Economy", 4:"Budget"};
+const TIER_CLASS  = {1:"t1",      2:"t2",       3:"t3",      4:"t4"};
+
+function fmt(n){
+  if(n < 0.1) return "$"+n.toFixed(3);
+  return "$"+n.toFixed(2);
+}
+
+(function renderTable(){
+  const tbody = document.getElementById("model-tbody");
+  tbody.innerHTML = MODELS.map(m => `
+    <tr>
+      <td class="col-rank">${m.r}</td>
+      <td class="col-model">${m.id}</td>
+      <td class="col-vendor">${m.v}</td>
+      <td><span class="tier-badge ${TIER_CLASS[m.t]}">T${m.t} · ${TIER_LABELS[m.t]}</span></td>
+      <td class="col-in">${fmt(m.i)}</td>
+      <td class="col-out">${fmt(m.o)}</td>
+    </tr>`).join("");
+})();
+
+async function handleSub(e){
+  e.preventDefault();
+  const email = document.getElementById("sub-email").value.trim();
+  const msg   = document.getElementById("sub-msg");
+  msg.style.display = "block";
+  msg.className = "";
+  msg.textContent = "Subscribing…";
+  try {
+    const r = await fetch("/api/v1/subscribe", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({email})
+    });
+    if(r.ok){
+      msg.className = "ok";
+      msg.textContent = "✓ You're subscribed! First report arrives Sunday 02:00 UTC.";
+      document.getElementById("sub-email").value = "";
+    } else {
+      const d = await r.json().catch(()=>({detail:"Unknown error"}));
+      msg.className = "err";
+      msg.textContent = "✗ " + (d.detail || "Subscription failed — try again.");
+    }
+  } catch(_){
+    // Fallback: open mailto
+    window.location.href = "mailto:lapkei01@gmail.com?subject=Subscribe%20to%20Tidus%20Magazine&body=Please%20subscribe%20me%20to%20the%20weekly%20Tidus%20pricing%20report.";
+    msg.className = "ok";
+    msg.textContent = "Opening your email client as a fallback…";
+  }
+}
+</script>
+</body>
+</html>
