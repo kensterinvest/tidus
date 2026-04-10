@@ -300,8 +300,7 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#pillars">Cost Pillars</a>
     <a href="#how">How It Works</a>
     <a href="#sources">Sources</a>
-    <a href="#pricing">Models</a>
-    <a href="#magazine">Report</a>
+    <a href="#magazine">Report &amp; Catalog</a>
   </div>
   <a href="#subscribe" class="nav-cta">Subscribe Free</a>
 </nav>
@@ -577,51 +576,6 @@ footer{background:#0a0f1e;padding:48px}
 
 <hr class="divider">
 
-<!-- PRICING TABLE -->
-<section id="pricing">
-  <div class="section-inner">
-    <p class="section-tag">Model Catalog</p>
-    <h2 class="section-title">41 production-ready models across 12 vendors</h2>
-    <p class="section-sub">All prices USD per 1M tokens. Verified April 9, 2026. Ranked by input price — highest first. Only commercially stable, publicly-priced models are listed.</p>
-
-    <div style="margin-top:32px">
-      <div class="pricing-legend">
-        <div class="leg">
-          <div class="leg-lbl">Input Price</div>
-          <div class="leg-desc">Tokens <em>you send</em> — your prompt, system message, and context. Charged once per request.</div>
-        </div>
-        <div class="leg">
-          <div class="leg-lbl">Output Price</div>
-          <div class="leg-desc">Tokens the <em>model generates</em>. Typically 3–5× the input price. Estimate: 200 output tokens per request.</div>
-        </div>
-        <div class="leg">
-          <div class="leg-lbl">Cost Formula</div>
-          <div class="leg-desc">(input_tokens × in_price + output_tokens × out_price) ÷ 1,000,000 = cost in USD</div>
-        </div>
-      </div>
-
-      <div class="table-wrap">
-        <table id="model-table">
-          <thead>
-            <tr>
-              <th class="col-rank">#</th>
-              <th>Model</th>
-              <th>Vendor</th>
-              <th>Tier</th>
-              <th>Input $/1M</th>
-              <th>Output $/1M</th>
-            </tr>
-          </thead>
-          <tbody id="model-tbody"></tbody>
-        </table>
-      </div>
-      <p class="table-note">★ Tier 1 = critical tasks · Tier 2 = complex · Tier 3 = moderate · Tier 4 = simple/budget · Local models (Ollama) excluded from this table</p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
 <!-- MAGAZINE SECTION -->
 <section class="magazine-section" id="magazine">
   <div class="section-inner">
@@ -730,6 +684,39 @@ footer{background:#0a0f1e;padding:48px}
             <div style="font-size:12px;color:#555;line-height:1.6">At $0.039/1M input, it's 98% cheaper than claude-opus-4-6 for tasks not requiring deep reasoning.</div>
           </div>
         </div>
+
+        <div class="mag-sec-title" style="margin-top:28px">📋 Full Model Catalog — April 2026</div>
+        <p style="font-size:12px;color:#888;margin-bottom:14px">41 production-ready models · Prices USD/1M tokens · Verified April 9, 2026 · Ranked by input price highest first</p>
+        <div class="pricing-legend" style="margin-bottom:14px">
+          <div class="leg">
+            <div class="leg-lbl">Input Price</div>
+            <div class="leg-desc">Tokens <em>you send</em> — prompt + context. Charged once per call.</div>
+          </div>
+          <div class="leg">
+            <div class="leg-lbl">Output Price</div>
+            <div class="leg-desc">Tokens the <em>model generates</em>. Typically 3–5× the input price.</div>
+          </div>
+          <div class="leg">
+            <div class="leg-lbl">Cost Formula</div>
+            <div class="leg-desc">(in_tokens × in_price + out_tokens × out_price) ÷ 1,000,000</div>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table id="model-table">
+            <thead>
+              <tr>
+                <th class="col-rank">#</th>
+                <th>Model</th>
+                <th>Vendor</th>
+                <th>Tier</th>
+                <th>Input $/1M</th>
+                <th>Output $/1M</th>
+              </tr>
+            </thead>
+            <tbody id="model-tbody"></tbody>
+          </table>
+        </div>
+        <p class="table-note">★ T1 = critical · T2 = complex · T3 = moderate · T4 = simple/budget · Local Ollama models not listed</p>
       </div>
       <div class="mag-footer">
         <p>Prices verified via multi-source consensus · Next sync: April 13, 2026 02:00 UTC</p>
@@ -767,8 +754,7 @@ footer{background:#0a0f1e;padding:48px}
       <h4>Product</h4>
       <a href="#about">About</a>
       <a href="#pillars">Pillars</a>
-      <a href="#pricing">Model Catalog</a>
-      <a href="#magazine">Weekly Report</a>
+      <a href="#magazine">Model Catalog &amp; Report</a>
     </div>
     <div class="f-col">
       <h4>Resources</h4>
