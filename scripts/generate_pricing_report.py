@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import argparse
 import asyncio
-import os
 import subprocess
 import sys
 from pathlib import Path
@@ -95,7 +94,7 @@ def _create_github_release(
         subprocess.run(["gh", "--version"], capture_output=True, check=True)
     except (FileNotFoundError, subprocess.CalledProcessError):
         print("  Warning: gh CLI not found — skipping GitHub Release creation.")
-        print(f"  Install: https://cli.github.com")
+        print("  Install: https://cli.github.com")
         return
 
     # Write release body to temp file to avoid shell escaping issues
