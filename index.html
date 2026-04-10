@@ -33,23 +33,33 @@ nav{position:sticky;top:0;z-index:1000;background:rgba(15,52,96,.97);backdrop-fi
 
 /* HERO */
 .hero{background:linear-gradient(135deg,#060d1f 0%,#0f3460 40%,#1e1b4b 70%,#533483 100%);
-      padding:100px 48px 80px;position:relative;overflow:hidden}
+      padding:80px 48px 72px;position:relative;overflow:hidden}
 .hero::after{content:'';position:absolute;inset:0;
-             background:radial-gradient(ellipse at 75% 50%,rgba(167,139,250,.1) 0%,transparent 65%);
+             background:radial-gradient(ellipse at 50% 40%,rgba(167,139,250,.12) 0%,transparent 60%);
              pointer-events:none}
-.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1}
+.hero-inner{max-width:1100px;margin:0 auto;position:relative;z-index:1;text-align:center}
+.hero-logo-wrap{margin-bottom:36px}
+.hero-logo{font-size:88px;font-weight:900;letter-spacing:-5px;color:#fff;line-height:1;
+           display:inline-block;position:relative}
+.hero-logo .dot{color:var(--violet)}
+.hero-logo::before{content:'';position:absolute;width:200px;height:200px;
+                   left:50%;top:50%;transform:translate(-50%,-50%);
+                   background:radial-gradient(circle,rgba(167,139,250,.18) 0%,transparent 65%);
+                   border-radius:50%;filter:blur(24px);z-index:-1;pointer-events:none}
+.hero-tagline-txt{font-size:11.5px;text-transform:uppercase;letter-spacing:3px;
+                  color:rgba(255,255,255,.38);margin-top:10px}
 .hero-badge{display:inline-flex;align-items:center;gap:6px;
             background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.3);
             color:var(--violet);font-size:12px;font-weight:600;
-            padding:4px 14px;border-radius:20px;letter-spacing:.5px;margin-bottom:24px}
+            padding:4px 14px;border-radius:20px;letter-spacing:.5px;margin-bottom:22px}
 .hero-badge::before{content:'●';font-size:8px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-.hero-title{font-size:66px;font-weight:900;color:#fff;line-height:1.05;
-            letter-spacing:-2.5px;margin-bottom:20px}
+.hero-title{font-size:60px;font-weight:900;color:#fff;line-height:1.08;
+            letter-spacing:-2px;margin-bottom:18px}
 .hero-title .accent{color:var(--violet)}
-.hero-sub{font-size:19px;color:rgba(255,255,255,.68);max-width:580px;
-          line-height:1.65;margin-bottom:40px}
-.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:68px}
+.hero-sub{font-size:18px;color:rgba(255,255,255,.65);max-width:560px;
+          line-height:1.7;margin:0 auto 36px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-bottom:60px}
 .btn-hero{font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;transition:all .2s}
 .btn-hero.primary{background:var(--violet);color:#fff}
 .btn-hero.primary:hover{background:#9061f9;transform:translateY(-2px);
@@ -78,7 +88,7 @@ hr.divider{border:none;border-top:1px solid #e9ecef;margin:0 48px}
 /* ABOUT */
 .about{background:var(--light)}
 .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;
-            align-items:center;margin-top:56px}
+            align-items:center;margin-top:28px}
 .about-text p{font-size:15px;color:#444;line-height:1.85;margin-bottom:16px}
 .about-code{background:#1a1a2e;border-radius:var(--radius);overflow:hidden;
             box-shadow:var(--shadow-lg)}
@@ -158,8 +168,7 @@ td{padding:10px 16px;vertical-align:middle}
 /* MAGAZINE */
 .magazine-section{background:linear-gradient(135deg,#f8f9ff 0%,#ede9fe 100%)}
 .mag-card{background:#fff;border-radius:20px;overflow:hidden;
-          box-shadow:var(--shadow-lg);border:1px solid rgba(83,52,131,.1);
-          max-width:860px;margin:0 auto}
+          box-shadow:var(--shadow-lg);border:1px solid rgba(83,52,131,.1)}
 .mag-header{background:linear-gradient(135deg,#0f3460 0%,#533483 60%,#e94560 100%);
             padding:32px 40px 28px}
 .mag-logo{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.5px}
@@ -314,9 +323,13 @@ footer{background:#0a0f1e;padding:48px}
 <!-- HERO -->
 <section class="hero" id="top">
   <div class="hero-inner">
-    <div class="hero-badge">Open Source · Self-Hosted · Enterprise Ready</div>
+    <div class="hero-logo-wrap">
+      <div class="hero-logo">tidus<span class="dot">.</span></div>
+      <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
+    </div>
+    <div class="hero-badge">Now tracking 41 models across 12 vendors · Weekly price sync</div>
     <h1 class="hero-title">Stop overpaying<br>for <span class="accent">AI.</span></h1>
-    <p class="hero-sub">Tidus intelligently routes every AI request to the best-value model — cutting costs 60–80% while preserving quality. Your data never leaves your infrastructure.</p>
+    <p class="hero-sub">Intelligently routes every request to the best-value model — cutting costs 60–80% while preserving quality. Your data never leaves your infrastructure.</p>
     <div class="hero-actions">
       <a href="https://github.com/kensterinvest/tidus" class="btn-hero primary">⭐ View on GitHub</a>
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
@@ -741,7 +754,7 @@ footer{background:#0a0f1e;padding:48px}
         </div>
 
         <div class="mag-sec-title" style="margin-top:28px">📋 Full Model Catalog — April 2026</div>
-        <p style="font-size:12px;color:#888;margin-bottom:14px">41 production-ready models · Prices USD/1M tokens · Verified April 9, 2026 · Ranked by input price highest first</p>
+        <p style="font-size:12px;color:#888;margin-bottom:14px">41 production-ready models · Prices USD/1M tokens · Verified April 9, 2026 · Ranked by blended cost — fairest comparison</p>
         <div class="pricing-legend" style="margin-bottom:14px">
           <div class="leg">
             <div class="leg-lbl">Input Price</div>
@@ -752,8 +765,8 @@ footer{background:#0a0f1e;padding:48px}
             <div class="leg-desc">Tokens the <em>model generates</em>. Typically 3–5× the input price.</div>
           </div>
           <div class="leg">
-            <div class="leg-lbl">Cost Formula</div>
-            <div class="leg-desc">(in_tokens × in_price + out_tokens × out_price) ÷ 1,000,000</div>
+            <div class="leg-lbl">Est. $/1K Req ★</div>
+            <div class="leg-desc">Blended cost: assumes 1,000 input + 500 output tokens per request. Ranking is by this column — fairer than input-only.</div>
           </div>
         </div>
         <div class="table-wrap">
@@ -766,12 +779,13 @@ footer{background:#0a0f1e;padding:48px}
                 <th>Tier</th>
                 <th>Input $/1M</th>
                 <th>Output $/1M</th>
+                <th>Est. $/1K Req ★</th>
               </tr>
             </thead>
             <tbody id="model-tbody"></tbody>
           </table>
         </div>
-        <p class="table-note">★ T1 = critical · T2 = complex · T3 = moderate · T4 = simple/budget · Local Ollama models not listed</p>
+        <p class="table-note">★ Est. $/1K Req = (1,000 × input_price + 500 × output_price) ÷ 1,000 · T1 = critical · T2 = complex · T3 = moderate · T4 = simple/budget</p>
       </div>
       <div class="mag-footer">
         <p>Prices verified via multi-source consensus · Next sync: April 13, 2026 02:00 UTC</p>
@@ -831,70 +845,90 @@ footer{background:#0a0f1e;padding:48px}
 </footer>
 
 <script>
-// Model data — all 41 models, sorted by input price descending
+// Model data — 41 models. Ranked at render time by blended cost (fairest comparison).
 const MODELS = [
-  {r:1,  id:"claude-opus-4-6",          v:"Anthropic",   t:1, i:15.00,  o:75.00},
-  {r:2,  id:"o3",                        v:"OpenAI",      t:1, i:10.00,  o:40.00},
-  {r:3,  id:"grok-3-fast",               v:"xAI",         t:1, i:5.00,   o:25.00},
-  {r:4,  id:"grok-3",                    v:"xAI",         t:1, i:3.00,   o:15.00},
-  {r:5,  id:"claude-sonnet-4-6",         v:"Anthropic",   t:1, i:3.00,   o:15.00},
-  {r:6,  id:"sonar-pro",                 v:"Perplexity",  t:1, i:3.00,   o:15.00},
-  {r:7,  id:"gpt-4o",                    v:"OpenAI",      t:1, i:2.50,   o:10.00},
-  {r:8,  id:"command-r-plus",            v:"Cohere",      t:2, i:2.50,   o:10.00},
-  {r:9,  id:"gpt-4.1",                   v:"OpenAI",      t:2, i:2.00,   o:8.00},
-  {r:10, id:"gemini-3.1-pro",            v:"Google",      t:2, i:2.00,   o:12.00},
-  {r:11, id:"mistral-large-3",           v:"Mistral",     t:2, i:2.00,   o:6.00},
-  {r:12, id:"o4-mini",                   v:"OpenAI",      t:2, i:1.10,   o:4.40},
-  {r:13, id:"qwen-max",                  v:"Alibaba",     t:2, i:1.04,   o:4.16},
-  {r:14, id:"gemini-2.5-pro",            v:"Google",      t:2, i:1.25,   o:10.00},
-  {r:15, id:"gpt-5-codex",               v:"OpenAI",      t:2, i:1.25,   o:10.00},
-  {r:16, id:"sonar",                     v:"Perplexity",  t:2, i:1.00,   o:1.00},
-  {r:17, id:"groq-deepseek-r1",          v:"Groq",        t:2, i:1.00,   o:3.00},
-  {r:18, id:"gemini-3.1-flash",          v:"Google",      t:2, i:1.00,   o:4.00},
-  {r:19, id:"claude-haiku-4-5",          v:"Anthropic",   t:2, i:0.80,   o:4.00},
-  {r:20, id:"codex-mini-latest",         v:"OpenAI",      t:2, i:0.75,   o:3.00},
-  {r:21, id:"kimi-k2.5",                 v:"Moonshot",    t:3, i:0.60,   o:2.50},
-  {r:22, id:"deepseek-r1",               v:"DeepSeek",    t:3, i:0.55,   o:2.19},
-  {r:23, id:"groq-llama4-maverick",      v:"Groq",        t:3, i:0.50,   o:1.50},
-  {r:24, id:"gpt-4.1-mini",              v:"OpenAI",      t:3, i:0.40,   o:1.60},
-  {r:25, id:"devstral",                  v:"Mistral",     t:3, i:0.40,   o:2.00},
-  {r:26, id:"mistral-medium",            v:"Mistral",     t:3, i:0.40,   o:2.00},
-  {r:27, id:"qwen-flash",                v:"Alibaba",     t:3, i:0.40,   o:1.20},
-  {r:28, id:"deepseek-v4",               v:"DeepSeek",    t:3, i:0.30,   o:0.50},
-  {r:29, id:"gemini-2.5-flash",          v:"Google",      t:3, i:0.30,   o:2.50},
-  {r:30, id:"deepseek-v3",               v:"DeepSeek",    t:3, i:0.27,   o:0.89},
-  {r:31, id:"together-llama4-maverick",  v:"Together AI", t:3, i:0.27,   o:0.85},
-  {r:32, id:"qwen-plus",                 v:"Alibaba",     t:3, i:0.26,   o:0.78},
-  {r:33, id:"codestral",                 v:"Mistral",     t:3, i:0.20,   o:0.60},
-  {r:34, id:"gpt-4o-mini",               v:"OpenAI",      t:3, i:0.15,   o:0.60},
-  {r:35, id:"mistral-nemo",              v:"Mistral",     t:3, i:0.15,   o:0.15},
-  {r:36, id:"command-r",                 v:"Cohere",      t:3, i:0.15,   o:0.60},
-  {r:37, id:"gpt-4.1-nano",              v:"OpenAI",      t:4, i:0.10,   o:0.40},
-  {r:38, id:"gemini-2.0-flash",          v:"Google",      t:4, i:0.10,   o:0.40},
-  {r:39, id:"devstral-small",            v:"Mistral",     t:4, i:0.10,   o:0.30},
-  {r:40, id:"mistral-small",             v:"Mistral",     t:4, i:0.10,   o:0.30},
-  {r:41, id:"gpt-oss-120b",              v:"OpenAI",      t:4, i:0.039,  o:0.10},
+  {id:"claude-opus-4-6",          v:"Anthropic",   t:1, i:15.00,  o:75.00},
+  {id:"o3",                       v:"OpenAI",      t:1, i:10.00,  o:40.00},
+  {id:"grok-3-fast",              v:"xAI",         t:1, i:5.00,   o:25.00},
+  {id:"grok-3",                   v:"xAI",         t:1, i:3.00,   o:15.00},
+  {id:"claude-sonnet-4-6",        v:"Anthropic",   t:1, i:3.00,   o:15.00},
+  {id:"sonar-pro",                v:"Perplexity",  t:1, i:3.00,   o:15.00},
+  {id:"gpt-4o",                   v:"OpenAI",      t:1, i:2.50,   o:10.00},
+  {id:"command-r-plus",           v:"Cohere",      t:2, i:2.50,   o:10.00},
+  {id:"gpt-4.1",                  v:"OpenAI",      t:2, i:2.00,   o:8.00},
+  {id:"gemini-3.1-pro",           v:"Google",      t:2, i:2.00,   o:12.00},
+  {id:"mistral-large-3",          v:"Mistral",     t:2, i:2.00,   o:6.00},
+  {id:"o4-mini",                  v:"OpenAI",      t:2, i:1.10,   o:4.40},
+  {id:"qwen-max",                 v:"Alibaba",     t:2, i:1.04,   o:4.16},
+  {id:"gemini-2.5-pro",           v:"Google",      t:2, i:1.25,   o:10.00},
+  {id:"gpt-5-codex",              v:"OpenAI",      t:2, i:1.25,   o:10.00},
+  {id:"sonar",                    v:"Perplexity",  t:2, i:1.00,   o:1.00},
+  {id:"groq-deepseek-r1",         v:"Groq",        t:2, i:1.00,   o:3.00},
+  {id:"gemini-3.1-flash",         v:"Google",      t:2, i:1.00,   o:4.00},
+  {id:"claude-haiku-4-5",         v:"Anthropic",   t:2, i:0.80,   o:4.00},
+  {id:"codex-mini-latest",        v:"OpenAI",      t:2, i:0.75,   o:3.00},
+  {id:"kimi-k2.5",                v:"Moonshot",    t:3, i:0.60,   o:2.50},
+  {id:"deepseek-r1",              v:"DeepSeek",    t:3, i:0.55,   o:2.19},
+  {id:"groq-llama4-maverick",     v:"Groq",        t:3, i:0.50,   o:1.50},
+  {id:"gpt-4.1-mini",             v:"OpenAI",      t:3, i:0.40,   o:1.60},
+  {id:"devstral",                 v:"Mistral",     t:3, i:0.40,   o:2.00},
+  {id:"mistral-medium",           v:"Mistral",     t:3, i:0.40,   o:2.00},
+  {id:"qwen-flash",               v:"Alibaba",     t:3, i:0.40,   o:1.20},
+  {id:"deepseek-v4",              v:"DeepSeek",    t:3, i:0.30,   o:0.50},
+  {id:"gemini-2.5-flash",         v:"Google",      t:3, i:0.30,   o:2.50},
+  {id:"deepseek-v3",              v:"DeepSeek",    t:3, i:0.27,   o:0.89},
+  {id:"together-llama4-maverick", v:"Together AI", t:3, i:0.27,   o:0.85},
+  {id:"qwen-plus",                v:"Alibaba",     t:3, i:0.26,   o:0.78},
+  {id:"codestral",                v:"Mistral",     t:3, i:0.20,   o:0.60},
+  {id:"gpt-4o-mini",              v:"OpenAI",      t:3, i:0.15,   o:0.60},
+  {id:"mistral-nemo",             v:"Mistral",     t:3, i:0.15,   o:0.15},
+  {id:"command-r",                v:"Cohere",      t:3, i:0.15,   o:0.60},
+  {id:"gpt-4.1-nano",             v:"OpenAI",      t:4, i:0.10,   o:0.40},
+  {id:"gemini-2.0-flash",         v:"Google",      t:4, i:0.10,   o:0.40},
+  {id:"devstral-small",           v:"Mistral",     t:4, i:0.10,   o:0.30},
+  {id:"mistral-small",            v:"Mistral",     t:4, i:0.10,   o:0.30},
+  {id:"gpt-oss-120b",             v:"OpenAI",      t:4, i:0.039,  o:0.10},
 ];
 
 const TIER_LABELS = {1:"Premium", 2:"Advanced", 3:"Economy", 4:"Budget"};
 const TIER_CLASS  = {1:"t1",      2:"t2",       3:"t3",      4:"t4"};
+
+// Sanitize — all values are static data, but good practice
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
 function fmt(n){
   if(n < 0.1) return "$"+n.toFixed(3);
   return "$"+n.toFixed(2);
 }
 
+// Blended cost: estimated $/1K requests assuming 1,000 input + 500 output tokens each
+function blended(m){ return (m.i * 1000 + m.o * 500) / 1000; }
+
+function fmtB(n){
+  if(n >= 1)   return "$"+n.toFixed(2);
+  if(n >= 0.1) return "$"+n.toFixed(3);
+  return "$"+n.toFixed(3);
+}
+
 (function renderTable(){
-  const tbody = document.getElementById("model-tbody");
-  tbody.innerHTML = MODELS.map(m => `
-    <tr>
-      <td class="col-rank">${m.r}</td>
-      <td class="col-model">${m.id}</td>
-      <td class="col-vendor">${m.v}</td>
-      <td><span class="tier-badge ${TIER_CLASS[m.t]}">T${m.t} · ${TIER_LABELS[m.t]}</span></td>
-      <td class="col-in">${fmt(m.i)}</td>
-      <td class="col-out">${fmt(m.o)}</td>
-    </tr>`).join("");
+  var sorted = MODELS.slice().sort(function(a,b){ return blended(b) - blended(a); });
+  var tbody = document.getElementById("model-tbody");
+  var html = "";
+  for(var i=0; i<sorted.length; i++){
+    var m = sorted[i];
+    var tc = TIER_CLASS[m.t];
+    var tl = TIER_LABELS[m.t];
+    html += "<tr>"
+      + "<td class='col-rank'>" + (i+1) + "</td>"
+      + "<td class='col-model'>" + esc(m.id) + "</td>"
+      + "<td class='col-vendor'>" + esc(m.v) + "</td>"
+      + "<td><span class='tier-badge " + tc + "'>T" + m.t + " \xb7 " + esc(tl) + "</span></td>"
+      + "<td class='col-in'>" + fmt(m.i) + "</td>"
+      + "<td class='col-out'>" + fmt(m.o) + "</td>"
+      + "<td class='col-in' style='font-weight:800'>" + fmtB(blended(m)) + "</td>"
+      + "</tr>";
+  }
+  tbody.innerHTML = html;
 })();
 
 async function handleSub(e){
