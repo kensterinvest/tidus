@@ -281,6 +281,69 @@ footer{background:#0a0f1e;padding:48px}
 .add-model code{background:#e9ecef;padding:3px 8px;border-radius:5px;
                 font-family:monospace;font-size:12.5px;color:#1a1a2e}
 
+/* ALGORITHM */
+.algo-section{background:#fff}
+.algo-pipeline{display:flex;gap:0;margin-top:40px}
+.algo-stage{flex:1;background:var(--light);border:1px solid #e9ecef;border-right:none;
+            padding:22px 14px;position:relative;text-align:center}
+.algo-stage:last-child{border-right:1px solid #e9ecef;border-radius:0 12px 12px 0}
+.algo-stage:first-child{border-radius:12px 0 0 12px}
+.algo-stage::after{content:'\2192';position:absolute;right:-13px;top:50%;
+                   transform:translateY(-50%);font-size:18px;color:var(--violet);
+                   z-index:2;font-weight:700;background:var(--light);
+                   width:26px;text-align:center;line-height:1}
+.algo-stage:last-child::after{display:none}
+.algo-stage-n{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;
+              color:var(--purple);margin-bottom:7px}
+.algo-stage-icon{font-size:26px;margin-bottom:8px}
+.algo-stage-title{font-size:12.5px;font-weight:800;color:#1a1a2e;margin-bottom:6px}
+.algo-stage-desc{font-size:11px;color:#888;line-height:1.5}
+.algo-formula{margin-top:32px;background:linear-gradient(135deg,#f8f9ff,#ede9fe);
+              border-radius:14px;padding:28px;border:1px solid rgba(83,52,131,.15)}
+.algo-formula-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px}
+.algo-formula-eq{font-family:'Courier New',monospace;font-size:14px;color:var(--navy);
+                 background:#fff;border-radius:8px;padding:16px 20px;
+                 border:1px solid rgba(83,52,131,.12);word-break:break-word}
+.algo-worked{margin-top:32px}
+.algo-worked-title{font-size:14px;font-weight:700;color:#1a1a2e;margin-bottom:12px}
+.algo-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.algo-table th{background:#1a1a2e;color:rgba(255,255,255,.6);text-align:left;
+               padding:10px 14px;font-size:11px;font-weight:600;
+               text-transform:uppercase;letter-spacing:1px}
+.algo-table td{padding:10px 14px;border-bottom:1px solid #f0f2f5}
+.algo-table tr:last-child td{border-bottom:none}
+.algo-table tr.winner td{background:#f0fdf4}
+.algo-table .score-win{color:#166534;font-weight:800}
+.algo-footer{font-size:12px;color:#aaa;margin-top:10px}
+.algo-footer a{color:var(--violet)}
+
+/* ROI CALCULATOR */
+.roi-section{background:linear-gradient(135deg,#060d1f 0%,#0f3460 50%,#1e1b4b 100%);
+             padding:80px 48px}
+.roi-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+          border-radius:20px;padding:40px;max-width:880px;margin:40px auto 0}
+.roi-inputs{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px}
+.roi-field label{display:block;font-size:11px;font-weight:700;text-transform:uppercase;
+                 letter-spacing:1.5px;color:rgba(255,255,255,.45);margin-bottom:8px}
+.roi-field input{width:100%;background:rgba(255,255,255,.07);
+                 border:1px solid rgba(255,255,255,.15);border-radius:10px;
+                 padding:12px 16px;color:#fff;font-size:15px;font-weight:600;
+                 outline:none;-moz-appearance:textfield}
+.roi-field input:focus{border-color:var(--violet)}
+.roi-slider-wrap{grid-column:1/-1}
+.roi-slider{width:100%;accent-color:var(--violet);margin-top:4px}
+.roi-slider-labels{display:flex;justify-content:space-between;font-size:11px;
+                   color:rgba(255,255,255,.35);margin-top:4px}
+.roi-results{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+             background:rgba(255,255,255,.04);border-radius:14px;padding:28px}
+.roi-res{text-align:center}
+.roi-res-val{font-size:30px;font-weight:900;color:#fff;line-height:1.1}
+.roi-res-val.accent{color:var(--violet)}
+.roi-res-label{font-size:12px;color:rgba(255,255,255,.45);margin-top:5px}
+.roi-save-pct{font-size:12px;font-weight:700;color:var(--violet);margin-top:4px}
+.roi-note{font-size:12px;color:rgba(255,255,255,.3);text-align:center;
+          margin-top:20px;line-height:1.6}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   nav{padding:0 20px}
@@ -302,6 +365,16 @@ footer{background:#0a0f1e;padding:48px}
   hr.divider{margin:0 20px}
   .src-grid{grid-template-columns:1fr}
   .vendor-grid{grid-template-columns:1fr}
+  .algo-pipeline{flex-direction:column}
+  .algo-stage{border-right:1px solid #e9ecef!important;border-bottom:none;
+              border-radius:0!important}
+  .algo-stage:first-child{border-radius:12px 12px 0 0!important}
+  .algo-stage:last-child{border-radius:0 0 12px 12px!important}
+  .algo-stage::after{display:none}
+  .roi-inputs{grid-template-columns:1fr}
+  .roi-results{grid-template-columns:1fr}
+  .roi-section{padding:60px 20px}
+  .roi-card{padding:24px 20px}
 }
 </style>
 </head>
@@ -314,6 +387,8 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#about">About</a>
     <a href="#pillars">Cost Pillars</a>
     <a href="#how">How It Works</a>
+    <a href="#algorithm">Algorithm</a>
+    <a href="#roi">ROI</a>
     <a href="#sources">Sources</a>
     <a href="#magazine">Report &amp; Catalog</a>
   </div>
@@ -328,8 +403,8 @@ footer{background:#0a0f1e;padding:48px}
       <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
     </div>
     <div class="hero-badge">Now tracking 41 models across 12 vendors · Weekly price sync</div>
-    <h1 class="hero-title">Stop overpaying<br>for <span class="accent">AI.</span></h1>
-    <p class="hero-sub">Intelligently routes every request to the best-value model — cutting costs 60–80% while preserving quality. Your data never leaves your infrastructure.</p>
+    <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
+    <p class="hero-sub">Tidus selects the most cost-effective capable model for every AI request — automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted.</p>
     <div class="hero-actions">
       <a href="https://github.com/kensterinvest/tidus" class="btn-hero primary">⭐ View on GitHub</a>
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
@@ -396,74 +471,74 @@ footer{background:#0a0f1e;padding:48px}
 <section id="pillars">
   <div class="section-inner">
     <p class="section-tag">Five Cost-Control Pillars</p>
-    <h2 class="section-title">Every way AI spend spirals — and how Tidus stops it</h2>
-    <p class="section-sub">AI costs grow in five distinct ways. Tidus addresses each one with a dedicated, automated control — no manual monitoring required.</p>
+    <h2 class="section-title">How Tidus reduces AI spend by 60–80%</h2>
+    <p class="section-sub">Five complementary controls — each tackling a distinct source of AI cost waste. Together they form a complete governance layer over your AI infrastructure.</p>
     <div class="pillars-grid">
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 1</div>
-        <div class="pillar-icon">💰</div>
-        <div class="pillar-title">Cost-First Routing</div>
-        <div class="pillar-desc">The single biggest lever: <em>always route to the cheapest model that can do the job</em>. Tidus scores every eligible model with cost weighted at <strong>70%</strong>, capability tier at 20%, and latency at 10%. A simple classification task routing to Gemini 2.0 Flash ($0.10/1M) instead of Claude Opus ($15/1M) is a 99.3% saving per request. At a million requests per month, that's the difference between a $15,000 bill and a $100 bill.</div>
+        <div class="pillar-icon">🏗️</div>
+        <div class="pillar-title">Tiered Model Strategy</div>
+        <div class="pillar-desc">Route every task to the <em>cheapest capable tier</em>. Tidus enforces a 4-tier hierarchy: T1 Premium (Claude Opus, o3), T2 Advanced (Claude Sonnet, GPT-4o), T3 Economy (Haiku, GPT-4.1-mini), T4 Budget (local Ollama). Task complexity sets the ceiling — <code>simple</code> tasks can use any tier; <code>critical</code> tasks are restricted to T1 only. This single rule removes the most expensive models from 80% of typical workloads without any manual configuration.</div>
         <div class="tags">
-          <span class="tag">70% cost weight</span>
-          <span class="tag">Complexity tiers</span>
-          <span class="tag">Capability matching</span>
-          <span class="tag">Privacy-forced local</span>
+          <span class="tag">4-tier hierarchy</span>
+          <span class="tag">Complexity ceiling</span>
+          <span class="tag">T4 local/free models</span>
+          <span class="tag">~99% savings on simple tasks</span>
         </div>
       </div>
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 2</div>
-        <div class="pillar-icon">🏛️</div>
-        <div class="pillar-title">Accurate Pricing Registry</div>
-        <div class="pillar-desc">Routing 70% on cost only works if prices are correct. Stale or wrong prices produce systematically wrong routing — and you overpay silently for weeks. Tidus maintains a versioned pricing registry that syncs from multiple verified sources every Sunday using MAD-based consensus. Any price change ≥5% creates an audited DB revision via atomic two-phase write. If prices become stale, a drift warning fires before routing quality degrades.</div>
+        <div class="pillar-icon">🧠</div>
+        <div class="pillar-title">Router Agent Intelligence</div>
+        <div class="pillar-desc">A 5-stage selector decides the optimal model <em>before any compute runs</em>. Stage 1 filters by capability and context fit. Stage 2 enforces operator guardrails. Stage 3 applies the tier ceiling. Stage 4 checks team budget. Stage 5 scores survivors: cost ×0.70 + tier ×0.20 + latency ×0.10. The best-value model wins. Decision overhead is sub-millisecond — the routing cost is negligible compared to the vendor API savings.</div>
         <div class="tags">
-          <span class="tag">Multi-source sync</span>
-          <span class="tag">MAD consensus</span>
-          <span class="tag">Versioned revisions</span>
-          <span class="tag">Stale-price alerting</span>
+          <span class="tag">5-stage pipeline</span>
+          <span class="tag">Pre-compute decision</span>
+          <span class="tag">Deterministic</span>
+          <span class="tag">Sub-ms overhead</span>
         </div>
       </div>
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 3</div>
-        <div class="pillar-icon">🛡️</div>
-        <div class="pillar-title">Hard Budget Guardrails</div>
-        <div class="pillar-desc">Routing cheap is not enough if individual teams run unchecked. Set hard spend limits per team, per model, or globally. Every routed request records actual token usage in real time — before billing. A request that would breach a budget ceiling is blocked or rerouted to a cheaper tier before it executes. Monthly billing reconciliation against provider CSV invoices flags any gap between Tidus cost records and what vendors actually charged.</div>
+        <div class="pillar-icon">⚡</div>
+        <div class="pillar-title">Cache Everything</div>
+        <div class="pillar-desc">Two caching layers prevent paying twice for identical work. <strong>Layer 1 — Exact cache:</strong> SHA-256 keyed by team + messages + model. Same team, same prompt, zero vendor cost on repeat. <strong>Layer 2 — Semantic cache:</strong> all-MiniLM-L6-v2 embeddings with 95% cosine similarity threshold catch "same question, different wording." Both layers are team-scoped — Team A's cache never leaks to Team B. Confidential-tagged requests bypass caching entirely.</div>
         <div class="tags">
-          <span class="tag">Per-team limits</span>
-          <span class="tag">Pre-execution enforcement</span>
-          <span class="tag">Overage blocking</span>
-          <span class="tag">Invoice reconciliation</span>
+          <span class="tag">SHA-256 exact match</span>
+          <span class="tag">Semantic similarity</span>
+          <span class="tag">Redis backend</span>
+          <span class="tag">Zero vendor cost on hit</span>
         </div>
       </div>
 
       <div class="pillar-card wide">
         <div class="pillar-num">Pillar 4</div>
-        <div class="pillar-icon">🔬</div>
-        <div class="pillar-title">Drift-Triggered Auto-Remediation</div>
-        <div class="pillar-desc">Cost overruns hide in model behaviour drift that no dashboard catches in time. Tidus runs four detectors every 5 minutes: <strong>Latency drift</strong> — when measured P50 exceeds the catalog baseline by 50%, throughput falls and queue costs rise. <strong>Context drift</strong> — rising context overflow rate means tokens are being wasted on truncated prompts. <strong>Tokenization drift</strong> — when estimated vs actual token counts diverge by 25%+, your cost model is broken and every budget calculation is wrong. <strong>Price drift</strong> — more than 3 price changes in 30 days signals an unstable vendor; single changes ≥15% trigger re-evaluation. Warning severity escalates the model to priority probing. Critical severity auto-creates a <code>hard_disable</code> override — the model is removed from routing immediately, with zero manual intervention. After 3 consecutive healthy probe cycles, the override is lifted automatically and routing resumes.</div>
+        <div class="pillar-icon">🛡️</div>
+        <div class="pillar-title">Agent Autonomy Limits</div>
+        <div class="pillar-desc">Agentic workflows compound costs exponentially if unchecked. Tidus enforces hard limits at every level — all configurable in <code>policies.yaml</code> and enforced before any API call is made: <strong>max_agent_depth</strong> (default 5) prevents infinite recursion loops; <strong>max_tokens_per_step</strong> (default 8,000) caps per-step cost uniformly across all models; <strong>max_retries_per_task</strong> (default 3) stops retry storms from multiplying costs; <strong>max_parallel_sessions_per_team</strong> (default 10) prevents concurrency explosions. Each violated guardrail produces a named rejection reason in the API response — no silent failures.</div>
         <div class="tags">
-          <span class="tag">Latency detector</span>
-          <span class="tag">Context detector</span>
-          <span class="tag">Tokenization detector</span>
-          <span class="tag">Price detector</span>
-          <span class="tag">Auto-disable + auto-recover</span>
-          <span class="tag">Prometheus metrics</span>
+          <span class="tag">Depth limits</span>
+          <span class="tag">Token caps</span>
+          <span class="tag">Retry limits</span>
+          <span class="tag">Concurrency limits</span>
+          <span class="tag">Pre-execution enforcement</span>
         </div>
       </div>
 
       <div class="pillar-card">
         <div class="pillar-num">Pillar 5</div>
-        <div class="pillar-icon">📰</div>
-        <div class="pillar-title">Market-Aware Price Intelligence</div>
-        <div class="pillar-desc">AI pricing is volatile. DeepSeek cut prices 3.6% last week. Gemini 2.5 Flash dropped 14% the week before. If your routing doesn't pick that up, you keep paying the old rate indefinitely. Every Sunday, Tidus syncs prices and emails your team a market intelligence report surfacing drops, rises, and models where you're routing above the cheapest capable alternative — before the savings opportunity passes.</div>
+        <div class="pillar-icon">🔌</div>
+        <div class="pillar-title">Vendor-Agnostic Design</div>
+        <div class="pillar-desc">8 production adapters running today (Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Groq, Together AI) with 5 more in progress. The MCP server connects Claude Desktop, Cursor, Zed, and any MCP-compatible client directly. Swapping vendors requires one YAML edit — not rewriting your application. Vendor portability is itself a cost control: avoiding lock-in is the most effective long-term AI pricing strategy.</div>
         <div class="tags">
-          <span class="tag">Sunday 02:00 UTC sync</span>
-          <span class="tag">Drop/rise alerts</span>
-          <span class="tag">Savings opportunities</span>
-          <span class="tag">41 models tracked</span>
+          <span class="tag">8 adapters live</span>
+          <span class="tag">5 in progress</span>
+          <span class="tag">MCP server</span>
+          <span class="tag">OpenAI-compatible API</span>
+          <span class="tag">Vendor portability</span>
         </div>
       </div>
 
@@ -510,6 +585,132 @@ footer{background:#0a0f1e;padding:48px}
         <div class="flow-title">Route &amp; Record</div>
         <div class="flow-desc">Top-ranked model receives the request. Actual tokens and cost recorded to cost_records. Telemetry updates latency P50</div>
       </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SELECTION ALGORITHM -->
+<section class="algo-section" id="algorithm">
+  <div class="section-inner">
+    <p class="section-tag">Selection Algorithm</p>
+    <h2 class="section-title">Five stages from request to optimal model</h2>
+    <p class="section-sub">Every routing decision follows a deterministic pipeline. Each stage either eliminates models or scores them — no randomness, no black-box AI decisions.</p>
+
+    <div class="algo-pipeline">
+      <div class="algo-stage">
+        <div class="algo-stage-n">Stage 1</div>
+        <div class="algo-stage-icon">🔒</div>
+        <div class="algo-stage-title">Hard Constraints</div>
+        <div class="algo-stage-desc">Enabled check · context window · domain capability · privacy (confidential → local only) · complexity range</div>
+      </div>
+      <div class="algo-stage">
+        <div class="algo-stage-n">Stage 2</div>
+        <div class="algo-stage-icon">🛡️</div>
+        <div class="algo-stage-title">Guardrails</div>
+        <div class="algo-stage-desc">Agent depth ≤ 5 · tokens per step ≤ 8,000 — operator-defined limits applied uniformly across all candidates</div>
+      </div>
+      <div class="algo-stage">
+        <div class="algo-stage-n">Stage 3</div>
+        <div class="algo-stage-icon">📊</div>
+        <div class="algo-stage-title">Tier Ceiling</div>
+        <div class="algo-stage-desc">simple → any tier · moderate → T1–3 · complex → T1–2 · critical → T1 only. Blocks over-engineering cheap tasks.</div>
+      </div>
+      <div class="algo-stage">
+        <div class="algo-stage-n">Stage 4</div>
+        <div class="algo-stage-icon">💰</div>
+        <div class="algo-stage-title">Budget Filter</div>
+        <div class="algo-stage-desc">Per-request cost cap + team monthly budget. Estimate = (input × price + output × price) × 1.15 buffer</div>
+      </div>
+      <div class="algo-stage">
+        <div class="algo-stage-n">Stage 5</div>
+        <div class="algo-stage-icon">🏆</div>
+        <div class="algo-stage-title">Score &amp; Select</div>
+        <div class="algo-stage-desc">Survivors scored: cost × 0.70 + tier × 0.20 + latency × 0.10. Min-max normalised. Lowest score wins.</div>
+      </div>
+    </div>
+
+    <div class="algo-formula">
+      <div class="algo-formula-title">Stage 5 Scoring — how the winner is picked</div>
+      <div class="algo-formula-eq">score = cost_norm × 0.70 &nbsp;+&nbsp; tier_norm × 0.20 &nbsp;+&nbsp; latency_norm × 0.10</div>
+      <p style="font-size:13.5px;color:#666;margin-top:14px;line-height:1.75">Each dimension is <strong>min-max normalised across the surviving candidates</strong> — scores are relative to the competition, not absolute. A $15/1M model that is the cheapest survivor scores 0.0 on cost. A deprecated model receives a flat +0.15 penalty added after normalisation — it can still win if significantly cheaper than all alternatives. If any stage reduces the eligible set to zero, Tidus raises a structured error naming the stage and every rejection reason: no silent failures, no fallback to a wrong model.</p>
+    </div>
+
+    <div class="algo-worked">
+      <div class="algo-worked-title">Worked Example — code task, moderate complexity, 2,000 input + 500 output tokens</div>
+      <div class="table-wrap">
+        <table class="algo-table">
+          <thead>
+            <tr>
+              <th>Model</th><th>Tier</th><th>Est. Cost</th>
+              <th>cost_norm</th><th>tier_norm</th><th>lat_norm</th><th>Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>claude-sonnet-4-6</code></td><td>T2</td><td>$0.0155</td>
+              <td>1.00</td><td>0.00</td><td>1.00</td><td>0.80</td>
+            </tr>
+            <tr>
+              <td><code>gemini-2.5-flash</code></td><td>T3</td><td>$0.00212</td>
+              <td>0.21</td><td>1.00</td><td>0.13</td><td>0.36</td>
+            </tr>
+            <tr class="winner">
+              <td><strong><code>gpt-4.1-mini</code></strong> &#10003; Winner</td><td>T3</td><td>$0.00184</td>
+              <td>0.00</td><td>1.00</td><td>0.00</td><td class="score-win">0.20</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="algo-footer">gpt-4.1-mini wins — cheapest option with lowest latency in this candidate set. Stage 3 blocked T1 models (moderate complexity ceiling = T3). &nbsp;<a href="https://github.com/kensterinvest/tidus/blob/main/docs/selection-algorithm.md" target="_blank">Read the full algorithm documentation →</a></p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ROI CALCULATOR -->
+<section class="roi-section" id="roi">
+  <div class="section-inner">
+    <p class="section-tag" style="color:rgba(255,255,255,.45)">ROI Calculator</p>
+    <h2 class="section-title" style="color:#fff">Estimate your savings with Tidus</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,.55)">Adjust your current spend and task mix. Savings scale with how many requests can be routed to lower-cost tiers.</p>
+    <div class="roi-card">
+      <div class="roi-inputs">
+        <div class="roi-field">
+          <label>Current Monthly AI Spend (USD)</label>
+          <input type="number" id="roi-spend" value="5000" min="100" max="10000000" step="100" oninput="calcROI()">
+        </div>
+        <div class="roi-field">
+          <label>Monthly Request Volume</label>
+          <input type="number" id="roi-reqs" value="100000" min="1000" max="100000000" step="1000" oninput="calcROI()">
+        </div>
+        <div class="roi-slider-wrap">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin-bottom:10px">Simple / Moderate requests: <span id="roi-pct-lbl">70%</span></label>
+          <input type="range" class="roi-slider" id="roi-simple-pct" min="0" max="100" value="70" oninput="calcROI()">
+          <div class="roi-slider-labels">
+            <span>0% — all complex / critical tasks</span>
+            <span>100% — all simple / moderate tasks</span>
+          </div>
+        </div>
+      </div>
+      <div class="roi-results">
+        <div class="roi-res">
+          <div class="roi-res-val" id="roi-current">$5.0K</div>
+          <div class="roi-res-label">Current monthly spend</div>
+        </div>
+        <div class="roi-res">
+          <div class="roi-res-val accent" id="roi-savings">$3.1K</div>
+          <div class="roi-res-label">Estimated monthly savings</div>
+          <div class="roi-save-pct" id="roi-save-pct">62% savings</div>
+        </div>
+        <div class="roi-res">
+          <div class="roi-res-val" id="roi-projected">$1.9K</div>
+          <div class="roi-res-label">Projected spend with Tidus</div>
+        </div>
+      </div>
+      <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task complexity distribution and model availability. Tidus is fully self-hosted — no subscription fee.</p>
     </div>
   </div>
 </section>
@@ -931,34 +1132,33 @@ function fmtB(n){
   tbody.innerHTML = html;
 })();
 
-async function handleSub(e){
+function handleSub(e){
   e.preventDefault();
-  const email = document.getElementById("sub-email").value.trim();
-  const msg   = document.getElementById("sub-msg");
+  var msg = document.getElementById("sub-msg");
   msg.style.display = "block";
   msg.className = "";
-  msg.textContent = "Subscribing…";
-  try {
-    const r = await fetch("/api/v1/subscribe", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({email})
-    });
-    if(r.ok){
-      msg.className = "ok";
-      msg.textContent = "✓ You're subscribed! First report arrives Sunday 02:00 UTC.";
-      document.getElementById("sub-email").value = "";
-    } else {
-      const d = await r.json().catch(()=>({detail:"Unknown error"}));
-      msg.className = "err";
-      msg.textContent = "✗ " + (d.detail || "Subscription failed — try again.");
-    }
-  } catch(_){
-    // Fallback: open mailto
-    window.location.href = "mailto:lapkei01@gmail.com?subject=Subscribe%20to%20Tidus%20Magazine&body=Please%20subscribe%20me%20to%20the%20weekly%20Tidus%20pricing%20report.";
-    msg.className = "ok";
-    msg.textContent = "Opening your email client as a fallback…";
+  msg.textContent = "Subscription is not available at the moment. Please contact lapkei01@gmail.com for early access.";
+}
+
+function calcROI(){
+  var spend = parseFloat(document.getElementById("roi-spend").value) || 5000;
+  var pct   = parseInt(document.getElementById("roi-simple-pct").value) / 100;
+  document.getElementById("roi-pct-lbl").textContent = Math.round(pct * 100) + "%";
+  // Simple/moderate → T3/T4 models: ~80% cost reduction vs unoptimised baseline
+  // Complex/critical → T1/T2 models: ~20% cost reduction (still routes cheapest viable T1)
+  var savingFactor = pct * 0.80 + (1 - pct) * 0.20;
+  var savings   = spend * savingFactor;
+  var projected = spend - savings;
+  function fmtMoney(n){
+    if(n >= 1000000) return "$" + (n/1000000).toFixed(1) + "M";
+    if(n >= 1000)    return "$" + (n/1000).toFixed(1) + "K";
+    return "$" + Math.round(n).toLocaleString();
   }
+  document.getElementById("roi-current").textContent   = fmtMoney(spend);
+  document.getElementById("roi-savings").textContent   = fmtMoney(savings);
+  document.getElementById("roi-projected").textContent = fmtMoney(projected);
+  var savePctEl = document.getElementById("roi-save-pct");
+  if(savePctEl) savePctEl.textContent = Math.round(savingFactor * 100) + "% savings";
 }
 </script>
 </body>
