@@ -249,12 +249,18 @@ footer{background:#0a0f1e;padding:48px}
 .src-title{font-size:17px;font-weight:800;color:#1a1a2e;margin-bottom:5px}
 .src-conf{font-size:12px;color:#999;margin-bottom:12px;font-family:monospace}
 .src-desc{font-size:13.5px;color:#555;line-height:1.8}
-.vendor-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:32px}
-.v-card{background:#fff;border-radius:10px;padding:12px 16px;border:1px solid #e9ecef;
-        display:flex;align-items:center;justify-content:space-between;gap:8px}
-.v-name{font-size:12.5px;font-weight:700;color:#1a1a2e}
+.vendor-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:32px}
+.v-card{background:#fff;border-radius:12px;padding:16px 18px;border:1px solid #e9ecef;
+        display:block;transition:all .2s;color:inherit}
+.v-card:hover{border-color:var(--violet);box-shadow:0 4px 16px rgba(83,52,131,.12);
+              transform:translateY(-3px)}
+.v-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:7px}
+.v-name{font-size:13.5px;font-weight:700;color:#1a1a2e;display:flex;align-items:center;gap:5px}
+.v-name::after{content:'↗';font-size:11px;color:var(--violet);opacity:0;transition:opacity .2s}
+.v-card:hover .v-name::after{opacity:1}
 .v-count{font-size:11px;font-weight:700;color:var(--violet);background:rgba(167,139,250,.1);
-         padding:2px 8px;border-radius:8px;white-space:nowrap}
+         padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0}
+.v-focus{font-size:12px;color:#888;line-height:1.45}
 .why-box{background:#fff;border-radius:14px;padding:24px 28px;border:1px solid #e9ecef;
          border-left:4px solid var(--purple);margin-top:28px}
 .why-box p{font-size:14px;color:#555;line-height:1.8;margin-bottom:10px}
@@ -286,7 +292,7 @@ footer{background:#0a0f1e;padding:48px}
   .mag-body{padding:20px 24px}
   hr.divider{margin:0 20px}
   .src-grid{grid-template-columns:1fr}
-  .vendor-grid{grid-template-columns:repeat(2,1fr)}
+  .vendor-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
@@ -502,7 +508,7 @@ footer{background:#0a0f1e;padding:48px}
   <div class="section-inner">
     <p class="section-tag">Model Discovery &amp; Pricing Sources</p>
     <h2 class="section-title">41 curated models — not the entire market. Here's why.</h2>
-    <p class="section-sub">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Tidus tracks 41 of them. The curation is deliberate — and the pricing data comes from two independent sources that cross-check each other.</p>
+    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 41 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
 
     <div class="why-box">
       <p><strong>Why 41, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
@@ -516,20 +522,69 @@ footer{background:#0a0f1e;padding:48px}
 
     <div style="margin-top:36px">
       <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">12 Vendors Currently Tracked</h3>
-      <p style="font-size:14px;color:#888;margin-bottom:16px">Model counts reflect the active catalog as of April 2026.</p>
+      <p style="font-size:14px;color:#888;margin-bottom:16px">Click any vendor to visit their AI platform. Model counts reflect the active catalog as of April 2026.</p>
       <div class="vendor-grid">
-        <div class="v-card"><span class="v-name">Anthropic</span><span class="v-count">3 models</span></div>
-        <div class="v-card"><span class="v-name">OpenAI</span><span class="v-count">10 models</span></div>
-        <div class="v-card"><span class="v-name">Google</span><span class="v-count">5 models</span></div>
-        <div class="v-card"><span class="v-name">Mistral AI</span><span class="v-count">7 models</span></div>
-        <div class="v-card"><span class="v-name">DeepSeek</span><span class="v-count">3 models</span></div>
-        <div class="v-card"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">3 models</span></div>
-        <div class="v-card"><span class="v-name">xAI</span><span class="v-count">2 models</span></div>
-        <div class="v-card"><span class="v-name">Groq</span><span class="v-count">2 models</span></div>
-        <div class="v-card"><span class="v-name">Cohere</span><span class="v-count">2 models</span></div>
-        <div class="v-card"><span class="v-name">Perplexity</span><span class="v-count">2 models</span></div>
-        <div class="v-card"><span class="v-name">Moonshot</span><span class="v-count">1 model</span></div>
-        <div class="v-card"><span class="v-name">Together AI</span><span class="v-count">1 model</span></div>
+
+        <a class="v-card" href="https://www.anthropic.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Anthropic</span><span class="v-count">3 models</span></div>
+          <div class="v-focus">Safety-first LLMs for enterprise. Known for Constitutional AI and the Claude family — industry benchmark for reasoning and instruction-following.</div>
+        </a>
+
+        <a class="v-card" href="https://platform.openai.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">OpenAI</span><span class="v-count">10 models</span></div>
+          <div class="v-focus">The broadest model portfolio: GPT flagship chat models, o-series deep reasoning models, Codex coding specialists, and ultra-cheap inference models like gpt-oss-120b.</div>
+        </a>
+
+        <a class="v-card" href="https://ai.google.dev" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Google DeepMind</span><span class="v-count">5 models</span></div>
+          <div class="v-focus">Gemini multimodal AI — strong at long-context, vision, and code. Tightly integrated with Google Cloud and Workspace. Gemini 2.5 Pro leads on context window size.</div>
+        </a>
+
+        <a class="v-card" href="https://mistral.ai" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Mistral AI</span><span class="v-count">7 models</span></div>
+          <div class="v-focus">European open-weight pioneer. Specialises in efficient code models (Codestral, Devstral) and multilingual LLMs. Largest model count in the Tidus catalog.</div>
+        </a>
+
+        <a class="v-card" href="https://www.deepseek.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">DeepSeek</span><span class="v-count">3 models</span></div>
+          <div class="v-focus">Chinese AI lab driving aggressive pricing competition. DeepSeek-R1 matches frontier reasoning at a fraction of the cost. Consistently the cheapest non-local option for complex tasks.</div>
+        </a>
+
+        <a class="v-card" href="https://qwenlm.github.io" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">3 models</span></div>
+          <div class="v-focus">Qwen series from Alibaba DAMO Academy. Strong multilingual performance — especially Chinese, Arabic, and Southeast Asian languages. Competitive pricing via Alibaba Cloud.</div>
+        </a>
+
+        <a class="v-card" href="https://x.ai" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">xAI</span><span class="v-count">2 models</span></div>
+          <div class="v-focus">Grok models from Elon Musk's lab. Real-time access to X (Twitter) data. Grok-3-Fast is the highest-cost routed model at $5/1M — positioned at the premium end.</div>
+        </a>
+
+        <a class="v-card" href="https://groq.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Groq</span><span class="v-count">2 models</span></div>
+          <div class="v-focus">LPU (Language Processing Unit) inference hardware built for speed, not model training. Hosts open-source models (DeepSeek-R1, Llama 4 Maverick) at industry-leading throughput.</div>
+        </a>
+
+        <a class="v-card" href="https://cohere.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Cohere</span><span class="v-count">2 models</span></div>
+          <div class="v-focus">Enterprise NLP specialist. Command models optimised for RAG (retrieval-augmented generation), summarisation, and structured enterprise workflows. Strong in regulated industries.</div>
+        </a>
+
+        <a class="v-card" href="https://www.perplexity.ai/api" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Perplexity</span><span class="v-count">2 models</span></div>
+          <div class="v-focus">Search-augmented AI with built-in real-time web access. Sonar models return cited answers grounded in live search results — distinct from pure generation models.</div>
+        </a>
+
+        <a class="v-card" href="https://www.moonshot.cn" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Moonshot (Kimi)</span><span class="v-count">1 model</span></div>
+          <div class="v-focus">Chinese AI startup known for extremely long context windows. Kimi-K2.5 supports up to 200K token context and is strong on Chinese-language tasks and document processing.</div>
+        </a>
+
+        <a class="v-card" href="https://www.together.ai" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Together AI</span><span class="v-count">1 model</span></div>
+          <div class="v-focus">Open-source model hosting and fine-tuning platform. Offers the Llama 4 Maverick at $0.27/1M — one of the cheapest capable models in the economy tier.</div>
+        </a>
+
       </div>
     </div>
 
