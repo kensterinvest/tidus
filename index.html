@@ -1016,7 +1016,7 @@ response = client.chat.completions.create(
   <div class="section-inner">
     <p class="section-tag">Latest Report</p>
     <h2 class="section-title">Weekly AI Market Intelligence</h2>
-    <p class="section-sub">Published every Sunday. Covers price movements, new models, and cost optimisation opportunities across 41 models and 12 vendors.</p>
+    <p class="section-sub">Tidus continuously tracks prices across 41 models and 12 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
     <div style="margin-top:40px">
     <div class="mag-card">
       <div class="mag-header">
@@ -1163,22 +1163,6 @@ response = client.chat.completions.create(
   </div>
 </section>
 
-<hr class="divider">
-
-<!-- SUBSCRIBE -->
-<section class="sub-section" id="subscribe">
-  <div>
-    <h2>Get the weekly AI pricing report</h2>
-    <p>41 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
-    <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
-      <input type="email" id="sub-email" placeholder="you@company.com" required>
-      <button type="submit">Subscribe Free</button>
-    </form>
-    <p id="sub-note">No spam. Unsubscribe anytime via one-click link in any email.</p>
-    <p id="sub-msg"></p>
-  </div>
-</section>
-
 <!-- ROI CALCULATOR -->
 <section class="roi-section" id="roi">
   <div class="section-inner">
@@ -1221,6 +1205,22 @@ response = client.chat.completions.create(
       </div>
       <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task mix and model availability. Tidus is fully self-hosted — no subscription fee.</p>
     </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SUBSCRIBE -->
+<section class="sub-section" id="subscribe">
+  <div>
+    <h2>Get the weekly AI pricing report</h2>
+    <p>41 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
+    <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
+      <input type="email" id="sub-email" placeholder="you@company.com" required>
+      <button type="submit">Subscribe Free</button>
+    </form>
+    <p id="sub-note">No spam. Unsubscribe anytime via one-click link in any email.</p>
+    <p id="sub-msg"></p>
   </div>
 </section>
 
