@@ -281,6 +281,78 @@ footer{background:#0a0f1e;padding:48px}
 .add-model code{background:#e9ecef;padding:3px 8px;border-radius:5px;
                 font-family:monospace;font-size:12.5px;color:#1a1a2e}
 
+/* ARCHITECTURE DIAGRAM */
+.arch-diagram{margin-top:40px}
+.arch-layer{border-radius:14px;padding:20px 24px}
+.arch-layer.org{background:rgba(15,52,96,.05);border:2px dashed rgba(15,52,96,.2)}
+.arch-layer.tidus-layer{background:linear-gradient(135deg,rgba(83,52,131,.07),rgba(167,139,250,.09));
+                        border:2px solid rgba(83,52,131,.3)}
+.arch-layer.vendors{background:rgba(34,197,94,.04);border:2px dashed rgba(34,197,94,.25)}
+.arch-layer-lbl{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:14px}
+.arch-layer.org .arch-layer-lbl{color:var(--navy)}
+.arch-layer.tidus-layer .arch-layer-lbl{color:var(--purple)}
+.arch-layer.vendors .arch-layer-lbl{color:#166534}
+.arch-apps{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.arch-app{background:#fff;border:1px solid rgba(15,52,96,.15);border-radius:8px;
+          padding:6px 13px;font-size:12.5px;font-weight:600;color:#1a1a2e}
+.arch-api-label{font-size:12px;color:var(--navy);opacity:.65;margin-top:8px;
+                background:rgba(15,52,96,.06);padding:7px 14px;border-radius:7px;
+                display:inline-block}
+.arch-arrow-row{text-align:center;padding:10px 0;font-size:12.5px;color:var(--violet);
+                font-weight:700;display:flex;align-items:center;justify-content:center;gap:10px}
+.arch-arrow-row::before,.arch-arrow-row::after{content:'';flex:1;height:1px;
+                                                background:rgba(167,139,250,.3)}
+.arch-tidus-inner{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.arch-comp{background:#fff;border:1px solid rgba(83,52,131,.18);border-radius:10px;
+           padding:9px 14px;font-size:12.5px;font-weight:700;color:var(--purple);
+           flex:1;min-width:140px;text-align:center}
+.arch-privacy{font-size:12.5px;color:var(--purple);background:rgba(83,52,131,.06);
+              border-radius:8px;padding:9px 14px;border-left:3px solid var(--purple)}
+.arch-vendors-row{display:flex;gap:8px;flex-wrap:wrap}
+.arch-v{background:#fff;border-radius:10px;padding:9px 13px;text-align:center;
+        font-size:12px;font-weight:700;flex:1;min-width:90px}
+.arch-v.at1{border:1px solid #fca5a5;color:#991b1b}
+.arch-v.at2{border:1px solid #fdba74;color:#9a3412}
+.arch-v.at3{border:1px solid #86efac;color:#166534}
+.arch-v.at4{border:1px solid #93c5fd;color:#075985}
+.arch-v small{display:block;font-weight:400;font-size:10.5px;opacity:.7;margin-top:1px}
+
+/* CODE COMPARISON */
+.code-cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px}
+.code-cmp-box{border-radius:12px;overflow:hidden;border:1px solid #e9ecef}
+.code-cmp-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;padding:9px 16px}
+.code-cmp-lbl.before{background:#fef2f2;color:#991b1b;border-bottom:1px solid #fca5a5}
+.code-cmp-lbl.after{background:#f0fdf4;color:#166534;border-bottom:1px solid #86efac}
+.code-pre{background:#1a1a2e;padding:16px;font-family:'Courier New',monospace;
+          font-size:12px;color:#d1d5db;line-height:1.65;margin:0;white-space:pre-wrap;
+          word-break:break-word}
+.code-pre .hi{color:#a78bfa}
+.code-pre .dim{color:#6b7280}
+
+/* GET STARTED / DEPLOY */
+.deploy-section{background:linear-gradient(135deg,#0f3460 0%,#533483 100%)}
+.deploy-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;position:relative}
+.deploy-steps::before{content:'';position:absolute;top:38px;left:calc(12.5% + 4px);
+                      right:calc(12.5% + 4px);height:2px;
+                      background:rgba(255,255,255,.12);z-index:0;pointer-events:none}
+.deploy-step{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+             border-radius:14px;padding:24px 18px;text-align:center;position:relative;z-index:1}
+.deploy-n{width:44px;height:44px;border-radius:50%;background:rgba(167,139,250,.2);
+          border:2px solid rgba(167,139,250,.5);color:#fff;font-size:17px;font-weight:900;
+          display:flex;align-items:center;justify-content:center;margin:0 auto 14px}
+.deploy-icon{font-size:28px;margin-bottom:10px}
+.deploy-title{font-size:14.5px;font-weight:800;color:#fff;margin-bottom:8px}
+.deploy-desc{font-size:12px;color:rgba(255,255,255,.6);line-height:1.65}
+.deploy-cmd{background:rgba(0,0,0,.3);border-radius:7px;padding:8px 12px;
+            font-family:'Courier New',monospace;font-size:11px;color:var(--violet);
+            margin-top:10px;text-align:left;word-break:break-all;line-height:1.6}
+.deploy-prereqs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+.prereq-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+             border-radius:12px;padding:18px 20px;text-align:center}
+.prereq-icon{font-size:24px;margin-bottom:8px}
+.prereq-title{font-size:13px;font-weight:700;color:#fff;margin-bottom:4px}
+.prereq-desc{font-size:12px;color:rgba(255,255,255,.5);line-height:1.55}
+
 /* ALGORITHM */
 .algo-section{background:#fff}
 .algo-pipeline{display:flex;gap:0;margin-top:40px}
@@ -365,6 +437,12 @@ footer{background:#0a0f1e;padding:48px}
   hr.divider{margin:0 20px}
   .src-grid{grid-template-columns:1fr}
   .vendor-grid{grid-template-columns:1fr}
+  .code-cmp{grid-template-columns:1fr}
+  .arch-vendors-row{flex-direction:column}
+  .arch-tidus-inner{flex-direction:column}
+  .deploy-steps{grid-template-columns:1fr 1fr}
+  .deploy-steps::before{display:none}
+  .deploy-prereqs{grid-template-columns:1fr}
   .algo-pipeline{flex-direction:column}
   .algo-stage{border-right:1px solid #e9ecef!important;border-bottom:none;
               border-radius:0!important}
@@ -388,7 +466,7 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#pillars">Cost Pillars</a>
     <a href="#how">How It Works</a>
     <a href="#algorithm">Algorithm</a>
-    <a href="#roi">ROI</a>
+    <a href="#deploy">Get Started</a>
     <a href="#sources">Sources</a>
     <a href="#magazine">Report &amp; Catalog</a>
   </div>
@@ -552,8 +630,83 @@ footer{background:#0a0f1e;padding:48px}
 <section class="how" id="how">
   <div class="section-inner">
     <p class="section-tag">How It Works</p>
-    <h2 class="section-title">From request to optimal route in milliseconds</h2>
-    <p class="section-sub">Tidus evaluates every request through a deterministic pipeline — no magic, no black-box AI decisions.</p>
+    <h2 class="section-title">Tidus sits between your apps and the AI vendors</h2>
+    <p class="section-sub">A transparent middleware layer deployed on your own infrastructure. Your existing code needs one URL change — no SDK swaps, no architecture redesign.</p>
+
+    <div class="arch-diagram">
+
+      <div class="arch-layer org">
+        <div class="arch-layer-lbl">Your Organization — Internal Applications &amp; Teams</div>
+        <div class="arch-apps">
+          <div class="arch-app">🤖 AI Agents</div>
+          <div class="arch-app">💬 Internal Chatbot</div>
+          <div class="arch-app">👨‍💻 Developer Tools</div>
+          <div class="arch-app">📄 Document Processing</div>
+          <div class="arch-app">🔍 RAG / Retrieval</div>
+          <div class="arch-app">🏢 Business Workflows</div>
+        </div>
+        <div class="arch-api-label">✦ Uses standard OpenAI Python / JS SDK — no SDK changes required</div>
+      </div>
+
+      <div class="arch-arrow-row">&#8595; &nbsp; POST /v1/chat/completions &nbsp;&middot;&nbsp; OpenAI-compatible endpoint</div>
+
+      <div class="arch-layer tidus-layer">
+        <div class="arch-layer-lbl">Tidus — Hosted On Your Own Infrastructure (Docker / On-Prem / VPC)</div>
+        <div class="arch-tidus-inner">
+          <div class="arch-comp">🧠 5-Stage Router</div>
+          <div class="arch-comp">⚡ Cache Layer</div>
+          <div class="arch-comp">🛡️ Budget Guardrails</div>
+          <div class="arch-comp">📊 Model Registry</div>
+        </div>
+        <div class="arch-privacy">🔒 Your messages, prompts, team IDs, and usage patterns never leave this layer — only the selected vendor API call exits your infrastructure</div>
+      </div>
+
+      <div class="arch-arrow-row">&#8595; &nbsp; Routes to the cheapest capable model based on complexity, capability match, and team budget</div>
+
+      <div class="arch-layer vendors">
+        <div class="arch-layer-lbl">AI Vendors — Accessed Only When Needed, Only for the Chosen Request</div>
+        <div class="arch-vendors-row">
+          <div class="arch-v at1">Anthropic<small>T1 · Premium</small></div>
+          <div class="arch-v at1">OpenAI<small>T1 – T4</small></div>
+          <div class="arch-v at2">Google<small>T2 – T4</small></div>
+          <div class="arch-v at3">Mistral<small>T2 – T3</small></div>
+          <div class="arch-v at3">DeepSeek<small>T3</small></div>
+          <div class="arch-v at3">xAI / Groq<small>T1 – T3</small></div>
+          <div class="arch-v at4">Local Ollama<small>T4 · Free</small></div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="code-cmp">
+      <div class="code-cmp-box">
+        <div class="code-cmp-lbl before">Before Tidus — single vendor, hardcoded model</div>
+        <pre class="code-pre"><span class="dim">from openai import OpenAI</span>
+client = OpenAI(api_key=<span class="hi">"sk-..."</span>)
+
+response = client.chat.completions.create(
+    model=<span class="hi">"gpt-4o"</span>,  <span class="dim"># hardcoded — always expensive</span>
+    messages=[...]
+)
+<span class="dim"># Every task hits GPT-4o at $2.50/1M input
+# Simple summary? Still $2.50/1M. No choice.</span></pre>
+      </div>
+      <div class="code-cmp-box">
+        <div class="code-cmp-lbl after">After Tidus — one URL change, automatic routing</div>
+        <pre class="code-pre"><span class="dim">from openai import OpenAI</span>
+client = OpenAI(
+    base_url=<span class="hi">"http://tidus:8000/v1"</span>,
+    api_key=<span class="hi">"your-team-api-key"</span>
+)
+response = client.chat.completions.create(
+    model=<span class="hi">"auto"</span>,  <span class="dim"># Tidus picks the best model</span>
+    messages=[...]
+)
+<span class="dim"># Simple task → $0.039/1M  Critical → GPT-4o</span></pre>
+      </div>
+    </div>
+
+    <h3 style="font-size:17px;font-weight:800;color:#1a1a2e;margin:44px 0 20px;letter-spacing:-.3px">What happens inside Tidus on every request</h3>
     <div class="flow">
       <div class="flow-step">
         <div class="flow-n">Step 1</div>
@@ -571,19 +724,19 @@ footer{background:#0a0f1e;padding:48px}
         <div class="flow-n">Step 3</div>
         <div class="flow-icon">💰</div>
         <div class="flow-title">Estimate Cost</div>
-        <div class="flow-desc">Token count × registry price per model. 15% safety buffer applied. Prices from the active revision — verified against multiple sources</div>
+        <div class="flow-desc">Token count × registry price per model. 15% safety buffer applied. Prices from weekly-synced active revision</div>
       </div>
       <div class="flow-step">
         <div class="flow-n">Step 4</div>
         <div class="flow-icon">📊</div>
         <div class="flow-title">Score &amp; Rank</div>
-        <div class="flow-desc">score = 0.70 × cost_score + 0.20 × tier_score + 0.10 × latency_score. Lowest cost wins within each tier</div>
+        <div class="flow-desc">score = 0.70 × cost + 0.20 × tier + 0.10 × latency. Min-max normalised across candidates. Lowest score wins.</div>
       </div>
       <div class="flow-step">
         <div class="flow-n">Step 5</div>
         <div class="flow-icon">⚡</div>
         <div class="flow-title">Route &amp; Record</div>
-        <div class="flow-desc">Top-ranked model receives the request. Actual tokens and cost recorded to cost_records. Telemetry updates latency P50</div>
+        <div class="flow-desc">Winning model receives the request. Actual tokens and cost recorded to cost_records. Telemetry updates latency P50.</div>
       </div>
     </div>
   </div>
@@ -664,53 +817,6 @@ footer{background:#0a0f1e;padding:48px}
         </table>
       </div>
       <p class="algo-footer">gpt-4.1-mini wins — cheapest option with lowest latency in this candidate set. Stage 3 blocked T1 models (moderate complexity ceiling = T3). &nbsp;<a href="https://github.com/kensterinvest/tidus/blob/main/docs/selection-algorithm.md" target="_blank">Read the full algorithm documentation →</a></p>
-    </div>
-  </div>
-</section>
-
-<hr class="divider">
-
-<!-- ROI CALCULATOR -->
-<section class="roi-section" id="roi">
-  <div class="section-inner">
-    <p class="section-tag" style="color:rgba(255,255,255,.45)">ROI Calculator</p>
-    <h2 class="section-title" style="color:#fff">Estimate your savings with Tidus</h2>
-    <p class="section-sub" style="color:rgba(255,255,255,.55)">Adjust your current spend and task mix. Savings scale with how many requests can be routed to lower-cost tiers.</p>
-    <div class="roi-card">
-      <div class="roi-inputs">
-        <div class="roi-field">
-          <label>Current Monthly AI Spend (USD)</label>
-          <input type="number" id="roi-spend" value="5000" min="100" max="10000000" step="100" oninput="calcROI()">
-        </div>
-        <div class="roi-field">
-          <label>Monthly Request Volume</label>
-          <input type="number" id="roi-reqs" value="100000" min="1000" max="100000000" step="1000" oninput="calcROI()">
-        </div>
-        <div class="roi-slider-wrap">
-          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin-bottom:10px">Simple / Moderate requests: <span id="roi-pct-lbl">70%</span></label>
-          <input type="range" class="roi-slider" id="roi-simple-pct" min="0" max="100" value="70" oninput="calcROI()">
-          <div class="roi-slider-labels">
-            <span>0% — all complex / critical tasks</span>
-            <span>100% — all simple / moderate tasks</span>
-          </div>
-        </div>
-      </div>
-      <div class="roi-results">
-        <div class="roi-res">
-          <div class="roi-res-val" id="roi-current">$5.0K</div>
-          <div class="roi-res-label">Current monthly spend</div>
-        </div>
-        <div class="roi-res">
-          <div class="roi-res-val accent" id="roi-savings">$3.1K</div>
-          <div class="roi-res-label">Estimated monthly savings</div>
-          <div class="roi-save-pct" id="roi-save-pct">62% savings</div>
-        </div>
-        <div class="roi-res">
-          <div class="roi-res-val" id="roi-projected">$1.9K</div>
-          <div class="roi-res-label">Projected spend with Tidus</div>
-        </div>
-      </div>
-      <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task complexity distribution and model availability. Tidus is fully self-hosted — no subscription fee.</p>
     </div>
   </div>
 </section>
@@ -840,6 +946,66 @@ footer{background:#0a0f1e;padding:48px}
       </div>
     </div>
 
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- GET STARTED / DEPLOY -->
+<section class="deploy-section" id="deploy">
+  <div class="section-inner">
+    <p class="section-tag" style="color:rgba(255,255,255,.45)">Getting Started</p>
+    <h2 class="section-title" style="color:#fff">How to deploy Tidus in your firm</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,.55)">From git clone to first routed request in under 5 minutes. Runs on Docker, works with SQLite in development, PostgreSQL in production. No cloud dependencies.</p>
+
+    <div class="deploy-steps">
+      <div class="deploy-step">
+        <div class="deploy-n">1</div>
+        <div class="deploy-icon">📦</div>
+        <div class="deploy-title">Clone &amp; Start</div>
+        <div class="deploy-desc">Clone the repo and launch with Docker Compose. Tidus starts immediately with SQLite — no database setup needed for evaluation.</div>
+        <div class="deploy-cmd">git clone github.com/kensterinvest/tidus<br>cd tidus<br>docker compose up</div>
+      </div>
+      <div class="deploy-step">
+        <div class="deploy-n">2</div>
+        <div class="deploy-icon">🔑</div>
+        <div class="deploy-title">Add API Keys</div>
+        <div class="deploy-desc">Add vendor API keys to <code style="color:var(--violet)">.env</code>. Enable vendors and set spending limits for each team in <code style="color:var(--violet)">config/models.yaml</code> and <code style="color:var(--violet)">config/budgets.yaml</code>.</div>
+        <div class="deploy-cmd">ANTHROPIC_API_KEY=sk-ant-...<br>OPENAI_API_KEY=sk-...</div>
+      </div>
+      <div class="deploy-step">
+        <div class="deploy-n">3</div>
+        <div class="deploy-icon">🔌</div>
+        <div class="deploy-title">Connect Your Apps</div>
+        <div class="deploy-desc">Point any OpenAI-compatible SDK at your Tidus host. No other code changes. Existing chatbots, agents, and pipelines work immediately.</div>
+        <div class="deploy-cmd">base_url="http://tidus:8000/v1"<br>model="auto"</div>
+      </div>
+      <div class="deploy-step">
+        <div class="deploy-n">4</div>
+        <div class="deploy-icon">📈</div>
+        <div class="deploy-title">Monitor &amp; Optimise</div>
+        <div class="deploy-desc">Real-time cost dashboard at <code style="color:var(--violet)">/dashboard/</code>. Weekly savings reports via API. Prometheus metrics for alerting. Drift detection auto-disables misbehaving models.</div>
+        <div class="deploy-cmd">http://tidus:8000/dashboard/</div>
+      </div>
+    </div>
+
+    <div class="deploy-prereqs">
+      <div class="prereq-card">
+        <div class="prereq-icon">🐳</div>
+        <div class="prereq-title">Docker + Docker Compose</div>
+        <div class="prereq-desc">The only hard prerequisite. Python runtime and the database are fully containerised.</div>
+      </div>
+      <div class="prereq-card">
+        <div class="prereq-icon">🔑</div>
+        <div class="prereq-title">One or More Vendor Keys</div>
+        <div class="prereq-desc">Anthropic, OpenAI, Google, or any supported vendor. Local Ollama works with no API key at all.</div>
+      </div>
+      <div class="prereq-card">
+        <div class="prereq-icon">🗄️</div>
+        <div class="prereq-title">PostgreSQL for Production</div>
+        <div class="prereq-desc">SQLite works for evaluation and demos. Production deployments set <code style="color:rgba(255,255,255,.7)">DATABASE_URL</code> to a PostgreSQL instance.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1010,6 +1176,51 @@ footer{background:#0a0f1e;padding:48px}
     </form>
     <p id="sub-note">No spam. Unsubscribe anytime via one-click link in any email.</p>
     <p id="sub-msg"></p>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section class="roi-section" id="roi">
+  <div class="section-inner">
+    <p class="section-tag" style="color:rgba(255,255,255,.45)">ROI Calculator</p>
+    <h2 class="section-title" style="color:#fff">How much could you save with Tidus?</h2>
+    <p class="section-sub" style="color:rgba(255,255,255,.55)">Adjust your current spend and task complexity mix. Savings scale with the proportion of requests that can be routed to lower-cost tiers.</p>
+    <div class="roi-card">
+      <div class="roi-inputs">
+        <div class="roi-field">
+          <label>Current Monthly AI Spend (USD)</label>
+          <input type="number" id="roi-spend" value="5000" min="100" max="10000000" step="100" oninput="calcROI()">
+        </div>
+        <div class="roi-field">
+          <label>Monthly Request Volume</label>
+          <input type="number" id="roi-reqs" value="100000" min="1000" max="100000000" step="1000" oninput="calcROI()">
+        </div>
+        <div class="roi-slider-wrap">
+          <label style="display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.45);margin-bottom:10px">Simple / Moderate requests: <span id="roi-pct-lbl">70%</span></label>
+          <input type="range" class="roi-slider" id="roi-simple-pct" min="0" max="100" value="70" oninput="calcROI()">
+          <div class="roi-slider-labels">
+            <span>0% — all complex / critical tasks</span>
+            <span>100% — all simple / moderate tasks</span>
+          </div>
+        </div>
+      </div>
+      <div class="roi-results">
+        <div class="roi-res">
+          <div class="roi-res-val" id="roi-current">$5.0K</div>
+          <div class="roi-res-label">Current monthly spend</div>
+        </div>
+        <div class="roi-res">
+          <div class="roi-res-val accent" id="roi-savings">$3.1K</div>
+          <div class="roi-res-label">Estimated monthly savings</div>
+          <div class="roi-save-pct" id="roi-save-pct">62% savings</div>
+        </div>
+        <div class="roi-res">
+          <div class="roi-res-val" id="roi-projected">$1.9K</div>
+          <div class="roi-res-label">Projected spend with Tidus</div>
+        </div>
+      </div>
+      <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task mix and model availability. Tidus is fully self-hosted — no subscription fee.</p>
+    </div>
   </div>
 </section>
 
