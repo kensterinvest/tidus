@@ -13,14 +13,13 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from tidus.models.model_registry import ModelSpec, ModelTier, TokenizerType
+from tidus.models.model_registry import ModelSpec
 from tidus.registry.validators import (
     CanaryProbe,
     CanaryProbeResult,
     InvariantValidator,
     SchemaValidator,
 )
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -201,8 +200,8 @@ class TestCanaryProbe:
         inside CanaryProbe.run() doesn't short-circuit the probe. Then patches
         _probe_one to always return a 'fail' verdict.
         """
-        from unittest.mock import MagicMock
         import sys
+        from unittest.mock import MagicMock
 
         specs = [_make_spec(model_id=f"model-{i}") for i in range(3)]
 
@@ -232,7 +231,7 @@ class TestCanaryProbe:
         })
         probe = CanaryProbe()
 
-        with patch("tidus.registry.validators.CanaryProbe._probe_one", new_callable=AsyncMock) as mock_probe:
+        with patch("tidus.registry.validators.CanaryProbe._probe_one", new_callable=AsyncMock):
             # Import guard: fake adapter_factory available
             with patch("tidus.registry.validators.CanaryProbe.run", wraps=probe.run):
                 # The method filters locals out and returns True when sample is empty

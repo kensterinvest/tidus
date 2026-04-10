@@ -192,14 +192,14 @@ class ReportDelivery:
         truncated = "\n...[truncated — see reports/ directory for full report]" \
                     if len(report_markdown) > 3000 else ""
         print(f"\n{'='*72}")
-        print(f"[DEV MODE — no email provider configured]")
+        print("[DEV MODE — no email provider configured]")
         print(f"To:      {', '.join(s.email for s in subscribers)}")
         print(f"Subject: {subject}")
         print(f"{'='*72}")
         print(safe + truncated)
         print(f"{'='*72}")
-        print(f"\nTo send real emails, add RESEND_API_KEY to .env")
-        print(f"Get a free key at: https://resend.com (3,000 emails/month free)\n")
+        print("\nTo send real emails, add RESEND_API_KEY to .env")
+        print("Get a free key at: https://resend.com (3,000 emails/month free)\n")
         return len(subscribers)
 
     # ── HTML renderer ─────────────────────────────────────────────────────────

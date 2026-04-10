@@ -78,7 +78,6 @@ class OverrideManager:
         _validate_payload(request.override_type, request.payload)
 
         override_id = str(uuid.uuid4())
-        now = datetime.now(UTC)
 
         async with self._sf() as session:
             # Conflict detection

@@ -21,7 +21,8 @@ from sqlalchemy import func, select
 from tidus.api.deps import get_audit_logger, get_session_factory
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
-from tidus.billing.csv_parser import BillingParseError, parse as parse_csv
+from tidus.billing.csv_parser import BillingParseError
+from tidus.billing.csv_parser import parse as parse_csv
 from tidus.billing.reconciler import BillingReconciler
 from tidus.db.registry_orm import BillingReconciliationORM
 

@@ -25,9 +25,9 @@ from sqlalchemy import select
 
 from tidus.auth.middleware import TokenPayload
 from tidus.db.registry_orm import ModelDriftEventORM, ModelOverrideORM, ModelTelemetryORM
-from tidus.observability.registry_metrics import DRIFT_EVENTS
 from tidus.db.repositories.registry_repo import get_open_drift_events
 from tidus.models.registry_models import CreateOverrideRequest
+from tidus.observability.registry_metrics import DRIFT_EVENTS
 from tidus.sync.drift.detectors import (
     ContextDriftDetector,
     DriftDetection,

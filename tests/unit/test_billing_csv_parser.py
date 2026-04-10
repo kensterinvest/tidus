@@ -18,8 +18,7 @@ from datetime import date
 
 import pytest
 
-from tidus.billing.csv_parser import BillingParseError, BillingRow, parse
-
+from tidus.billing.csv_parser import BillingParseError, parse
 
 VALID_CSV = """\
 model_id,date,provider_cost_usd

@@ -13,7 +13,6 @@ from __future__ import annotations
 import uuid
 from contextlib import asynccontextmanager
 from datetime import UTC, datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -21,7 +20,6 @@ from sqlalchemy.orm import sessionmaker
 
 from tidus.db.registry_orm import Base, ModelDriftEventORM
 from tidus.sync.drift.engine import DriftEngine
-
 
 # ── In-memory SQLite fixture ───────────────────────────────────────────────────
 

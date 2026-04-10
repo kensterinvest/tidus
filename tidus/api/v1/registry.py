@@ -24,6 +24,7 @@ import hmac
 from datetime import UTC, datetime
 from typing import Annotated, Any
 
+import structlog
 import yaml
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.responses import Response
@@ -41,7 +42,6 @@ from tidus.db.repositories.registry_repo import (
     count_entries_for_revision,
     get_active_overrides,
     get_all_revisions,
-    get_drift_event_by_id,
     get_entries_for_revision,
     get_open_drift_events,
     get_revision_by_id,
@@ -60,8 +60,6 @@ from tidus.models.registry_models import (
 from tidus.registry.merge import merge_spec
 from tidus.registry.telemetry_reader import TelemetryReader
 from tidus.settings import get_settings
-
-import structlog
 
 log = structlog.get_logger(__name__)
 

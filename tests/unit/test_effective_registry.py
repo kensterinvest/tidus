@@ -19,7 +19,6 @@ import pytest
 from tidus.models.model_registry import ModelSpec, ModelTier, TokenizerType
 from tidus.registry.effective_registry import EffectiveRegistry
 
-
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def _make_spec(model_id="gpt-4o", enabled=True, latency=100):

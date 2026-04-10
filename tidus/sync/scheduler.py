@@ -202,6 +202,7 @@ class TidusScheduler:
         """Generate Tidus AI Model Latest Pricing Report and deliver to subscribers."""
         try:
             from pathlib import Path
+
             from tidus.reporting.pricing_report import PricingReportGenerator
             from tidus.reporting.subscribers import ReportDelivery, load_subscribers
 
@@ -267,8 +268,8 @@ class TidusScheduler:
         if self._session_factory is None or self._registry is None:
             return
         try:
-            from tidus.sync.drift.engine import DriftEngine
             from tidus.api.deps import get_override_manager
+            from tidus.sync.drift.engine import DriftEngine
             override_manager = get_override_manager() if self._session_factory else None
             engine = DriftEngine(
                 self._session_factory,

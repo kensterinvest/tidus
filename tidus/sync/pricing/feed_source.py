@@ -27,7 +27,7 @@ import hashlib
 import hmac
 import random
 import time
-from datetime import UTC, date, datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 

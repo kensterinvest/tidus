@@ -7,7 +7,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -65,7 +64,7 @@ async def test_update_revision_metrics_sets_gauges():
     revision.status = "active"
 
     factory = _make_session_factory(revision=revision, completed_at=None)
-    registry = _make_registry()
+    _make_registry()
 
     with patch.object(REGISTRY_ACTIVE_REVISION_ID, "set") as mock_rev_id, \
          patch.object(REGISTRY_ACTIVE_REVISION_TS, "set") as mock_rev_ts:

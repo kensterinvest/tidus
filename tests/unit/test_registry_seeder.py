@@ -17,12 +17,12 @@ from pathlib import Path
 
 import pytest
 import pytest_asyncio
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from tidus.db.engine import Base
 from tidus.db.registry_orm import ModelCatalogEntryORM, ModelCatalogRevisionORM
-from tidus.registry.seeder import RegistrySeeder, _SEED_REVISION_ID
+from tidus.registry.seeder import _SEED_REVISION_ID, RegistrySeeder
 
 
 @pytest.fixture(scope="module")

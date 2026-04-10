@@ -21,7 +21,6 @@ from tidus.api.deps import (
     get_registry,
     get_session_factory,
 )
-from tidus.registry.seeder import RegistrySeeder
 from tidus.api.v1 import (
     audit,
     billing,
@@ -40,6 +39,7 @@ from tidus.api.v1 import (
 )
 from tidus.db.engine import create_tables
 from tidus.metering.middleware import MeteringMiddleware
+from tidus.registry.seeder import RegistrySeeder
 from tidus.settings import get_settings
 from tidus.sync.scheduler import TidusScheduler
 from tidus.utils.logging import configure_logging

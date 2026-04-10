@@ -7,8 +7,8 @@ PriceQuote    — A single price observation from one source for one model.
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from datetime import UTC, date, datetime
+from dataclasses import dataclass
+from datetime import date, datetime
 
 
 @dataclass

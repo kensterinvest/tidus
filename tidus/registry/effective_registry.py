@@ -62,7 +62,7 @@ class EffectiveRegistry:
         cls,
         session_factory,
         fallback_yaml_path: str = "config/models.yaml",
-    ) -> "EffectiveRegistry":
+    ) -> EffectiveRegistry:
         """Build an EffectiveRegistry from the active DB revision.
 
         Falls back to YAML load if no active revision is present.

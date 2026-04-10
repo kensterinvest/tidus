@@ -23,8 +23,7 @@ import respx
 from httpx import Response
 
 from tidus.sync.pricing.feed_source import TidusPricingFeedSource, _CBState
-from tidus.sync.pricing.hardcoded_source import HardcodedSource, _KNOWN_PRICES
-
+from tidus.sync.pricing.hardcoded_source import _KNOWN_PRICES, HardcodedSource
 
 # ── HardcodedSource ───────────────────────────────────────────────────────────
 

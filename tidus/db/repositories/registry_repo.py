@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 
-from sqlalchemy import func, select, text, update
+from sqlalchemy import func, select, update
 
 from tidus.db.registry_orm import (
     ModelCatalogEntryORM,

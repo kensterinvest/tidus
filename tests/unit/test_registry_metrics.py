@@ -1,6 +1,5 @@
 """Tests for registry_metrics.py — metric names, label sets, and hash function."""
 
-import pytest
 
 
 def test_gauge_metric_names():
@@ -76,8 +75,9 @@ def test_revision_id_to_int_deterministic():
 
 def test_revision_id_to_int_range():
     """Hash must stay within JS safe integer range (2**53)."""
-    from tidus.observability.registry_metrics import revision_id_to_int
     import uuid
+
+    from tidus.observability.registry_metrics import revision_id_to_int
 
     for _ in range(20):
         h = revision_id_to_int(str(uuid.uuid4()))
@@ -85,8 +85,9 @@ def test_revision_id_to_int_range():
 
 
 def test_revision_id_to_int_changes_on_different_ids():
-    from tidus.observability.registry_metrics import revision_id_to_int
     import uuid
+
+    from tidus.observability.registry_metrics import revision_id_to_int
 
     ids = [str(uuid.uuid4()) for _ in range(10)]
     hashes = [revision_id_to_int(i) for i in ids]

@@ -11,7 +11,7 @@ Covers:
 from __future__ import annotations
 
 import uuid
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, datetime
 
 import pytest
 import pytest_asyncio
@@ -19,7 +19,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from tidus.db.engine import Base, CostRecordORM, PriceChangeLogORM
 from tidus.db.registry_orm import ModelTelemetryORM
-from tidus.models.model_registry import ModelSpec, ModelTier, TokenizerType
+from tidus.models.model_registry import ModelSpec
 from tidus.sync.drift.detectors import (
     ContextDriftDetector,
     LatencyDriftDetector,

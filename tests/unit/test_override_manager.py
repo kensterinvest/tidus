@@ -25,7 +25,6 @@ from tidus.auth.middleware import TokenPayload
 from tidus.models.registry_models import CreateOverrideRequest
 from tidus.registry.override_manager import OverrideManager
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 def make_actor(role="admin", team_id="team-a", sub="user@example.com") -> TokenPayload:
@@ -128,7 +127,6 @@ async def test_team_manager_can_create_for_own_team():
     req = make_request(scope="team", scope_id="team-a")  # own team ✓
     sf, mock_session = make_session_factory(scalars_result=[])
 
-    orm = make_orm()
     mock_session.refresh = AsyncMock(side_effect=lambda o: None)
 
     with patch("tidus.registry.override_manager.ModelOverride.model_validate", return_value=MagicMock()):
@@ -288,7 +286,6 @@ async def test_list_active_team_manager_sees_only_own_team():
 async def test_create_calls_audit_logger():
     """OverrideManager.create() must write an audit entry when audit_logger is provided."""
     actor = make_actor()
-    orm_row = make_orm()
     sf, _ = make_session_factory(first_result=None, scalars_result=[])
 
     audit_logger = AsyncMock()

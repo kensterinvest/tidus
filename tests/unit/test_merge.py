@@ -20,7 +20,6 @@ from tidus.models.model_registry import ModelSpec, ModelTier, TokenizerType
 from tidus.models.registry_models import TelemetrySnapshot
 from tidus.registry.merge import apply_price_multiplier, merge_spec
 
-
 # ── Fixtures ──────────────────────────────────────────────────────────────────
 
 def make_override(override_type: str, payload: dict | None = None, model_id: str | None = None):

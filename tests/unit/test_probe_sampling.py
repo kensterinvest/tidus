@@ -22,7 +22,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from tidus.db.engine import Base
 from tidus.db.registry_orm import ModelTelemetryORM
-from tidus.models.model_registry import ModelSpec, ModelTier, TokenizerType
+from tidus.models.model_registry import ModelSpec
 from tidus.sync.health_probe import HealthProbe
 
 

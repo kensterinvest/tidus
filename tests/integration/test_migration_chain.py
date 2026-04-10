@@ -8,14 +8,13 @@ Tests that:
 
 from __future__ import annotations
 
-import os
 import sqlite3
-import tempfile
 from pathlib import Path
 
 import pytest
-from alembic import command
 from alembic.config import Config
+
+from alembic import command
 
 
 @pytest.fixture(autouse=True)

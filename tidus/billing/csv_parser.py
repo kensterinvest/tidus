@@ -21,7 +21,6 @@ import io
 from dataclasses import dataclass
 from datetime import date
 
-
 _REQUIRED_COLUMNS = {"model_id", "date", "provider_cost_usd"}
 
 

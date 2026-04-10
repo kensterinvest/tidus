@@ -27,9 +27,8 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
 
 import structlog
 from sqlalchemy import delete, select, text, update
@@ -46,7 +45,7 @@ from tidus.db.repositories.registry_repo import (
 )
 from tidus.models.model_registry import ModelSpec
 from tidus.registry.validators import CanaryProbe, InvariantValidator, SchemaValidator
-from tidus.sync.pricing.base import PricingSource, PriceQuote
+from tidus.sync.pricing.base import PriceQuote, PricingSource
 from tidus.sync.pricing.consensus import ConsensusError, PriceConsensus
 
 log = structlog.get_logger(__name__)
@@ -339,7 +338,7 @@ class RegistryPipeline:
         tier2_errors = InvariantValidator().validate(specs)
         all_errors = tier1_errors + tier2_errors
         if all_errors:
-            raise ValueError(f"Validation failed:\n" + "\n".join(all_errors))
+            raise ValueError("Validation failed:\n" + "\n".join(all_errors))
 
         canary_json: list[dict] = []  # Tier 3 skipped
         await self._phase_b_flip(revision_id, canary_json)

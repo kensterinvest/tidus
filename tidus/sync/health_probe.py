@@ -92,10 +92,8 @@ class HealthProbe:
             # Determine tier and whether to probe this cycle
             if model_id in tier_a_ids:
                 probe_type = "live"
-                should_probe = True
             elif model_id in tier_b_ids:
                 probe_type = "synthetic"
-                should_probe = True
             else:
                 # Tier C — 10% random sample
                 if random.random() > _TIER_C_SAMPLE_RATE:

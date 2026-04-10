@@ -15,13 +15,11 @@ Covers:
 from __future__ import annotations
 
 import io
-from unittest.mock import patch
 
 import pytest
 from fastapi.testclient import TestClient
 
-from tidus.api.deps import get_session_factory
-from tidus.auth.middleware import get_current_user, TokenPayload
+from tidus.auth.middleware import TokenPayload, get_current_user
 from tidus.auth.rbac import Role
 from tidus.main import create_app
 

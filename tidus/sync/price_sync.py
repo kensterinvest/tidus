@@ -28,7 +28,7 @@ async def run_price_sync(
     For richer results (revision_id, sources_used, ingestion_run_ids) call
     RegistryPipeline.run_price_sync_cycle() directly.
     """
-    from tidus.registry.pipeline import RegistryPipeline, PipelineResult
+    from tidus.registry.pipeline import PipelineResult, RegistryPipeline
     from tidus.settings import get_settings
     from tidus.sync.pricing.hardcoded_source import HardcodedSource
 

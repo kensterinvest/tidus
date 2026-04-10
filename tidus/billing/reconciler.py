@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass
-from datetime import date, datetime, UTC, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import structlog
 from sqlalchemy import select

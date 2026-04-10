@@ -16,6 +16,7 @@ Background:
 from collections.abc import Sequence
 
 import sqlalchemy as sa
+
 from alembic import op
 
 revision: str = "a2c4e6f8b1d3"
