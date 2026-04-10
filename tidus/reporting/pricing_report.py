@@ -88,8 +88,16 @@ tr:last-child td{border-bottom:none;}
 .col-field{color:#888;font-size:12px;}
 .col-vendor{color:#888;font-size:11px;white-space:nowrap;}
 .col-ctx{color:#888;font-size:11px;white-space:nowrap;}
+.col-rank{color:#bbb;font-size:11px;text-align:right;padding-right:4px;width:28px;}
 .table-note{font-size:12px;color:#888;margin-bottom:12px;}
 .no-changes{padding:20px;text-align:center;color:#888;font-style:italic;margin-bottom:16px;}
+.price-legend{background:#f8f6ff;border:1px solid #e0d9f7;border-radius:10px;
+              padding:16px 20px;margin-bottom:20px;}
+.legend-title{font-size:13px;font-weight:700;color:#533483;margin-bottom:12px;}
+.legend-grid{display:flex;flex-direction:column;gap:10px;}
+.legend-item{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:start;}
+.legend-label{font-size:12px;font-weight:700;color:#0f3460;padding-top:2px;white-space:nowrap;}
+.legend-desc{font-size:12px;color:#555;line-height:1.5;}
 
 .model-id{font-family:'SF Mono','Fira Code',monospace;font-size:12px;
           background:#f0f0f0;padding:2px 6px;border-radius:4px;color:#333;}
@@ -747,33 +755,64 @@ class PricingReportGenerator:
                 "</div>"
             )
 
-        # ── Full price table ──────────────────────────────────────────────────
-        by_vendor: dict[str, list[ModelSpec]] = {}
-        for spec in sorted(specs.values(), key=lambda s: (s.vendor, s.model_id)):
-            if not spec.is_local:
-                by_vendor.setdefault(spec.vendor, []).append(spec)
+        # ── Full price table — sorted by input price descending ──────────────
+        paid_specs = sorted(
+            (s for s in specs.values() if not s.is_local),
+            key=lambda s: s.input_price,
+            reverse=True,
+        )
         table_rows: list[str] = []
-        for vendor, vspecs in sorted(by_vendor.items()):
-            vname = _VENDOR_NAMES.get(vendor, vendor)
-            for s in vspecs:
-                ctx_k = s.max_context // 1000
-                table_rows.append(
-                    f"<tr>"
-                    f'<td class="col-vendor">{vname}</td>'
-                    f'<td><span class="model-id">{s.model_id}</span></td>'
-                    f'<td class="col-price-main">${s.input_price * 1000:.3f}</td>'
-                    f'<td class="col-price">${s.output_price * 1000:.3f}</td>'
-                    f'<td class="col-ctx">{ctx_k}K</td>'
-                    f"</tr>"
-                )
+        for rank, s in enumerate(paid_specs, start=1):
+            ctx_k = s.max_context // 1000
+            vname = _VENDOR_NAMES.get(s.vendor, s.vendor)
+            table_rows.append(
+                f"<tr>"
+                f'<td class="col-rank">{rank}</td>'
+                f'<td class="col-vendor">{vname}</td>'
+                f'<td><span class="model-id">{s.model_id}</span></td>'
+                f'<td class="col-price-main">${s.input_price * 1000:.3f}</td>'
+                f'<td class="col-price">${s.output_price * 1000:.3f}</td>'
+                f'<td class="col-ctx">{ctx_k}K</td>'
+                f"</tr>"
+            )
+        price_legend_html = (
+            '<div class="price-legend">'
+            '<div class="legend-title">&#x2139;&#xFE0F; How to read these prices</div>'
+            '<div class="legend-grid">'
+            '<div class="legend-item">'
+            '<span class="legend-label">Input price</span>'
+            '<span class="legend-desc">Cost per 1M tokens you <strong>send</strong> to the model — '
+            'your prompt, system instruction, conversation history, and any context you attach. '
+            'Longer prompts or large document uploads drive this cost up.</span>'
+            '</div>'
+            '<div class="legend-item">'
+            '<span class="legend-label">Output price</span>'
+            '<span class="legend-desc">Cost per 1M tokens the model <strong>generates</strong> — '
+            'every word in its response. Verbose answers, long code completions, and streaming '
+            'replies all accrue output cost. Output is typically 3–5&times; more expensive than input.</span>'
+            '</div>'
+            '<div class="legend-item">'
+            '<span class="legend-label">$/1M tokens</span>'
+            '<span class="legend-desc">Industry-standard unit. To estimate a task: '
+            '<em>(prompt tokens &div; 1,000,000) &times; input price</em> '
+            '+ <em>(response tokens &div; 1,000,000) &times; output price</em>. '
+            'A typical 500-word prompt (&asymp; 700 tokens) + 500-word reply costs under $0.01 '
+            'on most models.</span>'
+            '</div>'
+            '</div>'
+            '</div>'
+        )
         price_table_html = (
             '<div class="section-header">'
             '<span class="section-icon">&#x1F4CB;</span>'
             '<span class="section-title">Full Price Table</span>'
             "</div>"
-            f'<p class="table-note">All prices USD/1M tokens &middot; Updated {report.report_date}</p>'
-            "<table><thead><tr>"
-            "<th>Vendor</th><th>Model</th><th>Input $/1M</th><th>Output $/1M</th><th>Context</th>"
+            f'<p class="table-note">Ranked by input price &mdash; highest first &middot; '
+            f'All prices USD/1M tokens &middot; Updated {report.report_date}</p>'
+            + price_legend_html
+            + "<table><thead><tr>"
+            "<th>#</th><th>Vendor</th><th>Model</th>"
+            "<th>Input $/1M</th><th>Output $/1M</th><th>Context</th>"
             f"</tr></thead><tbody>{''.join(table_rows)}</tbody></table>"
         )
 

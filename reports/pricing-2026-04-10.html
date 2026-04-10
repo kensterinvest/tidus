@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tidus AI Pricing Report &mdash; 2026-04-10</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+     background:#f0f2f5;color:#1a1a2e;line-height:1.6;}
+.wrapper{max-width:680px;margin:0 auto;background:#ffffff;}
+
+.header{background:linear-gradient(135deg,#0f3460 0%,#533483 60%,#e94560 100%);
+        padding:40px 40px 32px;text-align:center;}
+.header-logo{font-size:30px;font-weight:800;color:white;letter-spacing:-0.5px;}
+.header-logo .dot{color:#a78bfa;}
+.header-tagline{font-size:11px;text-transform:uppercase;letter-spacing:2px;
+                color:rgba(255,255,255,0.6);margin-top:4px;}
+.header-title{font-size:22px;font-weight:700;color:white;margin-top:20px;line-height:1.3;}
+.header-date{font-size:13px;color:rgba(255,255,255,0.75);margin-top:8px;}
+
+.stats-bar{background:#1a1a2e;padding:20px 40px;display:flex;
+           justify-content:space-around;align-items:center;}
+.stat{text-align:center;flex:1;}
+.stat-value{font-size:28px;font-weight:800;color:#a78bfa;line-height:1;}
+.stat-drops{color:#4ade80 !important;}
+.stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+            color:rgba(255,255,255,0.5);margin-top:4px;}
+.stat-sep{width:1px;height:40px;background:rgba(255,255,255,0.1);}
+
+.content{padding:32px 40px;}
+.exec-summary{font-size:14px;color:#555;margin-bottom:8px;}
+
+.section-header{display:flex;align-items:center;gap:10px;margin:32px 0 16px;
+                padding-bottom:10px;border-bottom:2px solid #e9ecef;}
+.section-icon{font-size:22px;}
+.section-title{font-size:18px;font-weight:700;color:#1a1a2e;}
+
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+th{background:#f8f9fa;text-align:left;padding:8px 12px;font-size:11px;
+   text-transform:uppercase;letter-spacing:0.8px;color:#6c757d;border-bottom:2px solid #dee2e6;}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.col-price{color:#888;}
+.col-price-main{font-weight:600;}
+.col-field{color:#888;font-size:12px;}
+.col-vendor{color:#888;font-size:11px;white-space:nowrap;}
+.col-ctx{color:#888;font-size:11px;white-space:nowrap;}
+.col-rank{color:#bbb;font-size:11px;text-align:right;padding-right:4px;width:28px;}
+.table-note{font-size:12px;color:#888;margin-bottom:12px;}
+.no-changes{padding:20px;text-align:center;color:#888;font-style:italic;margin-bottom:16px;}
+.price-legend{background:#f8f6ff;border:1px solid #e0d9f7;border-radius:10px;
+              padding:16px 20px;margin-bottom:20px;}
+.legend-title{font-size:13px;font-weight:700;color:#533483;margin-bottom:12px;}
+.legend-grid{display:flex;flex-direction:column;gap:10px;}
+.legend-item{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:start;}
+.legend-label{font-size:12px;font-weight:700;color:#0f3460;padding-top:2px;white-space:nowrap;}
+.legend-desc{font-size:12px;color:#555;line-height:1.5;}
+
+.model-id{font-family:'SF Mono','Fira Code',monospace;font-size:12px;
+          background:#f0f0f0;padding:2px 6px;border-radius:4px;color:#333;}
+.change-up{color:#dc3545;font-weight:700;}
+.change-down{color:#198754;font-weight:700;}
+.badge-up{background:#fff0f0;color:#dc3545;padding:2px 8px;
+          border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
+.badge-down{background:#f0fff4;color:#198754;padding:2px 8px;
+            border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
+
+.vendor-header{font-size:13px;font-weight:700;color:#533483;text-transform:uppercase;
+               letter-spacing:1px;padding:12px 0 6px;margin-top:8px;}
+.narrative{background:linear-gradient(135deg,#f8f4ff,#fff);border-left:3px solid #a78bfa;
+           padding:10px 14px;font-size:13px;color:#4a4a6a;font-style:italic;
+           margin-bottom:20px;border-radius:0 6px 6px 0;}
+
+.model-card{border:1px solid #e9ecef;border-radius:10px;padding:18px 20px;
+            margin-bottom:16px;background:#fafbfc;}
+.model-card-header{display:flex;align-items:flex-start;
+                   justify-content:space-between;gap:12px;margin-bottom:10px;}
+.model-card-left{flex:1;}
+.model-card-vendor{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
+                   color:#a78bfa;font-weight:700;margin-bottom:4px;}
+.model-card-id{font-family:monospace;font-size:14px;font-weight:700;color:#0f3460;
+               background:#e8edf7;padding:3px 8px;border-radius:5px;
+               display:inline-block;margin-bottom:4px;}
+.model-card-tagline{font-size:13px;color:#555;line-height:1.4;}
+.model-card-pricing{text-align:right;flex-shrink:0;}
+.price-input{font-size:16px;font-weight:800;color:#0f3460;}
+.price-output{font-size:13px;color:#888;margin-top:2px;}
+.price-unit{font-size:10px;color:#aaa;margin-top:1px;}
+.model-strengths{font-size:12px;color:#666;margin-top:8px;padding-left:16px;}
+.model-strengths li{margin-bottom:3px;}
+.model-context{font-size:12px;color:#888;font-style:italic;margin-top:10px;
+               padding-top:8px;border-top:1px solid #eee;}
+.model-meta{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;}
+.meta-tag{background:#f0f2f5;color:#555;font-size:11px;padding:2px 8px;border-radius:10px;}
+.tier-tag{background:#e8edf7;color:#0f3460;font-size:11px;
+          font-weight:600;padding:2px 8px;border-radius:10px;}
+
+.cta-box{background:linear-gradient(135deg,#0f3460,#533483);border-radius:12px;
+         padding:28px 32px;margin:32px 0;text-align:center;}
+.cta-title{color:white;font-size:18px;font-weight:700;margin-bottom:8px;}
+.cta-sub{color:rgba(255,255,255,0.75);font-size:13px;margin-bottom:20px;}
+.cta-btn{display:inline-block;background:#a78bfa;color:white !important;
+         text-decoration:none;padding:12px 28px;border-radius:8px;
+         font-weight:700;font-size:14px;letter-spacing:0.3px;}
+
+.footer{background:#f8f9fa;padding:24px 40px;border-top:1px solid #e9ecef;
+        font-size:11px;color:#adb5bd;text-align:center;line-height:1.7;}
+.footer a{color:#533483;text-decoration:none;}
+code{background:#f0f0f0;padding:1px 5px;border-radius:3px;
+     font-family:monospace;font-size:11px;color:#555;}
+
+@media(max-width:600px){
+  .content,.header,.footer,.stats-bar{padding:20px;}
+  .model-card-header{flex-direction:column;}
+  .stats-bar{flex-wrap:wrap;gap:12px;}
+  .stat-sep{display:none;}
+}
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+<div class="header">
+  <div class="header-logo">tidus<span class="dot">.</span>ai</div>
+  <div class="header-tagline">WEEKLY AI INTELLIGENCE REPORT</div>
+  <div class="header-title">AI Model Pricing Report</div>
+  <div class="header-date">2026-04-10</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat"><div class="stat-value">53</div><div class="stat-label">Models tracked</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-value">4</div><div class="stat-label">Price changes</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-value">0</div><div class="stat-label">New models</div></div>
+  <div class="stat-sep"></div>
+  <div class="stat"><div class="stat-value stat-drops">4</div><div class="stat-label">Price drops</div></div>
+</div>
+
+<div class="content">
+<p class="exec-summary">This week: <strong>4 price drops</strong> across 2 vendors.</p>
+
+<div class="section-header"><span class="section-icon">&#x1F4CA;</span><span class="section-title">Price Changes</span></div><div class="vendor-header">DeepSeek</div><table><thead><tr><th>Model</th><th>Field</th><th>Old $/1M</th><th>New $/1M</th><th>Change</th></tr></thead><tbody><tr><td><span class="model-id">deepseek-v3</span></td><td class="col-field">Input</td><td class="col-price">$0.340</td><td class="col-price change-down">$0.270</td><td><span class="badge-down">-20.6%</span></td></tr><tr><td><span class="model-id">deepseek-v3</span></td><td class="col-field">Output</td><td class="col-price">$1.110</td><td class="col-price change-down">$0.890</td><td><span class="badge-down">-19.8%</span></td></tr></tbody></table><div class="narrative">DeepSeek reduced prices on `deepseek-v3` by an average of 20%, making these models more cost-effective for high-volume workloads.</div><div class="vendor-header">OpenAI</div><table><thead><tr><th>Model</th><th>Field</th><th>Old $/1M</th><th>New $/1M</th><th>Change</th></tr></thead><tbody><tr><td><span class="model-id">gpt-4o</span></td><td class="col-field">Input</td><td class="col-price">$3.000</td><td class="col-price change-down">$2.500</td><td><span class="badge-down">-16.7%</span></td></tr><tr><td><span class="model-id">gpt-4o</span></td><td class="col-field">Output</td><td class="col-price">$12.000</td><td class="col-price change-down">$10.000</td><td><span class="badge-down">-16.7%</span></td></tr></tbody></table><div class="narrative">OpenAI reduced prices on `gpt-4o` by an average of 17%, making these models more cost-effective for high-volume workloads.</div>
+<div class="section-header"><span class="section-icon">&#x1F4CB;</span><span class="section-title">Full Price Table</span></div><p class="table-note">Ranked by input price &mdash; highest first &middot; All prices USD/1M tokens &middot; Updated 2026-04-10</p><div class="price-legend"><div class="legend-title">&#x2139;&#xFE0F; How to read these prices</div><div class="legend-grid"><div class="legend-item"><span class="legend-label">Input price</span><span class="legend-desc">Cost per 1M tokens you <strong>send</strong> to the model — your prompt, system instruction, conversation history, and any context you attach. Longer prompts or large document uploads drive this cost up.</span></div><div class="legend-item"><span class="legend-label">Output price</span><span class="legend-desc">Cost per 1M tokens the model <strong>generates</strong> — every word in its response. Verbose answers, long code completions, and streaming replies all accrue output cost. Output is typically 3–5&times; more expensive than input.</span></div><div class="legend-item"><span class="legend-label">$/1M tokens</span><span class="legend-desc">Industry-standard unit. To estimate a task: <em>(prompt tokens &div; 1,000,000) &times; input price</em> + <em>(response tokens &div; 1,000,000) &times; output price</em>. A typical 500-word prompt (&asymp; 700 tokens) + 500-word reply costs under $0.01 on most models.</span></div></div></div><table><thead><tr><th>#</th><th>Vendor</th><th>Model</th><th>Input $/1M</th><th>Output $/1M</th><th>Context</th></tr></thead><tbody><tr><td class="col-rank">1</td><td class="col-vendor">Anthropic</td><td><span class="model-id">claude-opus-4-6</span></td><td class="col-price-main">$15.000</td><td class="col-price">$75.000</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">2</td><td class="col-vendor">OpenAI</td><td><span class="model-id">o3</span></td><td class="col-price-main">$10.000</td><td class="col-price">$40.000</td><td class="col-ctx">200K</td></tr><tr><td class="col-rank">3</td><td class="col-vendor">xAI</td><td><span class="model-id">grok-3-fast</span></td><td class="col-price-main">$5.000</td><td class="col-price">$25.000</td><td class="col-ctx">131K</td></tr><tr><td class="col-rank">4</td><td class="col-vendor">Anthropic</td><td><span class="model-id">claude-sonnet-4-6</span></td><td class="col-price-main">$3.000</td><td class="col-price">$15.000</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">5</td><td class="col-vendor">xAI</td><td><span class="model-id">grok-3</span></td><td class="col-price-main">$3.000</td><td class="col-price">$15.000</td><td class="col-ctx">131K</td></tr><tr><td class="col-rank">6</td><td class="col-vendor">Perplexity</td><td><span class="model-id">sonar-pro</span></td><td class="col-price-main">$3.000</td><td class="col-price">$15.000</td><td class="col-ctx">200K</td></tr><tr><td class="col-rank">7</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-4o</span></td><td class="col-price-main">$2.500</td><td class="col-price">$10.000</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">8</td><td class="col-vendor">cohere</td><td><span class="model-id">command-r-plus</span></td><td class="col-price-main">$2.500</td><td class="col-price">$10.000</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">9</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-4.1</span></td><td class="col-price-main">$2.000</td><td class="col-price">$8.000</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">10</td><td class="col-vendor">Google</td><td><span class="model-id">gemini-3.1-pro</span></td><td class="col-price-main">$2.000</td><td class="col-price">$12.000</td><td class="col-ctx">2000K</td></tr><tr><td class="col-rank">11</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">mistral-large-3</span></td><td class="col-price-main">$2.000</td><td class="col-price">$6.000</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">12</td><td class="col-vendor">Google</td><td><span class="model-id">gemini-2.5-pro</span></td><td class="col-price-main">$1.300</td><td class="col-price">$10.000</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">13</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-5-codex</span></td><td class="col-price-main">$1.250</td><td class="col-price">$10.000</td><td class="col-ctx">400K</td></tr><tr><td class="col-rank">14</td><td class="col-vendor">OpenAI</td><td><span class="model-id">o4-mini</span></td><td class="col-price-main">$1.100</td><td class="col-price">$4.400</td><td class="col-ctx">200K</td></tr><tr><td class="col-rank">15</td><td class="col-vendor">qwen</td><td><span class="model-id">qwen-max</span></td><td class="col-price-main">$1.040</td><td class="col-price">$4.160</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">16</td><td class="col-vendor">Google</td><td><span class="model-id">gemini-3.1-flash</span></td><td class="col-price-main">$1.000</td><td class="col-price">$4.000</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">17</td><td class="col-vendor">Perplexity</td><td><span class="model-id">sonar</span></td><td class="col-price-main">$1.000</td><td class="col-price">$1.000</td><td class="col-ctx">127K</td></tr><tr><td class="col-rank">18</td><td class="col-vendor">groq</td><td><span class="model-id">groq-deepseek-r1</span></td><td class="col-price-main">$1.000</td><td class="col-price">$3.000</td><td class="col-ctx">131K</td></tr><tr><td class="col-rank">19</td><td class="col-vendor">Anthropic</td><td><span class="model-id">claude-haiku-4-5</span></td><td class="col-price-main">$0.800</td><td class="col-price">$4.000</td><td class="col-ctx">200K</td></tr><tr><td class="col-rank">20</td><td class="col-vendor">OpenAI</td><td><span class="model-id">codex-mini-latest</span></td><td class="col-price-main">$0.750</td><td class="col-price">$3.000</td><td class="col-ctx">200K</td></tr><tr><td class="col-rank">21</td><td class="col-vendor">Moonshot (Kimi)</td><td><span class="model-id">kimi-k2.5</span></td><td class="col-price-main">$0.600</td><td class="col-price">$2.500</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">22</td><td class="col-vendor">DeepSeek</td><td><span class="model-id">deepseek-r1</span></td><td class="col-price-main">$0.550</td><td class="col-price">$2.190</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">23</td><td class="col-vendor">groq</td><td><span class="model-id">groq-llama4-maverick</span></td><td class="col-price-main">$0.500</td><td class="col-price">$1.500</td><td class="col-ctx">131K</td></tr><tr><td class="col-rank">24</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-4.1-mini</span></td><td class="col-price-main">$0.400</td><td class="col-price">$1.600</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">25</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">mistral-medium</span></td><td class="col-price-main">$0.400</td><td class="col-price">$2.000</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">26</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">devstral</span></td><td class="col-price-main">$0.400</td><td class="col-price">$2.000</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">27</td><td class="col-vendor">qwen</td><td><span class="model-id">qwen-flash</span></td><td class="col-price-main">$0.400</td><td class="col-price">$1.200</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">28</td><td class="col-vendor">Google</td><td><span class="model-id">gemini-2.5-flash</span></td><td class="col-price-main">$0.300</td><td class="col-price">$2.500</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">29</td><td class="col-vendor">DeepSeek</td><td><span class="model-id">deepseek-v4</span></td><td class="col-price-main">$0.300</td><td class="col-price">$0.500</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">30</td><td class="col-vendor">DeepSeek</td><td><span class="model-id">deepseek-v3</span></td><td class="col-price-main">$0.270</td><td class="col-price">$0.890</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">31</td><td class="col-vendor">together</td><td><span class="model-id">together-llama4-maverick</span></td><td class="col-price-main">$0.270</td><td class="col-price">$0.850</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">32</td><td class="col-vendor">qwen</td><td><span class="model-id">qwen-plus</span></td><td class="col-price-main">$0.260</td><td class="col-price">$0.780</td><td class="col-ctx">131K</td></tr><tr><td class="col-rank">33</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">codestral</span></td><td class="col-price-main">$0.200</td><td class="col-price">$0.600</td><td class="col-ctx">256K</td></tr><tr><td class="col-rank">34</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-4o-mini</span></td><td class="col-price-main">$0.150</td><td class="col-price">$0.600</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">35</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">mistral-nemo</span></td><td class="col-price-main">$0.150</td><td class="col-price">$0.150</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">36</td><td class="col-vendor">cohere</td><td><span class="model-id">command-r</span></td><td class="col-price-main">$0.150</td><td class="col-price">$0.600</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">37</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-4.1-nano</span></td><td class="col-price-main">$0.100</td><td class="col-price">$0.400</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">38</td><td class="col-vendor">Google</td><td><span class="model-id">gemini-2.0-flash</span></td><td class="col-price-main">$0.100</td><td class="col-price">$0.400</td><td class="col-ctx">1000K</td></tr><tr><td class="col-rank">39</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">mistral-small</span></td><td class="col-price-main">$0.100</td><td class="col-price">$0.300</td><td class="col-ctx">256K</td></tr><tr><td class="col-rank">40</td><td class="col-vendor">Mistral AI</td><td><span class="model-id">devstral-small</span></td><td class="col-price-main">$0.100</td><td class="col-price">$0.300</td><td class="col-ctx">128K</td></tr><tr><td class="col-rank">41</td><td class="col-vendor">OpenAI</td><td><span class="model-id">gpt-oss-120b</span></td><td class="col-price-main">$0.039</td><td class="col-price">$0.100</td><td class="col-ctx">128K</td></tr></tbody></table>
+<div class="cta-box">
+  <div class="cta-title">&#x1F4EC; Know someone who tracks AI costs?</div>
+  <div class="cta-sub">Forward this report or share the link &mdash; it&rsquo;s free, weekly, and open source.</div>
+  <a href="https://github.com/kensterinvest/tidus#subscribe" class="cta-btn">Subscribe to weekly AI pricing updates</a>
+</div>
+
+</div>
+
+<div class="footer">
+  You&rsquo;re receiving this because you subscribed to Tidus AI weekly pricing reports.<br>
+  To unsubscribe, set <code>active: false</code> next to your entry in <code>config/subscribers.yaml</code>.<br>
+  <a href="https://github.com/kensterinvest/tidus">Tidus v1.1.0</a> &middot; <a href="https://github.com/kensterinvest/tidus/blob/main/docs/pricing-model.md">Pricing docs</a> &middot; Apache 2.0
+</div>
+
+</div>
+</body>
+</html>
