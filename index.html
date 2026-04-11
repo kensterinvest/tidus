@@ -163,6 +163,7 @@ td{padding:10px 16px;vertical-align:middle}
 .t4{background:#f0f9ff;color:#075985}
 .col-in{font-family:'Courier New',monospace;font-weight:700;color:#0f3460;font-size:13px}
 .col-out{font-family:'Courier New',monospace;font-weight:600;color:#533483;font-size:13px}
+.col-ctx{font-family:'Courier New',monospace;font-size:12px;color:#555;text-align:right}
 .table-note{font-size:12px;color:#aaa;margin-top:10px;text-align:center}
 
 /* MAGAZINE */
@@ -1121,19 +1122,19 @@ response = client.chat.completions.create(
         </div>
 
         <div class="mag-sec-title" style="margin-top:28px">📋 Full Model Catalog — April 2026</div>
-        <p style="font-size:12px;color:#888;margin-bottom:14px">41 production-ready models · Prices USD/1M tokens · Verified April 9, 2026 · Ranked by blended cost — fairest comparison</p>
+        <p style="font-size:12px;color:#888;margin-bottom:14px">Ranked by input price — highest first &middot; All prices USD/1M tokens &middot; Updated April 9, 2026</p>
         <div class="pricing-legend" style="margin-bottom:14px">
           <div class="leg">
             <div class="leg-lbl">Input Price</div>
-            <div class="leg-desc">Tokens <em>you send</em> — prompt + context. Charged once per call.</div>
+            <div class="leg-desc">Cost per 1M tokens you <strong>send</strong> to the model — your prompt, system instruction, conversation history, and any context you attach. Longer prompts or large document uploads drive this cost up.</div>
           </div>
           <div class="leg">
             <div class="leg-lbl">Output Price</div>
-            <div class="leg-desc">Tokens the <em>model generates</em>. Typically 3–5× the input price.</div>
+            <div class="leg-desc">Cost per 1M tokens the model <strong>generates</strong> — every word in its response. Verbose answers, long code completions, and streaming replies all accrue output cost. Output is typically 3–5&times; more expensive than input.</div>
           </div>
           <div class="leg">
-            <div class="leg-lbl">Est. $/1K Req ★</div>
-            <div class="leg-desc">Blended cost: assumes 1,000 input + 500 output tokens per request. Ranking is by this column — fairer than input-only.</div>
+            <div class="leg-lbl">$/1M tokens</div>
+            <div class="leg-desc">Industry-standard unit. To estimate a task: <em>(prompt tokens &divide; 1,000,000) &times; input price</em> + <em>(response tokens &divide; 1,000,000) &times; output price</em>. A typical 500-word prompt (&asymp;700 tokens) + 500-word reply costs under $0.01 on most models.</div>
           </div>
         </div>
         <div class="table-wrap">
@@ -1141,18 +1142,17 @@ response = client.chat.completions.create(
             <thead>
               <tr>
                 <th class="col-rank">#</th>
-                <th>Model</th>
                 <th>Vendor</th>
-                <th>Tier</th>
+                <th>Model</th>
                 <th>Input $/1M</th>
                 <th>Output $/1M</th>
-                <th>Est. $/1K Req ★</th>
+                <th>Context</th>
               </tr>
             </thead>
             <tbody id="model-tbody"></tbody>
           </table>
         </div>
-        <p class="table-note">★ Est. $/1K Req = (1,000 × input_price + 500 × output_price) ÷ 1,000 · T1 = critical · T2 = complex · T3 = moderate · T4 = simple/budget</p>
+        <p class="table-note">Prices from official vendor pages via multi-source consensus &middot; Ranked by input price &middot; Updated April 9, 2026</p>
       </div>
       <div class="mag-footer">
         <p>Prices verified via multi-source consensus · Next sync: April 13, 2026 02:00 UTC</p>
@@ -1259,51 +1259,48 @@ response = client.chat.completions.create(
 <script>
 // Model data — 41 models. Ranked at render time by blended cost (fairest comparison).
 const MODELS = [
-  {id:"claude-opus-4-6",          v:"Anthropic",   t:1, i:15.00,  o:75.00},
-  {id:"o3",                       v:"OpenAI",      t:1, i:10.00,  o:40.00},
-  {id:"grok-3-fast",              v:"xAI",         t:1, i:5.00,   o:25.00},
-  {id:"grok-3",                   v:"xAI",         t:1, i:3.00,   o:15.00},
-  {id:"claude-sonnet-4-6",        v:"Anthropic",   t:1, i:3.00,   o:15.00},
-  {id:"sonar-pro",                v:"Perplexity",  t:1, i:3.00,   o:15.00},
-  {id:"gpt-4o",                   v:"OpenAI",      t:1, i:2.50,   o:10.00},
-  {id:"command-r-plus",           v:"Cohere",      t:2, i:2.50,   o:10.00},
-  {id:"gpt-4.1",                  v:"OpenAI",      t:2, i:2.00,   o:8.00},
-  {id:"gemini-3.1-pro",           v:"Google",      t:2, i:2.00,   o:12.00},
-  {id:"mistral-large-3",          v:"Mistral",     t:2, i:2.00,   o:6.00},
-  {id:"o4-mini",                  v:"OpenAI",      t:2, i:1.10,   o:4.40},
-  {id:"qwen-max",                 v:"Alibaba",     t:2, i:1.04,   o:4.16},
-  {id:"gemini-2.5-pro",           v:"Google",      t:2, i:1.25,   o:10.00},
-  {id:"gpt-5-codex",              v:"OpenAI",      t:2, i:1.25,   o:10.00},
-  {id:"sonar",                    v:"Perplexity",  t:2, i:1.00,   o:1.00},
-  {id:"groq-deepseek-r1",         v:"Groq",        t:2, i:1.00,   o:3.00},
-  {id:"gemini-3.1-flash",         v:"Google",      t:2, i:1.00,   o:4.00},
-  {id:"claude-haiku-4-5",         v:"Anthropic",   t:2, i:0.80,   o:4.00},
-  {id:"codex-mini-latest",        v:"OpenAI",      t:2, i:0.75,   o:3.00},
-  {id:"kimi-k2.5",                v:"Moonshot",    t:3, i:0.60,   o:2.50},
-  {id:"deepseek-r1",              v:"DeepSeek",    t:3, i:0.55,   o:2.19},
-  {id:"groq-llama4-maverick",     v:"Groq",        t:3, i:0.50,   o:1.50},
-  {id:"gpt-4.1-mini",             v:"OpenAI",      t:3, i:0.40,   o:1.60},
-  {id:"devstral",                 v:"Mistral",     t:3, i:0.40,   o:2.00},
-  {id:"mistral-medium",           v:"Mistral",     t:3, i:0.40,   o:2.00},
-  {id:"qwen-flash",               v:"Alibaba",     t:3, i:0.40,   o:1.20},
-  {id:"deepseek-v4",              v:"DeepSeek",    t:3, i:0.30,   o:0.50},
-  {id:"gemini-2.5-flash",         v:"Google",      t:3, i:0.30,   o:2.50},
-  {id:"deepseek-v3",              v:"DeepSeek",    t:3, i:0.27,   o:0.89},
-  {id:"together-llama4-maverick", v:"Together AI", t:3, i:0.27,   o:0.85},
-  {id:"qwen-plus",                v:"Alibaba",     t:3, i:0.26,   o:0.78},
-  {id:"codestral",                v:"Mistral",     t:3, i:0.20,   o:0.60},
-  {id:"gpt-4o-mini",              v:"OpenAI",      t:3, i:0.15,   o:0.60},
-  {id:"mistral-nemo",             v:"Mistral",     t:3, i:0.15,   o:0.15},
-  {id:"command-r",                v:"Cohere",      t:3, i:0.15,   o:0.60},
-  {id:"gpt-4.1-nano",             v:"OpenAI",      t:4, i:0.10,   o:0.40},
-  {id:"gemini-2.0-flash",         v:"Google",      t:4, i:0.10,   o:0.40},
-  {id:"devstral-small",           v:"Mistral",     t:4, i:0.10,   o:0.30},
-  {id:"mistral-small",            v:"Mistral",     t:4, i:0.10,   o:0.30},
-  {id:"gpt-oss-120b",             v:"OpenAI",      t:4, i:0.039,  o:0.10},
+  {id:"claude-opus-4-6",          v:"Anthropic",   t:1, i:15.00,  o:75.00,  ctx:1000},
+  {id:"o3",                       v:"OpenAI",      t:1, i:10.00,  o:40.00,  ctx:200},
+  {id:"grok-3-fast",              v:"xAI",         t:1, i:5.00,   o:25.00,  ctx:131},
+  {id:"grok-3",                   v:"xAI",         t:1, i:3.00,   o:15.00,  ctx:131},
+  {id:"claude-sonnet-4-6",        v:"Anthropic",   t:2, i:3.00,   o:15.00,  ctx:1000},
+  {id:"sonar-pro",                v:"Perplexity",  t:1, i:3.00,   o:15.00,  ctx:200},
+  {id:"gpt-4o",                   v:"OpenAI",      t:2, i:2.50,   o:10.00,  ctx:128},
+  {id:"command-r-plus",           v:"Cohere",      t:2, i:2.50,   o:10.00,  ctx:128},
+  {id:"gpt-4.1",                  v:"OpenAI",      t:1, i:2.00,   o:8.00,   ctx:1000},
+  {id:"gemini-3.1-pro",           v:"Google",      t:1, i:2.00,   o:12.00,  ctx:2000},
+  {id:"mistral-large-3",          v:"Mistral",     t:2, i:2.00,   o:6.00,   ctx:128},
+  {id:"o4-mini",                  v:"OpenAI",      t:2, i:1.10,   o:4.40,   ctx:200},
+  {id:"qwen-max",                 v:"Alibaba",     t:1, i:1.04,   o:4.16,   ctx:1000},
+  {id:"gemini-2.5-pro",           v:"Google",      t:1, i:1.25,   o:10.00,  ctx:1000},
+  {id:"gpt-5-codex",              v:"OpenAI",      t:1, i:1.25,   o:10.00,  ctx:400},
+  {id:"sonar",                    v:"Perplexity",  t:3, i:1.00,   o:1.00,   ctx:127},
+  {id:"groq-deepseek-r1",         v:"Groq",        t:1, i:1.00,   o:3.00,   ctx:131},
+  {id:"gemini-3.1-flash",         v:"Google",      t:3, i:1.00,   o:4.00,   ctx:1000},
+  {id:"claude-haiku-4-5",         v:"Anthropic",   t:3, i:0.80,   o:4.00,   ctx:200},
+  {id:"codex-mini-latest",        v:"OpenAI",      t:3, i:0.75,   o:3.00,   ctx:200},
+  {id:"kimi-k2.5",                v:"Moonshot",    t:2, i:0.60,   o:2.50,   ctx:1000},
+  {id:"deepseek-r1",              v:"DeepSeek",    t:1, i:0.55,   o:2.19,   ctx:128},
+  {id:"groq-llama4-maverick",     v:"Groq",        t:2, i:0.50,   o:1.50,   ctx:131},
+  {id:"gpt-4.1-mini",             v:"OpenAI",      t:3, i:0.40,   o:1.60,   ctx:1000},
+  {id:"devstral",                 v:"Mistral",     t:2, i:0.40,   o:2.00,   ctx:128},
+  {id:"mistral-medium",           v:"Mistral",     t:2, i:0.40,   o:2.00,   ctx:128},
+  {id:"qwen-flash",               v:"Alibaba",     t:3, i:0.40,   o:1.20,   ctx:1000},
+  {id:"deepseek-v4",              v:"DeepSeek",    t:2, i:0.30,   o:0.50,   ctx:128},
+  {id:"gemini-2.5-flash",         v:"Google",      t:2, i:0.30,   o:2.50,   ctx:1000},
+  {id:"deepseek-v3",              v:"DeepSeek",    t:2, i:0.27,   o:0.89,   ctx:128},
+  {id:"together-llama4-maverick", v:"Together AI", t:2, i:0.27,   o:0.85,   ctx:1000},
+  {id:"qwen-plus",                v:"Alibaba",     t:2, i:0.26,   o:0.78,   ctx:131},
+  {id:"codestral",                v:"Mistral",     t:2, i:0.20,   o:0.60,   ctx:256},
+  {id:"gpt-4o-mini",              v:"OpenAI",      t:3, i:0.15,   o:0.60,   ctx:128},
+  {id:"mistral-nemo",             v:"Mistral",     t:3, i:0.15,   o:0.15,   ctx:128},
+  {id:"command-r",                v:"Cohere",      t:3, i:0.15,   o:0.60,   ctx:128},
+  {id:"gpt-4.1-nano",             v:"OpenAI",      t:3, i:0.10,   o:0.40,   ctx:1000},
+  {id:"gemini-2.0-flash",         v:"Google",      t:3, i:0.10,   o:0.40,   ctx:1000},
+  {id:"devstral-small",           v:"Mistral",     t:3, i:0.10,   o:0.30,   ctx:128},
+  {id:"mistral-small",            v:"Mistral",     t:3, i:0.10,   o:0.30,   ctx:256},
+  {id:"gpt-oss-120b",             v:"OpenAI",      t:2, i:0.039,  o:0.10,   ctx:128},
 ];
-
-const TIER_LABELS = {1:"Premium", 2:"Advanced", 3:"Economy", 4:"Budget"};
-const TIER_CLASS  = {1:"t1",      2:"t2",       3:"t3",      4:"t4"};
 
 // Sanitize — all values are static data, but good practice
 function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
@@ -1313,31 +1310,20 @@ function fmt(n){
   return "$"+n.toFixed(2);
 }
 
-// Blended cost: estimated $/1K requests assuming 1,000 input + 500 output tokens each
-function blended(m){ return (m.i * 1000 + m.o * 500) / 1000; }
-
-function fmtB(n){
-  if(n >= 1)   return "$"+n.toFixed(2);
-  if(n >= 0.1) return "$"+n.toFixed(3);
-  return "$"+n.toFixed(3);
-}
-
 (function renderTable(){
-  var sorted = MODELS.slice().sort(function(a,b){ return blended(b) - blended(a); });
+  // Sort by input price descending — same order as weekly pricing report
+  var sorted = MODELS.slice().sort(function(a,b){ return b.i - a.i; });
   var tbody = document.getElementById("model-tbody");
   var html = "";
   for(var i=0; i<sorted.length; i++){
     var m = sorted[i];
-    var tc = TIER_CLASS[m.t];
-    var tl = TIER_LABELS[m.t];
     html += "<tr>"
       + "<td class='col-rank'>" + (i+1) + "</td>"
-      + "<td class='col-model'>" + esc(m.id) + "</td>"
       + "<td class='col-vendor'>" + esc(m.v) + "</td>"
-      + "<td><span class='tier-badge " + tc + "'>T" + m.t + " \xb7 " + esc(tl) + "</span></td>"
+      + "<td class='col-model'>" + esc(m.id) + "</td>"
       + "<td class='col-in'>" + fmt(m.i) + "</td>"
       + "<td class='col-out'>" + fmt(m.o) + "</td>"
-      + "<td class='col-in' style='font-weight:800'>" + fmtB(blended(m)) + "</td>"
+      + "<td class='col-ctx'>" + m.ctx + "K</td>"
       + "</tr>";
   }
   tbody.innerHTML = html;
