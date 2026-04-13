@@ -224,6 +224,9 @@ td{padding:10px 16px;vertical-align:middle}
                  padding:13px 22px;border-radius:10px;border:none;cursor:pointer;
                  white-space:nowrap;transition:all .2s}
 .sub-form button:hover{background:#9061f9;transform:translateY(-2px)}
+#sub-msg{font-size:14px;margin-top:12px;display:none}
+.sub-ok{color:#166534}
+.sub-err{color:#b91c1c}
 #sub-note{font-size:12px;color:rgba(255,255,255,.35);margin-top:14px}
 #sub-msg{margin-top:14px;font-size:14px;display:none}
 #sub-msg.ok{color:#4ade80}#sub-msg.err{color:#f87171}
@@ -1329,12 +1332,40 @@ function fmt(n){
   tbody.innerHTML = html;
 })();
 
-function handleSub(e){
+async function handleSub(e){
   e.preventDefault();
+  var btn = document.querySelector("#sub-form button");
   var msg = document.getElementById("sub-msg");
-  msg.style.display = "block";
-  msg.className = "";
-  msg.textContent = "Subscription is not available at the moment. Please contact lapkei01@gmail.com for early access.";
+  var email = document.getElementById("sub-email").value.trim();
+  btn.disabled = true;
+  btn.textContent = "Subscribing…";
+  msg.style.display = "none";
+  try {
+    var res = await fetch("/api/v1/subscribe", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({email: email, name: ""})
+    });
+    var data = await res.json();
+    if (res.ok) {
+      msg.style.display = "block";
+      msg.className = "sub-ok";
+      msg.textContent = "✓ You're subscribed! Expect your first report next Sunday.";
+      document.getElementById("sub-form").style.display = "none";
+    } else {
+      msg.style.display = "block";
+      msg.className = "sub-err";
+      msg.textContent = data.detail || "Something went wrong. Please try again.";
+      btn.disabled = false;
+      btn.textContent = "Subscribe Free";
+    }
+  } catch(err) {
+    msg.style.display = "block";
+    msg.className = "sub-err";
+    msg.textContent = "Network error. Please try again.";
+    btn.disabled = false;
+    btn.textContent = "Subscribe Free";
+  }
 }
 
 function calcROI(){
