@@ -161,8 +161,9 @@ td{padding:10px 16px;vertical-align:middle}
 .t2{background:#fff7ed;color:#9a3412}
 .t3{background:#f0fdf4;color:#166534}
 .t4{background:#f0f9ff;color:#075985}
-.col-in{font-family:'Courier New',monospace;font-weight:700;color:#0f3460;font-size:13px}
-.col-out{font-family:'Courier New',monospace;font-weight:600;color:#533483;font-size:13px}
+.col-blend{font-family:'Courier New',monospace;font-weight:800;color:#0f3460;font-size:13px}
+.col-in{font-family:'Courier New',monospace;font-weight:500;color:#555;font-size:12px}
+.col-out{font-family:'Courier New',monospace;font-weight:500;color:#555;font-size:12px}
 .col-ctx{font-family:'Courier New',monospace;font-size:12px;color:#555;text-align:right}
 .table-note{font-size:12px;color:#aaa;margin-top:10px;text-align:center}
 
@@ -1147,6 +1148,7 @@ response = client.chat.completions.create(
                 <th class="col-rank">#</th>
                 <th>Vendor</th>
                 <th>Model</th>
+                <th>Blended $/1M</th>
                 <th>Input $/1M</th>
                 <th>Output $/1M</th>
                 <th>Context</th>
@@ -1260,49 +1262,49 @@ response = client.chat.completions.create(
 </footer>
 
 <script>
-// Model data — 41 models. Ranked at render time by blended cost (fairest comparison).
+// Model data — 41 models. b = blended cost = (input + output) / 2 per 1M tokens.
 const MODELS = [
-  {id:"o3", v:"OpenAI", t:1, i:10.00, o:40.00, ctx:200},
-  {id:"o4-mini", v:"OpenAI", t:2, i:1.10, o:4.40, ctx:200},
-  {id:"gpt-4.1", v:"OpenAI", t:1, i:2.00, o:8.00, ctx:1000},
-  {id:"gpt-4.1-mini", v:"OpenAI", t:3, i:0.400, o:1.60, ctx:1000},
-  {id:"gpt-4.1-nano", v:"OpenAI", t:3, i:0.100, o:0.400, ctx:1000},
-  {id:"gpt-4o", v:"OpenAI", t:2, i:2.50, o:10.00, ctx:128},
-  {id:"gpt-4o-mini", v:"OpenAI", t:3, i:0.150, o:0.600, ctx:128},
-  {id:"gpt-oss-120b", v:"OpenAI", t:2, i:0.039, o:0.100, ctx:128},
-  {id:"gpt-5-codex", v:"OpenAI", t:1, i:1.25, o:10.00, ctx:400},
-  {id:"codex-mini-latest", v:"OpenAI", t:3, i:0.750, o:3.00, ctx:200},
-  {id:"claude-opus-4-6", v:"Anthropic", t:1, i:15.00, o:75.00, ctx:1000},
-  {id:"claude-sonnet-4-6", v:"Anthropic", t:2, i:3.00, o:15.00, ctx:1000},
-  {id:"claude-haiku-4-5", v:"Anthropic", t:3, i:0.800, o:4.00, ctx:200},
-  {id:"gemini-3.1-pro", v:"Google", t:1, i:2.00, o:12.00, ctx:2000},
-  {id:"gemini-3.1-flash", v:"Google", t:3, i:1.00, o:4.00, ctx:1000},
-  {id:"gemini-2.5-pro", v:"Google", t:1, i:1.30, o:10.00, ctx:1000},
-  {id:"gemini-2.5-flash", v:"Google", t:2, i:0.300, o:2.50, ctx:1000},
-  {id:"gemini-2.0-flash", v:"Google", t:3, i:0.100, o:0.400, ctx:1000},
-  {id:"mistral-large-3", v:"Mistral", t:2, i:2.00, o:6.00, ctx:128},
-  {id:"mistral-medium", v:"Mistral", t:2, i:0.400, o:2.00, ctx:128},
-  {id:"mistral-small", v:"Mistral", t:3, i:0.100, o:0.300, ctx:256},
-  {id:"mistral-nemo", v:"Mistral", t:3, i:0.150, o:0.150, ctx:128},
-  {id:"codestral", v:"Mistral", t:2, i:0.200, o:0.600, ctx:256},
-  {id:"devstral", v:"Mistral", t:2, i:0.400, o:2.00, ctx:128},
-  {id:"devstral-small", v:"Mistral", t:3, i:0.100, o:0.300, ctx:128},
-  {id:"deepseek-r1", v:"DeepSeek", t:1, i:0.550, o:2.19, ctx:128},
-  {id:"deepseek-v3", v:"DeepSeek", t:2, i:0.270, o:0.890, ctx:128},
-  {id:"deepseek-v4", v:"DeepSeek", t:2, i:0.300, o:0.500, ctx:128},
-  {id:"grok-3", v:"xAI", t:1, i:3.00, o:15.00, ctx:131},
-  {id:"grok-3-fast", v:"xAI", t:1, i:5.00, o:25.00, ctx:131},
-  {id:"kimi-k2.5", v:"Moonshot", t:2, i:0.600, o:2.50, ctx:1000},
-  {id:"command-r-plus", v:"Cohere", t:2, i:2.50, o:10.00, ctx:128},
-  {id:"command-r", v:"Cohere", t:3, i:0.150, o:0.600, ctx:128},
-  {id:"qwen-max", v:"Alibaba", t:1, i:1.04, o:4.16, ctx:1000},
-  {id:"qwen-plus", v:"Alibaba", t:2, i:0.260, o:0.780, ctx:131},
-  {id:"qwen-flash", v:"Alibaba", t:3, i:0.400, o:1.20, ctx:1000},
-  {id:"sonar-pro", v:"Perplexity", t:1, i:3.00, o:15.00, ctx:200},
-  {id:"sonar", v:"Perplexity", t:3, i:1.00, o:1.00, ctx:127},
-  {id:"together-llama4-maverick", v:"Together AI", t:2, i:0.270, o:0.850, ctx:1000},
-  {id:"groq-llama4-maverick", v:"Groq", t:2, i:0.500, o:1.50, ctx:131},
-  {id:"groq-deepseek-r1", v:"Groq", t:1, i:1.00, o:3.00, ctx:131},
+  {id:"claude-opus-4-6", v:"Anthropic", t:1, b:45.00, i:15.00, o:75.00, ctx:1000},
+  {id:"o3", v:"OpenAI", t:1, b:25.00, i:10.00, o:40.00, ctx:200},
+  {id:"grok-3-fast", v:"xAI", t:1, b:15.00, i:5.00, o:25.00, ctx:131},
+  {id:"claude-sonnet-4-6", v:"Anthropic", t:2, b:9.00, i:3.00, o:15.00, ctx:1000},
+  {id:"grok-3", v:"xAI", t:1, b:9.00, i:3.00, o:15.00, ctx:131},
+  {id:"sonar-pro", v:"Perplexity", t:1, b:9.00, i:3.00, o:15.00, ctx:200},
+  {id:"gemini-3.1-pro", v:"Google", t:1, b:7.00, i:2.00, o:12.00, ctx:2000},
+  {id:"gpt-4o", v:"OpenAI", t:2, b:6.25, i:2.50, o:10.00, ctx:128},
+  {id:"command-r-plus", v:"Cohere", t:2, b:6.25, i:2.50, o:10.00, ctx:128},
+  {id:"gemini-2.5-pro", v:"Google", t:1, b:5.65, i:1.30, o:10.00, ctx:1000},
+  {id:"gpt-5-codex", v:"OpenAI", t:1, b:5.62, i:1.25, o:10.00, ctx:400},
+  {id:"gpt-4.1", v:"OpenAI", t:1, b:5.00, i:2.00, o:8.00, ctx:1000},
+  {id:"mistral-large-3", v:"Mistral", t:2, b:4.00, i:2.00, o:6.00, ctx:128},
+  {id:"o4-mini", v:"OpenAI", t:2, b:2.75, i:1.10, o:4.40, ctx:200},
+  {id:"qwen-max", v:"Alibaba", t:1, b:2.60, i:1.04, o:4.16, ctx:1000},
+  {id:"gemini-3.1-flash", v:"Google", t:3, b:2.50, i:1.00, o:4.00, ctx:1000},
+  {id:"claude-haiku-4-5", v:"Anthropic", t:3, b:2.40, i:0.800, o:4.00, ctx:200},
+  {id:"groq-deepseek-r1", v:"Groq", t:1, b:2.00, i:1.00, o:3.00, ctx:131},
+  {id:"codex-mini-latest", v:"OpenAI", t:3, b:1.88, i:0.750, o:3.00, ctx:200},
+  {id:"kimi-k2.5", v:"Moonshot", t:2, b:1.55, i:0.600, o:2.50, ctx:1000},
+  {id:"gemini-2.5-flash", v:"Google", t:2, b:1.40, i:0.300, o:2.50, ctx:1000},
+  {id:"deepseek-r1", v:"DeepSeek", t:1, b:1.37, i:0.550, o:2.19, ctx:128},
+  {id:"mistral-medium", v:"Mistral", t:2, b:1.20, i:0.400, o:2.00, ctx:128},
+  {id:"devstral", v:"Mistral", t:2, b:1.20, i:0.400, o:2.00, ctx:128},
+  {id:"gpt-4.1-mini", v:"OpenAI", t:3, b:1.00, i:0.400, o:1.60, ctx:1000},
+  {id:"sonar", v:"Perplexity", t:3, b:1.00, i:1.00, o:1.00, ctx:127},
+  {id:"groq-llama4-maverick", v:"Groq", t:2, b:1.00, i:0.500, o:1.50, ctx:131},
+  {id:"qwen-flash", v:"Alibaba", t:3, b:0.800, i:0.400, o:1.20, ctx:1000},
+  {id:"deepseek-v3", v:"DeepSeek", t:2, b:0.580, i:0.270, o:0.890, ctx:128},
+  {id:"together-llama4-maverick", v:"Together AI", t:2, b:0.560, i:0.270, o:0.850, ctx:1000},
+  {id:"qwen-plus", v:"Alibaba", t:2, b:0.520, i:0.260, o:0.780, ctx:131},
+  {id:"codestral", v:"Mistral", t:2, b:0.400, i:0.200, o:0.600, ctx:256},
+  {id:"deepseek-v4", v:"DeepSeek", t:2, b:0.400, i:0.300, o:0.500, ctx:128},
+  {id:"gpt-4o-mini", v:"OpenAI", t:3, b:0.375, i:0.150, o:0.600, ctx:128},
+  {id:"command-r", v:"Cohere", t:3, b:0.375, i:0.150, o:0.600, ctx:128},
+  {id:"gpt-4.1-nano", v:"OpenAI", t:3, b:0.250, i:0.100, o:0.400, ctx:1000},
+  {id:"gemini-2.0-flash", v:"Google", t:3, b:0.250, i:0.100, o:0.400, ctx:1000},
+  {id:"mistral-small", v:"Mistral", t:3, b:0.200, i:0.100, o:0.300, ctx:256},
+  {id:"devstral-small", v:"Mistral", t:3, b:0.200, i:0.100, o:0.300, ctx:128},
+  {id:"mistral-nemo", v:"Mistral", t:3, b:0.150, i:0.150, o:0.150, ctx:128},
+  {id:"gpt-oss-120b", v:"OpenAI", t:2, b:0.0695, i:0.039, o:0.100, ctx:128},
 ];
 
 // Sanitize — all values are static data, but good practice
@@ -1314,8 +1316,8 @@ function fmt(n){
 }
 
 (function renderTable(){
-  // Sort by input price descending — same order as weekly pricing report
-  var sorted = MODELS.slice().sort(function(a,b){ return b.i - a.i; });
+  // Sort by blended cost descending — (input + output) / 2 per 1M tokens
+  var sorted = MODELS.slice().sort(function(a,b){ return b.b - a.b; });
   var tbody = document.getElementById("model-tbody");
   var html = "";
   for(var i=0; i<sorted.length; i++){
@@ -1324,6 +1326,7 @@ function fmt(n){
       + "<td class='col-rank'>" + (i+1) + "</td>"
       + "<td class='col-vendor'>" + esc(m.v) + "</td>"
       + "<td class='col-model'>" + esc(m.id) + "</td>"
+      + "<td class='col-blend'>" + fmt(m.b) + "</td>"
       + "<td class='col-in'>" + fmt(m.i) + "</td>"
       + "<td class='col-out'>" + fmt(m.o) + "</td>"
       + "<td class='col-ctx'>" + m.ctx + "K</td>"
