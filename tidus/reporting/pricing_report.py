@@ -61,59 +61,61 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
 .header-title{font-size:22px;font-weight:700;color:white;margin-top:20px;line-height:1.3;}
 .header-date{font-size:13px;color:rgba(255,255,255,0.75);margin-top:8px;}
 
-.stats-bar{background:#1a1a2e;padding:20px 40px;display:flex;
+.stats-bar{background:#1a1a2e;padding:20px 32px;display:flex;
            justify-content:space-around;align-items:center;}
 .stat{text-align:center;flex:1;}
-.stat-value{font-size:28px;font-weight:800;color:#a78bfa;line-height:1;}
+.stat-value{font-size:26px;font-weight:800;color:#a78bfa;line-height:1;}
 .stat-drops{color:#4ade80 !important;}
+.stat-rises{color:#f87171 !important;}
 .stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;
             color:rgba(255,255,255,0.5);margin-top:4px;}
-.stat-sep{width:1px;height:40px;background:rgba(255,255,255,0.1);}
+.stat-sep{width:1px;height:36px;background:rgba(255,255,255,0.1);}
 
 .content{padding:32px 40px;}
-.exec-summary{font-size:14px;color:#555;margin-bottom:8px;}
+.exec-summary{font-size:14px;color:#555;line-height:1.7;margin-bottom:6px;}
 
 .section-header{display:flex;align-items:center;gap:10px;margin:32px 0 16px;
                 padding-bottom:10px;border-bottom:2px solid #e9ecef;}
 .section-icon{font-size:22px;}
 .section-title{font-size:18px;font-weight:700;color:#1a1a2e;}
 
-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
-th{background:#f8f9fa;text-align:left;padding:8px 12px;font-size:11px;
-   text-transform:uppercase;letter-spacing:0.8px;color:#6c757d;border-bottom:2px solid #dee2e6;}
-td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
-tr:last-child td{border-bottom:none;}
-.col-price{color:#888;}
-.col-price-main{font-weight:600;}
-.col-field{color:#888;font-size:12px;}
-.col-vendor{color:#888;font-size:11px;white-space:nowrap;}
-.col-ctx{color:#888;font-size:11px;white-space:nowrap;}
-.col-rank{color:#bbb;font-size:11px;text-align:right;padding-right:4px;width:28px;}
-.table-note{font-size:12px;color:#888;margin-bottom:12px;}
-.no-changes{padding:20px;text-align:center;color:#888;font-style:italic;margin-bottom:16px;}
-.price-legend{background:#f8f6ff;border:1px solid #e0d9f7;border-radius:10px;
-              padding:16px 20px;margin-bottom:20px;}
-.legend-title{font-size:13px;font-weight:700;color:#533483;margin-bottom:12px;}
-.legend-grid{display:flex;flex-direction:column;gap:10px;}
-.legend-item{display:grid;grid-template-columns:120px 1fr;gap:8px;align-items:start;}
-.legend-label{font-size:12px;font-weight:700;color:#0f3460;padding-top:2px;white-space:nowrap;}
-.legend-desc{font-size:12px;color:#555;line-height:1.5;}
+/* Price change cards */
+.changes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+              gap:14px;margin-bottom:16px;}
+.cc-card{border-radius:10px;padding:16px;border:1.5px solid;}
+.cc-card.drop{background:#f0fff4;border-color:#86efac;}
+.cc-card.rise{background:#fff0f0;border-color:#fca5a5;}
+.cc-card.new{background:#f0f4ff;border-color:#93c5fd;}
+.cc-model{font-family:'SF Mono','Fira Code',monospace;font-size:13px;font-weight:700;
+          color:#0f3460;margin-bottom:2px;}
+.cc-vendor{font-size:10px;text-transform:uppercase;letter-spacing:1.2px;color:#888;
+           font-weight:600;margin-bottom:10px;}
+.cc-row{display:flex;align-items:center;gap:5px;font-size:12px;margin-bottom:4px;flex-wrap:wrap;}
+.cc-lbl{color:#888;font-size:11px;min-width:38px;}
+.cc-old{text-decoration:line-through;color:#aaa;}
+.cc-nv-drop{color:#16a34a;font-weight:700;}
+.cc-nv-rise{color:#dc2626;font-weight:700;}
+.cc-nv-new{color:#2563eb;font-weight:700;}
+.d-drop{background:#dcfce7;color:#16a34a;padding:1px 6px;border-radius:8px;
+        font-size:11px;font-weight:700;}
+.d-rise{background:#fee2e2;color:#dc2626;padding:1px 6px;border-radius:8px;
+        font-size:11px;font-weight:700;}
+.d-new{background:#dbeafe;color:#2563eb;padding:1px 6px;border-radius:8px;
+       font-size:11px;font-weight:700;}
 
-.model-id{font-family:'SF Mono','Fira Code',monospace;font-size:12px;
-          background:#f0f0f0;padding:2px 6px;border-radius:4px;color:#333;}
-.change-up{color:#dc3545;font-weight:700;}
-.change-down{color:#198754;font-weight:700;}
-.badge-up{background:#fff0f0;color:#dc3545;padding:2px 8px;
-          border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
-.badge-down{background:#f0fff4;color:#198754;padding:2px 8px;
-            border-radius:12px;font-size:11px;font-weight:700;white-space:nowrap;}
-
-.vendor-header{font-size:13px;font-weight:700;color:#533483;text-transform:uppercase;
-               letter-spacing:1px;padding:12px 0 6px;margin-top:8px;}
+/* Vendor narrative */
 .narrative{background:linear-gradient(135deg,#f8f4ff,#fff);border-left:3px solid #a78bfa;
            padding:10px 14px;font-size:13px;color:#4a4a6a;font-style:italic;
-           margin-bottom:20px;border-radius:0 6px 6px 0;}
+           margin:4px 0 20px;border-radius:0 6px 6px 0;}
 
+/* Optimisation tips */
+.tips-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:8px;}
+.tip-card{padding:14px;background:#f8f9ff;border-radius:10px;border:1px solid #e9ecef;}
+.tip-title{font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px;}
+.tip-desc{font-size:12px;color:#555;line-height:1.6;}
+.tip-savings{color:#16a34a;font-weight:700;}
+
+/* New model cards */
 .model-card{border:1px solid #e9ecef;border-radius:10px;padding:18px 20px;
             margin-bottom:16px;background:#fafbfc;}
 .model-card-header{display:flex;align-items:flex-start;
@@ -138,6 +140,32 @@ tr:last-child td{border-bottom:none;}
 .tier-tag{background:#e8edf7;color:#0f3460;font-size:11px;
           font-weight:600;padding:2px 8px;border-radius:10px;}
 
+/* Price table */
+table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px;}
+th{background:#f8f9fa;text-align:left;padding:8px 12px;font-size:11px;
+   text-transform:uppercase;letter-spacing:0.8px;color:#6c757d;border-bottom:2px solid #dee2e6;}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.col-price{color:#888;font-size:12px;}
+.col-price-main{font-weight:700;color:#0f3460;}
+.col-vendor{color:#888;font-size:11px;white-space:nowrap;}
+.col-ctx{color:#888;font-size:11px;white-space:nowrap;}
+.col-rank{color:#bbb;font-size:11px;text-align:right;padding-right:4px;width:28px;}
+.table-note{font-size:12px;color:#888;margin-bottom:12px;}
+.no-changes{padding:20px;text-align:center;color:#888;font-style:italic;margin-bottom:16px;}
+.model-id{font-family:'SF Mono','Fira Code',monospace;font-size:12px;
+          background:#f0f0f0;padding:2px 6px;border-radius:4px;color:#333;}
+
+/* Legend */
+.price-legend{background:#f8f6ff;border:1px solid #e0d9f7;border-radius:10px;
+              padding:16px 20px;margin-bottom:20px;}
+.legend-title{font-size:13px;font-weight:700;color:#533483;margin-bottom:12px;}
+.legend-grid{display:flex;flex-direction:column;gap:10px;}
+.legend-item{display:grid;grid-template-columns:130px 1fr;gap:8px;align-items:start;}
+.legend-label{font-size:12px;font-weight:700;color:#0f3460;padding-top:2px;white-space:nowrap;}
+.legend-desc{font-size:12px;color:#555;line-height:1.5;}
+
+/* CTA and footer */
 .cta-box{background:linear-gradient(135deg,#0f3460,#533483);border-radius:12px;
          padding:28px 32px;margin:32px 0;text-align:center;}
 .cta-title{color:white;font-size:18px;font-weight:700;margin-bottom:8px;}
@@ -145,7 +173,6 @@ tr:last-child td{border-bottom:none;}
 .cta-btn{display:inline-block;background:#a78bfa;color:white !important;
          text-decoration:none;padding:12px 28px;border-radius:8px;
          font-weight:700;font-size:14px;letter-spacing:0.3px;}
-
 .footer{background:#f8f9fa;padding:24px 40px;border-top:1px solid #e9ecef;
         font-size:11px;color:#adb5bd;text-align:center;line-height:1.7;}
 .footer a{color:#533483;text-decoration:none;}
@@ -157,6 +184,8 @@ code{background:#f0f0f0;padding:1px 5px;border-radius:3px;
   .model-card-header{flex-direction:column;}
   .stats-bar{flex-wrap:wrap;gap:12px;}
   .stat-sep{display:none;}
+  .tips-grid{grid-template-columns:1fr;}
+  .changes-grid{grid-template-columns:1fr;}
 }
 """
 
@@ -460,32 +489,27 @@ class PricingReportGenerator:
         lines += [
             "## 📋 Full Current Price Table",
             "",
-            f"*Prices as of {report.report_date} — $/1M tokens*",
+            f"*Prices as of {report.report_date} — USD/1M tokens · Ranked by blended cost*",
+            f"*Blended = (input + output) / 2 — equal input:output token split*",
             "",
+            "| # | Vendor | Model | Blended $/1M | Input $/1M | Output $/1M | Context |",
+            "|---|---|---|---|---|---|---|",
         ]
-        # Group by vendor
-        by_vendor: dict[str, list[ModelSpec]] = {}
-        for spec in sorted(specs.values(), key=lambda s: (s.vendor, s.model_id)):
-            if spec.is_local:
-                continue
-            by_vendor.setdefault(spec.vendor, []).append(spec)
-
-        for vendor, vendor_specs in sorted(by_vendor.items()):
-            vendor_name = _VENDOR_NAMES.get(vendor, vendor)
-            lines += [f"### {vendor_name}", ""]
-            lines += [
-                "| Model | Tier | Input $/1M | Output $/1M | Cache Read $/1M | Max Context |",
-                "|---|---|---|---|---|---|",
-            ]
-            for s in vendor_specs:
-                cache = f"${s.cache_read_price * 1000:.3f}" if s.cache_read_price > 0 else "—"
-                ctx = f"{s.max_context // 1000}K"
-                lines.append(
-                    f"| `{s.model_id}` | Tier {s.tier} | "
-                    f"${s.input_price * 1000:.3f} | ${s.output_price * 1000:.3f} | "
-                    f"{cache} | {ctx} |"
-                )
-            lines += [""]
+        paid_specs_md = sorted(
+            (s for s in specs.values() if not s.is_local),
+            key=lambda s: (s.input_price + s.output_price) / 2,
+            reverse=True,
+        )
+        for rank, s in enumerate(paid_specs_md, start=1):
+            blended = (s.input_price + s.output_price) / 2 * 1000
+            vendor_name = _VENDOR_NAMES.get(s.vendor, s.vendor)
+            ctx = f"{s.max_context // 1000}K"
+            lines.append(
+                f"| {rank} | {vendor_name} | `{s.model_id}` | "
+                f"${blended:.2f} | ${s.input_price * 1000:.3f} | "
+                f"${s.output_price * 1000:.3f} | {ctx} |"
+            )
+        lines += [""]
 
         # Stale models warning
         if report.stale_models:
@@ -631,29 +655,66 @@ class PricingReportGenerator:
         specs: dict[str, ModelSpec],
         descriptions: dict[str, dict],
     ) -> str:
-        """Generate a magazine-style HTML email newsletter."""
-        n_changes  = len(report.price_changes)
-        n_new      = len(report.new_models)
-        n_drops    = sum(1 for c in report.price_changes if c.delta_pct < 0)
+        """Generate a magazine-style HTML email newsletter matching index.html layout."""
+        from collections import defaultdict
+
         increases  = [c for c in report.price_changes if c.delta_pct > 0]
         decreases  = [c for c in report.price_changes if c.delta_pct < 0]
+        n_drops    = len({c.model_id for c in decreases})
+        n_rises    = len({c.model_id for c in increases})
+        n_new      = len(report.new_models)
+        n_updated  = len({c.model_id for c in report.price_changes})
 
-        # Executive summary line
-        if n_changes == 0 and n_new == 0:
-            exec_summary = "No pricing changes this week — all models stable."
-        else:
-            parts: list[str] = []
-            if decreases:
-                parts.append(f"<strong>{len(decreases)} price drop{'s' if len(decreases)>1 else ''}</strong>")
-            if increases:
-                parts.append(f"<strong>{len(increases)} price hike{'s' if len(increases)>1 else ''}</strong>")
-            if n_new:
-                parts.append(f"<strong>{n_new} new model{'s' if n_new>1 else ''}</strong>")
-            n_v = len({c.vendor for c in report.price_changes}) if report.price_changes else 0
-            v_str = f" across {n_v} vendor{'s' if n_v != 1 else ''}" if n_v else ""
-            exec_summary = f"This week: {', '.join(parts)}{v_str}."
+        def _blended(s: ModelSpec) -> float:
+            return (s.input_price + s.output_price) / 2 * 1000  # $/1M
 
-        # ── New models section ────────────────────────────────────────────────
+        paid = [s for s in specs.values() if not s.is_local and s.input_price > 0]
+        cheapest = min(paid, key=lambda s: s.input_price, default=None)
+        priciest = max(paid, key=_blended, default=None)
+        biggest_drop = (
+            min(decreases, key=lambda c: c.delta_pct) if decreases else None
+        )
+
+        # ── Rich executive summary ─────────────────────────────────────────────
+        paras: list[str] = []
+        if biggest_drop:
+            vname = _VENDOR_NAMES.get(biggest_drop.vendor, biggest_drop.vendor)
+            fl = "input" if biggest_drop.field == "input_price" else "output"
+            paras.append(
+                f"<strong>{vname}</strong> leads this week's activity — "
+                f"<strong>{biggest_drop.model_id}</strong> {fl} dropped "
+                f"<strong>{abs(biggest_drop.delta_pct):.1f}%</strong> to "
+                f"<strong>${biggest_drop.new_usd_per_1m:.3f}/1M</strong>."
+            )
+        if increases:
+            vnames = sorted({_VENDOR_NAMES.get(c.vendor, c.vendor) for c in increases})
+            paras.append(
+                f"{', '.join(vnames)} raised prices on "
+                f"{len({c.model_id for c in increases})} model"
+                f"{'s' if len({c.model_id for c in increases}) > 1 else ''}."
+            )
+        if n_new:
+            new_names = ", ".join(
+                f"<strong>{m.model_id}</strong>" for m in report.new_models[:3]
+            )
+            paras.append(
+                f"{n_new} new model{'s' if n_new > 1 else ''} added to the catalog: {new_names}."
+            )
+        if cheapest and priciest:
+            paras.append(
+                f"The catalog spans <strong>{cheapest.model_id}</strong> at "
+                f"<strong>${cheapest.input_price * 1000:.3f}/1M</strong> input "
+                f"(cheapest) to <strong>{priciest.model_id}</strong> at "
+                f"<strong>${_blended(priciest):.2f}/1M</strong> blended (most expensive)."
+            )
+        if not paras:
+            paras = [
+                "All models stable this week — no pricing changes detected across the "
+                f"{report.total_models}-model catalog."
+            ]
+        exec_summary_html = "  ".join(paras)
+
+        # ── New models section ─────────────────────────────────────────────────
         new_models_html = ""
         if report.new_models:
             cards = []
@@ -661,7 +722,7 @@ class PricingReportGenerator:
                 desc = descriptions.get(m.model_id, {})
                 tagline = desc.get(
                     "tagline",
-                    f"New {_VENDOR_NAMES.get(m.vendor, m.vendor)} model in the Tidus catalog.",
+                    f"New {_VENDOR_NAMES.get(m.vendor, m.vendor)} model added to the catalog.",
                 )
                 strengths_items = "".join(
                     f"<li>{s}</li>" for s in desc.get("strengths", [])[:4]
@@ -670,9 +731,9 @@ class PricingReportGenerator:
                     f'<ul class="model-strengths">{strengths_items}</ul>'
                     if strengths_items else ""
                 )
-                context = desc.get("context", "")
                 context_block = (
-                    f'<div class="model-context">{context}</div>' if context else ""
+                    f'<div class="model-context">{desc["context"]}</div>'
+                    if desc.get("context") else ""
                 )
                 caps_str = ", ".join(m.capabilities[:3]) if m.capabilities else ""
                 meta = (
@@ -708,69 +769,129 @@ class PricingReportGenerator:
                 + "".join(cards)
             )
 
-        # ── Price changes section ─────────────────────────────────────────────
+        # ── Price changes — card grid ──────────────────────────────────────────
         if report.price_changes:
-            vendor_blocks: list[str] = []
+            # Group per-field changes back to per-model cards
+            by_model: dict[str, list[PriceChange]] = defaultdict(list)
+            for c in report.price_changes:
+                by_model[c.model_id].append(c)
+
+            cards_html: list[str] = []
+            for model_id in sorted(by_model):
+                mchanges = by_model[model_id]
+                drops_m  = [c for c in mchanges if c.delta_pct < 0]
+                card_type = "drop" if len(drops_m) >= len(mchanges) - len(drops_m) else "rise"
+                vname = _VENDOR_NAMES.get(mchanges[0].vendor, mchanges[0].vendor)
+                rows_html = ""
+                for ch in mchanges:
+                    fl  = "Input" if ch.field == "input_price" else "Output"
+                    sign = "−" if ch.delta_pct < 0 else "+"
+                    nv_cls    = "cc-nv-drop" if ch.delta_pct < 0 else "cc-nv-rise"
+                    badge_cls = "d-drop"     if ch.delta_pct < 0 else "d-rise"
+                    rows_html += (
+                        f'<div class="cc-row">'
+                        f'<span class="cc-lbl">{fl}</span>'
+                        f'<span class="cc-old">${ch.old_usd_per_1m:.3f}</span>'
+                        f'<span style="color:#ccc">&#8594;</span>'
+                        f'<span class="{nv_cls}">${ch.new_usd_per_1m:.3f}</span>'
+                        f'<span class="{badge_cls}">{sign}{abs(ch.delta_pct):.1f}%</span>'
+                        f'</div>'
+                    )
+                cards_html.append(
+                    f'<div class="cc-card {card_type}">'
+                    f'<div class="cc-model">{model_id}</div>'
+                    f'<div class="cc-vendor">{vname}</div>'
+                    f'{rows_html}'
+                    f'</div>'
+                )
+
+            # Vendor narratives below the grid
+            narratives_html = ""
             for vendor in sorted({c.vendor for c in report.price_changes}):
                 vc = [c for c in report.price_changes if c.vendor == vendor]
-                vname = _VENDOR_NAMES.get(vendor, vendor)
-                narrative = self._generate_vendor_narrative(vendor, vc, specs)
-                rows = []
-                for ch in vc:
-                    fl = "Input" if ch.field == "input_price" else "Output"
-                    sign = "+" if ch.delta_pct > 0 else ""
-                    bc = "badge-up" if ch.delta_pct > 0 else "badge-down"
-                    pc = "change-up" if ch.delta_pct > 0 else "change-down"
-                    rows.append(
-                        f"<tr>"
-                        f'<td><span class="model-id">{ch.model_id}</span></td>'
-                        f'<td class="col-field">{fl}</td>'
-                        f'<td class="col-price">${ch.old_usd_per_1m:.3f}</td>'
-                        f'<td class="col-price {pc}">${ch.new_usd_per_1m:.3f}</td>'
-                        f'<td><span class="{bc}">{sign}{ch.delta_pct:.1f}%</span></td>'
-                        f"</tr>"
-                    )
-                narr_block = (
-                    f'<div class="narrative">{narrative}</div>' if narrative else ""
-                )
-                vendor_blocks.append(
-                    f'<div class="vendor-header">{vname}</div>'
-                    f"<table><thead><tr>"
-                    f"<th>Model</th><th>Field</th><th>Old $/1M</th>"
-                    f"<th>New $/1M</th><th>Change</th>"
-                    f"</tr></thead><tbody>{''.join(rows)}</tbody></table>"
-                    f"{narr_block}"
-                )
+                narr = self._generate_vendor_narrative(vendor, vc, specs)
+                if narr:
+                    narratives_html += f'<div class="narrative">{narr}</div>'
+
             price_changes_html = (
                 '<div class="section-header">'
-                '<span class="section-icon">&#x1F4CA;</span>'
-                '<span class="section-title">Price Changes</span>'
+                '<span class="section-icon">&#x1F4C9;</span>'
+                '<span class="section-title">Price Changes This Week</span>'
                 '</div>'
-                + "".join(vendor_blocks)
+                f'<div class="changes-grid">{"".join(cards_html)}</div>'
+                + narratives_html
             )
         else:
             price_changes_html = (
                 '<div class="no-changes">'
-                "No price changes this week &#x2014; all models stable."
+                "&#x2714; No price changes this week &mdash; all models stable."
                 "</div>"
             )
 
-        # ── Full price table — sorted by input price descending ──────────────
-        paid_specs = sorted(
-            (s for s in specs.values() if not s.is_local),
-            key=lambda s: s.input_price,
-            reverse=True,
+        # ── Cost optimisation tips ─────────────────────────────────────────────
+        tips: list[str] = []
+
+        # Tip 1: biggest input drop this week
+        input_drops = [c for c in decreases if c.field == "input_price"]
+        if input_drops:
+            bd = min(input_drops, key=lambda c: c.delta_pct)
+            vname = _VENDOR_NAMES.get(bd.vendor, bd.vendor)
+            tips.append(
+                f'<div class="tip-card">'
+                f'<div class="tip-title">&#x1F4C9; {bd.model_id} dropped {abs(bd.delta_pct):.0f}%</div>'
+                f'<div class="tip-desc">'
+                f'<strong>{vname}</strong>&rsquo;s <strong>{bd.model_id}</strong> input is now '
+                f'<strong>${bd.new_usd_per_1m:.3f}/1M</strong> (was ${bd.old_usd_per_1m:.3f}/1M). '
+                f'If you route similar-complexity tasks to a pricier model, this week is the right '
+                f'time to benchmark an alternative.'
+                f'</div></div>'
+            )
+
+        # Tip 2: cheapest economy vs most expensive — ratio insight
+        economy = sorted(
+            [s for s in paid if int(s.tier) == 3],
+            key=_blended,
         )
+        premium = sorted([s for s in paid if int(s.tier) == 1], key=_blended, reverse=True)
+        if economy and premium:
+            eco, prem = economy[0], premium[0]
+            ratio = _blended(prem) / _blended(eco) if _blended(eco) > 0 else 0
+            tips.append(
+                f'<div class="tip-card">'
+                f'<div class="tip-title">&#x1F4B0; Economy pick: {eco.model_id}</div>'
+                f'<div class="tip-desc">'
+                f'At <strong>${_blended(eco):.3f}/1M</strong> blended, '
+                f'<strong>{eco.model_id}</strong> is '
+                f'<strong class="tip-savings">{ratio:.0f}&times; cheaper</strong> than '
+                f'{prem.model_id} (${_blended(prem):.2f}/1M). '
+                f'Ideal for classification, summarisation, and simple generation tasks.'
+                f'</div></div>'
+            )
+
+        tips_html = ""
+        if tips:
+            tips_html = (
+                '<div class="section-header">'
+                '<span class="section-icon">&#x1F4A1;</span>'
+                '<span class="section-title">Cost Optimisation Opportunities</span>'
+                '</div>'
+                f'<div class="tips-grid">{"".join(tips)}</div>'
+            )
+
+        # ── Full price table ───────────────────────────────────────────────────
+        paid_specs = sorted(paid, key=_blended, reverse=True)
         table_rows: list[str] = []
         for rank, s in enumerate(paid_specs, start=1):
-            ctx_k = s.max_context // 1000
-            vname = _VENDOR_NAMES.get(s.vendor, s.vendor)
+            ctx_k  = s.max_context // 1000
+            vname  = _VENDOR_NAMES.get(s.vendor, s.vendor)
+            blended = _blended(s)
             table_rows.append(
                 f"<tr>"
                 f'<td class="col-rank">{rank}</td>'
                 f'<td class="col-vendor">{vname}</td>'
                 f'<td><span class="model-id">{s.model_id}</span></td>'
-                f'<td class="col-price-main">${s.input_price * 1000:.3f}</td>'
+                f'<td class="col-price-main">${blended:.2f}</td>'
+                f'<td class="col-price">${s.input_price * 1000:.3f}</td>'
                 f'<td class="col-price">${s.output_price * 1000:.3f}</td>'
                 f'<td class="col-ctx">{ctx_k}K</td>'
                 f"</tr>"
@@ -780,24 +901,20 @@ class PricingReportGenerator:
             '<div class="legend-title">&#x2139;&#xFE0F; How to read these prices</div>'
             '<div class="legend-grid">'
             '<div class="legend-item">'
-            '<span class="legend-label">Input price</span>'
-            '<span class="legend-desc">Cost per 1M tokens you <strong>send</strong> to the model — '
-            'your prompt, system instruction, conversation history, and any context you attach. '
-            'Longer prompts or large document uploads drive this cost up.</span>'
+            '<span class="legend-label">Blended $/1M</span>'
+            '<span class="legend-desc">Average of input and output price per 1M tokens — '
+            'the fairest single-number comparison. Assumes equal input:output token volume, '
+            'which is neutral across use cases.</span>'
             '</div>'
             '<div class="legend-item">'
-            '<span class="legend-label">Output price</span>'
-            '<span class="legend-desc">Cost per 1M tokens the model <strong>generates</strong> — '
-            'every word in its response. Verbose answers, long code completions, and streaming '
-            'replies all accrue output cost. Output is typically 3–5&times; more expensive than input.</span>'
+            '<span class="legend-label">Input $/1M</span>'
+            '<span class="legend-desc">Cost per 1M tokens you <strong>send</strong> — '
+            'your prompt, system instruction, and conversation history.</span>'
             '</div>'
             '<div class="legend-item">'
-            '<span class="legend-label">$/1M tokens</span>'
-            '<span class="legend-desc">Industry-standard unit. To estimate a task: '
-            '<em>(prompt tokens &div; 1,000,000) &times; input price</em> '
-            '+ <em>(response tokens &div; 1,000,000) &times; output price</em>. '
-            'A typical 500-word prompt (&asymp; 700 tokens) + 500-word reply costs under $0.01 '
-            'on most models.</span>'
+            '<span class="legend-label">Output $/1M</span>'
+            '<span class="legend-desc">Cost per 1M tokens the model <strong>generates</strong>. '
+            'Output is typically 3–5&times; more expensive than input.</span>'
             '</div>'
             '</div>'
             '</div>'
@@ -805,71 +922,87 @@ class PricingReportGenerator:
         price_table_html = (
             '<div class="section-header">'
             '<span class="section-icon">&#x1F4CB;</span>'
-            '<span class="section-title">Full Price Table</span>'
-            "</div>"
-            f'<p class="table-note">Ranked by input price &mdash; highest first &middot; '
+            '<span class="section-title">Full Model Catalog &mdash; '
+            f'{report.report_date.strftime("%B %Y")}</span>'
+            '</div>'
+            f'<p class="table-note">Ranked by blended cost &mdash; highest first &middot; '
+            f'Blended&nbsp;=&nbsp;(input&nbsp;+&nbsp;output)&nbsp;/&nbsp;2 &middot; '
             f'All prices USD/1M tokens &middot; Updated {report.report_date}</p>'
             + price_legend_html
             + "<table><thead><tr>"
             "<th>#</th><th>Vendor</th><th>Model</th>"
-            "<th>Input $/1M</th><th>Output $/1M</th><th>Context</th>"
+            "<th>Blended $/1M</th><th>Input $/1M</th><th>Output $/1M</th><th>Context</th>"
             f"</tr></thead><tbody>{''.join(table_rows)}</tbody></table>"
         )
 
-        # ── Assemble ──────────────────────────────────────────────────────────
+        # ── Assemble ───────────────────────────────────────────────────────────
         parts_html: list[str] = [
-            f"<!DOCTYPE html>\n<html>\n<head>\n"
-            f'<meta charset="utf-8">\n'
-            f'<meta name="viewport" content="width=device-width,initial-scale=1">\n'
+            "<!DOCTYPE html>\n<html>\n<head>\n"
+            '<meta charset="utf-8">\n'
+            '<meta name="viewport" content="width=device-width,initial-scale=1">\n'
             f"<title>Tidus AI Pricing Report &mdash; {report.report_date}</title>\n"
-            f"<style>\n",
+            "<style>\n",
             _HTML_CSS,
-            f"</style>\n</head>\n<body>\n<div class=\"wrapper\">\n\n"
+            f'</style>\n</head>\n<body>\n<div class="wrapper">\n\n'
 
+            # Header
             f'<div class="header">\n'
-            f'  <div class="header-logo">tidus<span class="dot">.</span>ai</div>\n'
-            f'  <div class="header-tagline">WEEKLY AI INTELLIGENCE REPORT</div>\n'
-            f'  <div class="header-title">AI Model Pricing Report</div>\n'
-            f'  <div class="header-date">{report.report_date}</div>\n'
-            f"</div>\n\n"
+            f'  <div class="header-logo">tidus<span class="dot">.</span>magazine</div>\n'
+            f'  <div class="header-tagline">AI MODEL MARKET INTELLIGENCE &middot; WEEKLY EDITION</div>\n'
+            f'  <div class="header-title">AI Model Pricing Report &mdash; '
+            f'{report.report_date.strftime("%B %Y")}</div>\n'
+            f'  <div class="header-date">Week of {report.report_date} &middot; '
+            f'Powered by Tidus v1.1.0</div>\n'
+            f'</div>\n\n'
 
+            # Stats bar (5 stats matching index.html magazine)
             f'<div class="stats-bar">\n'
             f'  <div class="stat"><div class="stat-value">{report.total_models}</div>'
-            f'<div class="stat-label">Models tracked</div></div>\n'
-            f'  <div class="stat-sep"></div>\n'
-            f'  <div class="stat"><div class="stat-value">{n_changes}</div>'
-            f'<div class="stat-label">Price changes</div></div>\n'
-            f'  <div class="stat-sep"></div>\n'
-            f'  <div class="stat"><div class="stat-value">{n_new}</div>'
-            f'<div class="stat-label">New models</div></div>\n'
+            f'<div class="stat-label">Models Tracked</div></div>\n'
             f'  <div class="stat-sep"></div>\n'
             f'  <div class="stat"><div class="stat-value stat-drops">{n_drops}</div>'
-            f'<div class="stat-label">Price drops</div></div>\n'
-            f"</div>\n\n"
+            f'<div class="stat-label">Price Drops</div></div>\n'
+            f'  <div class="stat-sep"></div>\n'
+            f'  <div class="stat"><div class="stat-value stat-rises">{n_rises}</div>'
+            f'<div class="stat-label">Price Rises</div></div>\n'
+            f'  <div class="stat-sep"></div>\n'
+            f'  <div class="stat"><div class="stat-value">{n_updated}</div>'
+            f'<div class="stat-label">Models Updated</div></div>\n'
+            f'  <div class="stat-sep"></div>\n'
+            f'  <div class="stat"><div class="stat-value">{n_new}</div>'
+            f'<div class="stat-label">New Models</div></div>\n'
+            f'</div>\n\n'
 
+            # Content
             f'<div class="content">\n'
-            f'<p class="exec-summary">{exec_summary}</p>\n'
+            f'<div style="background:#f8f9ff;border-left:4px solid #533483;'
+            f'border-radius:0 8px 8px 0;padding:14px 18px;margin-bottom:28px;">\n'
+            f'<div style="font-size:11px;font-weight:700;text-transform:uppercase;'
+            f'letter-spacing:1.5px;color:#533483;margin-bottom:6px;">Executive Summary</div>\n'
+            f'<p class="exec-summary" style="margin:0">{exec_summary_html}</p>\n'
+            f'</div>\n'
             f"{new_models_html}\n"
             f"{price_changes_html}\n"
+            f"{tips_html}\n"
             f"{price_table_html}\n"
 
+            # CTA
             f'<div class="cta-box">\n'
             f'  <div class="cta-title">&#x1F4EC; Know someone who tracks AI costs?</div>\n'
-            f"  <div class=\"cta-sub\">Forward this report or share the link &mdash; "
+            f'  <div class="cta-sub">Forward this report &mdash; '
             f"it&rsquo;s free, weekly, and open source.</div>\n"
-            f'  <a href="https://github.com/kensterinvest/tidus#subscribe" class="cta-btn">'
-            f"Subscribe to weekly AI pricing updates</a>\n"
-            f"</div>\n\n"
-            f"</div>\n\n"
+            f'  <a href="https://z-tidus.com#subscribe" class="cta-btn">'
+            f'Subscribe at z-tidus.com &rarr;</a>\n'
+            f'</div>\n\n'
+            f'</div>\n\n'
 
+            # Footer
             f'<div class="footer">\n'
             f"  You&rsquo;re receiving this because you subscribed to Tidus AI weekly pricing reports.<br>\n"
-            f"  To unsubscribe, set <code>active: false</code> next to your entry in "
-            f"<code>config/subscribers.yaml</code>.<br>\n"
-            f'  <a href="https://github.com/kensterinvest/tidus">Tidus v1.1.0</a> &middot; '
-            f'<a href="https://github.com/kensterinvest/tidus/blob/main/docs/pricing-model.md">'
-            f"Pricing docs</a> &middot; Apache 2.0\n"
-            f"</div>\n\n"
-            f"</div>\n</body>\n</html>",
+            f'  <a href="https://z-tidus.com#subscribe">Unsubscribe</a> &middot; '
+            f'  <a href="https://github.com/kensterinvest/tidus">Tidus on GitHub</a> &middot; '
+            f'  Apache 2.0\n'
+            f'</div>\n\n'
+            f'</div>\n</body>\n</html>',
         ]
         return "".join(parts_html)

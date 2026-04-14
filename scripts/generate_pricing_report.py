@@ -56,6 +56,12 @@ async def main(args: argparse.Namespace) -> int:
     report_path.write_text(report.markdown, encoding="utf-8")
     print(f"Report written: {report_path}")
 
+    # Optionally save HTML for browser preview
+    if args.save_html:
+        html_path = output_dir / f"pricing-{report.report_date}.html"
+        html_path.write_text(report.html, encoding="utf-8")
+        print(f"HTML written:   {html_path}")
+
     # Print summary
     n_changes = len({c.model_id for c in report.price_changes})
     n_new = len(report.new_models)
@@ -124,5 +130,6 @@ if __name__ == "__main__":
     parser.add_argument("--gh-release", action="store_true", help="Create GitHub Release")
     parser.add_argument("--tag", default="", help="Git tag for release")
     parser.add_argument("--dry-run", action="store_true", help="Print to stdout only")
+    parser.add_argument("--save-html", action="store_true", help="Also save HTML version")
     args = parser.parse_args()
     sys.exit(asyncio.run(main(args)))
