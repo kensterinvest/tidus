@@ -490,7 +490,7 @@ class PricingReportGenerator:
             "## 📋 Full Current Price Table",
             "",
             f"*Prices as of {report.report_date} — USD/1M tokens · Ranked by blended cost*",
-            f"*Blended = (input + output) / 2 — equal input:output token split*",
+            "*Blended = (input + output) / 2 — equal input:output token split*",
             "",
             "| # | Vendor | Model | Blended $/1M | Input $/1M | Output $/1M | Context |",
             "|---|---|---|---|---|---|---|",
