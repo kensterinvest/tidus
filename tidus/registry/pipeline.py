@@ -560,6 +560,50 @@ class RegistryPipeline:
         except Exception as exc:
             log.error("ingestion_run_link_failed", error=str(exc))
 
+    async def write_weekly_snapshot(self, revision_id: str) -> int:
+        """Write one price snapshot row per non-local model for time-series graphs.
+
+        Called every Sunday regardless of whether prices changed. Uses
+        INSERT OR IGNORE (via UniqueConstraint) so re-runs are idempotent.
+        Returns the number of rows written.
+        """
+        from tidus.db.registry_orm import ModelPriceSnapshotORM
+
+        entries = await get_entries_for_revision(self._sf, revision_id)
+        today = datetime.now(UTC).date()
+        count = 0
+        try:
+            async with self._sf() as session:
+                for entry in entries:
+                    try:
+                        spec = ModelSpec.model_validate(entry.spec_json)
+                    except Exception:
+                        continue
+                    if spec.is_local:
+                        continue
+                    session.add(ModelPriceSnapshotORM(
+                        id=str(uuid.uuid4()),
+                        snapshot_date=today,
+                        model_id=spec.model_id,
+                        vendor=spec.vendor,
+                        input_usd_1m=round(spec.input_price * 1000, 6),
+                        output_usd_1m=round(spec.output_price * 1000, 6),
+                        cache_read_usd_1m=round(spec.cache_read_price * 1000, 6),
+                        cache_write_usd_1m=round(spec.cache_write_price * 1000, 6),
+                        revision_id=revision_id,
+                    ))
+                    count += 1
+                await session.commit()
+        except Exception as exc:
+            # UniqueConstraint violation means we already snapshotted today — not an error
+            if "UNIQUE" in str(exc).upper():
+                log.info("weekly_snapshot_already_exists", date=today)
+            else:
+                log.error("weekly_snapshot_failed", error=str(exc))
+            return 0
+        log.info("weekly_snapshot_written", count=count, revision_id=revision_id, date=today)
+        return count
+
     # ── Advisory lock (PostgreSQL only) ──────────────────────────────────────
 
     async def _acquire_lock(self):

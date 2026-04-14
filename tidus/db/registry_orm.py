@@ -9,6 +9,7 @@ Phase 1 tables:
 
 Phase 3 tables:
   pricing_ingestion_runs   — per-source audit trail for each price sync cycle
+  model_price_snapshots    — weekly full-catalog price snapshot for time-series graphs
 
 All classes share the Base declared in tidus.db.engine so they are picked up
 by Alembic autogenerate when engine.py imports this module.
@@ -238,6 +239,44 @@ class PriceMarketHistoryORM(Base):
     __table_args__ = (
         Index("ix_price_market_history_model_date", "model_id", "event_date"),
         Index("ix_price_market_history_vendor_date", "vendor", "event_date"),
+    )
+
+
+class ModelPriceSnapshotORM(Base):
+    """Weekly full-catalog price snapshot — one row per model per sync cycle.
+
+    Written every Sunday by RegistryPipeline.write_weekly_snapshot() regardless
+    of whether prices changed. Provides the clean time-series data for graphing
+    price trends over time.
+
+    Query pattern for a price history graph:
+        SELECT snapshot_date, model_id, input_usd_1m, output_usd_1m
+        FROM model_price_snapshots
+        WHERE model_id = 'gpt-4o'
+        ORDER BY snapshot_date
+    """
+
+    __tablename__ = "model_price_snapshots"
+
+    id = Column(String, primary_key=True)
+    snapshot_date = Column(Date, nullable=False)
+    snapshot_at = Column(DateTime, server_default=func.now(), nullable=False)
+    model_id = Column(String, nullable=False)
+    vendor = Column(String, nullable=False)
+    input_usd_1m = Column(Float, nullable=False)      # $/1M input tokens
+    output_usd_1m = Column(Float, nullable=False)     # $/1M output tokens
+    cache_read_usd_1m = Column(Float, nullable=False, default=0.0)
+    cache_write_usd_1m = Column(Float, nullable=False, default=0.0)
+    revision_id = Column(
+        String,
+        ForeignKey("model_catalog_revisions.revision_id"),
+        nullable=True,
+    )
+
+    __table_args__ = (
+        Index("ix_model_price_snapshots_model_date", "model_id", "snapshot_date"),
+        Index("ix_model_price_snapshots_date", "snapshot_date"),
+        UniqueConstraint("model_id", "snapshot_date", name="uq_model_price_snapshot"),
     )
 
 

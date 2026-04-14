@@ -184,6 +184,9 @@ class TidusScheduler:
             result = await pipeline.run_price_sync_cycle(
                 sources, policies_path=self._policies_path
             )
+
+            # Resolve the active revision id (new if prices changed, current if stable)
+            from tidus.db.repositories.registry_repo import get_active_revision
             if isinstance(result, PipelineResult):
                 log.info(
                     "price_sync_run",
@@ -191,12 +194,40 @@ class TidusScheduler:
                     revision_id=result.revision_id,
                     sources=result.sources_used,
                 )
-                # Generate and deliver pricing report to subscribers
-                await self._run_pricing_report(result.revision_id)
+                active_revision_id = result.revision_id
             else:
                 log.info("price_sync_run", changes_detected=0)
+                active = await get_active_revision(self._session_factory)
+                active_revision_id = active.revision_id if active else None
+
+            if active_revision_id:
+                # 1. Write weekly price snapshot (for time-series graphs)
+                await self._write_weekly_snapshot(pipeline, active_revision_id)
+                # 2. Send magazine report to subscribers
+                await self._run_pricing_report(active_revision_id)
+                # 3. Update landing page and push to GitHub
+                await self._update_landing_magazine()
         except Exception as exc:
             log.error("price_sync_failed", error=str(exc))
+
+    async def _write_weekly_snapshot(self, pipeline, revision_id: str) -> None:
+        """Write a full price snapshot to model_price_snapshots for graph data."""
+        try:
+            count = await pipeline.write_weekly_snapshot(revision_id)
+            log.info("weekly_snapshot_run", models=count)
+        except Exception as exc:
+            log.error("weekly_snapshot_failed", error=str(exc))
+
+    async def _update_landing_magazine(self) -> None:
+        """Regenerate index.html MODELS array from active revision and push to GitHub."""
+        try:
+            from tidus.reporting.landing_updater import LandingPageUpdater
+            updater = LandingPageUpdater()
+            ok = await updater.update(self._session_factory)
+            if ok:
+                log.info("landing_magazine_updated")
+        except Exception as exc:
+            log.error("landing_magazine_update_failed", error=str(exc))
 
     async def _run_pricing_report(self, revision_id: str) -> None:
         """Generate Tidus AI Model Latest Pricing Report and deliver to subscribers."""
