@@ -459,6 +459,209 @@ footer{background:#0a0f1e;padding:48px}
   .roi-section{padding:60px 20px}
   .roi-card{padding:24px 20px}
 }
+
+/* ═══════════════════════════════════════════════
+   HOW TIDUS WORKS — Patent Workflow Section
+═══════════════════════════════════════════════ */
+.how-section{background:#fff;padding:80px 48px}
+.how-inner{max-width:1100px;margin:0 auto}
+.how-intro-box{background:linear-gradient(135deg,#f8f6ff,#f0f4ff);border:1px solid #e0d9f7;
+               border-radius:16px;padding:28px 32px;margin:32px 0 48px;
+               border-left:5px solid var(--purple)}
+.how-intro-box p{font-size:14px;color:#333;line-height:1.9;margin-bottom:10px}
+.how-intro-box p:last-child{margin-bottom:0}
+.how-h2{font-size:32px;font-weight:800;color:#0f3460;margin-bottom:10px}
+.how-h3{font-size:20px;font-weight:700;color:#0f3460;margin:52px 0 20px;
+        padding-bottom:10px;border-bottom:2px solid #e9ecef;
+        display:flex;align-items:center;gap:10px}
+.how-h3 .h3-icon{font-size:22px}
+
+/* ── Pipeline ── */
+.pipeline-wrap{display:flex;align-items:stretch;gap:0;margin:8px 0 40px;overflow-x:auto;padding-bottom:4px}
+.pipe-stage{flex:1;min-width:160px;background:#f8f9ff;border:2px solid #e9ecef;
+            border-radius:14px;padding:20px 14px 18px;text-align:center;position:relative}
+.pipe-stage.reject{border-color:#fca5a5;background:#fff8f8}
+.pipe-arrow{display:flex;align-items:center;padding:0 6px;color:var(--violet);
+            font-size:22px;flex-shrink:0;font-weight:300}
+.ps-badge{width:30px;height:30px;background:#0f3460;color:#fff;border-radius:50%;
+          font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;
+          margin:0 auto 10px}
+.ps-emoji{font-size:26px;margin-bottom:8px;line-height:1}
+.ps-title{font-size:12px;font-weight:800;color:#0f3460;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.ps-sub{font-size:11px;color:#888;line-height:1.5;margin-bottom:10px}
+.ps-checks{text-align:left}
+.ps-check{font-size:11px;color:#444;padding:2px 0;display:flex;gap:5px;align-items:flex-start}
+.ps-check .ck{color:#22c55e;font-weight:700;flex-shrink:0}
+.ps-check .ck.x{color:#ef4444}
+
+/* ── Scoring pillars ── */
+.pillars-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:8px 0 40px}
+.pillar{border-radius:14px;padding:28px 24px;text-align:center;border:2px solid}
+.pillar.cost-pillar{background:#faf7ff;border-color:#a78bfa}
+.pillar.tier-pillar{background:#f0f7ff;border-color:#93c5fd}
+.pillar.lat-pillar{background:#f0fff4;border-color:#86efac}
+.pillar-pct{font-size:44px;font-weight:900;line-height:1;margin-bottom:4px}
+.cost-pillar .pillar-pct{color:#7c3aed}
+.tier-pillar .pillar-pct{color:#1d4ed8}
+.lat-pillar .pillar-pct{color:#16a34a}
+.pillar-name{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:12px}
+.pillar-why{font-size:12px;color:#555;line-height:1.7}
+.pillar-formula{background:rgba(0,0,0,.04);border-radius:8px;padding:8px 10px;
+                font-family:monospace;font-size:11px;color:#333;margin-top:12px;text-align:left}
+.score-formula-box{background:#1a1a2e;border-radius:12px;padding:20px 28px;margin:0 0 40px;
+                   display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.sfb-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.4)}
+.sfb-eq{font-family:'SF Mono','Fira Code',monospace;font-size:15px;color:#a78bfa;font-weight:600;flex:1}
+.sfb-note{font-size:12px;color:rgba(255,255,255,.5);font-style:italic}
+.dep-note{background:#fff3cd;border:1px solid #fcd34d;border-radius:8px;
+          padding:10px 16px;font-size:12px;color:#92400e;margin-top:-28px;margin-bottom:36px}
+
+/* ── Complexity matrix ── */
+.cx-matrix{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 40px}
+.cx-matrix th{background:#0f3460;color:#fff;padding:10px 14px;text-align:left;font-size:11px;
+              text-transform:uppercase;letter-spacing:.8px}
+.cx-matrix td{padding:12px 14px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.cx-matrix tr:last-child td{border-bottom:none}
+.cx-matrix tr:nth-child(even) td{background:#fafafa}
+.cx-badge{display:inline-block;padding:2px 10px;border-radius:10px;font-size:11px;font-weight:700}
+.cx-simple{background:#dcfce7;color:#16a34a}
+.cx-moderate{background:#dbeafe;color:#1d4ed8}
+.cx-complex{background:#ede9fe;color:#7c3aed}
+.cx-critical{background:#fee2e2;color:#dc2626}
+.tier-badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:11px;
+            font-weight:600;background:#e8edf7;color:#0f3460;margin-right:3px}
+
+/* ── Pricing intelligence ── */
+.pricing-intel{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;
+               align-items:center;gap:16px;margin:8px 0 20px}
+.pi-source{background:#f8f9ff;border:2px solid #e9ecef;border-radius:12px;padding:18px 16px}
+.pi-arrow{font-size:28px;color:#a78bfa;text-align:center}
+.pi-engine{background:#0f3460;border-radius:14px;padding:20px 18px;text-align:center;color:#fff}
+.pi-out{background:linear-gradient(135deg,#f0f4ff,#faf7ff);border:2px solid #a78bfa;
+        border-radius:12px;padding:18px 16px}
+.pi-src-title{font-size:12px;font-weight:700;color:#0f3460;margin-bottom:4px}
+.pi-src-conf{font-size:11px;color:#888;margin-bottom:8px}
+.pi-src-desc{font-size:11px;color:#555;line-height:1.6}
+.pi-eng-title{font-size:13px;font-weight:700;color:#a78bfa;margin-bottom:8px}
+.pi-eng-desc{font-size:11px;color:rgba(255,255,255,.7);line-height:1.7}
+.pi-out-title{font-size:12px;font-weight:700;color:#533483;margin-bottom:8px}
+.pi-out-desc{font-size:11px;color:#555;line-height:1.6}
+.pi-cb{background:#fff3cd;border:1px solid #fcd34d;border-radius:8px;
+       padding:10px 16px;font-size:12px;color:#92400e;margin-bottom:40px}
+
+/* ── Examples ── */
+.ex-card{border:2px solid #e9ecef;border-radius:16px;overflow:hidden;margin-bottom:32px}
+.ex-card:last-child{margin-bottom:0}
+.ex-header{padding:22px 28px;display:flex;align-items:flex-start;gap:16px;
+           background:linear-gradient(135deg,#f8f9ff,#faf7ff)}
+.ex-icon{font-size:38px;flex-shrink:0;line-height:1}
+.ex-meta{flex:1}
+.ex-title{font-size:17px;font-weight:700;color:#0f3460;margin-bottom:4px}
+.ex-context{font-size:13px;color:#666;margin-bottom:10px;line-height:1.5}
+.ex-tags{display:flex;flex-wrap:wrap;gap:7px}
+.etag{padding:3px 10px;border-radius:8px;font-size:11px;font-weight:700}
+.etag-domain{background:#dbeafe;color:#1d4ed8}
+.etag-cx{background:#ede9fe;color:#7c3aed}
+.etag-priv{background:#fee2e2;color:#dc2626}
+.etag-priv.pub{background:#dcfce7;color:#16a34a}
+.etag-priv.int{background:#fef9c3;color:#854d0e}
+.etag-team{background:#f0f0f0;color:#555}
+.ex-stages{padding:0 28px}
+.ex-stage{display:grid;grid-template-columns:30px 140px 1fr;gap:12px;
+          align-items:start;padding:13px 0;border-bottom:1px solid #f5f5f5}
+.ex-stage:last-child{border-bottom:none}
+.ex-snum{width:26px;height:26px;border-radius:50%;background:#0f3460;color:#fff;
+         font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ex-slabel{font-size:11px;font-weight:700;color:#0f3460;padding-top:3px;line-height:1.4}
+.ex-sresult{font-size:12px;color:#444;line-height:1.7}
+.pass{color:#16a34a;font-weight:700}
+.fail{color:#ef4444;font-weight:700}
+.chosen{color:#7c3aed;font-weight:700}
+.ex-verdict{background:#0f3460;padding:18px 28px;display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.ev-model{font-size:14px;font-weight:700;color:#a78bfa}
+.ev-cost{font-size:13px;color:rgba(255,255,255,.65)}
+.ev-saving{font-size:12px;color:#4ade80;font-weight:600}
+.ev-why{font-size:12px;color:rgba(255,255,255,.55);flex:1;font-style:italic}
+
+/* ── Pipeline stage internals (supplementary) ── */
+.ps-num{width:28px;height:28px;background:#0f3460;color:#fff;border-radius:50%;
+        font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;margin:0 auto 8px}
+.ps-icon{font-size:24px;margin-bottom:6px;line-height:1}
+.ps-body{font-size:11px;color:#555;line-height:1.6;margin-bottom:8px}
+.ps-rule{background:rgba(0,0,0,.04);border-radius:8px;padding:6px 10px;font-family:monospace;
+         font-size:10px;color:#333;text-align:center;line-height:1.5;border:1px dashed #ccc;margin-top:10px}
+/* ── Pillar aliases ── */
+.pillar-cost{background:#faf7ff;border:2px solid #a78bfa;border-radius:14px;padding:28px 24px;text-align:center}
+.pillar-tier{background:#f0f7ff;border:2px solid #93c5fd;border-radius:14px;padding:28px 24px;text-align:center}
+.pillar-lat{background:#f0fff4;border:2px solid #86efac;border-radius:14px;padding:28px 24px;text-align:center}
+.pillar-cost .pillar-pct{color:#7c3aed}
+.pillar-tier .pillar-pct{color:#1d4ed8}
+.pillar-lat .pillar-pct{color:#16a34a}
+.pillar-name{font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:10px}
+.pillar-desc{font-size:12px;color:#555;line-height:1.7;margin-bottom:10px}
+/* ── Complexity matrix div grid ── */
+.cx-matrix{display:grid!important;grid-template-columns:130px 1fr 1fr 1.5fr;border:1px solid #e9ecef;
+           border-radius:12px;overflow:hidden;font-size:13px;margin:8px 0 40px;border-collapse:unset!important}
+.cx-header{background:#0f3460;color:#fff;padding:10px 14px;font-size:11px;font-weight:700;
+           text-transform:uppercase;letter-spacing:.8px}
+.cx-cell{padding:13px 14px;border-right:1px solid #eee;border-bottom:1px solid #eee;
+         line-height:1.5;color:#374151;font-size:13px}
+.cx-simple{background:#dcfce7;color:#16a34a;font-weight:700}
+.cx-moderate{background:#dbeafe;color:#1d4ed8;font-weight:700}
+.cx-complex{background:#ede9fe;color:#7c3aed;font-weight:700}
+.cx-critical{background:#fee2e2;color:#dc2626;font-weight:700}
+.cx-eg{font-style:italic;font-size:12.5px;color:#555}
+/* ── Pricing intel boxes ── */
+.pi-box{background:#f8f9ff;border:2px solid #e9ecef;border-radius:12px;padding:20px 18px}
+.pi-consensus{background:#0f3460!important;border-color:#0f3460!important}
+.pi-title{font-size:13px;font-weight:700;margin-bottom:8px;color:#0f3460}
+.pi-consensus .pi-title{color:#a78bfa!important}
+.pi-body{font-size:12px;line-height:1.7;color:#555}
+.pi-consensus .pi-body{color:rgba(255,255,255,.75)!important}
+/* ── Example card components ── */
+.ex-hdr-blue{background:linear-gradient(135deg,#eff6ff,#f0f4ff)!important;border-bottom:3px solid #3b82f6}
+.ex-hdr-red{background:linear-gradient(135deg,#fff5f5,#fff0f0)!important;border-bottom:3px solid #ef4444}
+.ex-hdr-purple{background:linear-gradient(135deg,#faf5ff,#f5f0ff)!important;border-bottom:3px solid #7c3aed}
+.ex-scenario{font-size:16px;font-weight:800;color:#0f3460;margin-bottom:6px}
+.ex-request{background:#f8f9ff;border-left:4px solid var(--violet);border-radius:0 8px 8px 0;
+            padding:14px 20px;margin:20px 28px 0;font-size:13px;color:#374151;font-style:italic;line-height:1.7}
+.ex-pass{border-left:3px solid #22c55e}
+.ex-eliminate{border-left:3px solid #f59e0b}
+.ex-winner{border-left:3px solid #7c3aed;background:#faf5ff}
+.exs-num{font-size:10px;font-weight:800;color:#fff;background:#0f3460;border-radius:4px;
+         padding:2px 6px;display:inline-block;margin-bottom:4px}
+.exs-title{font-size:12px;font-weight:700;color:#0f3460;margin-bottom:4px}
+.exs-body{font-size:12.5px;color:#444;line-height:1.7}
+.ex-score-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.ex-score-table th{background:#f0f0f0;padding:6px 10px;text-align:left;font-size:11px;font-weight:700;color:#374151}
+.ex-score-table td{padding:7px 10px;border-bottom:1px solid #f0f0f0;color:#444}
+.winner-row td{background:#faf5ff;font-weight:600;color:#7c3aed}
+.ev-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.4);margin-bottom:2px}
+.ev-red{background:linear-gradient(135deg,#991b1b,#1e1b4b)!important}
+.ev-purple{background:linear-gradient(135deg,#4c1d95,#1e1b4b)!important}
+/* ── Plain-English summary ── */
+.how-summary{background:linear-gradient(135deg,#f8f6ff,#f0f4ff);border:1px solid #e0d9f7;
+             border-radius:16px;padding:32px 36px;margin-top:48px;border-left:5px solid var(--violet)}
+.how-summary p{font-size:14px;color:#333;line-height:1.9}
+.how-sub{font-size:15px;color:#555;line-height:1.7;margin-bottom:32px}
+
+@media(max-width:768px){
+  .how-section{padding:48px 20px}
+  .pipeline-wrap{flex-direction:column}
+  .pipe-arrow{transform:rotate(90deg);margin:4px auto}
+  .pillars-wrap{grid-template-columns:1fr}
+  .pricing-intel{grid-template-columns:1fr}
+  .pi-arrow{transform:rotate(90deg)}
+  .ex-stage{grid-template-columns:26px 110px 1fr}
+  .ex-verdict{flex-direction:column;gap:8px}
+  .score-formula-box{flex-direction:column}
+  .cx-matrix{grid-template-columns:1fr 1fr;font-size:12px}
+  .cx-header:nth-child(3),.cx-header:nth-child(4),.cx-cell:nth-child(4n-1),.cx-cell:nth-child(4n){display:none}
+  .how-summary{padding:24px 20px}
+  .ex-request{margin:16px 16px 0}
+  .ex-stages{padding:0 16px}
+  .ex-score-table{font-size:11px}
+}
 </style>
 </head>
 <body>
@@ -474,6 +677,7 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#deploy">Get Started</a>
     <a href="#sources">Sources</a>
     <a href="#magazine">Report &amp; Catalog</a>
+    <a href="#how-it-works">How It Works</a>
   </div>
   <a href="#subscribe" class="nav-cta">Subscribe Free</a>
 </nav>
@@ -1123,6 +1327,330 @@ response = client.chat.completions.create(
 
 <hr class="divider">
 
+<!-- HOW TIDUS WORKS — Patent Workflow Section -->
+<section class="how-section" id="how-it-works">
+  <div class="section-inner">
+    <p class="section-tag">How It Works</p>
+    <h2 class="section-title">From Request to Optimal Model — The Tidus Workflow</h2>
+    <p class="section-sub">Tidus applies a deterministic, five-stage algorithm to every AI request. Each stage eliminates models that fail a hard rule; the surviving candidates are ranked by a weighted score. The model with the lowest score wins. This entire process completes in under one millisecond on the server.</p>
+
+    <!-- ═══════ THE FIVE STAGES ═══════ -->
+    <h3 class="how-h3">Stage 1–5: Request-to-Model Pipeline</h3>
+    <p class="how-sub">Every AI request enters this pipeline. Stages 1–4 are binary filters — a model either passes or is eliminated. Stage 5 ranks the survivors and selects the winner.</p>
+
+    <div class="pipeline-wrap">
+      <!-- Stage 1 -->
+      <div class="pipe-stage">
+        <div class="ps-num">1</div>
+        <div class="ps-icon">🔍</div>
+        <div class="ps-title">Capability Match</div>
+        <div class="ps-body">Does this model support what the task needs? If the task requires <em>reasoning</em> or <em>code</em> but the model only does <em>chat</em>, it is eliminated immediately. Hard technical constraint — no exceptions.</div>
+        <div class="ps-rule">Required capabilities ⊆ Model capabilities</div>
+      </div>
+
+      <div class="pipe-arrow">→</div>
+
+      <!-- Stage 2 -->
+      <div class="pipe-stage reject">
+        <div class="ps-num">2</div>
+        <div class="ps-icon">🔒</div>
+        <div class="ps-title">Privacy Guardrail</div>
+        <div class="ps-body">If the task is marked <strong>confidential</strong>, only models running on your own servers (local/on-prem) are allowed. Cloud-hosted models are eliminated. This enforces data sovereignty without configuration.</div>
+        <div class="ps-rule">confidential → local models only</div>
+      </div>
+
+      <div class="pipe-arrow">→</div>
+
+      <!-- Stage 3 -->
+      <div class="pipe-stage">
+        <div class="ps-num">3</div>
+        <div class="ps-icon">📊</div>
+        <div class="ps-title">Complexity Ceiling</div>
+        <div class="ps-body">Task complexity sets a maximum model tier. Simple tasks cannot use expensive premium models — they are filtered out. This prevents cost overruns from over-provisioned AI for routine work.</div>
+        <div class="ps-rule">
+          simple → Tier 4 max &nbsp;|&nbsp; moderate → Tier 3 max<br>
+          complex → Tier 2 max &nbsp;|&nbsp; critical → Tier 1 only
+        </div>
+      </div>
+
+      <div class="pipe-arrow">→</div>
+
+      <!-- Stage 4 -->
+      <div class="pipe-stage reject">
+        <div class="ps-num">4</div>
+        <div class="ps-icon">💰</div>
+        <div class="ps-title">Budget Filter</div>
+        <div class="ps-body">If the team has a per-request or monthly cost ceiling, models whose estimated cost exceeds the budget are eliminated. Estimated cost = (input tokens × input price + output tokens × output price).</div>
+        <div class="ps-rule">estimated_cost ≤ max_cost_usd</div>
+      </div>
+
+      <div class="pipe-arrow">→</div>
+
+      <!-- Stage 5 -->
+      <div class="pipe-stage" style="border-color:#7c3aed;background:#faf5ff">
+        <div class="ps-num" style="background:#7c3aed">5</div>
+        <div class="ps-icon">🏆</div>
+        <div class="ps-title">Score &amp; Select</div>
+        <div class="ps-body">Surviving models are ranked by a weighted score. <strong>Lower score = better.</strong> The top-ranked model is selected. Deprecated models receive a +0.15 penalty to discourage their use.</div>
+        <div class="ps-rule" style="font-size:11px;letter-spacing:.5px">score = 0.70 × cost + 0.20 × tier + 0.10 × latency</div>
+      </div>
+    </div>
+
+    <!-- ═══════ THE THREE SCORING PILLARS ═══════ -->
+    <h3 class="how-h3" style="margin-top:64px">The Three Scoring Pillars</h3>
+    <p class="how-sub">After hard filters, all surviving models are scored across three normalised dimensions. Each is expressed as a 0–1 value where 0 is best. The weighted sum determines rank.</p>
+
+    <div class="pillars-wrap">
+      <div class="pillar pillar-cost">
+        <div class="pillar-pct">70%</div>
+        <div class="pillar-name">Cost Efficiency</div>
+        <div class="pillar-desc">Blended price = (input price + output price) ÷ 2, per million tokens. Normalised across all candidates. The cheapest model in the pool scores 0; the most expensive scores 1. Cost dominates because most tasks don't require the most capable model.</div>
+        <div class="pillar-formula">cost_norm = (price − min_price) / (max_price − min_price)</div>
+      </div>
+      <div class="pillar pillar-tier">
+        <div class="pillar-pct">20%</div>
+        <div class="pillar-name">Model Quality Tier</div>
+        <div class="pillar-desc">Models are classified Tier 1 (premium, frontier) through Tier 4 (local, free). A lower-tier model scores better. This ensures Tidus prefers capable-but-affordable models over the absolute cheapest when quality matters.</div>
+        <div class="pillar-formula">tier_norm = (tier − 1) / 3 &nbsp;→&nbsp; Tier 1 = 0, Tier 4 = 1</div>
+      </div>
+      <div class="pillar pillar-lat">
+        <div class="pillar-pct">10%</div>
+        <div class="pillar-name">Response Speed</div>
+        <div class="pillar-desc">Measured median response latency (P50 milliseconds) from live health probes. Normalised across candidates. The fastest model in the pool scores 0. Latency matters least for most tasks — but breaks ties between otherwise equal options.</div>
+        <div class="pillar-formula">lat_norm = (latency − min_lat) / (max_lat − min_lat)</div>
+      </div>
+    </div>
+
+    <!-- ═══════ COMPLEXITY × DEPARTMENT MATRIX ═══════ -->
+    <h3 class="how-h3" style="margin-top:64px">Department &amp; Complexity Routing Matrix</h3>
+    <p class="how-sub">Different departments have different cost and capability profiles. Tidus uses task complexity to set a hard tier ceiling and the department domain to enforce capability requirements. Together, these two signals determine which models are even considered.</p>
+
+    <div class="cx-matrix">
+      <div class="cx-header">Task Complexity</div>
+      <div class="cx-header">Max Tier Allowed</div>
+      <div class="cx-header">Typical Department</div>
+      <div class="cx-header">Example Request</div>
+
+      <div class="cx-cell cx-simple">Simple</div>
+      <div class="cx-cell">Tier 4 (local) up to Tier 1 (premium) — all tiers eligible</div>
+      <div class="cx-cell">Customer Support, HR, Reception</div>
+      <div class="cx-cell cx-eg">"Summarise this support ticket in one sentence."</div>
+
+      <div class="cx-cell cx-moderate">Moderate</div>
+      <div class="cx-cell">Tier 3 max (economy cloud)</div>
+      <div class="cx-cell">Marketing, Sales, Operations</div>
+      <div class="cx-cell cx-eg">"Draft a personalised follow-up email for this prospect."</div>
+
+      <div class="cx-cell cx-complex">Complex</div>
+      <div class="cx-cell">Tier 2 max (mid-range cloud)</div>
+      <div class="cx-cell">Engineering, Finance, Legal (review)</div>
+      <div class="cx-cell cx-eg">"Extract all clause obligations from this 40-page contract."</div>
+
+      <div class="cx-cell cx-critical">Critical</div>
+      <div class="cx-cell">Tier 1 only (premium frontier)</div>
+      <div class="cx-cell">Medical, Executive Decision Support, Compliance</div>
+      <div class="cx-cell cx-eg">"Assess drug interaction risks for this patient's prescriptions."</div>
+    </div>
+
+    <!-- ═══════ PRICING INTELLIGENCE ═══════ -->
+    <h3 class="how-h3" style="margin-top:64px">Pricing Intelligence: How Tidus Knows What Each Model Costs</h3>
+    <p class="how-sub">Tidus cannot route cost-efficiently if it uses stale or incorrect prices. It maintains a continuously updated, multi-source pricing registry with statistical outlier detection to ensure the prices it uses for routing are always accurate.</p>
+
+    <div class="pricing-intel">
+      <div class="pi-box">
+        <div class="pi-title">📋 Hardcoded Source</div>
+        <div class="pi-body">A curated internal price list maintained by the Tidus team. Updated with each software release. Confidence: 0.70. Always available — never fails.</div>
+      </div>
+      <div class="pi-arrow">+</div>
+      <div class="pi-box">
+        <div class="pi-title">🌐 Live Pricing Feed</div>
+        <div class="pi-body">Optional external endpoint (operator-configured). Returns current vendor prices as JSON. Confidence: 0.85. Has circuit breaker — automatically disabled after 5 consecutive failures.</div>
+      </div>
+      <div class="pi-arrow">→</div>
+      <div class="pi-box pi-consensus">
+        <div class="pi-title">🧮 MAD Consensus Engine</div>
+        <div class="pi-body">Both sources are compared using Modified Z-Score (Median Absolute Deviation) outlier detection. Quotes more than 3.5 standard deviations from the median are rejected. The higher-confidence non-outlier source wins. Result: a single verified price per model.</div>
+      </div>
+    </div>
+
+    <div style="background:#f8f9ff;border:1px solid #e9ecef;border-radius:12px;padding:20px 28px;margin-top:20px;font-size:13.5px;color:#374151;line-height:1.7">
+      <strong>Why this matters for routing:</strong> If a vendor drops their price by 40% overnight (as DeepSeek did in early 2026), Tidus detects this on the next sync cycle (weekly by default, or on-demand) and creates a new versioned revision. All routing decisions from that point forward use the updated price — automatically, with a full audit trail of when the price changed and by how much.
+    </div>
+
+    <!-- ═══════ REAL-WORLD EXAMPLES ═══════ -->
+    <h3 class="how-h3" style="margin-top:72px">Real-World Examples: Full Workflow Walkthroughs</h3>
+    <p class="how-sub">Three scenarios — each triggers different branches of the five-stage pipeline. Follow each request from arrival to model selection.</p>
+
+    <!-- Example 1 -->
+    <div class="ex-card">
+      <div class="ex-header ex-hdr-blue">
+        <div class="ex-scenario">Example 1: Customer Support Department</div>
+        <div class="ex-meta">Complexity: Simple &nbsp;·&nbsp; Domain: chat &nbsp;·&nbsp; Privacy: public &nbsp;·&nbsp; Est. tokens: 200 in / 100 out &nbsp;·&nbsp; Budget: $0.01/request</div>
+      </div>
+      <div class="ex-body">
+        <div class="ex-request">"Summarise this customer complaint in one sentence and suggest a resolution category."</div>
+
+        <div class="ex-stages">
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 1</div>
+            <div class="exs-title">Capability Match</div>
+            <div class="exs-body">Task needs: <code>chat</code>. 41 models checked. All chat-capable models pass. Result: <strong>38 models survive</strong> (3 multimodal-only eliminated).</div>
+          </div>
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 2</div>
+            <div class="exs-title">Privacy Guardrail</div>
+            <div class="exs-body">Privacy = <strong>public</strong>. No restriction. All cloud and local models remain eligible. <strong>38 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-eliminate">
+            <div class="exs-num">Stage 3</div>
+            <div class="exs-title">Complexity Ceiling</div>
+            <div class="exs-body">Complexity = <strong>simple</strong>. All tiers allowed (Tier 1 through 4). No models eliminated by this rule. <strong>38 models survive.</strong> <em>(In practice, a team budget policy may cap at Tier 3 for support tasks.)</em></div>
+          </div>
+          <div class="ex-stage ex-eliminate">
+            <div class="exs-num">Stage 4</div>
+            <div class="exs-title">Budget Filter</div>
+            <div class="exs-body">Budget = $0.01/request. Estimated cost for Tier 1 models at 200 input + 100 output tokens exceeds $0.01. <strong>Premium models (o3, claude-opus-4-6, grok-3-fast) eliminated.</strong> Economy and local models survive. <strong>~24 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-winner">
+            <div class="exs-num">Stage 5</div>
+            <div class="exs-title">Score &amp; Select</div>
+            <div class="exs-body">Top survivors scored:<br><br>
+              <table class="ex-score-table">
+                <tr><th>Model</th><th>Tier</th><th>Blended $/1M</th><th>P50 ms</th><th>Score</th></tr>
+                <tr class="winner-row"><td>gpt-4.1-mini</td><td>3</td><td>$1.00</td><td>320ms</td><td><strong>0.12</strong> ✓ WINNER</td></tr>
+                <tr><td>gemini-2.5-flash</td><td>2</td><td>$1.40</td><td>280ms</td><td>0.19</td></tr>
+                <tr><td>claude-haiku-4-5</td><td>3</td><td>$2.40</td><td>290ms</td><td>0.28</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-verdict">
+          <div class="ev-label">Selected Model</div>
+          <div class="ev-model">gpt-4.1-mini</div>
+          <div class="ev-saving">88% cheaper than using claude-opus-4-6 for the same task &nbsp;·&nbsp; Full capability match &nbsp;·&nbsp; Avg response: 320ms</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 2 -->
+    <div class="ex-card">
+      <div class="ex-header ex-hdr-red">
+        <div class="ex-scenario">Example 2: Legal Department — Contract Review</div>
+        <div class="ex-meta">Complexity: Complex &nbsp;·&nbsp; Domain: extraction &nbsp;·&nbsp; Privacy: <strong>confidential</strong> &nbsp;·&nbsp; Est. tokens: 8,000 in / 2,000 out &nbsp;·&nbsp; Budget: $0.50/request</div>
+      </div>
+      <div class="ex-body">
+        <div class="ex-request">"Extract all indemnification clauses and payment obligations from this NDA. Flag any clauses that deviate from our standard template."</div>
+
+        <div class="ex-stages">
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 1</div>
+            <div class="exs-title">Capability Match</div>
+            <div class="exs-body">Task needs: <code>extraction</code>. Models without extraction capability eliminated. <strong>~28 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-eliminate">
+            <div class="exs-num">Stage 2</div>
+            <div class="exs-title">Privacy Guardrail — CRITICAL FILTER</div>
+            <div class="exs-body">Privacy = <strong>confidential</strong>. This is a contract with trade secrets. Tidus enforces: <strong>only local/on-prem models allowed.</strong> All 28 cloud-hosted models (OpenAI, Anthropic, Google, etc.) are eliminated immediately. Only your self-hosted Ollama models remain. <strong>3–5 local models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 3</div>
+            <div class="exs-title">Complexity Ceiling</div>
+            <div class="exs-body">Complexity = <strong>complex</strong> → Tier 2 maximum. Local models are Tier 4, which is within the ceiling. All local models survive. <strong>3–5 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 4</div>
+            <div class="exs-title">Budget Filter</div>
+            <div class="exs-body">Local models have <strong>$0 cost</strong> (on-prem compute). Estimated cost = $0.00. Budget = $0.50. All local models pass. <strong>3–5 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-winner">
+            <div class="exs-num">Stage 5</div>
+            <div class="exs-title">Score &amp; Select</div>
+            <div class="exs-body">All local models cost $0, so cost_norm = 0 for all. Tier 4 = tier_norm = 1.0 for all. <strong>Latency becomes the tiebreaker</strong> (10% weight). The fastest local model wins.
+              <table class="ex-score-table">
+                <tr><th>Model</th><th>Cost</th><th>P50 ms</th><th>Score</th></tr>
+                <tr class="winner-row"><td>ollama/llama3.3-70b</td><td>$0</td><td>1,200ms</td><td><strong>0.20</strong> ✓ WINNER</td></tr>
+                <tr><td>ollama/mistral-7b</td><td>$0</td><td>2,100ms</td><td>0.21</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-verdict ev-red">
+          <div class="ev-label">Selected Model</div>
+          <div class="ev-model">ollama/llama3.3-70b (local)</div>
+          <div class="ev-saving">Contract data never leaves your server &nbsp;·&nbsp; GDPR / SOC 2 compliant &nbsp;·&nbsp; Cost: $0.00 &nbsp;·&nbsp; Privacy enforced automatically — no developer action required</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Example 3 -->
+    <div class="ex-card">
+      <div class="ex-header ex-hdr-purple">
+        <div class="ex-scenario">Example 3: Medical / Executive — Critical Reasoning</div>
+        <div class="ex-meta">Complexity: Critical &nbsp;·&nbsp; Domain: reasoning &nbsp;·&nbsp; Privacy: internal &nbsp;·&nbsp; Est. tokens: 3,000 in / 1,500 out &nbsp;·&nbsp; Budget: $2.00/request</div>
+      </div>
+      <div class="ex-body">
+        <div class="ex-request">"Given this patient's medication list and lab values, identify any clinically significant drug interactions and rank by severity. Provide evidence-based reasoning for each flag."</div>
+
+        <div class="ex-stages">
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 1</div>
+            <div class="exs-title">Capability Match</div>
+            <div class="exs-body">Task needs: <code>reasoning</code>. Only models with advanced reasoning capability pass. Many economy-tier models without reasoning tags eliminated. <strong>~12 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 2</div>
+            <div class="exs-title">Privacy Guardrail</div>
+            <div class="exs-body">Privacy = <strong>internal</strong> (not confidential). Cloud models are allowed. All 12 reasoning-capable models remain. <strong>12 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-eliminate">
+            <div class="exs-num">Stage 3</div>
+            <div class="exs-title">Complexity Ceiling — STRICT FILTER</div>
+            <div class="exs-body">Complexity = <strong>critical</strong> → <strong>Tier 1 only.</strong> All Tier 2, 3, and 4 models are eliminated regardless of capability. For critical decisions, only frontier models are allowed. <strong>5–6 Tier 1 models survive</strong> (o3, claude-opus-4-6, grok-3-fast, gpt-5-codex, gemini-3.1-pro, groq-deepseek-r1).</div>
+          </div>
+          <div class="ex-stage ex-pass">
+            <div class="exs-num">Stage 4</div>
+            <div class="exs-title">Budget Filter</div>
+            <div class="exs-body">Budget = $2.00. Estimated cost at 3,000 + 1,500 tokens for Tier 1 models ranges from ~$0.08 to ~$0.23 — all within budget. <strong>All 5–6 Tier 1 models survive.</strong></div>
+          </div>
+          <div class="ex-stage ex-winner">
+            <div class="exs-num">Stage 5</div>
+            <div class="exs-title">Score &amp; Select</div>
+            <div class="exs-body">
+              <table class="ex-score-table">
+                <tr><th>Model</th><th>Blended $/1M</th><th>Tier</th><th>P50 ms</th><th>Score</th></tr>
+                <tr><td>groq-deepseek-r1</td><td>$2.00</td><td>1</td><td>800ms</td><td>0.14</td></tr>
+                <tr class="winner-row"><td>o3</td><td>$25.00</td><td>1</td><td>4,500ms</td><td><strong>0.48</strong> ✓ WINNER*</td></tr>
+                <tr><td>claude-opus-4-6</td><td>$45.00</td><td>1</td><td>3,200ms</td><td>0.62</td></tr>
+              </table>
+              <em style="font-size:12px">*After Stage 3, only Tier 1 models with <code>reasoning</code> capability remain. Among these, o3's cost-latency balance wins over the cheapest option (groq-deepseek-r1 scores well on cost but has less proven medical reasoning capability — capability matching at Stage 1 may have already filtered it if the catalog marks it accordingly).</em>
+            </div>
+          </div>
+        </div>
+
+        <div class="ex-verdict ev-purple">
+          <div class="ev-label">Selected Model</div>
+          <div class="ev-model">o3 (OpenAI)</div>
+          <div class="ev-saving">Highest-rated reasoning model &nbsp;·&nbsp; Frontier tier enforced by critical complexity &nbsp;·&nbsp; No economy models considered — patient safety non-negotiable &nbsp;·&nbsp; Full audit trail of selection logged</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══════ PLAIN ENGLISH SUMMARY ═══════ -->
+    <div class="how-summary">
+      <h3 style="font-size:20px;font-weight:800;margin:0 0 16px;color:#1e1b4b">Plain-English Summary for the Record</h3>
+      <p>Tidus is an automated AI model routing system. When an application sends an AI request, Tidus receives metadata about that request — its complexity, the type of task, privacy sensitivity, and cost budget. Tidus then applies a five-stage deterministic algorithm to select the optimal AI model from its registry of 41+ tracked models.</p>
+      <p style="margin-top:12px">The first two stages are safety filters: Stage 1 ensures the selected model is technically capable of performing the task; Stage 2 enforces data privacy law by preventing confidential data from being sent to external cloud providers. Stages 3 and 4 are economic filters: Stage 3 prevents over-provisioning by matching task complexity to model capability tier; Stage 4 enforces spending limits. Stage 5 applies a patented weighted scoring formula — 70% cost, 20% quality tier, 10% response speed — to rank surviving candidates and select the best one.</p>
+      <p style="margin-top:12px">Separately, Tidus maintains an always-current pricing registry. It ingests prices from multiple independent sources, applies statistical outlier detection (Modified Z-Score / Median Absolute Deviation) to reject anomalous data, and stores every price change as a versioned, audited revision. This ensures routing decisions are always based on current, verified market prices — not stale hardcoded values.</p>
+      <p style="margin-top:12px">The combination of these two systems — the five-stage routing algorithm and the self-healing pricing registry — constitutes the core patentable invention of the Tidus platform.</p>
+    </div>
+
+  </div>
+</section>
+
+<hr class="divider">
+
 <!-- SUBSCRIBE -->
 <section class="sub-section" id="subscribe">
   <div>
@@ -1148,6 +1676,7 @@ response = client.chat.completions.create(
       <h4>Product</h4>
       <a href="#about">About</a>
       <a href="#pillars">Pillars</a>
+      <a href="#how-it-works">How It Works</a>
       <a href="#magazine">Model Catalog &amp; Report</a>
     </div>
     <div class="f-col">
