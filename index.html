@@ -639,6 +639,49 @@ footer{background:#0a0f1e;padding:48px}
 .ev-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:rgba(255,255,255,.4);margin-bottom:2px}
 .ev-red{background:linear-gradient(135deg,#991b1b,#1e1b4b)!important}
 .ev-purple{background:linear-gradient(135deg,#4c1d95,#1e1b4b)!important}
+/* ── Stage detail list ── */
+.stage-detail-list{margin:40px 0 0;display:flex;flex-direction:column;gap:0}
+.sd-item{display:grid;grid-template-columns:56px 1fr;gap:0}
+.sd-item-last .sd-left{padding-bottom:0}
+.sd-left{display:flex;flex-direction:column;align-items:center;padding-bottom:0}
+.sd-num{width:40px;height:40px;border-radius:50%;background:#0f3460;color:#fff;
+        font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;
+        flex-shrink:0;margin-top:2px;z-index:1;position:relative}
+.sd-num-red{background:#dc2626}
+.sd-num-purple{background:#7c3aed}
+.sd-connector{flex:1;width:2px;background:#e9ecef;margin:6px 0;min-height:40px}
+.sd-right{padding:0 0 40px 0}
+.sd-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.sd-title{font-size:18px;font-weight:800;color:#0f3460}
+.sd-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+          padding:3px 10px;border-radius:20px}
+.sd-badge-filter{background:#fee2e2;color:#dc2626}
+.sd-badge-score{background:#ede9fe;color:#7c3aed}
+.sd-lead{font-size:14px;color:#444;line-height:1.8;margin-bottom:16px}
+.sd-checks-grid{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.sd-check{background:#f8f9ff;border:1px solid #e9ecef;border-radius:10px;padding:14px 18px}
+.sd-ck-label{font-size:12px;font-weight:700;color:#0f3460;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}
+.sd-ck-body{font-size:13px;color:#444;line-height:1.75;margin-bottom:8px}
+.sd-ck-rule{font-family:monospace;font-size:11.5px;color:#7c3aed;background:#faf5ff;
+            border-radius:6px;padding:5px 10px;display:inline-block}
+.sd-outcome{font-size:13px;color:#374151;background:#f0fdf4;border:1px solid #bbf7d0;
+            border-radius:8px;padding:10px 16px;line-height:1.7}
+.sd-outcome-purple{background:#faf5ff;border-color:#c4b5fd}
+.sd-callout{background:#fffbeb;border:1px solid #fcd34d;border-radius:8px;
+            padding:12px 16px;font-size:13px;color:#78350f;line-height:1.7;margin-bottom:14px}
+.sd-callout-purple{background:#faf5ff;border-color:#a78bfa;color:#4c1d95}
+/* ── Tier table inside Stage 3 ── */
+.sd-tier-table{border:1px solid #e9ecef;border-radius:10px;overflow:hidden;margin:12px 0 16px;font-size:13px}
+.sdt-row{display:grid;grid-template-columns:130px 110px 1fr 1fr;padding:10px 14px;border-bottom:1px solid #f0f0f0;align-items:center;gap:8px}
+.sdt-row:last-child{border-bottom:none}
+.sdt-header{background:#0f3460;color:#fff;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px}
+.sdt-crit{background:#fff5f5}
+.sdt-dim{color:#999;font-style:italic}
+/* ── Score formula block ── */
+.sd-score-formula{background:#1a1a2e;border-radius:12px;padding:18px 24px;margin:0 0 16px}
+.ssf-eq{font-family:monospace;font-size:15px;color:#a78bfa;font-weight:600;margin-bottom:6px}
+.ssf-note{font-size:12px;color:rgba(255,255,255,.5);line-height:1.6}
+
 /* ── Plain-English summary ── */
 .how-summary{background:linear-gradient(135deg,#f8f6ff,#f0f4ff);border:1px solid #e0d9f7;
              border-radius:16px;padding:32px 36px;margin-top:48px;border-left:5px solid var(--violet)}
@@ -657,6 +700,12 @@ footer{background:#0a0f1e;padding:48px}
   .score-formula-box{flex-direction:column}
   .cx-matrix{grid-template-columns:1fr 1fr;font-size:12px}
   .cx-header:nth-child(3),.cx-header:nth-child(4),.cx-cell:nth-child(4n-1),.cx-cell:nth-child(4n){display:none}
+  .sd-item{grid-template-columns:40px 1fr}
+  .sd-num{width:32px;height:32px;font-size:13px}
+  .sd-title{font-size:16px}
+  .sdt-row{grid-template-columns:100px 1fr;font-size:12px}
+  .sdt-row>div:nth-child(3),.sdt-row>div:nth-child(4){display:none}
+  .sdt-header>div:nth-child(3),.sdt-header>div:nth-child(4){display:none}
   .how-summary{padding:24px 20px}
   .ex-request{margin:16px 16px 0}
   .ex-stages{padding:0 16px}
@@ -1336,64 +1385,240 @@ response = client.chat.completions.create(
 
     <!-- ═══════ THE FIVE STAGES ═══════ -->
     <h3 class="how-h3">Stage 1–5: Request-to-Model Pipeline</h3>
-    <p class="how-sub">Every AI request enters this pipeline. Stages 1–4 are binary filters — a model either passes or is eliminated. Stage 5 ranks the survivors and selects the winner.</p>
+    <p class="how-sub">Every AI request enters this pipeline. Stages 1–4 are binary filters — each model either passes every check or is eliminated immediately. Stage 5 ranks the survivors by a weighted score and selects the single best model. The entire pipeline runs in under one millisecond on the server.</p>
 
+    <!-- Visual overview flow -->
     <div class="pipeline-wrap">
-      <!-- Stage 1 -->
       <div class="pipe-stage">
         <div class="ps-num">1</div>
         <div class="ps-icon">🔍</div>
-        <div class="ps-title">Capability Match</div>
-        <div class="ps-body">Does this model support what the task needs? If the task requires <em>reasoning</em> or <em>code</em> but the model only does <em>chat</em>, it is eliminated immediately. Hard technical constraint — no exceptions.</div>
-        <div class="ps-rule">Required capabilities ⊆ Model capabilities</div>
+        <div class="ps-title">Hard Constraints</div>
+        <div class="ps-rule">4 checks: enabled · context · capability · complexity range</div>
       </div>
-
       <div class="pipe-arrow">→</div>
-
-      <!-- Stage 2 -->
       <div class="pipe-stage reject">
         <div class="ps-num">2</div>
-        <div class="ps-icon">🔒</div>
-        <div class="ps-title">Privacy Guardrail</div>
-        <div class="ps-body">If the task is marked <strong>confidential</strong>, only models running on your own servers (local/on-prem) are allowed. Cloud-hosted models are eliminated. This enforces data sovereignty without configuration.</div>
-        <div class="ps-rule">confidential → local models only</div>
+        <div class="ps-icon">🛡️</div>
+        <div class="ps-title">Guardrails</div>
+        <div class="ps-rule">agent depth · token-per-step limit · privacy</div>
       </div>
-
       <div class="pipe-arrow">→</div>
-
-      <!-- Stage 3 -->
       <div class="pipe-stage">
         <div class="ps-num">3</div>
         <div class="ps-icon">📊</div>
         <div class="ps-title">Complexity Ceiling</div>
-        <div class="ps-body">Task complexity sets a maximum model tier. Simple tasks cannot use expensive premium models — they are filtered out. This prevents cost overruns from over-provisioned AI for routine work.</div>
-        <div class="ps-rule">
-          simple → Tier 4 max &nbsp;|&nbsp; moderate → Tier 3 max<br>
-          complex → Tier 2 max &nbsp;|&nbsp; critical → Tier 1 only
-        </div>
+        <div class="ps-rule">critical → Tier 1 only · simple → all tiers</div>
       </div>
-
       <div class="pipe-arrow">→</div>
-
-      <!-- Stage 4 -->
       <div class="pipe-stage reject">
         <div class="ps-num">4</div>
         <div class="ps-icon">💰</div>
         <div class="ps-title">Budget Filter</div>
-        <div class="ps-body">If the team has a per-request or monthly cost ceiling, models whose estimated cost exceeds the budget are eliminated. Estimated cost = (input tokens × input price + output tokens × output price).</div>
-        <div class="ps-rule">estimated_cost ≤ max_cost_usd</div>
+        <div class="ps-rule">per-request cap + team monthly budget</div>
       </div>
-
       <div class="pipe-arrow">→</div>
-
-      <!-- Stage 5 -->
       <div class="pipe-stage" style="border-color:#7c3aed;background:#faf5ff">
         <div class="ps-num" style="background:#7c3aed">5</div>
         <div class="ps-icon">🏆</div>
         <div class="ps-title">Score &amp; Select</div>
-        <div class="ps-body">Surviving models are ranked by a weighted score. <strong>Lower score = better.</strong> The top-ranked model is selected. Deprecated models receive a +0.15 penalty to discourage their use.</div>
-        <div class="ps-rule" style="font-size:11px;letter-spacing:.5px">score = 0.70 × cost + 0.20 × tier + 0.10 × latency</div>
+        <div class="ps-rule">0.70 × cost + 0.20 × tier + 0.10 × latency</div>
       </div>
+    </div>
+
+    <!-- Detailed stage breakdown -->
+    <div class="stage-detail-list">
+
+      <!-- Stage 1 detail -->
+      <div class="sd-item">
+        <div class="sd-left">
+          <div class="sd-num">1</div>
+          <div class="sd-connector"></div>
+        </div>
+        <div class="sd-right">
+          <div class="sd-head">
+            <span class="sd-title">Hard Constraints</span>
+            <span class="sd-badge sd-badge-filter">Binary Filter</span>
+          </div>
+          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 41+ registered models.</p>
+          <div class="sd-checks-grid">
+            <div class="sd-check">
+              <div class="sd-ck-label">Check 1 — Is the model active?</div>
+              <div class="sd-ck-body">The registry marks each model as <code>enabled: true</code> or <code>enabled: false</code>. Models can be disabled manually by an administrator, or automatically by the drift detector when repeated health probes fail. A disabled model is immediately eliminated, regardless of capability or cost.</div>
+              <div class="sd-ck-rule">spec.enabled == true</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Check 2 — Does the context window fit?</div>
+              <div class="sd-ck-body">Every model has a maximum context window (the total number of tokens it can process in one call). If the task's estimated input token count exceeds that window, the model physically cannot process the request. It is eliminated. Example: a task with 200,000 input tokens cannot use a model with a 128,000-token context window.</div>
+              <div class="sd-ck-rule">estimated_input_tokens ≤ model.max_context</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Check 3 — Does the model support the task domain?</div>
+              <div class="sd-ck-body">Each task carries a <strong>domain</strong> label: <code>chat</code>, <code>code</code>, <code>reasoning</code>, <code>extraction</code>, <code>classification</code>, <code>summarization</code>, or <code>creative</code>. Each model in the registry lists its supported capabilities. If the task's domain is not in the model's capability set, the model is eliminated. A chat-only model cannot be routed a code generation task, for example.</div>
+              <div class="sd-ck-rule">task.domain ∈ model.capabilities</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Check 4 — Is this task within the model's designed complexity range?</div>
+              <div class="sd-ck-body">Each model in the registry declares a <code>min_complexity</code> and <code>max_complexity</code> (e.g., <em>moderate to complex</em>). If the task's complexity falls outside this declared range, the model is eliminated. This prevents sending a trivially simple task to a model built for deep reasoning work (wrong tool), and prevents sending a critical decision task to a model not designed to handle it.</div>
+              <div class="sd-ck-rule">model.min_complexity ≤ task.complexity ≤ model.max_complexity</div>
+            </div>
+          </div>
+          <div class="sd-outcome">If a model fails any of these four checks, it is removed from the candidate pool. Only models that pass all four proceed to Stage 2.</div>
+        </div>
+      </div>
+
+      <!-- Stage 2 detail -->
+      <div class="sd-item">
+        <div class="sd-left">
+          <div class="sd-num sd-num-red">2</div>
+          <div class="sd-connector"></div>
+        </div>
+        <div class="sd-right">
+          <div class="sd-head">
+            <span class="sd-title">Safety Guardrails</span>
+            <span class="sd-badge sd-badge-filter">Binary Filter</span>
+          </div>
+          <p class="sd-lead">Guardrails enforce system-level safety policies that apply to every team and every task — they cannot be overridden by individual callers. Two types of guardrails apply at this stage: usage limits and privacy enforcement.</p>
+          <div class="sd-checks-grid">
+            <div class="sd-check">
+              <div class="sd-ck-label">Guardrail 1 — Privacy enforcement</div>
+              <div class="sd-ck-body">Tasks carry a <strong>privacy</strong> label: <code>public</code>, <code>internal</code>, or <code>confidential</code>. When a task is marked <code>confidential</code>, Tidus enforces a hard rule: only models running on your own infrastructure (<code>is_local: true</code> in the registry) are allowed. All cloud-hosted models — regardless of vendor, price, or capability — are eliminated. This is not a preference; it is an absolute constraint. It ensures that confidential data such as patient records, legal documents, or financial reports is never sent to an external API provider.</div>
+              <div class="sd-ck-rule">if task.privacy == confidential → model.is_local must be true</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Guardrail 2 — Agentic depth and token limits</div>
+              <div class="sd-ck-body">For agentic workflows (where the AI calls tools, loops, and makes multiple decisions), the system enforces a maximum recursion depth (<code>max_agent_depth</code>) and a maximum tokens-per-step limit (<code>max_tokens_per_step</code>). These limits prevent runaway agents from incurring unbounded costs or entering infinite loops. If the task's agent depth or token count exceeds the policy limit, the model is eliminated at this stage.</div>
+              <div class="sd-ck-rule">task.agent_depth ≤ policy.max_agent_depth &nbsp;·&nbsp; task.tokens ≤ policy.max_tokens_per_step</div>
+            </div>
+          </div>
+          <div class="sd-outcome">Models that survive Stages 1 and 2 are technically capable, active, appropriately scoped, and safe to use for this specific task. The remaining stages apply economic filters.</div>
+        </div>
+      </div>
+
+      <!-- Stage 3 detail -->
+      <div class="sd-item">
+        <div class="sd-left">
+          <div class="sd-num">3</div>
+          <div class="sd-connector"></div>
+        </div>
+        <div class="sd-right">
+          <div class="sd-head">
+            <span class="sd-title">Complexity Tier Ceiling</span>
+            <span class="sd-badge sd-badge-filter">Binary Filter</span>
+          </div>
+          <p class="sd-lead">Models in Tidus's registry are classified into four quality tiers. Tier 1 is premium frontier AI (most capable, most expensive). Tier 4 is local or free models (least capable, zero cost). This stage sets a <strong>minimum quality floor</strong> based on how complex the task is — ensuring that genuinely complex or critical tasks are always handled by appropriately capable models, and cannot be silently downgraded to cheap models.</p>
+
+          <div class="sd-tier-table">
+            <div class="sdt-row sdt-header">
+              <div>Task Complexity</div><div>Tier Ceiling</div><div>Models Allowed</div><div>What Gets Eliminated</div>
+            </div>
+            <div class="sdt-row">
+              <div><span class="cx-simple">Simple</span></div>
+              <div>Tier 4 (all tiers)</div>
+              <div>Tier 1, 2, 3, 4 — any model</div>
+              <div class="sdt-dim">Nothing eliminated at this stage</div>
+            </div>
+            <div class="sdt-row">
+              <div><span class="cx-moderate">Moderate</span></div>
+              <div>Tier 3</div>
+              <div>Tier 1, 2, 3</div>
+              <div>Tier 4 local/free models eliminated</div>
+            </div>
+            <div class="sdt-row">
+              <div><span class="cx-complex">Complex</span></div>
+              <div>Tier 2</div>
+              <div>Tier 1, 2 only</div>
+              <div>Tier 3 economy + Tier 4 local eliminated</div>
+            </div>
+            <div class="sdt-row sdt-crit">
+              <div><span class="cx-critical">Critical</span></div>
+              <div>Tier 1 only</div>
+              <div>Tier 1 (premium frontier) only</div>
+              <div>All Tier 2, 3, 4 models eliminated</div>
+            </div>
+          </div>
+
+          <div class="sd-callout">
+            <strong>Important distinction:</strong> The tier ceiling works in one direction — it enforces a <em>minimum quality standard</em> for the task, not a spending cap. Simple tasks may use any tier (including expensive premium models) if the caller requests them. Critical tasks <em>must</em> use Tier 1 — no matter how much a cheaper model costs. This protects against silent quality downgrade on high-stakes decisions.
+          </div>
+          <div class="sd-outcome">After Stage 3, every remaining model is confirmed to be capable enough for the task's complexity level. Stage 4 now applies spending constraints.</div>
+        </div>
+      </div>
+
+      <!-- Stage 4 detail -->
+      <div class="sd-item">
+        <div class="sd-left">
+          <div class="sd-num sd-num-red">4</div>
+          <div class="sd-connector"></div>
+        </div>
+        <div class="sd-right">
+          <div class="sd-head">
+            <span class="sd-title">Budget Filter</span>
+            <span class="sd-badge sd-badge-filter">Binary Filter</span>
+          </div>
+          <p class="sd-lead">For each model that survived Stages 1–3, Tidus computes the estimated cost of processing this specific task with that model. The estimate uses the actual token counts and current market prices from the pricing registry. Two separate budget checks then apply.</p>
+          <div class="sd-checks-grid">
+            <div class="sd-check">
+              <div class="sd-ck-label">Budget check 1 — Per-request cost cap</div>
+              <div class="sd-ck-body">The caller can optionally attach a <code>max_cost_usd</code> to the task. This is a hard ceiling on what any single API call is allowed to cost. If the estimated cost for a model exceeds this cap, that model is eliminated. This allows callers to guarantee that no single request exceeds a set dollar amount — useful for customer-facing features where per-query economics matter.</div>
+              <div class="sd-ck-rule">estimated_cost = (input_tokens × input_price) + (output_tokens × output_price)</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Budget check 2 — Team monthly budget</div>
+              <div class="sd-ck-body">Each team has a configurable monthly AI spending budget (set by an administrator). The budget enforcer tracks cumulative spend in real time. Before any model is used, Tidus checks whether the team still has budget headroom for the estimated cost. If spending this amount would exceed the team's remaining monthly budget, the model is eliminated. This prevents any single team from consuming more than its allocated share of AI spend — even if individual requests appear cheap.</div>
+              <div class="sd-ck-rule">team.cumulative_spend + estimated_cost ≤ team.monthly_budget</div>
+            </div>
+          </div>
+          <div class="sd-outcome">After Stage 4, every remaining model is both technically suitable and economically feasible for this request. Stage 5 picks the single best one.</div>
+        </div>
+      </div>
+
+      <!-- Stage 5 detail -->
+      <div class="sd-item sd-item-last">
+        <div class="sd-left">
+          <div class="sd-num sd-num-purple">5</div>
+        </div>
+        <div class="sd-right">
+          <div class="sd-head">
+            <span class="sd-title">Score &amp; Select</span>
+            <span class="sd-badge sd-badge-score">Weighted Ranking</span>
+          </div>
+          <p class="sd-lead">All models that survived the four filter stages are now ranked by a deterministic weighted score. Each model gets a number between 0 and 1 on three dimensions; those numbers are weighted and summed. <strong>The model with the lowest total score wins.</strong> Lower = better.</p>
+
+          <div class="sd-score-formula">
+            <div class="ssf-eq">score = (cost_norm × 0.70) + (tier_norm × 0.20) + (latency_norm × 0.10)</div>
+            <div class="ssf-note">Each dimension is independently normalised to [0, 1] across the candidate pool, so the weights have consistent meaning regardless of the actual prices or latencies involved.</div>
+          </div>
+
+          <div class="sd-checks-grid">
+            <div class="sd-check">
+              <div class="sd-ck-label">Dimension 1 — Cost (weight: 70%)</div>
+              <div class="sd-ck-body">Estimated cost for this specific request (Stage 4 already computed it). Normalised: the cheapest model in the surviving pool scores 0.0; the most expensive scores 1.0. Cost carries the largest weight because, for the majority of tasks, a less expensive model is equally sufficient — and the goal of Tidus is to capture that cost difference systematically.</div>
+              <div class="sd-ck-rule">cost_norm = (cost − min_cost) / (max_cost − min_cost)</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Dimension 2 — Quality Tier (weight: 20%)</div>
+              <div class="sd-ck-body">The model's registered quality tier (1 = premium, 4 = local). Normalised: Tier 1 scores 0.0 (best quality), Tier 4 scores 1.0. This dimension ensures Tidus doesn't blindly route everything to the absolute cheapest model — it applies a modest quality preference that keeps higher-tier models competitive when price differences are small.</div>
+              <div class="sd-ck-rule">tier_norm = (tier − 1) / 3 &nbsp;→&nbsp; Tier 1 = 0.0, Tier 4 = 1.0</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Dimension 3 — Response Speed (weight: 10%)</div>
+              <div class="sd-ck-body">The model's measured median latency (P50 milliseconds) from live health probes. Normalised across the pool. The fastest model scores 0.0. Latency is the least-weighted dimension because most tasks are not latency-sensitive — but it breaks ties between otherwise equal candidates and ensures consistently slow models don't win when a faster alternative costs the same.</div>
+              <div class="sd-ck-rule">lat_norm = (latency − min_lat) / (max_lat − min_lat)</div>
+            </div>
+            <div class="sd-check">
+              <div class="sd-ck-label">Deprecation penalty (+0.15)</div>
+              <div class="sd-ck-body">If a model is marked as <code>deprecated</code> in the registry (still routable, but being phased out), a flat penalty of 0.15 is added to its score after normalisation. This means a deprecated model only wins if it is substantially cheaper or faster than all non-deprecated alternatives — preventing gradual quality drift while still honouring the deprecation grace period rather than hard-removing models immediately.</div>
+              <div class="sd-ck-rule">if model.deprecated: score += 0.15</div>
+            </div>
+          </div>
+
+          <div class="sd-callout sd-callout-purple">
+            <strong>Preferred model shortcut:</strong> If the caller attaches a <code>preferred_model_id</code> to the task and that model survived all four filter stages, Tidus selects it directly — skipping the scoring step entirely. This respects explicit caller intent (e.g., "always use GPT-4.1 for this workflow") while still enforcing all hard safety and budget constraints. A preference that would violate budget or privacy rules is overridden by the filter stages regardless.
+          </div>
+          <div class="sd-outcome sd-outcome-purple">The model with the lowest score is selected. A <code>RoutingDecision</code> record is written to the audit log, capturing which model was chosen, its score, its estimated cost, and the full list of models that were rejected and why.</div>
+        </div>
+      </div>
+
     </div>
 
     <!-- ═══════ THE THREE SCORING PILLARS ═══════ -->
