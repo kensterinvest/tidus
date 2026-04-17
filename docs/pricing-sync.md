@@ -1,8 +1,9 @@
 # Pricing Sync
 
-Accurate prices are critical — the routing score weights cost at **70%**. Tidus v1.1.0 uses a
-multi-source consensus pipeline that creates versioned, audited DB revisions whenever prices
-change significantly.
+Accurate prices are critical — the routing score weights cost at **70%**. Since v1.1.0, Tidus
+has used a multi-source consensus pipeline that creates versioned, audited DB revisions whenever
+prices change significantly; v1.2.0 added a recency tie-breaker and a retired-model reconciliation
+pass so models removed from `models.yaml` are dropped from new revisions.
 
 ## Architecture
 
