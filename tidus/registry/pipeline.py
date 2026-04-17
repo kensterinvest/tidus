@@ -214,6 +214,32 @@ class RegistryPipeline:
                     "last_price_check": now.date(),
                 })
 
+            # Also pick up new models: in models.yaml + price source, but not yet in DB.
+            from tidus.router.registry import ModelRegistry
+            from tidus.settings import get_settings
+            yaml_registry = ModelRegistry.load(get_settings().models_config_path)
+            yaml_by_id = {s.model_id: s for s in yaml_registry.list_all()}
+            for model_id, quote in consensus.quotes.items():
+                if model_id in current_by_id or model_id not in yaml_by_id:
+                    continue
+                yaml_spec = yaml_by_id[model_id]
+                new_specs[model_id] = yaml_spec.model_copy(update={
+                    "input_price": quote.input_price,
+                    "output_price": quote.output_price,
+                    "cache_read_price": quote.cache_read_price,
+                    "cache_write_price": quote.cache_write_price,
+                    "last_price_check": now.date(),
+                })
+                changes.append({
+                    "model_id": model_id,
+                    "field": "new_model",
+                    "old_value": 0.0,
+                    "new_value": quote.input_price,
+                    "delta_pct": 100.0,
+                    "detected_at": now,
+                })
+                log.info("price_sync_new_model_detected", model_id=model_id)
+
             if not changes:
                 log.info("price_sync_no_changes")
                 return None
