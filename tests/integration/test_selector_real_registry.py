@@ -96,13 +96,13 @@ def _task(
 def test_registry_loads_all_models(registry):
     """All models defined in models.yaml should load without validation errors.
 
-    43 models are enabled (active adapters); 10 are intentionally disabled
+    45 models are enabled (active adapters); 10 are intentionally disabled
     (pending adapter implementations: Cohere, Groq, Qwen, Perplexity, Together AI).
     """
-    assert len(registry) == 53
+    assert len(registry) == 55
     enabled = [s for s in registry.list_all() if s.enabled]
     disabled = [s for s in registry.list_all() if not s.enabled]
-    assert len(enabled) == 43, f"Expected 43 enabled models, got {len(enabled)}"
+    assert len(enabled) == 45, f"Expected 45 enabled models, got {len(enabled)}"
     assert len(disabled) == 10, f"Expected 10 disabled (pending) models, got {len(disabled)}"
 
 
