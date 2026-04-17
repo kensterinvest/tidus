@@ -90,7 +90,7 @@ button:hover{opacity:0.9;}
   </form>
   <p class="note">
     Self-hosted on your own Tidus instance. Powered by
-    <a href="https://github.com/kensterinvest/tidus">Tidus v1.1.0</a>.<br>
+    <a href="https://github.com/kensterinvest/tidus">Tidus v1.2.0</a>.<br>
     To unsubscribe, set <code>active: false</code> in <code>config/subscribers.yaml</code>.
   </p>
 </div>

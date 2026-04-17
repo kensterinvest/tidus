@@ -85,7 +85,7 @@ class TelemetryReader:
 
         # Emit one summary log per refresh instead of one line per model.
         # This prevents log flooding during telemetry outages (e.g. probes stopped
-        # for maintenance) where all 53 models could expire simultaneously.
+        # for maintenance) where all 55 models could expire simultaneously.
         if expired_ids:
             log.warning(
                 "telemetry_expired",
