@@ -19,7 +19,7 @@ Tidus is priced to pay for itself. At any meaningful request volume, the AI cost
 
 ### Community (Free)
 - `POST /api/v1/route` — full 5-stage model selection
-- 53-model registry across 11 vendors, prices verified 2026-04-03
+- 53-model registry across 12 vendors, prices verified 2026-04-17
 - REST API with Swagger UI
 - Single team, no budget enforcement
 - Best for: developers evaluating Tidus, single-project use
