@@ -3,8 +3,8 @@ models:
   vendor: openai
   tier: 1
   max_context: 200000
-  input_price: 0.01
-  output_price: 0.04
+  input_price: 0.002
+  output_price: 0.008
   tokenizer: tiktoken_o200k
   latency_p50_ms: 2500
   capabilities:
@@ -21,7 +21,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: o4-mini
   vendor: openai
@@ -45,7 +45,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-4.1
   vendor: openai
@@ -71,7 +71,7 @@ models:
   - gpt-4.1-mini
   - claude-haiku-4-5
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-4.1-mini
   vendor: openai
@@ -96,7 +96,7 @@ models:
   - gpt-4.1-nano
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-4.1-nano
   vendor: openai
@@ -118,7 +118,7 @@ models:
   fallbacks:
   - llama4-scout-ollama
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-4o
   vendor: openai
@@ -144,7 +144,7 @@ models:
   - gpt-4.1-mini
   - claude-haiku-4-5
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-4o-mini
   vendor: openai
@@ -168,7 +168,7 @@ models:
   - gpt-4.1-nano
   - claude-haiku-4-5
   - mistral-small-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-oss-120b
   vendor: openai
@@ -192,7 +192,7 @@ models:
   - gpt-4o-mini
   - mistral-medium
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gpt-5-codex
   vendor: openai
@@ -215,7 +215,7 @@ models:
   - o3
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: codex-mini-latest
   vendor: openai
@@ -237,7 +237,7 @@ models:
   - gpt-4o-mini
   - mistral-small
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: claude-opus-4-7
   vendor: anthropic
@@ -269,8 +269,8 @@ models:
   vendor: anthropic
   tier: 1
   max_context: 1000000
-  input_price: 0.015
-  output_price: 0.075
+  input_price: 0.005
+  output_price: 0.025
   tokenizer: anthropic
   latency_p50_ms: 3000
   capabilities:
@@ -289,7 +289,7 @@ models:
   - claude-sonnet-4-6
   - gpt-4.1
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: claude-sonnet-4-6
   vendor: anthropic
@@ -315,14 +315,14 @@ models:
   - claude-haiku-4-5
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: claude-haiku-4-5
   vendor: anthropic
   tier: 3
   max_context: 200000
-  input_price: 0.0008
-  output_price: 0.004
+  input_price: 0.001
+  output_price: 0.005
   tokenizer: anthropic
   latency_p50_ms: 300
   capabilities:
@@ -339,7 +339,7 @@ models:
   - gpt-4o-mini
   - mistral-small
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-3.1-pro
   vendor: google
@@ -365,7 +365,7 @@ models:
   - gemini-3.1-flash
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-3.1-flash
   vendor: google
@@ -390,7 +390,7 @@ models:
   - gpt-4o-mini
   - claude-haiku-4-5
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-2.5-pro
   vendor: google
@@ -417,7 +417,7 @@ models:
   - gemini-2.5-flash
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-2.5-flash
   vendor: google
@@ -443,7 +443,7 @@ models:
   - gemini-3.1-flash
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-2.0-flash
   vendor: google
@@ -468,7 +468,7 @@ models:
   - gemini-2.5-flash
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemini-nano
   vendor: google
@@ -487,7 +487,7 @@ models:
   enabled: true
   deprecated: false
   fallbacks: []
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-large-3
   vendor: mistral
@@ -512,7 +512,7 @@ models:
   - mistral-small
   - gpt-4o-mini
   - mistral-small-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-medium
   vendor: mistral
@@ -536,7 +536,7 @@ models:
   - mistral-small
   - gpt-4o-mini
   - mistral-small-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-small
   vendor: mistral
@@ -560,7 +560,7 @@ models:
   - mistral-nemo
   - gpt-4o-mini
   - mistral-small-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-nemo
   vendor: mistral
@@ -582,7 +582,7 @@ models:
   fallbacks:
   - llama4-scout-ollama
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: codestral
   vendor: mistral
@@ -603,7 +603,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - deepseek-v3
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: devstral
   vendor: mistral
@@ -625,7 +625,7 @@ models:
   - codestral
   - deepseek-v3
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: devstral-small
   vendor: mistral
@@ -646,14 +646,14 @@ models:
   - mistral-nemo
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: deepseek-r1
   vendor: deepseek
   tier: 1
   max_context: 128000
-  input_price: 0.00055
-  output_price: 0.00219
+  input_price: 0.0007
+  output_price: 0.0025
   tokenizer: tiktoken_cl100k
   latency_p50_ms: 2000
   capabilities:
@@ -669,13 +669,13 @@ models:
   - deepseek-v3
   - claude-sonnet-4-6
   - deepseek-r1-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: deepseek-v3
   vendor: deepseek
   tier: 2
   max_context: 128000
-  input_price: 0.00027
+  input_price: 0.00032
   output_price: 0.00089
   tokenizer: tiktoken_cl100k
   latency_p50_ms: 800
@@ -693,7 +693,7 @@ models:
   - mistral-medium
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: deepseek-v4
   vendor: deepseek
@@ -718,7 +718,7 @@ models:
   - deepseek-v3
   - gpt-4o-mini
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: grok-3
   vendor: xai
@@ -742,7 +742,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: grok-3-fast
   vendor: xai
@@ -766,7 +766,7 @@ models:
   - grok-3
   - gpt-4.1
   - claude-sonnet-4-6
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: kimi-k2.5
   vendor: moonshot
@@ -791,7 +791,7 @@ models:
   - gemini-2.5-flash
   - deepseek-v3
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: command-r-plus
   vendor: cohere
@@ -817,7 +817,7 @@ models:
   - command-r
   - mistral-large-3
   - gpt-4o
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: command-r
   vendor: cohere
@@ -841,7 +841,7 @@ models:
   - mistral-small
   - gpt-4o-mini
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: qwen-max
   vendor: qwen
@@ -867,7 +867,7 @@ models:
   - qwen-plus
   - deepseek-v3
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: qwen-plus
   vendor: qwen
@@ -892,7 +892,7 @@ models:
   - qwen-flash
   - deepseek-v3
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: qwen-flash
   vendor: qwen
@@ -917,7 +917,7 @@ models:
   - mistral-nemo
   - gpt-4o-mini
   - qwen2.5-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: sonar-pro
   vendor: perplexity
@@ -941,7 +941,7 @@ models:
   - sonar
   - gpt-4.1
   - claude-sonnet-4-6
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: sonar
   vendor: perplexity
@@ -964,7 +964,7 @@ models:
   - gpt-4o-mini
   - mistral-small
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: together-llama4-maverick
   vendor: together
@@ -989,7 +989,7 @@ models:
   - deepseek-v3
   - gpt-4o-mini
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: groq-llama4-maverick
   vendor: groq
@@ -1014,7 +1014,7 @@ models:
   - deepseek-v3
   - gpt-4o-mini
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: groq-deepseek-r1
   vendor: groq
@@ -1037,7 +1037,7 @@ models:
   - deepseek-r1
   - claude-sonnet-4-6
   - deepseek-r1-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: llama4-maverick-ollama
   vendor: ollama
@@ -1060,7 +1060,7 @@ models:
   deprecated: false
   fallbacks:
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: llama4-scout-ollama
   vendor: ollama
@@ -1082,7 +1082,7 @@ models:
   deprecated: false
   fallbacks:
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: deepseek-r1-ollama
   vendor: ollama
@@ -1103,7 +1103,7 @@ models:
   deprecated: false
   fallbacks:
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: qwen2.5-ollama
   vendor: ollama
@@ -1126,7 +1126,7 @@ models:
   deprecated: false
   fallbacks:
   - llama4-scout-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: qwen2.5-coder-ollama
   vendor: ollama
@@ -1146,7 +1146,7 @@ models:
   deprecated: false
   fallbacks:
   - llama4-maverick-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: deepseek-coder-v2-ollama
   vendor: ollama
@@ -1166,7 +1166,7 @@ models:
   deprecated: false
   fallbacks:
   - qwen2.5-coder-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-small-ollama
   vendor: ollama
@@ -1187,7 +1187,7 @@ models:
   deprecated: false
   fallbacks:
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: mistral-nemo-ollama
   vendor: ollama
@@ -1208,7 +1208,7 @@ models:
   deprecated: false
   fallbacks:
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: phi-4-ollama
   vendor: ollama
@@ -1228,7 +1228,7 @@ models:
   enabled: true
   deprecated: false
   fallbacks: []
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: gemma-3-ollama
   vendor: ollama
@@ -1249,7 +1249,7 @@ models:
   deprecated: false
   fallbacks:
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: falcon-11b-ollama
   vendor: ollama
@@ -1270,5 +1270,5 @@ models:
   deprecated: false
   fallbacks:
   - phi-4-ollama
-  last_price_check: '2026-04-03'
+  last_price_check: '2026-04-17'
   last_health_check: null
