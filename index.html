@@ -738,7 +738,7 @@ footer{background:#0a0f1e;padding:48px}
       <div class="hero-logo">tidus<span class="dot">.</span></div>
       <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
     </div>
-    <div class="hero-badge">Now tracking 41 models across 12 vendors · Weekly price sync</div>
+    <div class="hero-badge">Now tracking 53 models across 12 vendors · Weekly price sync</div>
     <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
     <p class="hero-sub">Tidus selects the most cost-effective capable model for every AI request — automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted.</p>
     <div class="hero-actions">
@@ -746,7 +746,7 @@ footer{background:#0a0f1e;padding:48px}
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-val">41+</div><div class="stat-lbl">Models Tracked</div></div>
+      <div class="stat-card"><div class="stat-val">53+</div><div class="stat-lbl">Models Tracked</div></div>
       <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">AI Vendors</div></div>
       <div class="stat-card"><div class="stat-val">70%</div><div class="stat-lbl">Cost Weight in Routing</div></div>
       <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Cost-Control Pillars</div></div>
@@ -1085,11 +1085,11 @@ response = client.chat.completions.create(
 <section class="sources" id="sources">
   <div class="section-inner">
     <p class="section-tag">Model Discovery &amp; Pricing Sources</p>
-    <h2 class="section-title">41 curated models — not the entire market. Here's why.</h2>
-    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 41 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
+    <h2 class="section-title">53 curated models — not the entire market. Here's why.</h2>
+    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 53 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
 
     <div class="why-box">
-      <p><strong>Why 41, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
+      <p><strong>Why 53, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
       <p>The catalog grows continuously. Adding a new model is 3 lines in <code>hardcoded_source.py</code> — the model ID, input price, and output price. Community pull requests are welcome. If a vendor releases a new stable model, open a PR and it will be tracked in the next weekly sync.</p>
       <div class="add-model">
         <span>➕ To add a model:</span>
@@ -1175,7 +1175,7 @@ response = client.chat.completions.create(
           <div class="src-badge always">Always Available</div>
           <div class="src-title">HardcodedSource</div>
           <div class="src-conf">confidence = 0.70</div>
-          <div class="src-desc">A built-in verified price table covering all 41 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+          <div class="src-desc">A built-in verified price table covering all 53 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
         </div>
 
         <div class="src-card">
@@ -1274,7 +1274,7 @@ response = client.chat.completions.create(
   <div class="section-inner">
     <p class="section-tag">Latest Report</p>
     <h2 class="section-title">Weekly AI Market Intelligence</h2>
-    <p class="section-sub">Tidus continuously tracks prices across 41 models and 12 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
+    <p class="section-sub">Tidus continuously tracks prices across 53 models and 12 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
     <div style="margin-top:40px">
       <!-- TIDUS:MAG-CARD:START -->
       <div class="mag-card">
@@ -1282,7 +1282,7 @@ response = client.chat.completions.create(
         <div class="mag-logo">tidus<span>.</span>magazine</div>
         <div class="mag-sub-tag">AI Model Market Intelligence &middot; Weekly Edition</div>
         <div class="mag-title">April 2026 Update: DeepSeek &darr;21% &middot; OpenAI &darr;17%</div>
-        <div class="mag-date">Week of April 15, 2026 &middot; Issue #5</div>
+        <div class="mag-date">Week of April 17, 2026 &middot; Issue #5</div>
       </div>
       <div class="mag-stats-bar">
         <div class="ms"><div class="ms-val">41</div><div class="ms-lbl">Models Tracked</div></div>
@@ -1299,7 +1299,7 @@ response = client.chat.completions.create(
         <div class="mag-sec-title">&#x1F4A1; Cost Optimisation Opportunities</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><div style="padding:14px;background:#f8f9ff;border-radius:10px;border:1px solid #e9ecef"><div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">&#x1F4C9; deepseek-v3 dropped 21%</div><div style="font-size:12px;color:#555;line-height:1.6"><strong>DeepSeek</strong>&rsquo;s <strong>deepseek-v3</strong> input is now <strong>$0.270/1M</strong> (was $0.340/1M). Consider benchmarking it against your current routing choice this week.</div></div><div style="padding:14px;background:#f8f9ff;border-radius:10px;border:1px solid #e9ecef"><div style="font-size:12px;font-weight:700;color:#0f3460;margin-bottom:6px">&#x1F4B0; Economy pick: mistral-nemo</div><div style="font-size:12px;color:#555;line-height:1.6">At <strong>$0.150/1M</strong> blended, <strong>mistral-nemo</strong> is <strong style="color:#16a34a">300&times; cheaper</strong> than claude-opus-4-6 ($45.00/1M). Ideal for classification, summarisation, and simple generation tasks.</div></div></div>
 
         <div class="mag-sec-title" style="margin-top:28px">&#x1F4CB; Full Model Catalog &mdash; April 2026</div>
-        <p style="font-size:12px;color:#888;margin-bottom:14px">Ranked by blended cost &mdash; highest first &middot; All prices USD/1M tokens &middot; Updated April 15, 2026</p>
+        <p style="font-size:12px;color:#888;margin-bottom:14px">Ranked by blended cost &mdash; highest first &middot; All prices USD/1M tokens &middot; Updated April 17, 2026</p>
         <div class="pricing-legend" style="margin-bottom:14px"><div class="leg"><div class="leg-lbl">Input Price</div><div class="leg-desc">Cost per 1M tokens you <strong>send</strong> to the model &mdash; your prompt, system instruction, conversation history, and any context you attach. Longer prompts or large document uploads drive this cost up.</div></div><div class="leg"><div class="leg-lbl">Output Price</div><div class="leg-desc">Cost per 1M tokens the model <strong>generates</strong> &mdash; every word in its response. Verbose answers, long code completions, and streaming replies all accrue output cost. Output is typically 3&ndash;5&times; more expensive than input.</div></div><div class="leg"><div class="leg-lbl">$/1M tokens</div><div class="leg-desc">Industry-standard unit. To estimate a task: <em>(prompt tokens &divide; 1,000,000) &times; input price</em> + <em>(response tokens &divide; 1,000,000) &times; output price</em>. A typical 500-word prompt (&asymp;700 tokens) + 500-word reply costs under $0.01 on most models.</div></div></div>
         <div class="table-wrap">
           <table id="model-table">
@@ -1317,7 +1317,7 @@ response = client.chat.completions.create(
             <tbody id="model-tbody"></tbody>
           </table>
         </div>
-        <p class="table-note">Prices from official vendor pages via multi-source consensus &middot; Ranked by blended cost &middot; Updated April 15, 2026</p>
+        <p class="table-note">Prices from official vendor pages via multi-source consensus &middot; Ranked by blended cost &middot; Updated April 17, 2026</p>
       </div>
       <div class="mag-footer">
         <p>Prices verified via multi-source consensus &middot; Next sync: April 19, 2026 02:00 UTC</p>
@@ -1439,7 +1439,7 @@ response = client.chat.completions.create(
             <span class="sd-title">Hard Constraints</span>
             <span class="sd-badge sd-badge-filter">Binary Filter</span>
           </div>
-          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 41+ registered models.</p>
+          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 53+ registered models.</p>
           <div class="sd-checks-grid">
             <div class="sd-check">
               <div class="sd-ck-label">Check 1 — Is the model active?</div>
@@ -1719,7 +1719,7 @@ response = client.chat.completions.create(
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 1</div>
             <div class="exs-title">Capability Match</div>
-            <div class="exs-body">Task needs: <code>chat</code>. 41 models checked. All chat-capable models pass. Result: <strong>38 models survive</strong> (3 multimodal-only eliminated).</div>
+            <div class="exs-body">Task needs: <code>chat</code>. 53 models checked. All chat-capable models pass. Result: <strong>50 models survive</strong> (3 multimodal-only eliminated).</div>
           </div>
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 2</div>
@@ -1865,7 +1865,7 @@ response = client.chat.completions.create(
     <!-- ═══════ PLAIN ENGLISH SUMMARY ═══════ -->
     <div class="how-summary">
       <h3 style="font-size:20px;font-weight:800;margin:0 0 16px;color:#1e1b4b">Plain-English Summary for the Record</h3>
-      <p>Tidus is an automated AI model routing system. When an application sends an AI request, Tidus receives metadata about that request — its complexity, the type of task, privacy sensitivity, and cost budget. Tidus then applies a five-stage deterministic algorithm to select the optimal AI model from its registry of 41+ tracked models.</p>
+      <p>Tidus is an automated AI model routing system. When an application sends an AI request, Tidus receives metadata about that request — its complexity, the type of task, privacy sensitivity, and cost budget. Tidus then applies a five-stage deterministic algorithm to select the optimal AI model from its registry of 53+ tracked models.</p>
       <p style="margin-top:12px">The first two stages are safety filters: Stage 1 ensures the selected model is technically capable of performing the task; Stage 2 enforces data privacy law by preventing confidential data from being sent to external cloud providers. Stages 3 and 4 are economic filters: Stage 3 prevents over-provisioning by matching task complexity to model capability tier; Stage 4 enforces spending limits. Stage 5 applies a patented weighted scoring formula — 70% cost, 20% quality tier, 10% response speed — to rank surviving candidates and select the best one.</p>
       <p style="margin-top:12px">Separately, Tidus maintains an always-current pricing registry. It ingests prices from multiple independent sources, applies statistical outlier detection (Modified Z-Score / Median Absolute Deviation) to reject anomalous data, and stores every price change as a versioned, audited revision. This ensures routing decisions are always based on current, verified market prices — not stale hardcoded values.</p>
       <p style="margin-top:12px">The combination of these two systems — the five-stage routing algorithm and the self-healing pricing registry — constitutes the core patentable invention of the Tidus platform.</p>
@@ -1880,7 +1880,7 @@ response = client.chat.completions.create(
 <section class="sub-section" id="subscribe">
   <div>
     <h2>Get the weekly AI pricing report</h2>
-    <p>41 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
+    <p>53 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
     <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
       <input type="email" id="sub-email" placeholder="you@company.com" required>
       <button type="submit">Subscribe Free</button>
@@ -1924,7 +1924,7 @@ response = client.chat.completions.create(
 </footer>
 
 <script>
-// Model data — 41 models. b = blended cost = (input + output) / 2 per 1M tokens.
+// Model data — 53 models. b = blended cost = (input + output) / 2 per 1M tokens.
 const MODELS = [
   {id:"claude-opus-4-6", v:"Anthropic", t:1, b:45.00, i:15.00, o:75.00, ctx:1000},
   {id:"o3", v:"OpenAI", t:1, b:25.00, i:10.00, o:40.00, ctx:200},
