@@ -54,6 +54,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "deepseek-v4":               {"input": 0.0003,    "output": 0.0005},   # $0.30/$0.50 per 1M
 
     # ── xAI ──────────────────────────────────────────────────────────────────
+    "grok-4":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M (released Jul-2025)
     "grok-3":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M
     "grok-3-fast":               {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M
 

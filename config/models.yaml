@@ -722,6 +722,32 @@ models:
   - llama4-maverick-ollama
   last_price_check: '2026-04-17'
   last_health_check: null
+- model_id: grok-4
+  vendor: xai
+  tier: 2
+  max_context: 2000000
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  - long_context
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-3
+  - claude-sonnet-4-6
+  - gpt-4.1
+  released_at: '2025-07-01'
+  last_price_check: '2026-04-17'
+  last_health_check: null
 - model_id: grok-3
   vendor: xai
   tier: 1

@@ -240,6 +240,15 @@ class RegistryPipeline:
                 })
                 log.info("price_sync_new_model_detected", model_id=model_id)
 
+            # Overlay released_at from YAML for any model missing it in the DB spec.
+            # Runs silently whenever a new revision is being created (does not add change records).
+            for model_id in list(new_specs.keys()):
+                spec = new_specs[model_id]
+                if spec.released_at is None and model_id in yaml_by_id:
+                    yaml_released = yaml_by_id[model_id].released_at
+                    if yaml_released is not None:
+                        new_specs[model_id] = spec.model_copy(update={"released_at": yaml_released})
+
             if not changes:
                 log.info("price_sync_no_changes")
                 return None

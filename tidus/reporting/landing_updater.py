@@ -165,8 +165,31 @@ class LandingPageUpdater:
 
         today = date.today()
 
-        # Sort paid specs by blended cost descending for MODELS array + table
-        paid_specs.sort(key=lambda s: (s.input_price + s.output_price) / 2, reverse=True)
+        # Overlay released_at from YAML — DB spec_json may predate this field.
+        try:
+            from tidus.router.registry import ModelRegistry
+            from tidus.settings import get_settings
+            _yaml_reg = ModelRegistry.load(get_settings().models_config_path)
+            paid_specs = [
+                s.model_copy(update={"released_at": _yaml_reg.get(s.model_id).released_at})
+                if _yaml_reg.get(s.model_id) and _yaml_reg.get(s.model_id).released_at and s.released_at is None
+                else s
+                for s in paid_specs
+            ]
+        except Exception:
+            pass  # best-effort; sort falls back to model_id lex
+
+        # Sort by blended cost desc → release date desc → model_id desc.
+        # Using reverse=True on a tuple: all elements sorted descending,
+        # so higher ordinal (newer date) and higher model_id string both rank first.
+        paid_specs.sort(
+            key=lambda s: (
+                (s.input_price + s.output_price) / 2,
+                s.released_at.toordinal() if s.released_at else 0,
+                s.model_id,
+            ),
+            reverse=True,
+        )
 
         # Build the complete magazine HTML block
         magazine_html = self._build_magazine_html(
