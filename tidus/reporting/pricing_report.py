@@ -242,6 +242,24 @@ class PricingReport:
     html: str = field(default="", repr=False)
 
 
+def _rank_key(spec) -> tuple[float, int, str]:
+    """Sort key for ranking paid models in the report.
+
+    Returns ``(blended_cost, released_ord, model_id)``. Used with
+    ``sorted(..., reverse=True)`` so:
+      1. Higher blended cost ranks first.
+      2. On cost tie, the more recently released model wins (so opus-4-7
+         outranks opus-4-6 at the same $15/M).
+      3. On date tie, higher model_id string wins — deterministic tiebreak.
+
+    Requires ``released_at`` to be populated on specs (applied via the YAML
+    overlay in :meth:`PricingReportGenerator.generate` before sorting).
+    """
+    blended = (spec.input_price + spec.output_price) / 2
+    released_ord = spec.released_at.toordinal() if spec.released_at else 0
+    return (blended, released_ord, spec.model_id)
+
+
 class PricingReportGenerator:
     """Generates Tidus AI Model Latest Pricing Report from registry revisions."""
 
@@ -298,6 +316,20 @@ class PricingReportGenerator:
                         base_specs[e.model_id] = ModelSpec.model_validate(e.spec_json)
                     except Exception:
                         continue
+
+        # Overlay released_at from YAML — DB spec_json may predate this field,
+        # and we rely on released_at as the tie-breaker for ranking (Opus 4.7
+        # above Opus 4.6 when they share the same $15/M blended cost).
+        try:
+            from tidus.router.registry import ModelRegistry
+            from tidus.settings import get_settings
+            _yaml_reg = ModelRegistry.load(get_settings().models_config_path)
+            for mid, spec in list(current_specs.items()):
+                y = _yaml_reg.get(mid)
+                if y and y.released_at and spec.released_at is None:
+                    current_specs[mid] = spec.model_copy(update={"released_at": y.released_at})
+        except Exception:
+            pass  # best-effort; ranking falls back to model_id lex
 
         # Load model descriptions for new-model intro cards
         descriptions = self._load_descriptions()
@@ -500,7 +532,7 @@ class PricingReportGenerator:
         ]
         paid_specs_md = sorted(
             (s for s in specs.values() if not s.is_local),
-            key=lambda s: (s.input_price + s.output_price) / 2,
+            key=_rank_key,
             reverse=True,
         )
         for rank, s in enumerate(paid_specs_md, start=1):
@@ -856,7 +888,7 @@ class PricingReportGenerator:
             [s for s in paid if int(s.tier) == 3],
             key=_blended,
         )
-        premium = sorted([s for s in paid if int(s.tier) == 1], key=_blended, reverse=True)
+        premium = sorted([s for s in paid if int(s.tier) == 1], key=_rank_key, reverse=True)
         if economy and premium:
             eco, prem = economy[0], premium[0]
             ratio = _blended(prem) / _blended(eco) if _blended(eco) > 0 else 0
@@ -883,7 +915,7 @@ class PricingReportGenerator:
             )
 
         # ── Full price table ───────────────────────────────────────────────────
-        paid_specs = sorted(paid, key=_blended, reverse=True)
+        paid_specs = sorted(paid, key=_rank_key, reverse=True)
         table_rows: list[str] = []
         for rank, s in enumerate(paid_specs, start=1):
             ctx_k  = s.max_context // 1000
