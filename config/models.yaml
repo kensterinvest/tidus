@@ -239,6 +239,32 @@ models:
   - llama4-scout-ollama
   last_price_check: '2026-04-03'
   last_health_check: null
+- model_id: claude-opus-4-7
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.005
+  output_price: 0.025
+  tokenizer: anthropic
+  latency_p50_ms: 2800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  - long_context
+  - summarization
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-4-6
+  - claude-sonnet-4-6
+  - gpt-4.1
+  last_price_check: '2026-04-17'
+  last_health_check: null
 - model_id: claude-opus-4-6
   vendor: anthropic
   tier: 1
