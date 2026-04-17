@@ -218,6 +218,64 @@ class TestEnforcerConcurrency:
         # Fresh period — should pass again
         assert await enforcer.can_spend("team-reset", None, 0.50) is True
 
+    async def test_concurrent_reserve_is_bounded_by_limit(self):
+        """20 concurrent reserve($0.10) on a $1.00 budget — at most 10 succeed.
+
+        Regression test for the can_spend → undo race fix (Fix 2): the new
+        `reserve()` method must atomically check-and-hold the reservation so
+        that concurrent callers cannot all pass.
+        """
+        policies = [_policy("reserve-p", "team-reserve", limit_usd=1.00)]
+        enforcer = BudgetEnforcer(policies, SpendCounter())
+
+        results = await asyncio.gather(*[
+            enforcer.reserve("team-reserve", None, 0.10) for _ in range(20)
+        ])
+
+        passed = sum(results)
+        assert passed == 10, (
+            f"Expected exactly 10 reservations to fit $1.00 limit, got {passed}"
+        )
+
+    async def test_refund_releases_reservation(self):
+        """Reserve then refund leaves the counter unchanged (modulo floats)."""
+        policies = [_policy("refund-p", "team-refund", limit_usd=1.00)]
+        counter = SpendCounter()
+        enforcer = BudgetEnforcer(policies, counter)
+
+        assert await enforcer.reserve("team-refund", None, 0.30) is True
+        assert await counter.get("team-refund", None) == pytest.approx(0.30)
+
+        await enforcer.refund("team-refund", None, 0.30)
+        assert await counter.get("team-refund", None) == pytest.approx(0.0)
+
+    async def test_deduct_with_reserved_adjusts_by_diff(self):
+        """deduct(actual, reserved_usd=estimated) settles counter at actual."""
+        policies = [_policy("settle-p", "team-settle", limit_usd=10.0)]
+        counter = SpendCounter()
+        enforcer = BudgetEnforcer(policies, counter)
+
+        await enforcer.reserve("team-settle", None, 0.10)
+        assert await counter.get("team-settle", None) == pytest.approx(0.10)
+
+        await enforcer.deduct("team-settle", None, 0.08, reserved_usd=0.10)
+        assert await counter.get("team-settle", None) == pytest.approx(0.08)
+
+    async def test_can_spend_is_pure_check_no_side_effects(self):
+        """can_spend must no longer mutate counter state (fixes can_spend → undo race)."""
+        policies = [_policy("pure-p", "team-pure", limit_usd=1.00)]
+        counter = SpendCounter()
+        enforcer = BudgetEnforcer(policies, counter)
+
+        before = await counter.get("team-pure", None)
+        await enforcer.can_spend("team-pure", None, 0.50)
+        after = await counter.get("team-pure", None)
+
+        assert before == after, (
+            "can_spend() must be a pure check; it must not reserve or undo "
+            f"(before={before}, after={after})"
+        )
+
     async def test_high_concurrency_no_negative_totals(self):
         """Under very high concurrency the counter must never go negative."""
         counter = SpendCounter()

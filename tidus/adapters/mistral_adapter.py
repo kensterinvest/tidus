@@ -11,7 +11,14 @@ from collections.abc import AsyncIterator
 
 import structlog
 
-from tidus.adapters.base import AbstractModelAdapter, AdapterResponse, register_adapter
+from tidus.adapters.base import (
+    AbstractModelAdapter,
+    AdapterError,
+    AdapterResponse,
+    register_adapter,
+    translate_vendor_exception,
+    with_retry,
+)
 from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
@@ -42,12 +49,26 @@ class MistralAdapter(AbstractModelAdapter):
 
     async def complete(self, model_id: str, task) -> AdapterResponse:
         client = _get_client()
+        settings = get_settings()
+
+        async def do_call():
+            try:
+                return await client.chat.complete_async(
+                    model=model_id,
+                    messages=task.messages,
+                    max_tokens=task.estimated_output_tokens,
+                )
+            except AdapterError:
+                raise
+            except Exception as exc:
+                raise translate_vendor_exception(exc) from exc
 
         start = time.monotonic()
-        response = await client.chat.complete_async(
-            model=model_id,
-            messages=task.messages,
-            max_tokens=task.estimated_output_tokens,
+        response = await with_retry(
+            do_call,
+            timeout_seconds=settings.adapter_timeout_seconds,
+            max_attempts=settings.adapter_max_retries,
+            base_delay_seconds=settings.adapter_base_delay_seconds,
         )
         latency_ms = (time.monotonic() - start) * 1000
 

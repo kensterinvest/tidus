@@ -65,19 +65,32 @@ class ModelSelector:
 
     # ── Public API ────────────────────────────────────────────────────────────
 
-    async def select(self, task: TaskDescriptor) -> RoutingDecision:
+    async def select(
+        self,
+        task: TaskDescriptor,
+        exclude_model_ids: frozenset[str] | None = None,
+    ) -> RoutingDecision:
         """Run all 5 stages and return the best RoutingDecision.
 
         If a preferred_model_id is set on the task and it survives all stages,
         it is returned directly (bypasses scoring but still enforces budget).
 
+        Args:
+            task: The task descriptor to route.
+            exclude_model_ids: Models to skip in Stage 1 — used by the fallback
+                path in `/complete` to re-run the full pipeline excluding the
+                model that just failed, so privacy/budget/guardrails still apply.
+
         Raises ModelSelectionError if no model survives.
         """
         all_rejections: list[RoutingDecision] = []
+        exclude = exclude_model_ids or frozenset()
 
         # ── Stage 1 & 2: Hard constraints + guardrails ─────────────────────
-        # Use list_all() so disabled/deprecated models appear in rejection log
-        candidates = self._registry.list_all()
+        # Use list_all() so disabled/deprecated models appear in rejection log.
+        candidates = [
+            c for c in self._registry.list_all() if c.model_id not in exclude
+        ]
         eligible, rejected = self._matcher.filter(candidates, task)
         all_rejections.extend(rejected)
 

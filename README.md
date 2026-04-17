@@ -146,7 +146,7 @@ Response:
 
 See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/v1/complete` (route + execute).
 
-## Supported Models (53 total across 11 vendors, prices verified 2026-04-03)
+## Supported Models (55 total, 45 enabled across 13 vendors — prices verified 2026-04-17)
 
 **8 production adapters live. 5 adapters in progress (models registered, adapters coming).**
 
@@ -169,14 +169,16 @@ See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/
 
 ## Pricing
 
-Tidus is **free** for individuals and small organisations (< 1,000 AI users). Enterprise pricing applies at scale.
+Tidus is priced to pay for itself — the AI cost savings Tidus delivers typically exceed the subscription fee within the first day of use.
 
-| Tier | Users | Price | Key Features |
-|------|-------|-------|-------------|
-| **Community (Free)** | < 1,000 AI users | **Free** | Full 5-stage routing, MCP integration, basic dashboard |
-| **Enterprise** | 1,000+ AI users | Contact sales | On-prem/VPC, SSO/OIDC, RBAC, advanced caching, SLA, data residency, audit logs |
+| Tier | Price | Requests/month | Key Features |
+|------|-------|---------------|-------------|
+| **Community** | Free | 10,000 | 5-stage routing, single team, no budget enforcement |
+| **Pro** | $99/month | 100,000 | Budget enforcement + guardrails, dashboard, multi-team |
+| **Business** | $499/month | 1,000,000 | MCP server, response caching (exact + semantic), audit logs, Docker |
+| **Enterprise** | from $2,000/month | Unlimited | SSO/OIDC + RBAC (live), on-prem / data residency (roadmap), SLA, dedicated support |
 
-See [docs/pricing.md](docs/pricing.md) for full tier details, or the [How to Use guide](docs/how-to-use.md#15-enterprise-tier) for enterprise onboarding steps.
+See [docs/pricing.md](docs/pricing.md) for full tier details and ROI calculations, or the [How to Use guide](docs/how-to-use.md#15-enterprise-tier) for enterprise onboarding steps.
 
 ## Get Started
 

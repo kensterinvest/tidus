@@ -1,16 +1,21 @@
 # Enterprise: SSO / OIDC Integration
 
-*This feature is on the roadmap for the Enterprise tier.*
+*Available in the Enterprise tier and shipped with Tidus v1.1.0 (Phase 8).*
 
-Contact lapkei01@gmail.com to discuss early access or to share requirements.
+Set `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, and the claim mapping in `.env` —
+see `deployment.md` for the step-by-step guide. Leave the issuer empty to
+run in the built-in dev fallback (all requests are treated as an admin on
+`team-dev`, explicitly blocked when `ENVIRONMENT=production`).
 
 ---
 
-## Design Intent
+## How It Works
 
-Tidus will support SSO via any OIDC-compliant identity provider, allowing enterprises to authenticate Tidus API access using their existing identity infrastructure — no separate Tidus credentials needed.
+Tidus validates Bearer JWTs against any OIDC-compliant identity provider.
+A request missing a valid token in production is rejected with HTTP 401;
+tokens missing the configured team or role claim are rejected with HTTP 403.
 
-### Supported Identity Providers (Planned)
+### Supported Identity Providers
 
 | Provider | Protocol | Notes |
 |----------|----------|-------|

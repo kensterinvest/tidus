@@ -130,8 +130,14 @@ class PriceConsensus:
                     "This indicates a systemic data quality problem — manual investigation required."
                 )
 
-            # Pick highest-confidence non-outlier
-            winner = max(non_outliers, key=lambda q: q.source_confidence)
+            # Pick highest-confidence non-outlier.
+            # Tie-breaker (Fix 8): prefer the more recent effective_date, then
+            # the more recent retrieved_at. Older feeds with stale prices lose
+            # to fresher feeds even when confidence scores are identical.
+            winner = max(
+                non_outliers,
+                key=lambda q: (q.source_confidence, q.effective_date, q.retrieved_at),
+            )
             winners[model_id] = winner
             log.debug(
                 "consensus_winner",

@@ -45,11 +45,19 @@ AI_TRAFFIC_ROLES: frozenset[Role] = frozenset({
 
 
 def _has_role(actual: str, *required: Role) -> bool:
-    """Return True if the actual role satisfies any of the required roles."""
+    """Return True if the actual role satisfies any of the required roles.
+
+    Admin is a super-role: satisfies ANY required list, even if not listed
+    explicitly. This is defense-in-depth so that callsites that forget to
+    include ``Role.admin`` in their ``require_role`` list do not accidentally
+    deny admin users.
+    """
     try:
         actual_role = Role(actual)
     except ValueError:
         return False
+    if actual_role is Role.admin:
+        return True
     return actual_role in required
 
 

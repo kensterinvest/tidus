@@ -42,6 +42,68 @@ def make_quote(
 
 # ── Single source ─────────────────────────────────────────────────────────────
 
+def test_recency_tie_breaker_on_equal_confidence():
+    """Fix 8 regression: when two sources tie on confidence, the more recent
+    effective_date wins. Commit f5be789 claimed this but the code took the
+    first by lexical order via max()."""
+    older = PriceQuote(
+        model_id="gpt-4o",
+        input_price=5.0,
+        output_price=15.0,
+        cache_read_price=0.0,
+        cache_write_price=0.0,
+        currency="USD",
+        effective_date=date(2026, 1, 1),
+        retrieved_at=datetime(2026, 1, 2, tzinfo=UTC),
+        source_name="old_source",
+        source_confidence=0.7,
+    )
+    newer = PriceQuote(
+        model_id="gpt-4o",
+        input_price=5.0,   # same price, same confidence → tie
+        output_price=15.0,
+        cache_read_price=0.0,
+        cache_write_price=0.0,
+        currency="USD",
+        effective_date=date(2026, 4, 17),
+        retrieved_at=datetime(2026, 4, 17, tzinfo=UTC),
+        source_name="new_source",
+        source_confidence=0.7,
+    )
+    result = PriceConsensus().resolve([older, newer])
+    winner = result.quotes["gpt-4o"]
+    assert winner.source_name == "new_source", (
+        f"Expected recency tie-breaker to pick 'new_source', got {winner.source_name!r}"
+    )
+
+
+def test_recency_tie_breaker_uses_retrieved_at_when_effective_date_ties():
+    """If effective_date also ties, prefer the more recently retrieved quote."""
+    earlier = PriceQuote(
+        model_id="claude-opus-4-7",
+        input_price=5.0, output_price=25.0,
+        cache_read_price=0.0, cache_write_price=0.0,
+        currency="USD",
+        effective_date=date(2026, 4, 17),
+        retrieved_at=datetime(2026, 4, 17, 6, 0, 0, tzinfo=UTC),
+        source_name="morning_fetch",
+        source_confidence=0.8,
+    )
+    later = PriceQuote(
+        model_id="claude-opus-4-7",
+        input_price=5.0, output_price=25.0,
+        cache_read_price=0.0, cache_write_price=0.0,
+        currency="USD",
+        effective_date=date(2026, 4, 17),
+        retrieved_at=datetime(2026, 4, 17, 18, 0, 0, tzinfo=UTC),
+        source_name="evening_fetch",
+        source_confidence=0.8,
+    )
+    result = PriceConsensus().resolve([earlier, later])
+    winner = result.quotes["claude-opus-4-7"]
+    assert winner.source_name == "evening_fetch"
+
+
 def test_single_source_accepted_with_reduced_confidence():
     q = make_quote(source_confidence=0.7)
     result = PriceConsensus().resolve([q])

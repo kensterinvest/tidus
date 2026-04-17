@@ -5,6 +5,87 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.2.0] — 2026-04-17 — Comprehensive Review Hardening
+
+### Highlights
+
+- **Cross-tenant data-leak plugs** — 4 endpoints (`/dashboard/summary`, `/guardrails/sessions`, `/budgets`) now enforce team-scoped access for non-admin/non-team_manager callers
+- **Fallback path now safe** — `/complete` fallback re-runs the full 5-stage selector (privacy / budget / guardrails all re-applied) instead of short-circuiting to `spec.fallbacks[0]`
+- **Budget reservation pattern** — `BudgetEnforcer.reserve()` atomically holds estimated cost across the adapter call; `deduct(..., reserved_usd=)` settles by delta. Eliminates the check-then-undo race
+- **Redis SpendCounter backend** — `RedisSpendCounter` with Lua-backed `check_and_add` for multi-worker / multi-pod deployments. Picked automatically when `REDIS_URL` is set
+- **Server-side agent-depth tracking** — `agent_depth > 0` now requires a real `agent_session_id`; server advances depth via `AgentGuard`. Client-supplied depths are no longer trusted (breaking)
+- **Adapter hardening** — all 8 vendor adapters now use a shared `AdapterError` hierarchy, per-call timeout, and exponential backoff on transient failures. Auth/client errors fail fast
+- **ExactCache wired into `/complete`** — response cache active for non-confidential tasks; new `cache_hit: bool` field on `CompleteResponse`
+- **Audit on every error path** — `/complete` records an audit entry on each failure exit (SOC2/ISO friendly)
+
+### Added
+
+- `tidus/cost/counter.py::RedisSpendCounter` — Redis-backed counter with Lua `check_and_add`, `reset_workflow` via SCAN
+- `tidus/budget/enforcer.py::reserve` and `refund` — reservation lifecycle; `deduct` accepts optional `reserved_usd` for delta-settle
+- `tidus/adapters/base.py` — `AdapterError`, `AdapterAuthError`, `AdapterRateLimitError`, `AdapterTimeoutError`, `AdapterServerError`, `AdapterClientError`; `with_retry()` helper; `translate_vendor_exception()` for SDK-to-hierarchy mapping
+- `tidus/api/deps.py::get_exact_cache` — FastAPI dependency exposing the shared `ExactCache` singleton
+- `CompleteResponse.cache_hit: bool` — tells callers whether the response came from cache
+- New settings: `cache_enabled`, `cache_ttl_seconds`, `cache_max_size`, `adapter_timeout_seconds`, `adapter_max_retries`, `adapter_base_delay_seconds`, `redis_spend_counter_prefix`
+- `SpendCounter.reset_workflow(workflow_id)` — reset all `(team, workflow_id)` counters in one pass
+- `ModelSelector.select(task, exclude_model_ids=...)` — optional parameter used by the `/complete` fallback re-selection
+- Description entries for `claude-opus-4-7`, `grok-4`, `qwen-flash`
+- `docs/enterprise/sso.md`, `docs/enterprise/rbac.md` now document shipped behavior (were "Roadmap")
+
+### Changed
+
+- `BudgetEnforcer.can_spend()` is now a **pure check** (no state mutation). The atomic reserve-and-hold moved to the new `reserve()` method
+- `BudgetEnforcer.deduct(team, wf, amount_usd, *, reserved_usd=None)` — new kwarg; legacy callers that don't reserve still work
+- `resolve_caller_id()` — JWT sub now overrides a mismatching `X-Titus-User-Id` header (was: header blindly trusted); impersonation attempts logged as `metering_header_impersonation_attempt`
+- RBAC `_has_role()` — **admin is a super-role**: satisfies every required-role list even when not explicitly listed (defense in depth)
+- `PriceConsensus` tie-breaker — ties on `source_confidence` now break by `effective_date` then `retrieved_at` (commit f5be789 promised this; now actually implemented)
+- `RegistryPipeline.run_price_sync_cycle` — models missing from `models.yaml` are **retired** (removed from the new revision) instead of persisting forever
+- `BudgetEnforcer.reset_period()` — workflow-scoped policies now reset all `(team, workflow_id)` counters via `counter.reset_workflow(scope_id)` instead of mis-keying `(workflow_id, None)`
+- Anthropic adapter — joins **all** text blocks in a response (previously dropped every block except the first)
+- Google adapter — reads the real `finish_reason` from the candidate instead of hardcoding `"stop"` (`safety`/`max_tokens` stops are now reported correctly)
+- MCP server — singletons initialized exactly once per process via `_ensure_initialized`; `SpendCounter` and `SessionStore` identity preserved across tool calls
+- README pricing table now mirrors `docs/pricing.md` 4-tier ladder (Community / Pro / Business / Enterprise)
+- Magazine (`index.html`) — model count 55 (was 53), vendor count 13 (was 12), adapter list corrected (`Moonshot`, `Ollama` added; `Groq`, `Together AI` removed — they were listed but have no live adapter), per-vendor counts refreshed
+- Model count corrections across docs (`README.md`, `docs/pricing.md`, `docs/selection-algorithm.md`) and descriptions (Opus 4.6 $5/$25, Haiku 4.5 $1/$5, DeepSeek-V3 $0.32/$0.89)
+
+### Fixed
+
+- `/complete` fallback path bypassed Stages 1–5 of the selector — confidential tasks could land on non-local fallback models. Fixed by re-running `selector.select(..., exclude_model_ids=...)`
+- `BudgetEnforcer.can_spend → undo → deduct` race — concurrent requests could all pass the check and collectively overrun the limit. Fixed by the reservation pattern
+- `agent_depth` was trusted from the request body — clients could claim depth=0 indefinitely and bypass recursion limits. Now validated against `AgentGuard`/`SessionStore` server-side
+- `/dashboard/summary`: no team filter on cost records / budget rows / sessions. `read_only`/`service_account` callers could see every team's spend history
+- `/guardrails/sessions/{id}` GET/DELETE: no team-ownership check; a caller who knew a session ID could read or terminate another team's agent session
+- `/guardrails/sessions` POST and `/budgets` POST: accepted `team_id`/`scope_id` from the request body with no validation against the caller's JWT team
+- `X-Titus-User-Id` header trusted without JWT verification — any caller could impersonate any user_id in the metering tables
+- All 8 adapters collapsed every upstream failure to bare `Exception`. Zero timeouts on cloud calls (only Ollama had one). No retry/backoff. Auth errors and rate-limits were indistinguishable
+- All `/complete` error paths raised `HTTPException` without an audit-log entry
+- MCP server rebuilt `SpendCounter` + `SessionStore` on every tool call — budget state never accumulated across an MCP session
+- `pricing_report` generator emitted `Tier ModelTier.mid` (enum repr) instead of `Tier 2` in the "New Models" block
+- Duplicate `How It Works` nav entry in `index.html`
+- Stale "Roadmap" labels on shipped SSO/RBAC features in 4 doc files
+- Model count drift across README (53 → 55), `docs/pricing.md` (53 → 55), `docs/selection-algorithm.md` (53 → 55)
+
+### Removed
+
+- `www/` directory — stale first-iteration SaaS marketing page that contradicted the real product (`$99/mo` tier, `api.tidus.ai`, `hello@tidus.ai`, `github.com/tidusai/tidus`). The root `index.html` is the single source of truth for the landing page
+
+### Breaking
+
+- `POST /api/v1/complete`: `agent_depth > 0` now requires a valid `agent_session_id` from `POST /api/v1/guardrails/sessions`. Requests omitting the session id → HTTP 400
+- `BudgetEnforcer.can_spend()` no longer mutates state. Any code relying on the old reserve-and-undo behavior needs to migrate to the new `reserve()` method
+- Callers that passed `team_id`/`scope_id` for other teams on `/guardrails/sessions` POST, `/budgets` POST, or GET-ed other teams' session IDs on `/guardrails/sessions/{id}` now receive HTTP 403 / 404
+
+### Tests
+
+- +82 new regression tests (total 569, was 487) covering every fix above
+- New test files: `test_adapter_base.py`, `test_adapter_integration.py`, `test_cross_team_api_isolation.py`, `test_rbac.py`, `test_redis_spend_counter.py`
+- `fakeredis[lua]` added as a dev-group dep so Redis atomicity tests run without a Redis daemon
+
+### Dependencies
+
+- **Added**: `redis>=5.0.0` (runtime), `fakeredis[lua]>=2.20.0` (dev group)
+
+---
+
 ## [v1.1.0] — 2026-04-06 — Multi-Source Self-Healing Registry
 
 ### Highlights

@@ -449,9 +449,12 @@ class PricingReportGenerator:
             ]
             for m in report.new_models:
                 caps = ", ".join(m.capabilities)
+                # m.tier may be a ModelTier enum or already an int — normalise so the
+                # generated Markdown always shows "Tier 2" not "Tier ModelTier.mid".
+                tier_int = int(m.tier.value) if hasattr(m.tier, "value") else int(m.tier)
                 lines.append(
                     f"| `{m.model_id}` | {_VENDOR_NAMES.get(m.vendor, m.vendor)} | "
-                    f"Tier {m.tier} | ${m.input_usd_per_1m:.3f} | ${m.output_usd_per_1m:.3f} | "
+                    f"Tier {tier_int} | ${m.input_usd_per_1m:.3f} | ${m.output_usd_per_1m:.3f} | "
                     f"{m.max_context_k}K | {caps} |"
                 )
             lines += [""]
@@ -736,8 +739,9 @@ class PricingReportGenerator:
                     if desc.get("context") else ""
                 )
                 caps_str = ", ".join(m.capabilities[:3]) if m.capabilities else ""
+                tier_int = int(m.tier.value) if hasattr(m.tier, "value") else int(m.tier)
                 meta = (
-                    f'<span class="tier-tag">Tier {m.tier}</span>'
+                    f'<span class="tier-tag">Tier {tier_int}</span>'
                     f'<span class="meta-tag">{m.max_context_k}K ctx</span>'
                 )
                 if caps_str:

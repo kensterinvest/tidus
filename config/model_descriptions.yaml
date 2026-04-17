@@ -7,14 +7,23 @@
 
 models:
   # ── Anthropic ──────────────────────────────────────────────────────────────
+  claude-opus-4-7:
+    tagline: "Anthropic's latest frontier model — Opus 4.7 succeeds 4.6 as the top-tier Claude with refined reasoning and the same aggressive pricing."
+    strengths:
+      - "Best-in-class long-horizon reasoning and analysis"
+      - "1M token context window — entire codebases in one prompt"
+      - "Improved instruction-following consistency over 4.6"
+      - "Same $5/$25 per 1M pricing as 4.6 — no premium for the upgrade"
+    context: "Claude Opus 4.7 (released 2026-04-17) is Anthropic's flagship reasoning model. Priced identically to Opus 4.6 at $5/$25 per 1M tokens — a dramatic 67% cut from the 4.6 launch pricing of $15/$75. The preferred choice for critical/complex workloads where Tidus's scoring is willing to pay for tier-1 quality."
+
   claude-opus-4-6:
-    tagline: "Anthropic's flagship frontier model — the gold standard for complex reasoning, deep analysis, and high-stakes tasks."
+    tagline: "Anthropic's previous-generation frontier — still a strong fallback for Opus-tier tasks."
     strengths:
       - "Long-form document analysis and synthesis"
       - "Multi-step reasoning and research workflows"
       - "Nuanced instruction following with minimal hallucination"
       - "1M token context window — fit an entire codebase"
-    context: "Opus 4.6 is Anthropic's highest-capability model. At $15/$75 per 1M tokens it is positioned as a premium reasoning engine, not an everyday workhorse."
+    context: "Opus 4.6 is now listed as a fallback behind Opus 4.7. Repriced from $15/$75 to $5/$25 per 1M tokens in April 2026 to match 4.7, so running it as a backup does not incur a price penalty."
 
   claude-sonnet-4-6:
     tagline: "Anthropic's workhorse — strikes the best balance of capability and cost in the Claude family."
@@ -29,7 +38,7 @@ models:
     tagline: "Anthropic's fastest and most affordable Claude — purpose-built for high-volume, latency-sensitive workloads."
     strengths:
       - "Sub-second response times for chat and classification"
-      - "Cost-efficient at $0.80/$4 per 1M tokens"
+      - "Cost-efficient at $1/$5 per 1M tokens"
       - "200K context — handles most enterprise documents"
       - "Strong at routing, triage, and pre-processing tasks"
     context: "Haiku 4.5 is designed to replace GPT-3.5-level tasks at a fraction of the cost while maintaining Anthropic's safety standards."
@@ -171,7 +180,7 @@ models:
     tagline: "DeepSeek's general-purpose model — GPT-4-class quality at developing-world pricing."
     strengths:
       - "Strong coding, analysis, and instruction following"
-      - "128K context at $0.27/$0.89/1M — 10× cheaper than GPT-4.1"
+      - "128K context at $0.32/$0.89/1M — ~6× cheaper than GPT-4.1"
       - "Open-weights with commercial licence"
     context: "DeepSeek-V3 is widely considered the best price-performance model for general tasks. Its release triggered a significant repricing wave across OpenAI and Google offerings."
 
@@ -184,6 +193,15 @@ models:
     context: "DeepSeek-V4 extends the V3 architecture with refinements announced in Q1 2026. Pricing details are still being verified."
 
   # ── xAI ────────────────────────────────────────────────────────────────────
+  grok-4:
+    tagline: "xAI's latest flagship — Grok-4 succeeds Grok-3 with improved reasoning and the same real-time X data access."
+    strengths:
+      - "Real-time world knowledge via X (Twitter) integration"
+      - "Stronger reasoning than Grok-3 on technical and multi-step tasks"
+      - "128K context window"
+      - "Targets Claude Opus / GPT-4.1 tier on quality"
+    context: "Grok-4 is xAI's premium 2026 release, sitting above grok-3-fast in Tidus's tier scoring. Its key differentiator remains real-time X platform data — useful for news-aware analysis and trend detection — while reasoning quality has caught up with the established frontier models."
+
   grok-3:
     tagline: "xAI's flagship — trained on real-time X (Twitter) data with a wit that sets it apart."
     strengths:
@@ -273,6 +291,14 @@ models:
       - "Reliable at standard chat, coding, and extraction tasks"
       - "Strong multilingual including Chinese, Japanese, Korean"
     context: "Qwen-Plus was repriced from $3 to $0.26/1M — a 91% cut — making it the lowest-cost non-trivial model in the tracked catalog for general-purpose tasks."
+
+  qwen-flash:
+    tagline: "Alibaba's fastest Qwen — commodity-price tier aimed at classification and high-volume extraction."
+    strengths:
+      - "Extremely low per-token cost — below gemini-2.0-flash in some configurations"
+      - "Sub-second latency for routing, tagging, and pre-processing"
+      - "Strong on Chinese/multilingual classification"
+    context: "Qwen-Flash is Alibaba's economy tier for Qwen, positioned directly against gemini-2.0-flash and gpt-4.1-nano. In Tidus's scoring it's a natural pick for simple-complexity tasks where cost dominates."
 
   # ── Perplexity ─────────────────────────────────────────────────────────────
   sonar-pro:

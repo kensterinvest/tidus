@@ -18,12 +18,37 @@ from tidus.metering.service import (
 # ── resolve_caller_id ──────────────────────────────────────────────────────────
 
 class TestResolveCallerId:
-    def test_header_takes_priority(self):
+    def test_header_matching_authenticated_sub_accepted(self):
+        """Matching header + authenticated sub: both point to the same identity."""
         caller_id, source = resolve_caller_id(
             user_id_header="alice",
-            api_key_sub="svc-account",
+            api_key_sub="alice",
             client_ip="10.0.0.1",
             user_agent="python-httpx/0.27",
+        )
+        assert caller_id == "alice"
+        # Either "header" or "api_key" is acceptable — the identity is the same.
+
+    def test_header_ignored_when_it_does_not_match_authenticated_sub(self):
+        """Fix 12 regression: x-titus-user-id cannot impersonate when JWT sub is present."""
+        caller_id, source = resolve_caller_id(
+            user_id_header="alice",     # attacker-claimed identity
+            api_key_sub="svc-account",  # actual authenticated identity
+            client_ip="10.0.0.1",
+            user_agent="python-httpx/0.27",
+        )
+        assert caller_id == "svc-account", (
+            "Impersonation via x-titus-user-id must be blocked — caller_id must be the JWT sub"
+        )
+        assert source == "api_key"
+
+    def test_header_accepted_when_unauthenticated(self):
+        """Without a JWT sub, the header is the best available identity."""
+        caller_id, source = resolve_caller_id(
+            user_id_header="alice",
+            api_key_sub=None,
+            client_ip="10.0.0.1",
+            user_agent="curl/8.0",
         )
         assert caller_id == "alice"
         assert source == "header"

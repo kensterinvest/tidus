@@ -103,6 +103,57 @@ class TestBudgetPeriodReset:
         count = await enforcer.reset_period(BudgetPeriod.monthly)
         assert count == 0
 
+    async def test_workflow_scoped_reset_clears_workflow_counters(self):
+        """Fix 9 regression: resetting a workflow-period policy must clear the
+        (team_id, workflow_id) counter — not `(workflow_id, None)` which is
+        a non-existent team counter."""
+        counter = SpendCounter()
+        wf_policy = BudgetPolicy(
+            policy_id="wf-reset",
+            scope=BudgetScope.workflow,
+            scope_id="wf-batch",
+            period=BudgetPeriod.daily,
+            limit_usd=1.0,
+            warn_at_pct=0.80,
+            hard_stop=True,
+        )
+        enforcer = BudgetEnforcer([wf_policy], counter)
+
+        # Spend on two teams using the same workflow
+        await enforcer.deduct("team-a", "wf-batch", 0.30)
+        await enforcer.deduct("team-b", "wf-batch", 0.25)
+
+        count = await enforcer.reset_period(BudgetPeriod.daily)
+        assert count == 1
+
+        # Both team-level workflow counters must be zero
+        assert await counter.get("team-a", "wf-batch") == pytest.approx(0.0)
+        assert await counter.get("team-b", "wf-batch") == pytest.approx(0.0)
+
+    async def test_workflow_reset_does_not_touch_team_counters(self):
+        """Resetting a workflow policy must not wipe unrelated team counters."""
+        counter = SpendCounter()
+        wf_policy = BudgetPolicy(
+            policy_id="wf-iso",
+            scope=BudgetScope.workflow,
+            scope_id="wf-iso-flow",
+            period=BudgetPeriod.daily,
+            limit_usd=1.0,
+            warn_at_pct=0.80,
+            hard_stop=True,
+        )
+        enforcer = BudgetEnforcer([wf_policy], counter)
+
+        await enforcer.deduct("team-a", None, 0.50)  # team-level only
+        await enforcer.deduct("team-a", "wf-iso-flow", 0.20)  # touches both
+        # After setup: team-a/None = 0.70, team-a/wf-iso-flow = 0.20
+
+        await enforcer.reset_period(BudgetPeriod.daily)
+
+        # Workflow counter reset; team counter untouched (still 0.70)
+        assert await counter.get("team-a", "wf-iso-flow") == pytest.approx(0.0)
+        assert await counter.get("team-a", None) == pytest.approx(0.70)
+
     async def test_reset_is_idempotent(self):
         """Calling reset twice in a row must not error and counter stays at 0."""
         counter = SpendCounter()

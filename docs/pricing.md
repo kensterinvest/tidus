@@ -19,7 +19,7 @@ Tidus is priced to pay for itself. At any meaningful request volume, the AI cost
 
 ### Community (Free)
 - `POST /api/v1/route` — full 5-stage model selection
-- 53-model registry across 12 vendors, prices verified 2026-04-17
+- 55-model registry (45 enabled) across 13 vendors, prices verified 2026-04-17
 - REST API with Swagger UI
 - Single team, no budget enforcement
 - Best for: developers evaluating Tidus, single-project use
@@ -86,11 +86,12 @@ All features described above are available in v1.0.0-community:
 |---------|------|--------|
 | 5-stage model routing | Community | ✅ Live |
 | `/api/v1/complete` (route + execute) | Community | ✅ Live |
-| 53-model registry (11 vendors, prices verified 2026-04-03) | Community | ✅ Live |
+| 55-model registry, 45 enabled (13 vendors, prices verified 2026-04-17) | Community | ✅ Live |
 | Budget enforcement + guardrails | Pro | ✅ Live |
 | Dashboard at `/dashboard/` | Pro | ✅ Live |
 | Response caching (exact + semantic) | Business | ✅ Live |
 | MCP server (`tidus-mcp`) | Business | ✅ Live |
 | Docker Compose deployment | Business | ✅ Live |
 | Kubernetes + Helm charts | Business | ✅ Live |
-| On-prem, SSO/OIDC, RBAC | Enterprise | Roadmap |
+| SSO/OIDC, RBAC | Enterprise | ✅ Live |
+| On-prem, Data Residency | Enterprise | Roadmap |

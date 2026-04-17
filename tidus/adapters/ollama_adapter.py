@@ -9,13 +9,21 @@ Environment:
 
 from __future__ import annotations
 
+import json
 import time
 from collections.abc import AsyncIterator
 
 import httpx
 import structlog
 
-from tidus.adapters.base import AbstractModelAdapter, AdapterResponse, register_adapter
+from tidus.adapters.base import (
+    AbstractModelAdapter,
+    AdapterError,
+    AdapterResponse,
+    register_adapter,
+    translate_vendor_exception,
+    with_retry,
+)
 from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
@@ -38,13 +46,25 @@ class OllamaAdapter(AbstractModelAdapter):
             "options": {"num_predict": task.estimated_output_tokens},
         }
 
-        start = time.monotonic()
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            resp = await client.post(f"{base_url}/api/chat", json=payload)
-            resp.raise_for_status()
+        async def do_call():
+            try:
+                async with httpx.AsyncClient(timeout=120.0) as client:
+                    resp = await client.post(f"{base_url}/api/chat", json=payload)
+                    resp.raise_for_status()
+                    return resp.json()
+            except AdapterError:
+                raise
+            except Exception as exc:
+                raise translate_vendor_exception(exc) from exc
 
+        start = time.monotonic()
+        data = await with_retry(
+            do_call,
+            timeout_seconds=settings.adapter_timeout_seconds,
+            max_attempts=settings.adapter_max_retries,
+            base_delay_seconds=settings.adapter_base_delay_seconds,
+        )
         latency_ms = (time.monotonic() - start) * 1000
-        data = resp.json()
 
         message = data.get("message", {})
         content = message.get("content", "")
@@ -84,7 +104,6 @@ class OllamaAdapter(AbstractModelAdapter):
                 async for line in resp.aiter_lines():
                     if not line:
                         continue
-                    import json
                     data = json.loads(line)
                     chunk = data.get("message", {}).get("content", "")
                     if chunk:

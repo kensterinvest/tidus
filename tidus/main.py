@@ -115,7 +115,7 @@ def create_app() -> FastAPI:
             "Routes every AI request to the cheapest capable model, enforces budgets, "
             "and prevents runaway multi-agent loops."
         ),
-        version="1.1.0",
+        version="1.2.0",
         contact={"name": "Kenny Wong", "email": "lapkei01@gmail.com"},
         license_info={"name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0"},
         lifespan=lifespan,
@@ -158,7 +158,7 @@ def create_app() -> FastAPI:
             return RedirectResponse("/dashboard/")
         return {
             "service": "tidus",
-            "version": "1.1.0",
+            "version": "1.2.0",
             "description": "Enterprise AI Router — routes every request to the cheapest capable model",
             "links": {
                 "dashboard": "/dashboard/",

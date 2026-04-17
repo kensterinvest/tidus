@@ -61,6 +61,20 @@ class BudgetEnforcer:
         return None
 
     # ── Public API ────────────────────────────────────────────────────────────
+    #
+    # Budget enforcement uses a **reservation pattern** to avoid the
+    # check-then-commit race:
+    #
+    #     can_spend(amount)      — pure read: would this fit right now?
+    #     reserve(amount) → ok   — atomic check + hold; on True, the amount is
+    #                              counted against the budget until refund/deduct.
+    #     deduct(actual, reserved_usd=estimated)
+    #                            — settle the reservation at the actual cost;
+    #                              adjusts the counter by (actual - estimated).
+    #     refund(amount)         — release a reservation when the adapter failed.
+    #
+    # `deduct(amount)` without `reserved_usd` preserves the older "add actual
+    # directly" behavior used by tests and legacy callers.
 
     async def can_spend(
         self,
@@ -68,17 +82,50 @@ class BudgetEnforcer:
         workflow_id: str | None,
         amount_usd: float,
     ) -> bool:
-        """Return True if the estimated spend fits all applicable budget policies.
+        """Pure check — does ``amount_usd`` fit within all hard-stop policies?
 
-        Checks the team-level policy first, then the workflow-level policy if
-        one exists. Returns False as soon as any policy would be exceeded.
-
-        For policies with hard_stop=False, always returns True (warn-only mode).
+        Reads current counters and compares against limits without mutating
+        state. Used by the selector Stage 4 filter when iterating candidate
+        models; the actual enforcement happens at :meth:`reserve`.
 
         Example:
             ok = await enforcer.can_spend("team-eng", None, 0.005)
         """
         team_policy = self._team_policy(team_id)
+        if team_policy and team_policy.hard_stop:
+            current = await self._counter.get(team_id, None)
+            if current + amount_usd > team_policy.limit_usd:
+                return False
+        if workflow_id:
+            wf_policy = self._workflow_policy(workflow_id)
+            if wf_policy and wf_policy.hard_stop:
+                current = await self._counter.get(team_id, workflow_id)
+                if current + amount_usd > wf_policy.limit_usd:
+                    return False
+        return True
+
+    async def reserve(
+        self,
+        team_id: str,
+        workflow_id: str | None,
+        amount_usd: float,
+    ) -> bool:
+        """Atomically check all hard-stop policies AND reserve ``amount_usd``.
+
+        Returns True when every applicable hard-stop policy admitted the
+        reservation; the amount is held on the counter until :meth:`deduct`
+        (with ``reserved_usd``) or :meth:`refund` completes the lifecycle.
+
+        If reservation fails for any scope, any partial reservation for other
+        scopes is released before returning False.
+
+        Example:
+            if not await enforcer.reserve("team-eng", "wf-chat", 0.01):
+                raise HTTPException(402, "Budget exceeded")
+        """
+        team_policy = self._team_policy(team_id)
+        reserved_team = False
+
         if team_policy and team_policy.hard_stop:
             allowed, current = await self._counter.check_and_add(
                 team_id, None, amount_usd, team_policy.limit_usd
@@ -92,8 +139,7 @@ class BudgetEnforcer:
                     limit_usd=team_policy.limit_usd,
                 )
                 return False
-            # Undo the tentative deduction — deduct() will commit the real cost later
-            await self._counter.add(team_id, None, -amount_usd)
+            reserved_team = True
 
         if workflow_id:
             wf_policy = self._workflow_policy(workflow_id)
@@ -109,26 +155,62 @@ class BudgetEnforcer:
                         requested_usd=amount_usd,
                         limit_usd=wf_policy.limit_usd,
                     )
+                    if reserved_team:
+                        # roll back the team-level reservation
+                        await self._counter.add(team_id, None, -amount_usd)
                     return False
-                await self._counter.add(team_id, workflow_id, -amount_usd)
 
         return True
+
+    async def refund(
+        self,
+        team_id: str,
+        workflow_id: str | None,
+        amount_usd: float,
+    ) -> None:
+        """Release a reservation made by :meth:`reserve`.
+
+        Only scopes with hard-stop policies were reserved by ``reserve()``;
+        we mirror that contract here so the counter ends in the same state
+        it was in before the reservation.
+
+        Example:
+            await enforcer.refund("team-eng", "wf-chat", 0.01)
+        """
+        team_policy = self._team_policy(team_id)
+        if team_policy and team_policy.hard_stop:
+            await self._counter.add(team_id, None, -amount_usd)
+        if workflow_id:
+            wf_policy = self._workflow_policy(workflow_id)
+            if wf_policy and wf_policy.hard_stop:
+                await self._counter.add(team_id, workflow_id, -amount_usd)
 
     async def deduct(
         self,
         team_id: str,
         workflow_id: str | None,
         amount_usd: float,
+        *,
+        reserved_usd: float | None = None,
     ) -> None:
         """Commit actual spend after a successful model call.
 
-        Updates both the team-level and (if applicable) workflow-level counters.
-        Emits a warning log if any policy's warn_at_pct threshold is crossed.
+        If ``reserved_usd`` is given the counter was already credited with the
+        reservation, so we adjust by the delta ``amount_usd - reserved_usd``.
+        Without ``reserved_usd`` the full ``amount_usd`` is added (legacy
+        path used by tests and paths that did not call :meth:`reserve`).
+
+        Warning thresholds evaluated against the post-adjustment total.
 
         Example:
-            await enforcer.deduct("team-eng", "wf-chat", 0.0018)
+            await enforcer.deduct("team-eng", "wf-chat", 0.0048, reserved_usd=0.005)
         """
-        new_team_total = await self._counter.add(team_id, None, amount_usd)
+        if reserved_usd is None:
+            delta = amount_usd
+        else:
+            delta = amount_usd - reserved_usd
+
+        new_team_total = await self._counter.add(team_id, None, delta)
 
         team_policy = self._team_policy(team_id)
         if team_policy:
@@ -143,7 +225,7 @@ class BudgetEnforcer:
                 )
 
         if workflow_id:
-            new_wf_total = await self._counter.add(team_id, workflow_id, amount_usd)
+            new_wf_total = await self._counter.add(team_id, workflow_id, delta)
             wf_policy = self._workflow_policy(workflow_id)
             if wf_policy:
                 utilisation = new_wf_total / wf_policy.limit_usd
@@ -165,17 +247,25 @@ class BudgetEnforcer:
         Returns:
             The number of counters that were reset.
         """
+        target_period = BudgetPeriod(period) if isinstance(period, str) else period
         count = 0
         for policy in self._policies:
-            if policy.period == BudgetPeriod(period) if isinstance(period, str) else policy.period == period:
+            if policy.period != target_period:
+                continue
+            if policy.scope == BudgetScope.workflow:
+                # Workflow counters are keyed (team_id, workflow_id); reset
+                # across all teams that used this workflow.
+                await self._counter.reset_workflow(policy.scope_id)
+            else:
                 await self._counter.reset(policy.scope_id, None)
-                log.info(
-                    "budget_period_reset",
-                    policy_id=policy.policy_id,
-                    scope_id=policy.scope_id,
-                    period=str(period),
-                )
-                count += 1
+            log.info(
+                "budget_period_reset",
+                policy_id=policy.policy_id,
+                scope=policy.scope.value,
+                scope_id=policy.scope_id,
+                period=str(period),
+            )
+            count += 1
         if count:
             log.info("budget_period_reset_complete", reset_count=count, period=str(period))
         return count

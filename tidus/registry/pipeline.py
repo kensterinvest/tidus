@@ -170,11 +170,21 @@ class RegistryPipeline:
                 except Exception:
                     continue
 
+            # Compute retired set early so we can skip price evaluation for
+            # models that are about to be dropped anyway.
+            from tidus.router.registry import ModelRegistry
+            from tidus.settings import get_settings
+            yaml_registry = ModelRegistry.load(get_settings().models_config_path)
+            yaml_by_id = {s.model_id: s for s in yaml_registry.list_all()}
+            retired_ids = set(current_by_id.keys()) - set(yaml_by_id.keys())
+
             new_specs: dict[str, ModelSpec] = dict(current_by_id)  # start from current
             changes: list[dict] = []
             now = datetime.now(UTC)
 
             for model_id, spec in current_by_id.items():
+                if model_id in retired_ids:
+                    continue
                 if spec.is_local:
                     continue
                 quote = consensus.quotes.get(model_id)
@@ -215,10 +225,6 @@ class RegistryPipeline:
                 })
 
             # Also pick up new models: in models.yaml + price source, but not yet in DB.
-            from tidus.router.registry import ModelRegistry
-            from tidus.settings import get_settings
-            yaml_registry = ModelRegistry.load(get_settings().models_config_path)
-            yaml_by_id = {s.model_id: s for s in yaml_registry.list_all()}
             for model_id, quote in consensus.quotes.items():
                 if model_id in current_by_id or model_id not in yaml_by_id:
                     continue
@@ -239,6 +245,26 @@ class RegistryPipeline:
                     "detected_at": now,
                 })
                 log.info("price_sync_new_model_detected", model_id=model_id)
+
+            # ── Retirement: drop models that no longer exist in models.yaml ───
+            # Without this the DB accumulates stale entries forever; the review
+            # flagged this as a High-severity correctness bug in Fix 7.
+            for model_id in retired_ids:
+                old_spec = current_by_id[model_id]
+                new_specs.pop(model_id, None)
+                changes.append({
+                    "model_id": model_id,
+                    "field": "retired",
+                    "old_value": old_spec.input_price,
+                    "new_value": 0.0,
+                    "delta_pct": -100.0,
+                    "detected_at": now,
+                })
+                log.info(
+                    "price_sync_model_retired",
+                    model_id=model_id,
+                    reason="removed_from_yaml",
+                )
 
             # Overlay released_at from YAML for any model missing it in the DB spec.
             # Runs silently whenever a new revision is being created (does not add change records).

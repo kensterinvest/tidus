@@ -66,9 +66,18 @@ async def create_budget(
 ) -> BudgetPolicy:
     """Add a new budget policy to the in-memory registry.
 
+    Only admins may create budgets whose scope_id differs from the caller's
+    team_id. A team_manager can only manage their own team's (or workflow's)
+    budgets.
+
     This does NOT persist to budgets.yaml — it takes effect immediately
     for all subsequent routing decisions until the service restarts.
     """
+    if _auth.role != Role.admin.value and body.scope_id != _auth.team_id:
+        raise HTTPException(
+            status_code=403,
+            detail="Non-admin callers may only create budgets for their own team",
+        )
     policy = BudgetPolicy(
         policy_id=body.policy_id,
         scope=body.scope,

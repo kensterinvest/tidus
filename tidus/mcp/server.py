@@ -29,16 +29,39 @@ from tidus.utils.logging import configure_logging
 
 log = structlog.get_logger(__name__)
 
+# ── Lazy, once-only initialization ────────────────────────────────────────────
+# build_singletons() in api/deps.py creates a fresh SpendCounter + SessionStore
+# on every call, which means calling it per handler would wipe in-memory budget
+# and agent-session state between MCP tool invocations. We initialize exactly
+# once on first handler call, guarded by an asyncio.Lock to avoid the thundering
+# herd on concurrent first calls.
+
+_init_lock = asyncio.Lock()
+_initialized = False
+
+
+async def _ensure_initialized() -> None:
+    """Initialize DB tables and singletons exactly once per process."""
+    global _initialized
+    if _initialized:
+        return
+    async with _init_lock:
+        if _initialized:
+            return
+        from tidus.api.deps import build_singletons
+        from tidus.db.engine import create_tables
+        await create_tables()
+        await build_singletons()
+        _initialized = True
+
 
 async def _handle_route(args: dict) -> str:
     """Handle tidus_route_task — returns routing decision as JSON string."""
-    from tidus.api.deps import build_singletons, get_registry, get_selector
-    from tidus.db.engine import create_tables
+    from tidus.api.deps import get_registry, get_selector
     from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
     from tidus.router.selector import ModelSelectionError
 
-    await create_tables()
-    await build_singletons()
+    await _ensure_initialized()
     selector = get_selector()
     registry = get_registry()
 
@@ -77,13 +100,11 @@ async def _handle_route(args: dict) -> str:
 async def _handle_complete(args: dict) -> str:
     """Handle tidus_complete_task — routes + executes, returns content."""
     from tidus.adapters.adapter_factory import get_adapter
-    from tidus.api.deps import build_singletons, get_enforcer, get_registry, get_selector
-    from tidus.db.engine import create_tables
+    from tidus.api.deps import get_enforcer, get_registry, get_selector
     from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
     from tidus.router.selector import ModelSelectionError
 
-    await create_tables()
-    await build_singletons()
+    await _ensure_initialized()
     selector = get_selector()
     registry = get_registry()
     enforcer = get_enforcer()
@@ -141,11 +162,9 @@ async def _handle_complete(args: dict) -> str:
 
 async def _handle_budget_status(args: dict) -> str:
     """Handle tidus_get_budget_status."""
-    from tidus.api.deps import build_singletons, get_enforcer
-    from tidus.db.engine import create_tables
+    from tidus.api.deps import get_enforcer
 
-    await create_tables()
-    await build_singletons()
+    await _ensure_initialized()
     enforcer = get_enforcer()
     team_id = args["team_id"]
     status = await enforcer.status(team_id=team_id)
@@ -162,11 +181,9 @@ async def _handle_budget_status(args: dict) -> str:
 
 async def _handle_list_models(args: dict) -> str:
     """Handle tidus_list_models."""
-    from tidus.api.deps import build_singletons, get_registry
-    from tidus.db.engine import create_tables
+    from tidus.api.deps import get_registry
 
-    await create_tables()
-    await build_singletons()
+    await _ensure_initialized()
     registry = get_registry()
 
     enabled_only = args.get("enabled_only", False)

@@ -20,9 +20,13 @@ from pydantic import BaseModel
 
 from tidus.api.deps import get_enforcer, get_registry, get_session_store
 from tidus.auth.middleware import TokenPayload, get_current_user
+from tidus.auth.rbac import Role
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.guardrails.session_store import SessionStore
 from tidus.router.registry import ModelRegistry
+
+# Roles that may observe other teams' dashboard data.
+_CROSS_TEAM_ROLES = frozenset({Role.admin.value, Role.team_manager.value})
 
 log = structlog.get_logger(__name__)
 
@@ -94,8 +98,8 @@ _FALLBACK_INPUT_PRICE = 0.005
 _FALLBACK_OUTPUT_PRICE = 0.025
 
 
-async def _get_cost_records(days: int = 7) -> list[dict]:
-    """Fetch cost records from DB for the past N days."""
+async def _get_cost_records(days: int = 7, team_id: str | None = None) -> list[dict]:
+    """Fetch cost records from DB for the past N days, optionally filtered by team."""
     try:
         from sqlalchemy import select
 
@@ -106,6 +110,8 @@ async def _get_cost_records(days: int = 7) -> list[dict]:
 
         async with session_factory() as session:
             stmt = select(CostRecordORM).where(CostRecordORM.timestamp >= cutoff)
+            if team_id is not None:
+                stmt = stmt.where(CostRecordORM.team_id == team_id)
             result = await session.execute(stmt)
             rows = result.scalars().all()
             return [
@@ -135,12 +141,20 @@ async def dashboard_summary(
     _auth: Annotated[TokenPayload, Depends(get_current_user)],
     days: int = Query(default=7, ge=1, le=90, description="Lookback window in days (7, 30, or 90)"),
 ) -> DashboardSummary:
-    """Return all metrics needed to render the dashboard in one request."""
+    """Return all metrics needed to render the dashboard in one request.
+
+    Non-admin/non-team_manager callers are automatically scoped to their own
+    team so cost records, budgets, and sessions from other teams are never
+    exposed.
+    """
     now = datetime.now(UTC)
     today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
 
+    is_cross_team = _auth.role in _CROSS_TEAM_ROLES
+    scope_team_id: str | None = None if is_cross_team else _auth.team_id
+
     # ── Cost records from DB ───────────────────────────────────────────────────
-    records = await _get_cost_records(days)
+    records = await _get_cost_records(days, team_id=scope_team_id)
 
     total_cost = sum(r["cost_usd"] for r in records)
     total_requests = len(records)
@@ -194,6 +208,8 @@ async def dashboard_summary(
     # ── Budget rows ────────────────────────────────────────────────────────────
     budget_rows: list[BudgetRow] = []
     for policy in enforcer.list_policies():
+        if scope_team_id is not None and policy.scope_id != scope_team_id:
+            continue  # non-cross-team caller: skip other teams' budgets
         status = await enforcer.status(team_id=policy.scope_id)
         if status is None:
             continue
@@ -209,6 +225,8 @@ async def dashboard_summary(
     # ── Active sessions ────────────────────────────────────────────────────────
     session_rows: list[SessionRow] = []
     for sess in await session_store.list_active():
+        if scope_team_id is not None and sess.team_id != scope_team_id:
+            continue  # non-cross-team caller: skip other teams' sessions
         session_rows.append(SessionRow(
             session_id=sess.session_id,
             team_id=sess.team_id,

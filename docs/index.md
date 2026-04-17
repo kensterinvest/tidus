@@ -35,6 +35,6 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | [ROI Calculator](roi-calculator.md) | Calculate your enterprise savings | Live |
 | [Savings Report](savings-report.md) | Monthly AI savings report API — local, no external dependency | ✅ Live |
 | [Troubleshooting](troubleshooting.md) | Top 10 first-run issues with exact fixes | ✅ Live |
-| [Enterprise: RBAC](enterprise/rbac.md) | Role-based access control | Roadmap |
-| [Enterprise: SSO](enterprise/sso.md) | SSO/OIDC integration | Roadmap |
+| [Enterprise: RBAC](enterprise/rbac.md) | Role-based access control | ✅ Live |
+| [Enterprise: SSO](enterprise/sso.md) | SSO/OIDC integration | ✅ Live |
 | [Enterprise: Data Residency](enterprise/data-residency.md) | On-prem/VPC deployment | Roadmap |

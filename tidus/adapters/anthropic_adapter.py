@@ -11,7 +11,14 @@ from collections.abc import AsyncIterator
 
 import structlog
 
-from tidus.adapters.base import AbstractModelAdapter, AdapterResponse, register_adapter
+from tidus.adapters.base import (
+    AbstractModelAdapter,
+    AdapterError,
+    AdapterResponse,
+    register_adapter,
+    translate_vendor_exception,
+    with_retry,
+)
 from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
@@ -39,6 +46,7 @@ class AnthropicAdapter(AbstractModelAdapter):
 
     async def complete(self, model_id: str, task) -> AdapterResponse:
         client = _get_client()
+        settings = get_settings()
 
         # Separate system message if present
         system = None
@@ -57,11 +65,31 @@ class AnthropicAdapter(AbstractModelAdapter):
         if system:
             kwargs["system"] = system
 
+        async def do_call():
+            try:
+                return await client.messages.create(**kwargs)
+            except AdapterError:
+                raise
+            except Exception as exc:
+                raise translate_vendor_exception(exc) from exc
+
         start = time.monotonic()
-        response = await client.messages.create(**kwargs)
+        response = await with_retry(
+            do_call,
+            timeout_seconds=settings.adapter_timeout_seconds,
+            max_attempts=settings.adapter_max_retries,
+            base_delay_seconds=settings.adapter_base_delay_seconds,
+        )
         latency_ms = (time.monotonic() - start) * 1000
 
-        content = response.content[0].text if response.content else ""
+        # Aggregate all text blocks — Anthropic returns a list for multi-block
+        # responses (tool use + text). Previously we dropped everything except
+        # the first block, losing content. See Fix 18 / review report.
+        text_blocks = [
+            block.text for block in (response.content or [])
+            if getattr(block, "type", None) == "text" and getattr(block, "text", None)
+        ]
+        content = "\n".join(text_blocks)
         input_tokens = response.usage.input_tokens
         output_tokens = response.usage.output_tokens
 

@@ -20,7 +20,11 @@ class Settings(BaseSettings):
     database_url: str = "sqlite+aiosqlite:///./tidus.db"
 
     # ── Redis (optional) ─────────────────────────────────────────────────────
+    # When set, SpendCounter uses Redis INCRBYFLOAT + a Lua script for atomic
+    # cross-worker budget enforcement. Leave unset to use in-memory counters
+    # (safe for single-worker deployments and tests).
     redis_url: str | None = None
+    redis_spend_counter_prefix: str = "tidus:spend"
 
     # ── Config Paths ─────────────────────────────────────────────────────────
     models_config_path: str = "config/models.yaml"
@@ -75,6 +79,22 @@ class Settings(BaseSettings):
 
     # Circuit breaker: seconds before transitioning OPEN → HALF-OPEN.
     pricing_feed_reset_timeout_seconds: int = 300
+
+    # ── Response Cache (v1.1 Pillar 3) ───────────────────────────────────────
+    # Exact-match cache: hash(team_id + messages + model_id) → response.
+    # Disabled in prod only for debugging / A-B testing cache impact.
+    cache_enabled: bool = True
+    cache_ttl_seconds: int = 3600
+    cache_max_size: int = 10_000
+
+    # ── Adapter resilience (Fix 18) ──────────────────────────────────────────
+    # Per-call timeout for vendor API requests. Beyond this wall-clock, the
+    # request is cancelled and counted as a transient failure for retry.
+    adapter_timeout_seconds: float = 60.0
+    # Total attempts on transient failures (429/5xx/timeout). 3 = one retry.
+    # Auth + client errors are never retried regardless of this setting.
+    adapter_max_retries: int = 3
+    adapter_base_delay_seconds: float = 0.5
 
 
 _settings: Settings | None = None

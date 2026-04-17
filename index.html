@@ -726,7 +726,6 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#deploy">Get Started</a>
     <a href="#sources">Sources</a>
     <a href="#magazine">Report &amp; Catalog</a>
-    <a href="#how-it-works">How It Works</a>
   </div>
   <a href="#subscribe" class="nav-cta">Subscribe Free</a>
 </nav>
@@ -738,7 +737,7 @@ footer{background:#0a0f1e;padding:48px}
       <div class="hero-logo">tidus<span class="dot">.</span></div>
       <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
     </div>
-    <div class="hero-badge">Now tracking 53 models across 12 vendors · Weekly price sync</div>
+    <div class="hero-badge">Now tracking 55 models across 13 vendors · Weekly price sync</div>
     <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
     <p class="hero-sub">Tidus selects the most cost-effective capable model for every AI request — automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted.</p>
     <div class="hero-actions">
@@ -868,7 +867,7 @@ footer{background:#0a0f1e;padding:48px}
         <div class="pillar-num">Pillar 5</div>
         <div class="pillar-icon">🔌</div>
         <div class="pillar-title">Vendor-Agnostic Design</div>
-        <div class="pillar-desc">8 production adapters running today (Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Groq, Together AI) with 5 more in progress. The MCP server connects Claude Desktop, Cursor, Zed, and any MCP-compatible client directly. Swapping vendors requires one YAML edit — not rewriting your application. Vendor portability is itself a cost control: avoiding lock-in is the most effective long-term AI pricing strategy.</div>
+        <div class="pillar-desc">8 production adapters running today (Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Moonshot/Kimi, Ollama local). Cohere and Qwen are tracked in pricing but not yet wired. The MCP server connects Claude Desktop, Cursor, Zed, and any MCP-compatible client directly. Swapping vendors requires one YAML edit — not rewriting your application. Vendor portability is itself a cost control: avoiding lock-in is the most effective long-term AI pricing strategy.</div>
         <div class="tags">
           <span class="tag">8 adapters live</span>
           <span class="tag">5 in progress</span>
@@ -1085,11 +1084,11 @@ response = client.chat.completions.create(
 <section class="sources" id="sources">
   <div class="section-inner">
     <p class="section-tag">Model Discovery &amp; Pricing Sources</p>
-    <h2 class="section-title">53 curated models — not the entire market. Here's why.</h2>
-    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 53 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
+    <h2 class="section-title">55 curated models — not the entire market. Here's why.</h2>
+    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 55 commercially stable, enterprise-accessible models (45 currently enabled) — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
 
     <div class="why-box">
-      <p><strong>Why 53, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
+      <p><strong>Why 55, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
       <p>The catalog grows continuously. Adding a new model is 3 lines in <code>hardcoded_source.py</code> — the model ID, input price, and output price. Community pull requests are welcome. If a vendor releases a new stable model, open a PR and it will be tracked in the next weekly sync.</p>
       <div class="add-model">
         <span>➕ To add a model:</span>
@@ -1099,12 +1098,12 @@ response = client.chat.completions.create(
     </div>
 
     <div style="margin-top:36px">
-      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">12 Vendors Currently Tracked</h3>
+      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">13 Vendors Currently Tracked</h3>
       <p style="font-size:14px;color:#888;margin-bottom:16px">Click any vendor to visit their AI platform. Model counts reflect the active catalog as of April 2026.</p>
       <div class="vendor-grid">
 
         <a class="v-card" href="https://www.anthropic.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Anthropic</span><span class="v-count">3 models</span></div>
+          <div class="v-card-top"><span class="v-name">Anthropic</span><span class="v-count">4 models</span></div>
           <div class="v-focus">Safety-first LLMs for enterprise. Known for Constitutional AI and the Claude family — industry benchmark for reasoning and instruction-following.</div>
         </a>
 
@@ -1114,7 +1113,7 @@ response = client.chat.completions.create(
         </a>
 
         <a class="v-card" href="https://ai.google.dev" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Google DeepMind</span><span class="v-count">5 models</span></div>
+          <div class="v-card-top"><span class="v-name">Google DeepMind</span><span class="v-count">6 models</span></div>
           <div class="v-focus">Gemini multimodal AI — strong at long-context, vision, and code. Tightly integrated with Google Cloud and Workspace. Gemini 2.5 Pro leads on context window size.</div>
         </a>
 
@@ -1130,12 +1129,22 @@ response = client.chat.completions.create(
 
         <a class="v-card" href="https://qwenlm.github.io" target="_blank" rel="noopener">
           <div class="v-card-top"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">3 models</span></div>
-          <div class="v-focus">Qwen series from Alibaba DAMO Academy. Strong multilingual performance — especially Chinese, Arabic, and Southeast Asian languages. Competitive pricing via Alibaba Cloud.</div>
+          <div class="v-focus">Qwen series from Alibaba DAMO Academy. Strong multilingual performance — especially Chinese, Arabic, and Southeast Asian languages. Tracked in pricing but not yet wired as a live adapter.</div>
+        </a>
+
+        <a class="v-card" href="https://ollama.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Ollama (local)</span><span class="v-count">1 model</span></div>
+          <div class="v-focus">Self-hosted local inference — the only adapter that keeps confidential data fully on-prem. Any task marked <code>privacy=confidential</code> is routed exclusively to Ollama.</div>
+        </a>
+
+        <a class="v-card" href="https://moonshot.cn" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Moonshot (Kimi)</span><span class="v-count">1 model</span></div>
+          <div class="v-focus">Chinese frontier lab behind the Kimi family. Long-context models competitive with Claude and Gemini on document-heavy workloads.</div>
         </a>
 
         <a class="v-card" href="https://x.ai" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">xAI</span><span class="v-count">2 models</span></div>
-          <div class="v-focus">Grok models from Elon Musk's lab. Real-time access to X (Twitter) data. Grok-3-Fast is the highest-cost routed model at $5/1M — positioned at the premium end.</div>
+          <div class="v-card-top"><span class="v-name">xAI</span><span class="v-count">3 models</span></div>
+          <div class="v-focus">Grok models from Elon Musk's lab. Real-time access to X (Twitter) data. Grok-4 sits at the premium tier alongside Grok-3 and Grok-3-Fast — blended cost $15/1M input+output.</div>
         </a>
 
         <a class="v-card" href="https://groq.com" target="_blank" rel="noopener">
@@ -1175,7 +1184,7 @@ response = client.chat.completions.create(
           <div class="src-badge always">Always Available</div>
           <div class="src-title">HardcodedSource</div>
           <div class="src-conf">confidence = 0.70</div>
-          <div class="src-desc">A built-in verified price table covering all 53 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+          <div class="src-desc">A built-in verified price table covering all 55 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
         </div>
 
         <div class="src-card">
@@ -1274,7 +1283,7 @@ response = client.chat.completions.create(
   <div class="section-inner">
     <p class="section-tag">Latest Report</p>
     <h2 class="section-title">Weekly AI Market Intelligence</h2>
-    <p class="section-sub">Tidus continuously tracks prices across 53 models and 12 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
+    <p class="section-sub">Tidus continuously tracks prices across 55 models and 13 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
     <div style="margin-top:40px">
       <!-- TIDUS:MAG-CARD:START -->
       <div class="mag-card">
@@ -1439,7 +1448,7 @@ response = client.chat.completions.create(
             <span class="sd-title">Hard Constraints</span>
             <span class="sd-badge sd-badge-filter">Binary Filter</span>
           </div>
-          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 53+ registered models.</p>
+          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 55 registered models.</p>
           <div class="sd-checks-grid">
             <div class="sd-check">
               <div class="sd-ck-label">Check 1 — Is the model active?</div>
@@ -1719,7 +1728,7 @@ response = client.chat.completions.create(
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 1</div>
             <div class="exs-title">Capability Match</div>
-            <div class="exs-body">Task needs: <code>chat</code>. 53 models checked. All chat-capable models pass. Result: <strong>50 models survive</strong> (3 multimodal-only eliminated).</div>
+            <div class="exs-body">Task needs: <code>chat</code>. 55 models checked. All chat-capable models pass. Result: <strong>52 models survive</strong> (3 multimodal-only eliminated).</div>
           </div>
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 2</div>
@@ -1880,7 +1889,7 @@ response = client.chat.completions.create(
 <section class="sub-section" id="subscribe">
   <div>
     <h2>Get the weekly AI pricing report</h2>
-    <p>53 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
+    <p>55 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
     <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
       <input type="email" id="sub-email" placeholder="you@company.com" required>
       <button type="submit">Subscribe Free</button>
@@ -1924,7 +1933,7 @@ response = client.chat.completions.create(
 </footer>
 
 <script>
-// Model data — 53 models. b = blended cost = (input + output) / 2 per 1M tokens.
+// Model data — 55 models. b = blended cost = (input + output) / 2 per 1M tokens.
 const MODELS = [
   {id:"claude-opus-4-7", v:"Anthropic", t:1, b:15.00, i:5.00, o:25.00, ctx:1000},
   {id:"claude-opus-4-6", v:"Anthropic", t:1, b:15.00, i:5.00, o:25.00, ctx:1000},

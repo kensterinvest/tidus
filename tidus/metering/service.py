@@ -82,19 +82,31 @@ def resolve_caller_id(
 ) -> tuple[str, str]:
     """Resolve caller identity per TIT-32 spec.
 
-    Resolution order:
-      1. X-Titus-User-Id header (explicit identity)
-      2. API key subject (authenticated service account)
-      3. SHA-256 hash of (IP + User-Agent) as anonymous fingerprint
+    Resolution rules (security-hardened in Fix 12):
+      1. If a JWT sub is present, it is ALWAYS the identity. A mismatching
+         X-Titus-User-Id header is ignored (and logged) — the header cannot
+         be used to impersonate other users.
+      2. If no JWT sub is present, X-Titus-User-Id is honored (unauthenticated
+         deployments rely on the header for identity).
+      3. Otherwise fall back to a SHA-256(IP + UA) anonymous fingerprint.
 
     Returns:
         (caller_id, caller_source) where source is "header", "api_key", or "ip_hash"
     """
+    has_auth = bool(api_key_sub) and api_key_sub not in ("dev", "")
+
+    if has_auth:
+        header_norm = user_id_header.strip() if user_id_header else None
+        if header_norm and header_norm != api_key_sub:
+            log.warning(
+                "metering_header_impersonation_attempt",
+                claimed=header_norm,
+                actual=api_key_sub,
+            )
+        return api_key_sub, "api_key"
+
     if user_id_header:
         return user_id_header.strip(), "header"
-
-    if api_key_sub and api_key_sub not in ("dev", ""):
-        return api_key_sub, "api_key"
 
     # Anonymous fingerprint — best-effort; not PII since it's a hash
     raw = f"{client_ip or 'unknown'}:{user_agent or 'unknown'}"

@@ -12,7 +12,14 @@ from collections.abc import AsyncIterator
 
 import structlog
 
-from tidus.adapters.base import AbstractModelAdapter, AdapterResponse, register_adapter
+from tidus.adapters.base import (
+    AbstractModelAdapter,
+    AdapterError,
+    AdapterResponse,
+    register_adapter,
+    translate_vendor_exception,
+    with_retry,
+)
 from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
@@ -59,6 +66,7 @@ class GoogleAdapter(AbstractModelAdapter):
 
     async def complete(self, model_id: str, task) -> AdapterResponse:
         genai = _get_genai()
+        settings = get_settings()
         system, history = _to_genai_messages(task.messages)
 
         kwargs: dict = {}
@@ -69,12 +77,25 @@ class GoogleAdapter(AbstractModelAdapter):
         chat = model.start_chat(history=history[:-1] if len(history) > 1 else [])
         last_user = history[-1]["parts"][0] if history else ""
 
+        async def do_call():
+            try:
+                return await chat.send_message_async(
+                    last_user,
+                    generation_config=genai.GenerationConfig(
+                        max_output_tokens=task.estimated_output_tokens
+                    ),
+                )
+            except AdapterError:
+                raise
+            except Exception as exc:
+                raise translate_vendor_exception(exc) from exc
+
         start = time.monotonic()
-        response = await chat.send_message_async(
-            last_user,
-            generation_config=genai.GenerationConfig(
-                max_output_tokens=task.estimated_output_tokens
-            ),
+        response = await with_retry(
+            do_call,
+            timeout_seconds=settings.adapter_timeout_seconds,
+            max_attempts=settings.adapter_max_retries,
+            base_delay_seconds=settings.adapter_base_delay_seconds,
         )
         latency_ms = (time.monotonic() - start) * 1000
 
@@ -82,12 +103,23 @@ class GoogleAdapter(AbstractModelAdapter):
         input_tokens = response.usage_metadata.prompt_token_count or 0
         output_tokens = response.usage_metadata.candidates_token_count or 0
 
+        # Read the actual finish reason from the candidate instead of hard-coding "stop".
+        # Catches SAFETY / MAX_TOKENS stops that were previously misreported.
+        finish_reason = "stop"
+        candidates = getattr(response, "candidates", None) or []
+        if candidates:
+            raw_reason = getattr(candidates[0], "finish_reason", None)
+            if raw_reason is not None:
+                # Gemini returns an enum; convert to lowercase string
+                finish_reason = getattr(raw_reason, "name", str(raw_reason)).lower() or "stop"
+
         log.info(
             "google_complete",
             model_id=model_id,
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             latency_ms=round(latency_ms, 1),
+            finish_reason=finish_reason,
         )
         return AdapterResponse(
             model_id=model_id,
@@ -95,7 +127,7 @@ class GoogleAdapter(AbstractModelAdapter):
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             latency_ms=latency_ms,
-            finish_reason="stop",
+            finish_reason=finish_reason,
             raw={},
         )
 

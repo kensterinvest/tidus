@@ -14,7 +14,8 @@ from __future__ import annotations
 from tidus.audit.logger import AuditLogger
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.budget.policies import load_budget_policies
-from tidus.cost.counter import SpendCounter
+from tidus.cache.exact_cache import ExactCache
+from tidus.cost.counter import RedisSpendCounter, SpendCounter
 from tidus.cost.engine import CostEngine
 from tidus.cost.logger import CostLogger
 from tidus.guardrails.agent_guard import AgentGuard
@@ -40,6 +41,21 @@ _cost_logger: CostLogger | None = None
 _audit_logger: AuditLogger | None = None
 _metering: MeteringService | None = None
 _override_manager: OverrideManager | None = None
+_exact_cache: ExactCache | None = None
+
+
+def _build_spend_counter(settings) -> SpendCounter | RedisSpendCounter:
+    """Pick the SpendCounter backend based on settings.redis_url.
+
+    Returns a Redis-backed counter when ``settings.redis_url`` is configured
+    (required for multi-worker deployments so budget state is shared across
+    processes); otherwise returns the in-memory counter.
+    """
+    if not settings.redis_url:
+        return SpendCounter()
+    from redis.asyncio import Redis
+    client = Redis.from_url(settings.redis_url, decode_responses=False)
+    return RedisSpendCounter(client, prefix=settings.redis_spend_counter_prefix)
 
 
 async def build_singletons() -> None:
@@ -49,7 +65,7 @@ async def build_singletons() -> None:
     revision. Called once from the FastAPI lifespan on startup. Safe to call
     again (re-initializes, useful for testing overrides).
     """
-    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering, _override_manager
+    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering, _override_manager, _exact_cache
 
     settings = get_settings()
 
@@ -65,7 +81,7 @@ async def build_singletons() -> None:
     _registry = await EffectiveRegistry.build(sf, settings.models_config_path)
 
     budgets = load_budget_policies(settings.budgets_config_path)
-    counter = SpendCounter()
+    counter = _build_spend_counter(settings)
     _enforcer = BudgetEnforcer(budgets, counter)
 
     matcher = CapabilityMatcher(_guardrail_policy)
@@ -79,6 +95,14 @@ async def build_singletons() -> None:
     _audit_logger = AuditLogger(sf)
     _metering = MeteringService(sf)
     _override_manager = OverrideManager(sf, audit_logger=_audit_logger)
+
+    if settings.cache_enabled:
+        _exact_cache = ExactCache(
+            ttl_seconds=settings.cache_ttl_seconds,
+            max_size=settings.cache_max_size,
+        )
+    else:
+        _exact_cache = None
 
 
 # ── Dependency getters (used with FastAPI Depends) ────────────────────────────
@@ -131,6 +155,11 @@ def get_metering() -> MeteringService:
 def get_override_manager() -> OverrideManager:
     assert _override_manager is not None, "Singletons not built — call build_singletons() at startup"
     return _override_manager
+
+
+def get_exact_cache() -> ExactCache | None:
+    """Return the process-wide ExactCache, or None if cache is disabled."""
+    return _exact_cache
 
 
 def get_session_factory():

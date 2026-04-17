@@ -203,6 +203,42 @@ class TestBudgetStatus:
 
 # ── tidus_complete_task ────────────────────────────────────────────────────────
 
+class TestSingletonPersistence:
+    """Budget and session singletons must persist across MCP handler invocations.
+
+    Regression test for the MCP bug where every handler called build_singletons(),
+    creating a fresh SpendCounter / SessionStore each time and wiping state.
+    """
+
+    async def test_spend_counter_identity_preserved_across_calls(self, mcp_server):
+        """Two handler invocations must see the SAME SpendCounter object."""
+        from tidus.api.deps import get_enforcer
+
+        await _call(mcp_server, "tidus_list_models", {"enabled_only": True})
+        counter_a = get_enforcer()._counter
+
+        await _call(mcp_server, "tidus_list_models", {"enabled_only": False})
+        counter_b = get_enforcer()._counter
+
+        assert counter_a is counter_b, (
+            "MCP handlers rebuilt SpendCounter between calls — budget state would be lost"
+        )
+
+    async def test_session_store_identity_preserved_across_calls(self, mcp_server):
+        """Two handler invocations must see the SAME SessionStore object."""
+        from tidus.api.deps import get_session_store
+
+        await _call(mcp_server, "tidus_list_models", {"enabled_only": True})
+        store_a = get_session_store()
+
+        await _call(mcp_server, "tidus_get_budget_status", {"team_id": "team-engineering"})
+        store_b = get_session_store()
+
+        assert store_a is store_b, (
+            "MCP handlers rebuilt SessionStore between calls — agent session state would be lost"
+        )
+
+
 class TestCompleteTask:
     async def test_complete_returns_content(self, mcp_server):
         from tidus.adapters.base import AdapterResponse

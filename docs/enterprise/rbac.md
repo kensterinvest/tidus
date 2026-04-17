@@ -1,16 +1,22 @@
 # Enterprise: Role-Based Access Control (RBAC)
 
-*This feature is on the roadmap for the Enterprise tier.*
+*Available in the Enterprise tier and shipped with Tidus v1.1.0 (Phase 8).*
 
-Contact lapkei01@gmail.com to discuss early access or to share requirements.
+Tidus enforces a five-role hierarchy on every API endpoint. Role is extracted
+from the OIDC token's role claim (configurable via `OIDC_ROLE_CLAIM`) and
+checked by FastAPI's `require_role` dependency. Admin is a super-role — it
+satisfies any required role list.
 
 ---
 
-## Design Intent
+## How It Works
 
-Tidus RBAC will give enterprises fine-grained control over which teams, users, and service accounts can access which models, endpoints, and budget policies.
+Every protected endpoint lists the roles permitted to call it. A caller whose
+token role is not in that list is rejected with HTTP 403. Non-admin callers
+are additionally scoped to their own team on the dashboard, guardrails session,
+and budget-creation endpoints.
 
-### Planned Role Model
+### Role Model
 
 | Role | Scope | Permissions |
 |------|-------|-------------|

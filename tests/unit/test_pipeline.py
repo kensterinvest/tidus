@@ -172,6 +172,57 @@ async def test_pipeline_returns_none_when_no_changes(sf):
 
 
 @pytest.mark.asyncio
+async def test_pipeline_retires_models_removed_from_yaml(sf):
+    """Fix 7 regression: a model in the DB revision that no longer exists in
+    models.yaml must be dropped from the new revision and recorded as retired.
+    """
+    # Seed two models: gpt-4o (real, exists in YAML) and ghost-model-v1 (fake)
+    revision_id = f"rev-{uuid.uuid4().hex[:8]}"
+    now = datetime.now(UTC)
+    async with sf() as session:
+        session.add(ModelCatalogRevisionORM(
+            revision_id=revision_id, source="yaml_seed",
+            signature_hash="abc", status="active", activated_at=now,
+        ))
+        session.add(ModelCatalogEntryORM(
+            id=str(uuid.uuid4()), revision_id=revision_id,
+            model_id="gpt-4o", spec_json=_spec_dict("gpt-4o", 5.0), schema_version=1,
+        ))
+        session.add(ModelCatalogEntryORM(
+            id=str(uuid.uuid4()), revision_id=revision_id,
+            model_id="ghost-model-v1",
+            spec_json=_spec_dict("ghost-model-v1", 1.0), schema_version=1,
+        ))
+        await session.commit()
+
+    # Pricing source returns a valid quote for gpt-4o (triggers a price delta to advance the pipeline)
+    source = _SimpleSource([_make_quote("gpt-4o", input_price=10.0)])
+
+    with patch("tidus.registry.validators.CanaryProbe.run", new_callable=AsyncMock) as mock_canary:
+        mock_canary.return_value = (True, [])
+        result = await RegistryPipeline(sf).run_price_sync_cycle([source], _POLICIES_PATH)
+
+    assert result is not None, "Pipeline should create a revision (price change + retirement)"
+    retired_changes = [c for c in result.changes if c.get("field") == "retired"]
+    assert any(c["model_id"] == "ghost-model-v1" for c in retired_changes), (
+        f"Expected 'retired' change for ghost-model-v1, got changes: {result.changes}"
+    )
+
+    # The new revision must NOT contain ghost-model-v1
+    async with sf() as session:
+        entries = (await session.execute(
+            select(ModelCatalogEntryORM).where(
+                ModelCatalogEntryORM.revision_id == result.revision_id
+            )
+        )).scalars().all()
+    model_ids = {e.model_id for e in entries}
+    assert "ghost-model-v1" not in model_ids, (
+        f"Retired model survived into new revision: {model_ids}"
+    )
+    assert "gpt-4o" in model_ids, "gpt-4o must survive — it's still in YAML"
+
+
+@pytest.mark.asyncio
 async def test_pipeline_returns_none_when_no_active_revision(sf):
     """Without an active revision in DB, the pipeline cannot compute a diff."""
     source = _SimpleSource([_make_quote(input_price=5.0)])
@@ -184,7 +235,7 @@ async def test_pipeline_returns_none_when_no_active_revision(sf):
 async def test_pipeline_returns_none_on_tier2_validation_failure(sf):
     """Tier 2 violation (local model with price > 0) → returns None, no revision created."""
     # Seed a local model that is currently free
-    local_spec = {**_spec_dict("ollama-llama", input_price=0.0), "is_local": True, "output_price": 0.0}
+    local_spec = {**_spec_dict("gemini-nano", input_price=0.0), "is_local": True, "output_price": 0.0}
     revision_id = f"rev-{uuid.uuid4().hex[:8]}"
     async with sf() as session:
         session.add(ModelCatalogRevisionORM(
@@ -193,13 +244,13 @@ async def test_pipeline_returns_none_on_tier2_validation_failure(sf):
         ))
         session.add(ModelCatalogEntryORM(
             id=str(uuid.uuid4()), revision_id=revision_id,
-            model_id="ollama-llama", spec_json=local_spec, schema_version=1,
+            model_id="gemini-nano", spec_json=local_spec, schema_version=1,
         ))
         await session.commit()
 
     # Source returns a price for the local model — this violates InvariantValidator
     quote = PriceQuote(
-        model_id="ollama-llama",
+        model_id="gemini-nano",
         input_price=5.0,  # local model should be free!
         output_price=10.0,
         cache_read_price=0.0, cache_write_price=0.0,
