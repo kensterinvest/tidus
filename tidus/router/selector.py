@@ -259,7 +259,7 @@ def _normalize(values: list[float]) -> list[float]:
     return [(v - lo) / spread for v in values]
 
 
-def _is_more_recent(a: "ModelSpec", b: "ModelSpec") -> bool:
+def _is_more_recent(a: ModelSpec, b: ModelSpec) -> bool:
     """True if `a` has a later release date than `b`.
 
     Falls back to model_id lexicographic comparison when dates are unavailable,

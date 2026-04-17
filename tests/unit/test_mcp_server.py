@@ -105,7 +105,7 @@ class TestListModels:
     async def test_returns_all_models(self, mcp_server):
         result = await _call(mcp_server, "tidus_list_models", {"enabled_only": False})
         assert isinstance(result, list)
-        assert len(result) == 55
+        assert len(result) >= 55, f"Registry shrank unexpectedly: {len(result)}"
 
     async def test_each_model_has_required_fields(self, mcp_server):
         result = await _call(mcp_server, "tidus_list_models", {})

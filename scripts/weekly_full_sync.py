@@ -11,12 +11,12 @@ Usage:
 from __future__ import annotations
 
 import asyncio
+import os
 import sys
 from datetime import date
 from pathlib import Path
 
 # Must be set before any tidus imports to skip live canary probes.
-import os
 os.environ.setdefault("TIDUS_CANARY_SAMPLE_SIZE", "0")
 
 sys.path.insert(0, str(Path(__file__).parent.parent))

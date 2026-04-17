@@ -96,14 +96,15 @@ def _task(
 def test_registry_loads_all_models(registry):
     """All models defined in models.yaml should load without validation errors.
 
-    45 models are enabled (active adapters); 10 are intentionally disabled
-    (pending adapter implementations: Cohere, Groq, Qwen, Perplexity, Together AI).
+    Disabled models are intentionally excluded adapters (Cohere, Groq, Qwen,
+    Perplexity, Together AI). Counts use minimums so weekly model additions
+    don't break CI.
     """
-    assert len(registry) == 55
+    assert len(registry) >= 55, f"Registry shrank unexpectedly: {len(registry)}"
     enabled = [s for s in registry.list_all() if s.enabled]
     disabled = [s for s in registry.list_all() if not s.enabled]
-    assert len(enabled) == 45, f"Expected 45 enabled models, got {len(enabled)}"
-    assert len(disabled) == 10, f"Expected 10 disabled (pending) models, got {len(disabled)}"
+    assert len(enabled) >= 45, f"Fewer enabled models than expected: {len(enabled)}"
+    assert len(disabled) >= 10, f"Fewer disabled models than expected: {len(disabled)}"
 
 
 def test_guardrail_policy_matches_yaml_values(guardrail_policy):
