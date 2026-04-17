@@ -239,7 +239,7 @@ def _score_and_pick(
         score = cost_norm[i] * 0.70 + tier_norm[i] * 0.20 + lat_norm[i] * 0.10
         if spec.deprecated:
             score += _DEPRECATED_SCORE_PENALTY
-        if score < best_score:
+        if score < best_score or (score == best_score and _is_more_recent(spec, best_spec)):
             best_score = score
             best_spec = spec
             best_cost = cost
@@ -257,3 +257,18 @@ def _normalize(values: list[float]) -> list[float]:
     if spread == 0:
         return [0.0] * len(values)
     return [(v - lo) / spread for v in values]
+
+
+def _is_more_recent(a: "ModelSpec", b: "ModelSpec") -> bool:
+    """True if `a` has a later release date than `b`.
+
+    Falls back to model_id lexicographic comparison when dates are unavailable,
+    which naturally favours higher version suffixes (e.g. 4-7 > 4-6).
+    """
+    if a.released_at is not None and b.released_at is not None:
+        return a.released_at > b.released_at
+    if a.released_at is not None:
+        return True   # known release date beats unknown
+    if b.released_at is not None:
+        return False
+    return a.model_id > b.model_id

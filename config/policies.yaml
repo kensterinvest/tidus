@@ -64,6 +64,7 @@ drift:
     lookback_days: 30
 
 pricing_sync:
+  enabled: false        # Replaced by Claude Code cron — see scripts/weekly_full_sync.py
   # Day of week (0=Monday … 6=Sunday) and UTC hour for weekly price sync
   day_of_week: 6        # Sunday
   hour_utc: 2

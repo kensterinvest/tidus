@@ -88,6 +88,7 @@ class ModelSpec(BaseModel):
 
     last_price_check: date = Field(default_factory=date.today, description="Date of last price sync")
     last_health_check: datetime | None = None
+    released_at: date | None = Field(None, description="Official GA release date; used as tie-breaker when scores are equal")
 
     # Model lifecycle
     retired_at: datetime | None = Field(None, description="Set when model is retired; excluded from routing")

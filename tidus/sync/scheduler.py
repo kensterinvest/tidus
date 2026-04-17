@@ -70,13 +70,16 @@ class TidusScheduler:
             misfire_grace_time=60,
         )
 
-        self._scheduler.add_job(
-            self._run_price_sync,
-            trigger=CronTrigger(day_of_week=sync_day, hour=sync_hour, timezone="UTC"),
-            id="price_sync",
-            name="Weekly price sync",
-            misfire_grace_time=3600,
-        )
+        if not sync_cfg.get("enabled", True):
+            log.warning("price_sync_disabled", reason="managed by Claude Code cron — see scripts/weekly_full_sync.py")
+        else:
+            self._scheduler.add_job(
+                self._run_price_sync,
+                trigger=CronTrigger(day_of_week=sync_day, hour=sync_hour, timezone="UTC"),
+                id="price_sync",
+                name="Weekly price sync",
+                misfire_grace_time=3600,
+            )
 
         # Monthly budget reset — 1st of each month at 00:05 UTC
         self._scheduler.add_job(

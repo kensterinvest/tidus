@@ -263,6 +263,7 @@ models:
   - claude-opus-4-6
   - claude-sonnet-4-6
   - gpt-4.1
+  released_at: '2026-04-17'
   last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: claude-opus-4-6
@@ -289,6 +290,7 @@ models:
   - claude-sonnet-4-6
   - gpt-4.1
   - llama4-maverick-ollama
+  released_at: '2025-07-22'
   last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: claude-sonnet-4-6
@@ -742,6 +744,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - llama4-maverick-ollama
+  released_at: '2025-02-18'
   last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: grok-3-fast
@@ -766,6 +769,7 @@ models:
   - grok-3
   - gpt-4.1
   - claude-sonnet-4-6
+  released_at: '2025-02-18'
   last_price_check: '2026-04-17'
   last_health_check: null
 - model_id: kimi-k2.5
