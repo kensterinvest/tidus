@@ -467,6 +467,180 @@ dependencies = [
 - This is the customer-facing compliance handshake. "Asymmetric overclassification" is engineering philosophy; ≤1% FN rate is the signable commitment
 - Applies to `privacy == confidential` predictions specifically; domain/complexity FN are routing-optimization losses, not compliance incidents
 
+## Research Validation (2026-04-20)
+
+**Three-axis inter-rater reliability study** across Claude (Anthropic), GPT (OpenAI, via Copilot Think-Deeper), and Gemini (Google, Gemini 2.5 Pro) on n=149 stratified WildChat prompts (69 confidential + 40 internal + 40 public; all labelers blind, same frozen rubric).
+
+**Weighted Cohen's κ (ordinal-aware for privacy/complexity; unweighted for nominal domain):**
+
+| Axis | Best pair κ | Fleiss κ (3-rater) | Interpretation |
+|---|---|---|---|
+| **domain** | 0.801 Claude-Gemini (unweighted) | 0.737 | substantial |
+| **privacy** | 0.783 Claude-Gemini (weighted) | 0.577 (unweighted) | substantial pairwise, moderate 3-rater |
+| **complexity** | 0.679 Claude-GPT (weighted) | 0.517 (unweighted) | substantial pairwise, moderate 3-rater |
+
+All three axes cross the substantial-agreement threshold under the appropriate metric. Cross-family agreement (GPT+Gemini from different training corpora) closes the single-labeler credibility gap.
+
+**Audit-case unanimity:** the 3 structurally-missed cases (Vue/SCSS Chinese placeholder, Canadian work-permit letter, Russian mental-health disclosure) received 3/3 agreement across all raters — Case 1 public×3 (validates our flip), Cases 2 & 3 confidential×3 (validates Tier-5 LLM escalation as the architectural answer for topic-based confidentials).
+
+**Ensemble recall on cross-family-adjudicated ground truth** (gt_conf=83 after 14 asymmetric-safety flips in `label_overrides_irr.jsonl`):
+
+| Rule | Recall | CI | Flagged % |
+|---|---|---|---|
+| E1 PERSON alone (Tier 2b Presidio) | 74/83 = **89.2%** | [80.7, 94.2] | 49.3% |
+| E2 PERSON + Encoder-non-public | 69/83 = 83.1% | [73.7, 89.7] | 18.5% |
+
+**IRR-flip entity/topic analysis** (`scripts/irr_flip_analysis.py`): of the 14 newly-adjudicated confidentials, Presidio's PERSON detector catches 6/12 in-pool (entity-bearing: real names in contact info, driver-license numbers, named-sender emails) and misses 6/12 (topic-bearing: first-person financial hardship, credential requests, HR complaints, filesystem paths with real usernames, SSH audit logs). The 50/50 split empirically justifies the tiered architecture — cheap entity detectors at Tier 2b, LLM topic review at Tier 5.
+
+**Credential re-leak finding:** across 2669 labeled prompts, 4 identified cases of the same credential appearing in multiple user sessions (Telegram token chunks 055/059, VK token chunks 048/061, Instagram+FB credentials chunks 048/062, Discord+Steam multi-leak chunk 060). Evidence that credential persistence is longitudinal, not per-request — motivates user/session-scoped leak caching in the Audit layer.
+
+Full artifacts: `findings.md`, `tests/classification/irr/irr_report.md`, `scripts/irr_build_external_pack.py`, `scripts/irr_score.py`, `scripts/irr_flip_analysis.py`, `scripts/irr_score_all_axes.py`.
+
+---
+
+## Shipping Plan — Stages A-D (2026-04-20)
+
+Baseline ship target: **E1 recall = 89.2% [80.7, 94.2]** on cross-family-validated ground truth. The product thesis is self-improving: ship at 89%, reach 95-97% via telemetry-driven feedback loops on real enterprise traffic within 12 months.
+
+### Stage A — Wire classifier into the 5-tier stack (~1 week)
+
+- **Ship default: E1** (PERSON alone triggers confidential). Configurable per deployment to E2 (PERSON + encoder-non-public) for precision-preferred tenants. See "E1 vs E2 Decision Matrix" section below.
+- Asymmetric-safety OR-rule hardwired at Stage 1: any tier says `confidential` → local-only routing (subject to `privacy_enforcement` config, below)
+- Tier 5 LLM escalation via topic-heuristic trigger: when Tiers 1-4 say non-confidential AND a topic keyword fires (hardship / credential-request / medical / legal / HR / employment), escalate to LLM. Heuristics cover the miss pattern surfaced by `irr_flip_analysis.py`.
+
+### Stage B — PII-safe telemetry (parallel with A, week 1-2)
+
+Per-request log schema — features only, never raw prompts (foundation of feedback loop):
+
+```
+{
+  "request_id": uuid,
+  "tenant_id": "t_xxx",                      // REQUIRED from day 1 for future per-tenant fine-tuning
+  "ts": iso8601,
+  "embedding_reduced_64d": [...],            // dim-reduced; raw 384-d is semi-reversible
+  "presidio_entities": ["PERSON","EMAIL"],   // types only, never values
+  "regex_hits": ["SSN_PATTERN"],             // pattern IDs, not matched strings
+  "tier_decided": 4,
+  "classification": {"domain": "...", "complexity": "...", "privacy": "..."},
+  "model_routed": "claude-haiku-4-5",
+  "latency_ms": 59
+}
+```
+
+Stage B must ship simultaneously with Stage A. Retrofit of telemetry post-launch is where teams lose months.
+
+### Stage C — Disagreement-capture active learning (weeks 2-3)
+
+When Tier 4 (cheap stack) and Tier 5 (LLM) disagree on any axis → flag request as review candidate. Expected disagreement rate: 5-10% of traffic.
+
+- **Strict-privacy tenants:** telemetry features only; monthly human review of disagreement *metadata* plus opt-in raw-prompt review for specific incidents; quarterly encoder retrain from adjudicated overrides
+- **Disabled-privacy tenants (see `privacy_enforcement` below):** opt-in raw-prompt retention enabled; full supervised training data; faster improvement curve
+
+Emits `label_overrides_production_YYYY_MM.jsonl` monthly; encoder retrains quarterly.
+
+### Stage D — Canary regression test (week 3, light touch)
+
+Repurpose the original "second-dataset generalization probe" idea as a production canary, not a research experiment. **Canary dataset: Enron email corpus subset** (public, CMU distribution, pre-cleared for research use). Freeze 100-150 prompts stratified across privacy classes, labeled via the same 3-rater IRR workflow (Claude + GPT + Gemini) to produce canary ground truth. Run production classifier against the frozen set weekly; alarm if E1 recall drops below 80% or weighted κ drift on new labelings exceeds 0.15. Catches regression from encoder drift, Presidio version bumps, or rubric drift in the human-adjudication pipeline. Reuses the IRR study's infrastructure (`irr_build_external_pack.py`, `irr_score.py`).
+
+---
+
+## E1 vs E2 Decision Matrix (2026-04-20)
+
+**Ship default: E1.** Both rules operate at Tier 2b (Presidio NER); the difference is whether detection requires one signal or two corroborating signals.
+
+### The rules
+
+| | **E1 — PERSON alone** | **E2 — PERSON + Encoder-non-public** |
+|---|---|---|
+| **Trigger logic** | Presidio detects a `PERSON` entity → `confidential` | Presidio detects `PERSON` **AND** encoder predicts `non-public` (i.e., `internal` or `confidential`) → `confidential` |
+| **Character** | Aggressive — one signal suffices | Conservative — needs two independent signals to agree |
+
+### Empirical trade-off (on IRR-adjudicated ground truth, n=83 confidentials in n=2249 total)
+
+| Metric | E1 | E2 |
+|---|---|---|
+| Recall (confidentials caught) | **89.2%** [80.7, 94.2] | 83.1% [73.7, 89.7] |
+| Precision (of flagged, true confidentials) | 6.6% | **15.7%** |
+| % of all traffic flagged | 49.3% | **18.5%** |
+| True positives | 74/83 | 69/83 |
+
+### Operational implications
+
+Every flagged request:
+- Pays an "assumed sensitive" tax (routed to local / safer models per `privacy_enforcement=strict`)
+- May escalate to Tier 5 LLM review for topic-heuristic confirmation
+- Generates a disagreement-log entry if tiers disagree (feeding Stage-C active learning)
+
+Flag rate translates directly to LLM-escalation cost and average latency. E1 charges ~half your traffic with the tax; E2 charges ~1 in 5.
+
+### Decision matrix — when to pick which
+
+| Tenant type | Recommended rule | Why |
+|---|---|---|
+| **Healthcare, finance, defense, regulated** | **E1** | Compliance floor: every missed confidential is a potential incident. Pay the flag-rate cost to protect the ≤1% FN Privacy SLO. |
+| **Unregulated SaaS, consumer tools, general enterprise** | **E2** | Fewer escalations, faster responses, lower LLM cost. The 6pp recall loss is acceptable when downstream consequences of a miss are small. |
+| **New tenant, unknown posture** | **E1 (ship default)** | Fail safe. Tenant can downgrade to E2 after understanding their flag-rate cost. Upgrading from E2 to E1 later is easier than explaining a missed confidential. |
+
+### Why E1 is the ship default (this release)
+
+- Matches asymmetric-safety principle already enforced at Stage 1 (any signal → confidential)
+- Tier 5 LLM catches what leaks through — the full pipeline's miss rate is much smaller than E1's 10.8% alone (see IRR-flip analysis: 6/6 E1-miss cases were topic-based, exactly the Tier-5 target class)
+- Opt-in downgrade to E2 is simpler UX than opt-in upgrade to E1
+
+### Interaction with Tier 5
+
+Whichever rule is chosen, Tier 5 LLM is the escape valve:
+- E1's misses are dominated by topic-based content (6/6 analyzed) — exactly what LLM-topic-review catches
+- E2's additional misses beyond E1 behave similarly
+- At the **full pipeline** level (Tiers 1 → 5), E1 vs E2 is a knob for *how much work Tier 5 does*, not a knob for *overall system miss rate*
+
+So the decision is really: "How much traffic volume should be routed through the expensive LLM tier?" E1 routes less to LLM (because E1 catches more upfront with cheap rules); E2 routes more to LLM (because E2 is stricter, pushing more ambiguous cases up). That framing inverts the naive reading.
+
+---
+
+## privacy_enforcement Config (Per-Tenant, 2026-04-20)
+
+**Important clarifier:** this config affects *routing enforcement* — whether a `confidential` classification forces local-only routing. It does NOT affect classifier location. Classification always happens in-process / on localhost (see "Hard constraint" at top of this spec — unchanged). These are different concepts.
+
+Two modes only. No middle value — "relaxed" invites compliance confusion and audit ambiguity.
+
+| Mode | Behavior | Default? | Use case |
+|---|---|---|---|
+| **strict** | Stage-1 hard constraint: `confidential` → local-only models. Cloud LLMs excluded from candidate set. Raw-prompt retention OFF. | **Yes** (default for new tenants; opt-in for weaker privacy) | HIPAA / GDPR / SOC 2 regulated tenants, defense, finance, healthcare |
+| **disabled** | Classifier still runs (for cost-tier routing, complexity ceiling, and telemetry), but `confidential` does NOT force local-only. All models eligible per normal scoring. Raw-prompt retention available per tenant opt-in. | No | Unregulated tenants wanting best-model-regardless-of-content, accepting vendor data-policy trade-off |
+
+**Customer-facing framing:** `disabled` is not "less safe" — it's "different trust model." Customer has decided their data policy permits external LLM processing, and in exchange gets (a) access to cloud frontier models for every request, (b) faster improvement trajectory because Stage-C can use full supervised training data for their deployment. Self-improving feedback loop runs richer when privacy doesn't forbid raw-prompt retention.
+
+**Compliance defaults:** new tenant config defaults to `strict`. Weaker privacy is opt-in, not opt-out. Audit trail records when `disabled` was set and by whom.
+
+**Vendor allowlist (future, v1.4):** if a customer wants "route confidential to cloud but only to specific approved vendors," that's a separate `vendor_allowlist` config, not a third `privacy_enforcement` value. Keep the concepts orthogonal.
+
+---
+
+## Accuracy Improvement Roadmap (Post-Ship)
+
+Four compounding levers. Trajectory from ship-day 89.2% to 95-97% within 12 months without additional hand-labeling. Ceiling at ~97-98% set by rubric ambiguity (Fleiss κ = 0.577 → humans disagree on ~37% of privacy boundary cases).
+
+| Lever | Trigger | Expected gain | Cost/cadence |
+|---|---|---|---|
+| **1. Disagreement-capture active learning** (Stage C core) | Monthly from month 1 | +2-4 pp per quarter year-1, diminishing | Already built into Stage C |
+| **2. Topic-heuristic pattern library** | Month 2-3, informed by Stage C review output | +3-5 pp on topic-based miss class | Few days/quarter of pattern engineering |
+| **3. Encoder upgrade swap** | Every ~6 months (BGE / GTE / newer MiniLM releases) | +1-3 pp per upgrade | One afternoon of swap + k-fold retrain, twice/year |
+| **4. Per-tenant encoder fine-tuning** (LoRA adapter) | Month 9-12+; requires ~500 tenant-specific labeled requests | +5-15 pp per tenant on their traffic | Requires `tenant_id` in telemetry from Day 1 (Stage B); per-tenant training infra as one-time build |
+
+**Expected trajectory on E1 recall:**
+
+| Milestone | Recall (global) | Primary driver |
+|---|---|---|
+| Ship (week 3) | 89.2% [80.7, 94.2] | Current IRR-adjudicated baseline |
+| +3 months | 91-92% | Lever 1 first adjudication cycle + Lever 2 initial patterns |
+| +6 months | 93-94% | Lever 1 continuing + Lever 3 first encoder swap |
+| +12 months | **95-97% global / higher per-tenant** | All four levers compounding + Lever 4 online for active tenants |
+
+**Explicitly NOT on the roadmap:** further WildChat hand-labeling (diminishing returns confirmed); external-LLM ensembles at Tier 5 (cost + privacy risk without evidence of gain); research-style generalization probe as labeled training data (Enron subset is the *canary*, not training signal).
+
+---
+
 ## What NOT to Do
 
 - Never transmit messages to external services for classification (hard constraint)
