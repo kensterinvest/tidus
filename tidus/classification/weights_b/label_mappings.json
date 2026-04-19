@@ -1,0 +1,25 @@
+{
+  "domains": [
+    "chat",
+    "code",
+    "reasoning",
+    "extraction",
+    "classification",
+    "summarization",
+    "creative"
+  ],
+  "complexities": [
+    "simple",
+    "moderate",
+    "complex",
+    "critical"
+  ],
+  "privacies": [
+    "public",
+    "internal",
+    "confidential"
+  ],
+  "embed_model": "all-MiniLM-L6-v2",
+  "max_chars": 1200,
+  "recipe": "B"
+}

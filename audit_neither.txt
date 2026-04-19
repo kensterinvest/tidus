@@ -1,0 +1,68 @@
+# NEITHER-caught confidentials (12 of 57 ground-truth)
+
+For each, write flip decision BEFORE looking at gate impact:
+  KEEP   = genuinely confidential, encoder/POC just missed it
+  FLIP   = was labeler overcall, should not be confidential
+  AMBIG  = taxonomy underspecified, no clear answer
+
+================================================================================
+
+[labels_012] wildchat-7d55bae2a1f94c0609a6ed3a2d2ce13a
+  rationale: Draft maths-tutor reply email to parent Belinda re student Harry's schedule — contains real names, Presidio-anonymized emails/person marker, and real phone number '0422 166 942'.
+  text_len:  1625
+  text:      I am the maths tutor of Harry and require you to write the reply email to Belinda (the mother of Harry). I want you to first apologise for the delay in returning her email. Then express my sincere regret that unfortunately 5:30 pm is not available . I could try scheduling Monday at 5:30pm if that could potentially work better for Belinda (fingers crossed).Otherwise let me know if 4 pm can still wo
+
+[labels_017] wildchat-3aba9fbe9541a6262ea606a7af9fd328
+  rationale: Vue/uni-app timeline SCSS selector question; template contains real-format Chinese name (张三) and phone (13845257654).
+  text_len:  976
+  text:      <template> <view class="page"> <view class="title">姓名：张三&nbsp;&nbsp;电话：13845257654</view> <view class="timeAxis"> <view v-for="(item,index) in timeline" :key="index" class="temp"> <view v-if="!item.month" > <view class="container" > <view class="year">{{item.year}}</view> <u-icon :name="item.icon" color="#fff" size="30"></u-icon> <text>{{item.txt}}</text> </view> <view class="content"> <view class
+
+[labels_022] wildchat-aaa763b039db5dbcdeb6fbe2069db730
+  rationale: Proof-read real cover letter to Ms. Prather at Rose-Hulman with specific personal SAT scores, competition history, course ISBN — personal academic PII.
+  text_len:  2000
+  text:      Please proof-read this formal letter "Dear Ms. Prather, I am writing to express my keen interest in the “Fast Track Calculus” program at Rose-Hulman Institute of Technology. As a current high school student, I have always been passionate about mathematics, especially in the field of mechanical engineering. I believe that this program would provide me with the ideal opportunity to further develop m
+
+[labels_023] wildchat-25ffb13fc97968d8027e377a08da7f1b
+  rationale: Personal resume highlighting real 10+ years enterprise real-estate management work history at Siemens Shanghai Center — personal career PII.
+  text_len:  2000
+  text:      Advantage highlights  More than 10 years of experience in enterprise real estate management, familiar with the whole system process of office leasing, decoration and relocation  Familiar with the formulation of relevant policies and regulations of the office  Good communication skills, good at coordinating internal and external personnel, good teamwork  Good at reasonable time arrangement, abl
+
+[labels_027] wildchat-d5a328a8e0a5c8e7215ea2bd01ad8eff
+  rationale: Review the user's draft letter of explanation for a Canadian open work permit accompanying their studying spouse — immigration-legal matter with material application consequences.
+  text_len:  180
+  text:      I am drafting a letter of explanation to support my application for an open work permit to accompany my wife during her studies in Canada, could you please review the draft for me?
+
+[labels_028] wildchat-1f95377871641fcd0972365922ea1aa5
+  rationale: Deduce a decimal-to-hex transformation formula for Wiegand access-control card IDs from a large table of paired values — complex reverse-engineering involving real-looking access credentials.
+  text_len:  2000
+  text:      find transformation formula for wiegand from table Wiegand Decimal Wiegand Hex 153600306305 200000000000000093BD20D4 153632128142 20000000000000008EF401C1 153328287956 2000000000000000026985B7 153328286784 20000000000000006E6485B7 153504242991 20000000000000002FB503BD 153504124500 200000000000000054E601BD 153616207245 20000000000000008D2983C0 153616207311 2000000000000000CF2983C0 153616207234 2000
+
+[labels_030] wildchat-8330a517fe9516e9e5c12b5cfd9e19a7
+  rationale: Review and polish a letter recommending named student Martin Williamson for a Fast-Track Calculus program with detailed VEX-Robotics accomplishments — education letter with named-person PII.
+  text_len:  2000
+  text:      Need to review the Recommendations for the Fast Track Calculus I would totally Recommend Martin Williamson for the Fast Track Calculus Program. I feel Martin Williamson has outstanding academic ability and is just amazing and his accomplishments are increasable. I have been advising and overseeing Martin for the last 3 years. His decaudation to everything he does is just totally incredible. The ch
+
+[labels_030] wildchat-a4b9f41384146af06e07b33ddd326f37
+  rationale: Astrological birth-chart analysis for a specific 1991-01-27 08:50am chart focused on fame aspects and Jupiter's 10th-house influence — moderate astrology interpretation with PII-grade birth details.
+  text_len:  508
+  text:      Need some info on birth chart. birth time: 1991-01-27 8:50am, Ascendant: 20° Aquarius 21’,Sun: 12° Capricorn 56′ 20″, Moon: 00° Gemini 06′ 13″, Mars: 07° Taurus 45′ 07″, Mercury: 22° Sagittarius 00′ 11″, Jupiter: 15° Cancer 05′ 52″, Venus: 03° Aquarius 41′ 43″, Saturn: 05° Capricorn 00′ 55″, North node (Rahu): 04° Capricorn 00′ 24″, South node (Ketu): 04° Cancer 00′ 24″. What can you tell me about
+
+[labels_035] wildchat-c2d4050e334cb8e36ef99bc72c2dcaba
+  rationale: discord.py message_handler restricted to hardcoded real Discord user IDs and guild ID, dispatching 'status' and 'announce' flows with reaction-picked role targeting (Underboss/Capo/Soldier/Prospect/All) — moderate bot extension containing r
+  text_len:  2000
+  text:      ### import discord from members import favela_to_names, angels_to_names from favela import favela from angels import check_angels # message_handler.py async def handle_message(message, bot): # Add your user ID below user_id = [204221702404571136, 727947838079631421, 941168256805384193] if message.author.id not in user_id: return # ignore messages from other users if isinstance(message.channel, dis
+
+[labels_039] wildchat-1b26ab6746ab5e4178abe77c22858085
+  rationale: Roleplay-as-psychologist request where the user discloses "у меня депрессия и повышенная трвежность" (I have depression and heightened anxiety) and asks for scientific suggestions — critical mental-health guidance tied to the user's own con
+  text_len:  204
+  text:      I want you to act a psychologist. i will provide you my thoughts. I want you to give me scientific suggestions that will make me feel better. my first thought, { у меня депрессия и повышенная трвежность }
+
+[labels_041] wildchat-737b1a7ed0f42f5e1dfba1dba76f3968
+  rationale: Full clinical workup for named 53-year-old female teacher Hameda Jasem Mohammed with bilateral knee pain, polyuria, fatigue on a background of DM2 (9y on metformin) and OA (11y on NSAIDs), asking for history/examination/timeline/complicatio
+  text_len:  2000
+  text:      Personal ID Name Hameda Jasem Mohammed Age 53 years Gender female Occupation teacher Blood group O- Martial status Married Chronic diseases OA, Diabetes type 2 I will take history and examination then i will discuss the timeline of the patient condition improvement or Worsening including complications and investigations with treatments. History taking: 1-chief complaint Bilateral knee pain and sti
+
+[labels_045] wildchat-f3665ce87900529741ce3ff7f87546a2
+  rationale: Framework for an adaptive MMPI self-report session — 100 true/false questions across the 10 clinical scales (Hypochondriasis / Depression / Hysteria / Psychopathic Deviate / Masculinity-Femininity / Paranoia / Psychasthenia / Schizophrenia 
+  text_len:  2000
+  text:      Let's play a game at the end of which you will assign me an MMPI score based on my answers to your questions. After I answer the question, immediately give me the next one. The game uses MMPI clinical Scales 1. Hypochondriasis (Hs) 2. Depression (D) 3. Hysteria (Hy) 4. Psychopathic Deviate (Pd) 5. Masculinity-Femininity (Mf) 6. Paranoia (Pa) 7. Psychasthenia (Pt) 8. Schizophrenia (Sc) 9. Hypomania

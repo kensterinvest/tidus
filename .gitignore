@@ -32,6 +32,25 @@ env/
 # persistent state between runs. See .github/workflows/weekly-sync.yml.
 !tidus.db
 
+# ML training artifacts — only final inference weights are committed
+# (tidus/classification/weights/heads.pt + label_mappings.json,
+# and tidus/classification/weights_b/*.joblib). Intermediate training
+# checkpoints contain model.safetensors files in the hundreds of MB
+# and are not needed for reproducibility — the training scripts
+# regenerate them from scratch.
+tidus/classification/weights/adapter/
+tidus/classification/weights/checkpoints/
+tidus/classification/weights_b/checkpoints/
+
+# Labeled dataset — distributed separately on Hugging Face Datasets
+# (https://huggingface.co/datasets/kensterinvest/tidus-wildchat-classification)
+# because a small number of prompts contain real credential patterns from
+# upstream WildChat-1M that trip GitHub push-protection. The HF dataset
+# is the authoritative public distribution; local clone goes in
+# tests/classification/ via `huggingface-cli download …`.
+tests/classification/
+hf_dataset_staging/
+
 # IDE
 .vscode/
 .idea/

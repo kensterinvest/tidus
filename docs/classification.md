@@ -46,9 +46,27 @@ See `config/policies.yaml` for:
 See `plan.md` for the full shipping sequence (Stages A through D) and the four-lever accuracy improvement roadmap.
 See `findings.md` for the research evidence document with full tables and methodology.
 
+## Dataset
+
+The labeled corpus is distributed separately on Hugging Face Datasets:
+
+**<https://huggingface.co/datasets/kensterinvest/tidus-wildchat-classification>**
+
+To reproduce paper numbers locally:
+
+```bash
+huggingface-cli download kensterinvest/tidus-wildchat-classification \
+  --repo-type dataset \
+  --local-dir tests/classification/
+```
+
+Contents: 2,669 labels + 25 manual overrides + 14 IRR-adjudicated overrides + full IRR study artifacts (n=149 × 3 raters). Dataset is CC-BY 4.0.
+
+The dataset is on Hugging Face rather than in this git repo because a small number of prompts (inherited from upstream WildChat-1M) contain real credential patterns that trip GitHub's secret-scanning push protection. These credentials are the evidentiary basis of Finding #4 (credential re-leak) and are preserved in the Hugging Face distribution.
+
 ## Reproduction artifacts
 
-All studies are reproducible from the repository. Relevant scripts:
+All studies are reproducible from the repository plus the Hugging Face dataset above. Relevant scripts:
 
 - `scripts/label_wildchat.py` — rubric (`SYSTEM_PROMPT`) + labeling pipeline
 - `scripts/ensemble_presidio.py` — Tier 2b rule evaluation (E0 through E7)

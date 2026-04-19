@@ -1,0 +1,46 @@
+{
+  "domains": [
+    "chat",
+    "code",
+    "reasoning",
+    "extraction",
+    "classification",
+    "summarization",
+    "creative"
+  ],
+  "complexities": [
+    "simple",
+    "moderate",
+    "complex",
+    "critical"
+  ],
+  "privacies": [
+    "public",
+    "internal",
+    "confidential"
+  ],
+  "backbone": "microsoft/deberta-v3-xsmall",
+  "max_len": 384,
+  "class_weights": {
+    "domain": [
+      0.612310528755188,
+      0.45666325092315674,
+      1.7002551555633545,
+      11.201681137084961,
+      31.738094329833984,
+      4.139751434326172,
+      0.44912397861480713
+    ],
+    "complexity": [
+      0.6026220321655273,
+      0.5745689868927002,
+      1.7447644472122192,
+      37.02777862548828
+    ],
+    "privacy": [
+      0.38503754138946533,
+      3.967261791229248,
+      6.631840705871582
+    ]
+  }
+}
