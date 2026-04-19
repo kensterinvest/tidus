@@ -83,7 +83,7 @@ def report_slice(name: str, rows: list[Row],
         conf_pass = plo >= 0.95
         conf_fail = phi < 0.95
     else:
-        print(f"\n  Confidential recall: n/a")
+        print("\n  Confidential recall: n/a")
         conf_pass = False
         conf_fail = False
 

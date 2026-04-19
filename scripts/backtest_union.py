@@ -29,7 +29,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from poc_classifier import classify_t1, Privacy as POCPrivacy  # noqa: E402
+from poc_classifier import Privacy as POCPrivacy
+from poc_classifier import classify_t1  # noqa: E402
 from train_encoder import PRIVACIES, PRV2IDX, SEED, load_joined_rows  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -105,7 +106,7 @@ def main() -> int:
         print(f"\n  {name}")
         print(f"    Confidential recall: {tp}/{gt_conf} = {pp*100:.2f}%   CI [{plo*100:.2f}, {phi*100:.2f}]")
         print(f"    Gate >= 95%:         {gate_verdict(plo, phi, 0.95)}")
-        print(f"    Total flagged: {predicted} (TP={tp}, FP={fp}, precision={tp/predicted*100:.1f}% if predicted)" if predicted else f"    Total flagged: 0")
+        print(f"    Total flagged: {predicted} (TP={tp}, FP={fp}, precision={tp/predicted*100:.1f}% if predicted)" if predicted else "    Total flagged: 0")
 
     sep = "=" * 72
     print(f"\n{sep}\n  UNION(POC + Recipe B encoder) — privacy gate check  (n={n}, gt_conf={gt_conf})\n{sep}")
@@ -116,8 +117,6 @@ def main() -> int:
     report("INTERSECTION (both fire — high-precision subset)", intersect_conf)
 
     # --- Overlap analysis on the ground-truth confidentials ---
-    poc_catches = int((poc_conf & conf_mask).sum())
-    enc_catches = int((enc_conf & conf_mask).sum())
     both = int(((poc_conf & enc_conf) & conf_mask).sum())
     only_poc = int(((poc_conf & ~enc_conf) & conf_mask).sum())
     only_enc = int(((~poc_conf & enc_conf) & conf_mask).sum())

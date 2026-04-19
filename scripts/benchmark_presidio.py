@@ -34,7 +34,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from poc_classifier import Privacy as POCPrivacy, classify_t1  # noqa: E402
+from poc_classifier import Privacy as POCPrivacy  # noqa: E402
+from poc_classifier import classify_t1
 from train_encoder import PRIVACIES, PRV2IDX, SEED, load_joined_rows  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
@@ -146,9 +147,9 @@ def main() -> int:
           f"max: {lat.max():.1f}ms")
     p95 = np.percentile(lat, 95)
     if p95 <= 30:
-        print(f"    p95 <= 30ms -> KEEP as parallel Tier 2b per plan.md")
+        print("    p95 <= 30ms -> KEEP as parallel Tier 2b per plan.md")
     else:
-        print(f"    p95  > 30ms -> DEMOTE to conditional Tier 3 per plan.md")
+        print("    p95  > 30ms -> DEMOTE to conditional Tier 3 per plan.md")
 
     # Top Presidio entity types (informative)
     print("\n  Presidio top entity types hit (any confidence):")
@@ -166,7 +167,7 @@ def main() -> int:
         if predicted:
             print(f"    Total flagged: {predicted} (TP={tp}, FP={fp}, precision={tp/predicted*100:.1f}%)")
         else:
-            print(f"    Total flagged: 0")
+            print("    Total flagged: 0")
 
     report("POC Tier 1 alone", poc_conf)
     report("Recipe B encoder alone (k-fold)", enc_conf)

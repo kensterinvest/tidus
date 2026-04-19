@@ -31,7 +31,6 @@ from collections import Counter
 from dataclasses import asdict, dataclass
 from enum import Enum
 from pathlib import Path
-from typing import Iterable
 
 from anthropic import AsyncAnthropic
 from datasets import load_dataset
@@ -354,21 +353,21 @@ def summarize(results: list[LabelResult]) -> None:
     total = len(results)
     errors = [r for r in results if r.parse_error]
     ok = [r for r in results if not r.parse_error]
-    print(f"\n=== Labeling summary ===", file=sys.stderr)
+    print("\n=== Labeling summary ===", file=sys.stderr)
     print(f"Total: {total}", file=sys.stderr)
     print(f"OK:    {len(ok)} ({len(ok)/total:.1%})", file=sys.stderr)
     print(f"Errors:{len(errors)} ({len(errors)/total:.1%})", file=sys.stderr)
     if errors[:3]:
-        print(f"\nFirst 3 errors:", file=sys.stderr)
+        print("\nFirst 3 errors:", file=sys.stderr)
         for r in errors[:3]:
             print(f"  [{r.id}] {r.parse_error}", file=sys.stderr)
-    print(f"\nDomain distribution:", file=sys.stderr)
+    print("\nDomain distribution:", file=sys.stderr)
     for k, v in sorted(Counter(r.domain for r in ok).items(), key=lambda x: -x[1]):
         print(f"  {k}: {v} ({v/len(ok):.1%})", file=sys.stderr)
-    print(f"\nComplexity distribution:", file=sys.stderr)
+    print("\nComplexity distribution:", file=sys.stderr)
     for k, v in sorted(Counter(r.complexity for r in ok).items(), key=lambda x: -x[1]):
         print(f"  {k}: {v} ({v/len(ok):.1%})", file=sys.stderr)
-    print(f"\nPrivacy distribution:", file=sys.stderr)
+    print("\nPrivacy distribution:", file=sys.stderr)
     for k, v in sorted(Counter(r.privacy for r in ok).items(), key=lambda x: -x[1]):
         print(f"  {k}: {v} ({v/len(ok):.1%})", file=sys.stderr)
 
@@ -453,7 +452,7 @@ def main():
                     "has_keyword_hint": bool(KEYWORD_HINT_RE.search(p["text"])),
                 }
                 f.write(json.dumps(row, ensure_ascii=False) + "\n")
-        print(f"[dump] Done. Stratum counts:", file=sys.stderr)
+        print("[dump] Done. Stratum counts:", file=sys.stderr)
         code_n = sum(1 for p in sample if CODE_FENCE_RE.search(p["text"]))
         pii_n = sum(1 for p in sample if PII_HINT_RE.search(p["text"]))
         kw_n = sum(1 for p in sample if KEYWORD_HINT_RE.search(p["text"]))

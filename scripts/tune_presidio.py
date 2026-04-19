@@ -18,7 +18,6 @@ from __future__ import annotations
 
 import math
 import sys
-from collections import Counter
 from pathlib import Path
 
 import numpy as np
@@ -29,8 +28,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from poc_classifier import Privacy as POCPrivacy, classify_t1  # noqa: E402
-from train_encoder import PRIVACIES, PRV2IDX, SEED, load_joined_rows  # noqa: E402
+from poc_classifier import Privacy as POCPrivacy  # noqa: E402
+from poc_classifier import classify_t1
+from train_encoder import PRV2IDX, SEED, load_joined_rows  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -163,7 +163,6 @@ def main() -> int:
         "FI_PERSONAL_IDENTITY_CODE", "NG_NIN",
     }
     NOISY_PATTERNS = {"URL", "US_DRIVER_LICENSE", "US_BANK_NUMBER", "DATE_TIME", "US_ITIN"}
-    NER_ENTITIES = {"PERSON", "ORGANIZATION", "LOCATION", "NRP"}
     # Union of everything Presidio can emit (for "baseline = all" configs)
     all_entities_on = set().union(*per_row_on) if per_row_on else set()
     all_entities_off = set().union(*per_row_off) if per_row_off else set()

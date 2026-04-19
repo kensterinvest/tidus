@@ -10,6 +10,8 @@ import json
 import sys
 from pathlib import Path
 
+from presidio_analyzer import AnalyzerEngine
+
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -31,7 +33,6 @@ print(f"pool_chunks rows: {len(pool_chunks)}")
 in_pool = sum(1 for f in flips if f["id"] in pool_chunks)
 print(f"Of {len(flips)} flips, in ensemble pool_chunks: {in_pool}")
 
-from presidio_analyzer import AnalyzerEngine
 analyzer = AnalyzerEngine()
 
 print()

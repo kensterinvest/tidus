@@ -290,7 +290,7 @@ def main() -> None:
     lines: list[str] = []
     lines.append("# Inter-Rater Reliability Report — Privacy Classification\n")
     lines.append(f"- Common items (labeled by all 3 raters): **{len(common_ids)}**")
-    lines.append(f"- Raters: Claude (Anthropic), GPT (OpenAI, via Copilot), Gemini (Google)")
+    lines.append("- Raters: Claude (Anthropic), GPT (OpenAI, via Copilot), Gemini (Google)")
     lines.append(f"- Classes: {', '.join(PRIVACY_CLASSES)}\n")
 
     lines.append("## Headline numbers\n")
@@ -300,8 +300,8 @@ def main() -> None:
         "distant disagreements (public↔confidential) more than adjacent ones "
         "(public↔internal). Unweighted κ reported for reference.\n"
     )
-    lines.append(f"| Metric | Value | Interpretation |")
-    lines.append(f"|---|---|---|")
+    lines.append("| Metric | Value | Interpretation |")
+    lines.append("|---|---|---|")
     lines.append(f"| **Fleiss' κ (3 raters, unweighted)** | **{kappa_fleiss:.3f}** | {kappa_interpretation(kappa_fleiss)} |")
     lines.append(f"| **Weighted Cohen's κ — Claude vs GPT** | **{wkappa_cg:.3f}** | {kappa_interpretation(wkappa_cg)} |")
     lines.append(f"| **Weighted Cohen's κ — Claude vs Gemini** | **{wkappa_cm:.3f}** | {kappa_interpretation(wkappa_cm)} |")

@@ -23,8 +23,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from poc_classifier import Privacy as POCPrivacy, classify_t1  # noqa: E402
-from train_encoder import PRIVACIES, PRV2IDX, SEED, load_joined_rows  # noqa: E402
+from poc_classifier import Privacy as POCPrivacy  # noqa: E402
+from poc_classifier import classify_t1
+from train_encoder import PRV2IDX, SEED, load_joined_rows  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -116,7 +117,7 @@ def main() -> int:
     print(f"\nAll-signal-missed confidentials: {len(idxs)}")
 
     report = []
-    report.append(f"# Confidentials missed by EVERY signal (E1 ceiling)")
+    report.append("# Confidentials missed by EVERY signal (E1 ceiling)")
     report.append(f"# n_total={n}, gt_conf={int(conf_mask.sum())}, all_missed={len(idxs)}")
     report.append("")
     report.append("For each, decide BEFORE checking impact on metrics:")

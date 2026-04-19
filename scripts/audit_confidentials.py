@@ -145,7 +145,7 @@ def main() -> int:
     suggestions = defaultdict(int)
     for c in confidentials:
         suggestions[c["suggest"]] += 1
-    out(f"Heuristic suggestion totals:")
+    out("Heuristic suggestion totals:")
     for k, v in suggestions.items():
         out(f"  {k}: {v}")
     out()

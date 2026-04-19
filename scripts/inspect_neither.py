@@ -21,8 +21,9 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from poc_classifier import Privacy as POCPrivacy, classify_t1  # noqa: E402
-from train_encoder import PRIVACIES, PRV2IDX, SEED, load_joined_rows  # noqa: E402
+from poc_classifier import Privacy as POCPrivacy  # noqa: E402
+from poc_classifier import classify_t1
+from train_encoder import PRV2IDX, SEED, load_joined_rows  # noqa: E402
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")

@@ -198,11 +198,11 @@ def main() -> int:
     # Secondary: confidential precision + overall privacy
     if conf_predicted:
         prec = conf_flagged / conf_predicted
-        print(f"\n  Privacy — confidential precision (secondary)")
+        print("\n  Privacy — confidential precision (secondary)")
         print(f"    {conf_flagged}/{conf_predicted} = {prec*100:.2f}%   ({conf_predicted - conf_flagged} false-confidentials)")
     if internal_ground:
         esc = internal_to_conf / internal_ground
-        print(f"\n  Privacy — internal->confidential escalation rate (context)")
+        print("\n  Privacy — internal->confidential escalation rate (context)")
         print(f"    {internal_to_conf}/{internal_ground} = {esc*100:.2f}%")
 
     po_p, po_lo, po_hi = wilson_ci(priv_overall_ok, n)
