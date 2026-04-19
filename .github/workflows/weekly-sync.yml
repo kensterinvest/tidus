@@ -1,0 +1,64 @@
+name: Weekly Pricing Sync
+
+# Replaces the session-scoped Claude Code cron (see commit 00b9b9d).
+# Root cause: Claude Code crons don't persist across sessions — the Sunday
+# 2026-04-19 run was missed because the registering session had ended.
+# This workflow runs on GitHub infrastructure, independent of any local session.
+
+on:
+  schedule:
+    - cron: '0 2 * * 0'  # Sunday 02:00 UTC
+  workflow_dispatch:     # allow manual fire from Actions tab
+
+permissions:
+  contents: write        # needed for pushing DB/reports/index.html back to main
+
+concurrency:
+  group: weekly-sync
+  cancel-in-progress: false
+
+jobs:
+  weekly_sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repo (with tidus.db committed state)
+        uses: actions/checkout@v4
+        with:
+          # DEPLOY_PAT is a PAT with `repo` scope if cross-repo push to
+          # kensterinvest.github.io is desired. Falls back to GITHUB_TOKEN,
+          # which only has permission on this repo (github.io push will fail
+          # silently — landing_updater catches and logs the error).
+          token: ${{ secrets.DEPLOY_PAT || secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+
+      - name: Install project dependencies
+        run: uv sync --frozen
+
+      - name: Configure git identity for auto-commits
+        run: |
+          git config --global user.name  "tidus-bot[bot]"
+          git config --global user.email "tidus-bot@users.noreply.github.com"
+
+      - name: Run weekly sync (price + snapshot + report + email + landing)
+        env:
+          TIDUS_CANARY_SAMPLE_SIZE: "0"
+          RESEND_API_KEY:  ${{ secrets.RESEND_API_KEY }}
+          TIDUS_SMTP_FROM: ${{ secrets.TIDUS_SMTP_FROM }}
+        run: uv run python scripts/weekly_full_sync.py
+
+      - name: Commit updated DB + reports to main
+        run: |
+          git add tidus.db reports/ || true
+          if ! git diff --cached --quiet; then
+            DATE=$(date -u +%Y-%m-%d)
+            git commit -m "chore(weekly): DB + reports sync ${DATE}"
+            git push origin HEAD:main
+          else
+            echo "No DB or report changes to commit."
+          fi

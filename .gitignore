@@ -27,6 +27,10 @@ env/
 *.db
 *.sqlite
 *.sqlite3
+# Exception: tidus.db is the weekly-sync state (2 MB SQLite, price history
+# + revisions). Committed so GitHub Actions weekly-sync workflow has
+# persistent state between runs. See .github/workflows/weekly-sync.yml.
+!tidus.db
 
 # IDE
 .vscode/
