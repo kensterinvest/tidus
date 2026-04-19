@@ -60,6 +60,12 @@ dependencies = [
     "resend>=2.0.0",
     # Redis (optional — used for multi-worker SpendCounter backend)
     "redis>=5.0.0",
+    "datasets>=4.8.4",
+    "sentence-transformers>=5.4.1",
+    "peft>=0.19.1",
+    "scikit-learn>=1.8.0",
+    "presidio-analyzer>=2.2.362",
+    "spacy>=3.8.14",
 ]
 
 [project.optional-dependencies]
