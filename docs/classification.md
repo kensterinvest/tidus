@@ -1,4 +1,4 @@
-# Classification — Privacy, Domain, and Complexity
+# Multi-Axis Request Classification — Domain, Complexity, Privacy
 
 **Status:** Research complete (2026-04-20). Shipping preparation.
 **Current baseline:** 89.2% confidential recall (CI [80.7%, 94.2%]) on cross-family-validated ground truth.

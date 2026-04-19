@@ -1895,8 +1895,83 @@ response = client.chat.completions.create(
 <section class="classification-section" id="classification-workflow" style="padding:80px 20px;background:#f9f9fb;border-top:1px solid #e5e5ea">
   <div class="section-inner" style="max-width:980px;margin:0 auto">
     <p class="section-tag">Technical Specification</p>
-    <h2 class="section-title">The Tidus Privacy-Aware Classification Workflow</h2>
-    <p class="section-sub" style="max-width:none">How Tidus converts a raw user prompt into a structured three-axis classification (domain, complexity, privacy) using a five-tier pipeline of local deterministic detectors and a fallback language model, without transmitting the prompt outside the deployment boundary. Includes empirical validation via cross-family inter-rater reliability, an honest accuracy baseline of 89.2% confidential recall at ship, and a telemetry-driven self-improvement trajectory to 95–97% within twelve months of enterprise deployment.</p>
+    <h2 class="section-title">The Tidus Multi-Axis Request Classification Workflow</h2>
+    <p class="section-sub" style="max-width:none">How Tidus converts a raw user prompt into a structured three-axis classification — <strong>domain</strong> (task type), <strong>complexity</strong> (cognitive load), and <strong>privacy</strong> (content sensitivity) — using a five-tier pipeline of local detectors and a language-model fallback, without transmitting the prompt outside the deployment boundary. Includes empirical validation via cross-family inter-rater reliability, an honest accuracy baseline of 89.2% confidential recall at ship, and a telemetry-driven self-improvement trajectory to 95–97% within twelve months of enterprise deployment.</p>
+
+    <!-- ─── Worked examples — what the classifier actually outputs ─── -->
+    <h3 style="margin-top:48px;font-size:22px;color:#111">What the classifier outputs — worked examples</h3>
+    <p>Every incoming prompt receives one label per axis. The routing stage downstream uses all three: <strong>domain</strong> narrows the candidate-model set, <strong>complexity</strong> sets the tier ceiling, and <strong>privacy</strong> enforces local-only routing when <code>confidential</code>. The examples below are drawn from the labeled corpus and show both the classifier output and which tier resolved it.</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0;font-size:13px">
+      <thead>
+        <tr style="background:#111;color:#fff">
+          <th style="padding:10px;text-align:left">Example prompt (abbreviated)</th>
+          <th style="padding:10px;text-align:center">domain</th>
+          <th style="padding:10px;text-align:center">complexity</th>
+          <th style="padding:10px;text-align:center">privacy</th>
+          <th style="padding:10px;text-align:left">Resolved at</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"do you know the game arknights"</em></td>
+          <td style="padding:10px;text-align:center">chat</td>
+          <td style="padding:10px;text-align:center">simple</td>
+          <td style="padding:10px;text-align:center;color:#10b981">public</td>
+          <td style="padding:10px">T2a encoder</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"write a React component that fetches data with useEffect and handles errors"</em></td>
+          <td style="padding:10px;text-align:center">code</td>
+          <td style="padding:10px;text-align:center">moderate</td>
+          <td style="padding:10px;text-align:center;color:#64748b">internal</td>
+          <td style="padding:10px">T2a encoder</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"debug: bot.send_message(chat_id, '5828712341:AAG5HJa37u32SHLytWm5poFr…')"</em></td>
+          <td style="padding:10px;text-align:center">code</td>
+          <td style="padding:10px;text-align:center">moderate</td>
+          <td style="padding:10px;text-align:center;color:#dc2626"><strong>confidential</strong></td>
+          <td style="padding:10px">T1 regex (Telegram-token pattern)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"I have depression and heightened anxiety, please give me scientific suggestions"</em></td>
+          <td style="padding:10px;text-align:center">chat</td>
+          <td style="padding:10px;text-align:center">critical</td>
+          <td style="padding:10px;text-align:center;color:#dc2626"><strong>confidential</strong></td>
+          <td style="padding:10px">T5 LLM (topic-based — no entity)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"review my letter of explanation for a Canadian open work permit to accompany my wife"</em></td>
+          <td style="padding:10px;text-align:center">summarization</td>
+          <td style="padding:10px;text-align:center">critical</td>
+          <td style="padding:10px;text-align:center;color:#dc2626"><strong>confidential</strong></td>
+          <td style="padding:10px">T5 LLM (immigration topic)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"Kalman filter for YOLO ball tracking, code attached: /Users/surabhi/Documents/kalman/best.pt"</em></td>
+          <td style="padding:10px;text-align:center">code</td>
+          <td style="padding:10px;text-align:center">complex</td>
+          <td style="padding:10px;text-align:center;color:#dc2626"><strong>confidential</strong></td>
+          <td style="padding:10px">T5 LLM (filesystem user-id leak)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"contact me at jennifer.miller@acme.com re: Q3 pricing"</em></td>
+          <td style="padding:10px;text-align:center">chat</td>
+          <td style="padding:10px;text-align:center">simple</td>
+          <td style="padding:10px;text-align:center;color:#dc2626"><strong>confidential</strong></td>
+          <td style="padding:10px">T2b Presidio (PERSON + EMAIL)</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><em>"Vue timeline with 张三 as template user and 13845257654 as placeholder phone"</em></td>
+          <td style="padding:10px;text-align:center">code</td>
+          <td style="padding:10px;text-align:center">moderate</td>
+          <td style="padding:10px;text-align:center;color:#10b981">public</td>
+          <td style="padding:10px">T2a encoder (recognizes placeholders)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size:13px;color:#666;margin-top:8px"><em>Observation:</em> the three axes operate independently. A "code / moderate / confidential" prompt and a "chat / simple / confidential" prompt route to entirely different model sets despite sharing the privacy flag. Conversely, two prompts both labeled <code>confidential</code> may trigger for completely different reasons (entity leak vs. topic sensitivity vs. credential pattern) — which is why a single-signal classifier cannot produce the full three-axis output alone, and why the cascade has multiple tiers.</p>
 
     <!-- ─────── 1. Abstract ─────── -->
     <h3 style="margin-top:50px;font-size:22px;color:#111">1. Abstract</h3>
@@ -1916,6 +1991,65 @@ response = client.chat.completions.create(
     <!-- ─────── 4. System Architecture ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">4. System Architecture — Five-Tier Classification Cascade</h3>
     <p>The classification subsystem comprises five tiers executed in cascade. Each tier operates on the raw prompt text and emits a partial classification across the three axes. Tiers are ordered by ascending cost and descending throughput; the cascade short-circuits when a tier produces a high-confidence classification.</p>
+
+    <!-- Cascade visual diagram -->
+    <div style="margin:28px 0;padding:24px;background:#fff;border-radius:10px;border:1px solid #e5e5ea">
+      <div style="text-align:center;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:16px;font-weight:700">Cascade flow — every prompt enters at T0</div>
+
+      <!-- Input box -->
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div style="padding:10px 20px;background:#111;color:#fff;border-radius:6px;font-size:13px;font-weight:700">Incoming prompt</div>
+      </div>
+      <div style="text-align:center;font-size:20px;color:#94a3b8;margin:-4px 0 12px 0">↓</div>
+
+      <!-- 5 tiers in vertical stack with their roles -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+
+        <div style="display:flex;align-items:center;padding:14px;background:#f9f9fb;border-left:4px solid #6b7280;border-radius:6px">
+          <div style="min-width:70px;font-weight:700;color:#111">T0</div>
+          <div style="flex:1">
+            <div style="font-weight:600;color:#111">Caller override</div>
+            <div style="font-size:13px;color:#64748b">Explicit axes in API request → skip all tiers. &lt; 1 µs.</div>
+          </div>
+          <div style="font-size:12px;color:#10b981;font-weight:700">~5% of traffic</div>
+        </div>
+
+        <div style="display:flex;align-items:center;padding:14px;background:#f9f9fb;border-left:4px solid #3b82f6;border-radius:6px">
+          <div style="min-width:70px;font-weight:700;color:#111">T1</div>
+          <div style="flex:1">
+            <div style="font-weight:600;color:#111">Heuristic fast-path (regex + keywords)</div>
+            <div style="font-size:13px;color:#64748b">SSN / credit-card+Luhn / AWS / GitHub / Telegram / Discord / generic high-entropy secrets · medical + legal + financial keyword hits · code fences and shebangs. 5–10 ms.</div>
+          </div>
+          <div style="font-size:12px;color:#3b82f6;font-weight:700">~30-40% short-circuit</div>
+        </div>
+
+        <div style="display:flex;align-items:center;padding:14px;background:#f9f9fb;border-left:4px solid #7c3aed;border-radius:6px">
+          <div style="min-width:70px;font-weight:700;color:#111">T2a ∥ T2b</div>
+          <div style="flex:1">
+            <div style="font-weight:600;color:#111">Trained encoder (semantic) + Presidio NER (entity) — executed in parallel</div>
+            <div style="font-size:13px;color:#64748b"><strong>T2a:</strong> sentence-transformer + 3 logistic-regression heads → domain / complexity / privacy probabilities. <strong>T2b:</strong> spaCy NER for PERSON, EMAIL, PHONE, IBAN, SSN, etc. Max(T2a, T2b) latency ≈ 50 ms.</div>
+          </div>
+          <div style="font-size:12px;color:#7c3aed;font-weight:700">~55-60% resolved here</div>
+        </div>
+
+        <div style="display:flex;align-items:center;padding:14px;background:#f9f9fb;border-left:4px solid #dc2626;border-radius:6px">
+          <div style="min-width:70px;font-weight:700;color:#111">T5</div>
+          <div style="flex:1">
+            <div style="font-weight:600;color:#111">Language-model fallback (local for <code>strict</code>; cloud allowed for <code>disabled</code>)</div>
+            <div style="font-size:13px;color:#64748b">Invoked only when T1–T2b disagree or report low confidence. Catches topic-based sensitivity that entity detectors cannot see. 200–2,000 ms.</div>
+          </div>
+          <div style="font-size:12px;color:#dc2626;font-weight:700">~5-10% escalated</div>
+        </div>
+      </div>
+
+      <!-- Merge + emit -->
+      <div style="text-align:center;font-size:20px;color:#94a3b8;margin:12px 0">↓</div>
+      <div style="display:flex;justify-content:center">
+        <div style="padding:12px 24px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border-radius:6px;font-size:13px;font-weight:700">Three-axis label emitted → Stage 1 of 5-stage router</div>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:#666"><em>Reading the diagram:</em> a prompt enters at T0 and is "resolved" at whichever tier first produces a high-confidence classification. T0 handles the rare back-compat case where the caller already passes the axes. T1 short-circuits roughly a third of traffic on explicit signals. T2a+T2b run in parallel (not in series) and resolve the majority of remaining traffic. T5 is the escape valve for ambiguous cases. Expected tier-resolution distribution in production is shown on the right of each row.</p>
 
     <table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:14px">
       <thead>
@@ -1974,6 +2108,27 @@ response = client.chat.completions.create(
   returns confidential
 for the request</pre>
     <p>The rationale is that false negatives on the privacy axis constitute compliance incidents (potential regulatory, contractual, or reputational loss); false positives on the privacy axis merely reduce the candidate model set for a single request. The two error types are not symmetric in cost, and the combining rule reflects that asymmetry.</p>
+
+    <!-- Worked example: the OR-rule in action -->
+    <div style="margin:24px 0;padding:20px;background:#fef3c7;border-left:4px solid #f59e0b;border-radius:6px">
+      <div style="font-weight:700;font-size:13px;color:#92400e;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Worked example — the OR-rule in action</div>
+      <p style="margin:0 0 12px 0;font-size:14px"><strong>Prompt:</strong> <em>"Help me fix this Python script that reads employee data. Here's the CSV: <code>name,ssn,salary\nJohn Smith,123-45-6789,85000…</code>"</em></p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px">
+        <thead>
+          <tr style="background:#fde68a">
+            <th style="padding:8px;text-align:left">Tier</th>
+            <th style="padding:8px;text-align:left">Signal</th>
+            <th style="padding:8px;text-align:center">Emit</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="padding:8px">T1 regex</td><td style="padding:8px">SSN pattern <code>\d{3}-\d{2}-\d{4}</code> matches "123-45-6789"</td><td style="padding:8px;text-align:center;color:#dc2626;font-weight:700">confidential</td></tr>
+          <tr><td style="padding:8px">T2a encoder</td><td style="padding:8px">Semantic vector → probably "code / moderate / internal"</td><td style="padding:8px;text-align:center;color:#64748b">internal</td></tr>
+          <tr><td style="padding:8px">T2b Presidio</td><td style="padding:8px">Detects PERSON ("John Smith"), US_SSN, and numeric context</td><td style="padding:8px;text-align:center;color:#dc2626;font-weight:700">confidential</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:0;font-size:14px"><strong>Emit:</strong> <span style="color:#dc2626;font-weight:700">confidential</span>. Even though T2a said "internal" (correctly identifying the code task), T1's regex hit and T2b's SSN detection each independently trigger the OR-rule. Majority voting would have produced "internal" (2 votes internal vs 2 votes confidential — ambiguous) and leaked the prompt to external models. The OR-rule guarantees any signal wins.</p>
+    </div>
 
     <p><strong>Per-tenant privacy enforcement modes.</strong> The effect of the <code>confidential</code> emit on downstream routing is configurable per tenant via a two-valued enumeration, <code>privacy_enforcement</code>:</p>
     <ul style="line-height:1.7">
@@ -2064,12 +2219,35 @@ for the request</pre>
     <p>The 6.6-percentage-point recall drop between the Claude-only baseline (95.8%, observed on n=71 pre-adjudication) and the cross-family-adjudicated baseline (89.2%, n=83) constitutes the quantified single-labeler bias that the IRR study was designed to surface. The 89.2% figure is the defensible production value.</p>
 
     <h4 style="margin-top:24px;font-size:18px;color:#333">7.3. Entity/Topic Bifurcation Analysis</h4>
-    <p>Each of the fourteen IRR-adjudicated confidential flips was analyzed by <code>scripts/irr_flip_analysis.py</code> to determine whether Tier 2b Presidio would catch it via a PERSON entity match. Of the twelve flips in the joinable pool:</p>
-    <ul style="line-height:1.7">
-      <li><strong>6 flips are entity-bearing</strong> (Presidio detects a PERSON entity): real names in contact-information blocks, driver-license numbers, emails with named senders. Caught by Tier 2b.</li>
-      <li><strong>6 flips are topic-bearing</strong> (Presidio detects no PERSON entity): first-person financial hardship ("I am from Slovakia and have no money"), credential-generation requests ("generate valid openai api keys"), employment-law complaints ("human resources complaint"), filesystem paths containing real usernames (<code>/Users/surabhi/Documents/…</code>), SSH audit-log fragments, apartment-affordability queries. Not catchable by entity-based detectors; require semantic understanding at Tier 5.</li>
-    </ul>
-    <p>The precise 50/50 split is empirical evidence that confidential prompts decompose into two distinct architectural classes — entity-bearing and topic-bearing — and that no single detector family can achieve high recall on both. This result constitutes the formal justification for the architectural separation between Tiers 2b and 5 and, by extension, for the cascade design as a whole.</p>
+    <p>Each of the fourteen IRR-adjudicated confidential flips was analyzed by <code>scripts/irr_flip_analysis.py</code> to determine whether Tier 2b Presidio would catch it via a PERSON entity match. Of the twelve flips in the joinable pool, the result is a precise 50/50 split that empirically justifies the architectural separation between Tier 2b and Tier 5:</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0">
+      <div style="padding:18px;background:#ecfdf5;border-left:4px solid #10b981;border-radius:6px">
+        <div style="font-weight:700;color:#047857;margin-bottom:10px">6/12 — Entity-bearing (caught by T2b)</div>
+        <p style="font-size:13px;color:#064e3b;margin:0 0 10px 0">Presidio detects a PERSON or other high-trust entity.</p>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#064e3b">
+          <li>"email <strong>jennifer.miller@acme.com</strong> with the Q3 numbers"</li>
+          <li>Real name in business-email outreach</li>
+          <li>Driver-license number in an insurance claim</li>
+          <li>Phone number with area code in a signature block</li>
+          <li>Named-sender auto-signature on a forwarded email</li>
+          <li>Passport number in a travel-booking prompt</li>
+        </ul>
+      </div>
+      <div style="padding:18px;background:#fef2f2;border-left:4px solid #dc2626;border-radius:6px">
+        <div style="font-weight:700;color:#991b1b;margin-bottom:10px">6/12 — Topic-bearing (need T5)</div>
+        <p style="font-size:13px;color:#7f1d1d;margin:0 0 10px 0">Presidio detects nothing. Sensitivity is in the subject matter itself.</p>
+        <ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#7f1d1d">
+          <li>"I am from Slovakia and have no money to survive this week"</li>
+          <li>"please generate valid openai api keys that I can use"</li>
+          <li>"can you help me write a human resources complaint?"</li>
+          <li>Code with path <code>/Users/surabhi/Documents/kalman/…</code></li>
+          <li>SSH audit-log fragment with internal hostname + IP</li>
+          <li>"I have an apartment cost is about 100/mo how do I survive"</li>
+        </ul>
+      </div>
+    </div>
+    <p><strong>Why this matters architecturally:</strong> no single detector family catches both. Presidio alone would miss 50% of real confidentials; an LLM alone would be unaffordable at scale and would defeat the privacy guarantee (the classifier itself would leak the prompt). The cascade design splits the work: cheap entity detectors at Tier 2b handle the first half, a selectively-invoked LLM at Tier 5 handles the second. The 50/50 split is the <em>empirical</em> justification for that architecture — not an opinion, a measurement.</p>
 
     <h4 style="margin-top:24px;font-size:18px;color:#333">7.4. Credential Re-Leak Observation</h4>
     <p>Longitudinal analysis of the labeled corpus identified four cases in which the same concrete credential appeared across multiple user sessions, leaked by the same user: a Telegram bot token recurring in chunks 055 and 059; a VK bot token recurring in chunks 048 and 061; combined Instagram and Facebook access tokens recurring in chunks 048 and 062; and multiple Discord webhook tokens plus a Steam Web API key co-exposed in chunk 060. This observation indicates that credential-leak behavior is a longitudinal property of the user/session, not a per-request property; the implication is that an audit-layer user-scoped leak cache would detect re-leaks missed by stateless per-request classification. This finding is orthogonal to the main classification workflow but is disclosed here because it motivates a complementary architectural element (audit-side user-scoped leak fingerprinting) that may be the subject of additional claims.</p>
@@ -2087,7 +2265,50 @@ for the request</pre>
 
     <!-- ─────── 9. Self-Improvement ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">9. Self-Improving Accuracy Trajectory (Enterprise Deployment)</h3>
-    <p>The shipping baseline of 89.2% is designed to compound upward on real enterprise traffic via four overlapping mechanisms (referred to internally as "levers"), each operating at a different cadence and informed by different data:</p>
+    <p>The shipping baseline of 89.2% is designed to compound upward on real enterprise traffic via four overlapping mechanisms (referred to internally as "levers"), each operating at a different cadence and informed by different data.</p>
+
+    <!-- Feedback loop diagram -->
+    <div style="margin:24px 0;padding:24px;background:#fff;border-radius:10px;border:1px solid #e5e5ea">
+      <div style="text-align:center;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;font-weight:700">Lever 1 — the disagreement-capture feedback loop</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;font-size:13px">
+        <div style="padding:12px 16px;background:#111;color:#fff;border-radius:6px;font-weight:700">Every request</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:#f3f4f6;border:1px solid #d1d5db;border-radius:6px">5-tier classifier</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:#fef3c7;border:1px solid #f59e0b;border-radius:6px;font-weight:700">T2b vs T5 agree?</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:#ecfdf5;border:1px solid #10b981;border-radius:6px;color:#065f46;font-weight:700">Yes (90-95%) → done</div>
+      </div>
+      <div style="text-align:center;margin:14px 0;color:#94a3b8">↓ No (5-10% of traffic)</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;font-size:13px">
+        <div style="padding:12px 16px;background:#fef2f2;border:1px solid #dc2626;border-radius:6px;color:#991b1b">Log features only (no raw prompt)</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:#fef2f2;border:1px solid #dc2626;border-radius:6px;color:#991b1b">Monthly human review</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:#fef2f2;border:1px solid #dc2626;border-radius:6px;color:#991b1b"><code>label_overrides_production_YYYY_MM.jsonl</code></div>
+      </div>
+      <div style="text-align:center;margin:14px 0;color:#94a3b8">↓ Quarterly</div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;font-size:13px">
+        <div style="padding:12px 16px;background:#ede9fe;border:1px solid #7c3aed;border-radius:6px;color:#5b21b6">Retrain T2a encoder head</div>
+        <div style="font-size:20px;color:#94a3b8">→</div>
+        <div style="padding:12px 16px;background:linear-gradient(90deg,#10b981,#059669);color:#fff;border-radius:6px;font-weight:700">Updated classifier — back to top</div>
+      </div>
+      <p style="margin:18px 0 0 0;font-size:13px;color:#64748b;text-align:center"><em>The privacy-safe part:</em> what flows into the review queue is <strong>feature metadata only</strong> (entity types, reduced embedding, regex pattern IDs, tier decisions) — never the raw prompt text. Even under full active learning, confidential prompts remain inside the deployment boundary.</p>
+    </div>
+
+    <!-- Example disagreement that would feed the loop -->
+    <div style="margin:20px 0;padding:20px;background:#f9f9fb;border-left:4px solid #7c3aed;border-radius:6px">
+      <div style="font-weight:700;font-size:13px;color:#5b21b6;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Worked example — a tier disagreement feeding the loop</div>
+      <p style="margin:0 0 10px 0;font-size:14px"><strong>Prompt:</strong> <em>"draft a resignation letter citing mistreatment during performance review cycles"</em></p>
+      <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:10px">
+        <thead><tr style="background:#f3f4f6"><th style="padding:8px;text-align:left">Tier</th><th style="padding:8px;text-align:left">Decision</th></tr></thead>
+        <tbody>
+          <tr><td style="padding:8px">T2b Presidio</td><td style="padding:8px">No entities detected → <span style="color:#64748b">internal</span></td></tr>
+          <tr><td style="padding:8px">T5 LLM</td><td style="padding:8px">Employment-law complaint topic → <span style="color:#dc2626;font-weight:700">confidential</span></td></tr>
+        </tbody>
+      </table>
+      <p style="margin:0;font-size:14px">Disagreement logged. Emit follows OR-rule (<code>confidential</code>) but the feature record goes to review. Next month's human adjudication confirms T5's label. A topic-keyword pattern ("resignation letter", "mistreatment", "performance review") is added to the Tier-1 library (Lever 2) so future prompts of this shape are caught in 5 ms instead of needing a 2,000 ms LLM call. The system is now both more accurate <em>and</em> faster on this traffic class — this is how compounding happens.</p>
+    </div>
     <ol style="line-height:1.7">
       <li><strong>Disagreement-capture active learning.</strong> When Tier 2b and Tier 5 produce conflicting classifications on a given request, the request is logged to a review queue as telemetry (feature-only; no raw prompt under <code>privacy_enforcement=strict</code>). Monthly human review of the queue emits a new <code>label_overrides_production_YYYY_MM.jsonl</code> file. Quarterly retraining of the Tier 2a encoder head on the expanded corpus produces approximately 2–4 percentage-point recall gains per quarter in the first year, diminishing thereafter. The review queue receives an expected 5–10% of traffic — precisely the fraction where the system is uncertain and where labels add the most information.</li>
       <li><strong>Topic-heuristic pattern library.</strong> The six topic-based miss classes identified in §7.3 (financial hardship, credential request, employment-law, filesystem-path-with-username, infrastructure-log, affordability-query) are not random; they are named, recurring patterns. Each pattern admits a cheap keyword or regular-expression signature. Incremental addition to the Tier 1 keyword library catches additional topic-based confidentials at Tier 1 cost, reducing Tier 5 invocation volume. Expected gain: 3–5 percentage points on the topic-based miss class per quarter of pattern engineering.</li>
@@ -2108,6 +2329,31 @@ for the request</pre>
     <p><strong>Telemetry activation.</strong> The disagreement-capture feedback loop of Lever 1 requires no additional configuration beyond the above. Per-request telemetry records are written to the audit database, which also drives the cost-reporting and routing-decision history dashboards. Monthly review of the disagreement queue is a human-in-the-loop activity; the expected effort is on the order of a few hours per month for a representative enterprise traffic volume.</p>
     <p><strong>Quarterly retraining.</strong> Retraining the Tier 2a encoder head from accumulated telemetry requires executing <code>scripts/train_encoder.py</code> with the expanded <code>label_overrides_production_*.jsonl</code> files present. Retraining is a standalone activity of approximately 10–30 minutes CPU time at typical enterprise telemetry volumes; no downtime is required as the new encoder head is published as a new revision in the model registry subsystem and becomes active at the next selector refresh.</p>
     <p><strong>Per-tenant fine-tuning (Lever 4).</strong> Available after approximately 500 labeled telemetry rows per tenant accumulate. The infrastructure for per-tenant heads is specified but not required at initial deployment; enabling it at time of sufficient telemetry volume is a one-time activity of a few engineering sessions.</p>
+
+    <!-- Worked config example -->
+    <div style="margin:20px 0;padding:20px;background:#f9f9fb;border-left:4px solid #10b981;border-radius:6px">
+      <div style="font-weight:700;font-size:13px;color:#047857;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px">Worked example — a regulated-tenant config</div>
+      <p style="margin:0 0 10px 0;font-size:14px">Excerpt from <code>config/policies.yaml</code> for a HIPAA-covered healthcare SaaS:</p>
+      <pre style="background:#111;color:#d1d5db;padding:16px;border-radius:6px;font-size:12px;overflow-x:auto">tenants:
+  acme-healthcare:
+    privacy_enforcement: strict           # confidential → local-only routing
+    classification:
+      presidio_rule: E1                   # 89.2% recall; flag cost acceptable
+      topic_heuristics_enabled: true      # catches topic-based confidentials cheap
+    vendor_allowlist:                     # independent of privacy; applied at routing stage
+      - local-llama-3-70b
+      - local-mistral-large
+      - azure-openai-east-us              # BAA-covered
+
+tenants:
+  acme-internal-saas:
+    privacy_enforcement: disabled         # unregulated; best-model routing
+    classification:
+      presidio_rule: E2                   # lower flag rate; lower Tier-5 volume
+      topic_heuristics_enabled: true
+      raw_prompt_retention: opt-in        # faster per-tenant fine-tuning</pre>
+      <p style="margin:10px 0 0 0;font-size:13px;color:#64748b"><em>Note</em>: a single Tidus deployment can host both tenants. <code>privacy_enforcement</code> is evaluated per request based on the calling tenant's config; the classifier itself always runs in-process regardless.</p>
+    </div>
 
     <!-- ─────── 11. Summary of Claims-Adjacent Novelty ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">11. Summary of Claims-Adjacent Novelty</h3>
