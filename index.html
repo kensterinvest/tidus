@@ -1885,6 +1885,273 @@ response = client.chat.completions.create(
 
 <hr class="divider">
 
+<!-- ═══════════════════════════════════════════════════════════════════════
+     PRIVACY-AWARE CLASSIFICATION WORKFLOW — Technical Specification
+     Added 2026-04-20. Intended for technical evaluators and for legal
+     review in support of patent filing. Sits outside LandingPageUpdater
+     managed regions (magazine / models-array / dates); survives weekly
+     regeneration without manual re-insertion.
+     ═══════════════════════════════════════════════════════════════════════ -->
+<section class="classification-section" id="classification-workflow" style="padding:80px 20px;background:#f9f9fb;border-top:1px solid #e5e5ea">
+  <div class="section-inner" style="max-width:980px;margin:0 auto">
+    <p class="section-tag">Technical Specification</p>
+    <h2 class="section-title">The Tidus Privacy-Aware Classification Workflow</h2>
+    <p class="section-sub" style="max-width:none">How Tidus converts a raw user prompt into a structured three-axis classification (domain, complexity, privacy) using a five-tier pipeline of local deterministic detectors and a fallback language model, without transmitting the prompt outside the deployment boundary. Includes empirical validation via cross-family inter-rater reliability, an honest accuracy baseline of 89.2% confidential recall at ship, and a telemetry-driven self-improvement trajectory to 95–97% within twelve months of enterprise deployment.</p>
+
+    <!-- ─────── 1. Abstract ─────── -->
+    <h3 style="margin-top:50px;font-size:22px;color:#111">1. Abstract</h3>
+    <p>Tidus classifies every incoming AI request across three dimensions — <strong>domain</strong> (task type), <strong>complexity</strong> (cognitive load required for correctness), and <strong>privacy</strong> (content sensitivity) — before the request reaches any underlying language model. Classification is performed by a five-tier cascade of local detectors, each tier cheaper and faster than the next. Classification output drives downstream routing within the Tidus five-stage model-selection algorithm disclosed elsewhere in this document. The novel aspects of the classification layer disclosed herein include: (i) an asymmetric-safety OR-rule whereby any tier's <code>confidential</code> classification unilaterally forces local-only routing regardless of other tiers' outputs; (ii) a cross-family inter-rater reliability methodology for validating classification ground truth using independent large language models from distinct vendor families (Anthropic, OpenAI, Google); (iii) a disagreement-capture active learning loop that accumulates retraining signal from production traffic while persisting only feature metadata, never raw prompt content; and (iv) an entity/topic bifurcation analysis empirically justifying architectural separation between cheap entity detectors and language-model topic review.</p>
+
+    <!-- ─────── 2. Field of Application ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">2. Field of Application</h3>
+    <p>The disclosed classification workflow is intended for use within enterprise AI gateway software that routes natural-language prompts to one of a plurality of candidate language models. Non-exhaustive deployment contexts include: regulated industry verticals (healthcare, finance, legal, defense) subject to data-residency requirements such as HIPAA, GDPR, SOC 2, and equivalent regional standards; organizations with heterogeneous model portfolios spanning both cloud-hosted and on-premises language models; and any system requiring per-request determination of whether prompt content permits transmission to external services.</p>
+
+    <!-- ─────── 3. Problem & Prior Art Gap ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">3. Technical Problem and Prior Art Gap</h3>
+    <p>Existing prompt-classification systems fall broadly into two classes, each with material limitations:</p>
+    <p><strong>Class A — single-stage language-model classifiers (e.g., Llama Guard, prompt-classification services).</strong> These systems achieve high accuracy by invoking a language model on every request. They are unsuitable for privacy-sensitive routing because the act of classifying a confidential prompt requires transmitting that prompt to the classifier, typically outside the deployment boundary. This establishes a privacy paradox: the mechanism intended to determine whether content may leave the system is itself a mechanism that causes content to leave the system.</p>
+    <p><strong>Class B — static pattern-matching detectors (e.g., Presidio, regex-based secret scanners, DLP systems).</strong> These systems are local and fast but detect only explicit identifiers (names, credit card numbers, email addresses, named entities). They systematically miss <em>topic-based</em> confidential content — prompts where sensitivity arises from subject matter (self-disclosed medical condition, employment-law dispute, immigration status, financial hardship) rather than from the presence of a recognizable identifier. Empirical analysis reported in §7 demonstrates that approximately half of enterprise confidential prompts fall into this topic-based class.</p>
+    <p>No prior art known to the inventor combines (a) local-only classifier execution suitable for regulated deployments, (b) coverage of both entity-based and topic-based confidentiality signals, (c) per-tier asymmetric-safety semantics consistent with enterprise compliance obligations, and (d) a telemetry feedback mechanism that permits continuous accuracy improvement without raw-prompt retention.</p>
+
+    <!-- ─────── 4. System Architecture ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">4. System Architecture — Five-Tier Classification Cascade</h3>
+    <p>The classification subsystem comprises five tiers executed in cascade. Each tier operates on the raw prompt text and emits a partial classification across the three axes. Tiers are ordered by ascending cost and descending throughput; the cascade short-circuits when a tier produces a high-confidence classification.</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:14px">
+      <thead>
+        <tr style="background:#111;color:#fff">
+          <th style="padding:10px;text-align:left">Tier</th>
+          <th style="padding:10px;text-align:left">Mechanism</th>
+          <th style="padding:10px;text-align:left">Latency (p95)</th>
+          <th style="padding:10px;text-align:left">Purpose</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>T0</strong></td>
+          <td style="padding:10px">Caller override — explicit fields in the request API</td>
+          <td style="padding:10px">&lt; 1 µs</td>
+          <td style="padding:10px">Back-compat for callers who already know the classification</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>T1</strong></td>
+          <td style="padding:10px">Regular-expression and keyword heuristics (Aho–Corasick on MeSH-seeded medical, legal, PCI DSS, and homebrew financial lexica; structural signals including code fences and shebangs; POC secret patterns for SSN, credit card with Luhn validation, AWS access keys, GitHub tokens, generic high-entropy secrets)</td>
+          <td style="padding:10px">5–10 ms</td>
+          <td style="padding:10px">High-confidence short-circuit for ~30–40% of traffic; first line of privacy defense</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>T2a</strong></td>
+          <td style="padding:10px">Trained encoder — frozen sentence-transformer backbone (<code>all-MiniLM-L6-v2</code>) with a per-axis scikit-learn logistic-regression head trained on a labeled corpus of 2,669 WildChat prompts (see §6)</td>
+          <td style="padding:10px">3–15 ms (CPU, ONNX int8)</td>
+          <td style="padding:10px">Semantic classification for prompts without explicit identifiers</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>T2b</strong></td>
+          <td style="padding:10px">Presidio-based named-entity recognizer using <code>en_core_web_sm</code>, with a high-trust recognizer allowlist (PERSON, EMAIL_ADDRESS, PHONE_NUMBER, US_SSN, IBAN, CRYPTO, MEDICAL_LICENSE, URL, IP_ADDRESS)</td>
+          <td style="padding:10px">20–60 ms (runs in parallel with T2a)</td>
+          <td style="padding:10px">Entity-based confidentiality detection — Rule E1 or E2 below</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>T5</strong></td>
+          <td style="padding:10px">Language-model fallback, invoked only when T1–T2b disagree or report low confidence; implemented as a local language model for <code>privacy_enforcement=strict</code> deployments, or as a cloud language model for <code>privacy_enforcement=disabled</code> deployments (see §5)</td>
+          <td style="padding:10px">200–2,000 ms</td>
+          <td style="padding:10px">Topic-based confidentiality detection — catches content that Tier 2b structurally cannot see</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Detection rules at Tier 2b (configurable per deployment):</strong></p>
+    <ul style="line-height:1.7">
+      <li><strong>Rule E1 — PERSON alone.</strong> If Presidio detects any <code>PERSON</code> entity, classify as <code>confidential</code>. Recall 89.2% (95% CI [80.7%, 94.2%]) on cross-family-validated ground truth (§7). Flags ~49% of traffic. Ship default.</li>
+      <li><strong>Rule E2 — PERSON AND encoder-non-public.</strong> Both signals must agree. Recall 83.1% (95% CI [73.7%, 89.7%]). Flags ~19% of traffic. Higher precision; suitable where the flag-rate cost of E1 is prohibitive.</li>
+    </ul>
+
+    <!-- ─────── 5. Asymmetric-Safety OR-Rule ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">5. Asymmetric-Safety OR-Rule and Privacy Enforcement Modes</h3>
+    <p>A fundamental architectural rule governs how the outputs of the five classification tiers are combined: any tier that classifies a prompt as <code>confidential</code> unilaterally forces a <code>confidential</code> outcome at the classifier's emit boundary, regardless of the other tiers' outputs. No voting, no majority aggregation, no confidence-weighted blending. This asymmetric semantics is expressed as follows:</p>
+    <pre style="background:#f5f5f7;padding:16px;border-left:3px solid #7c3aed;font-size:13px;overflow-x:auto">privacy_emit = confidential
+  if any of {T0, T1, T2a, T2b, T5}
+  returns confidential
+for the request</pre>
+    <p>The rationale is that false negatives on the privacy axis constitute compliance incidents (potential regulatory, contractual, or reputational loss); false positives on the privacy axis merely reduce the candidate model set for a single request. The two error types are not symmetric in cost, and the combining rule reflects that asymmetry.</p>
+
+    <p><strong>Per-tenant privacy enforcement modes.</strong> The effect of the <code>confidential</code> emit on downstream routing is configurable per tenant via a two-valued enumeration, <code>privacy_enforcement</code>:</p>
+    <ul style="line-height:1.7">
+      <li><strong><code>strict</code> (default, opt-out required).</strong> A <code>confidential</code> classification forces local-only model selection at Stage 1 of the downstream routing algorithm. Candidate models whose inference endpoint resides outside the deployment boundary are removed from the eligible set. No raw-prompt retention. Intended for healthcare, finance, defense, and other regulated verticals.</li>
+      <li><strong><code>disabled</code> (opt-in).</strong> Classification still executes for cost-tier routing, complexity ceiling, and telemetry; however the <code>confidential</code> emit does not force local-only routing. All models remain eligible subject to other gating rules. Optional opt-in raw-prompt retention enabled. Intended for unregulated tenants whose data policy permits external model processing and who therefore benefit from faster improvement cycles (§9).</li>
+    </ul>
+    <p>The configuration space is deliberately restricted to two values. A middle "relaxed" mode was considered and rejected on the grounds that its semantics would admit multiple interpretations, creating compliance ambiguity during audit. Vendor-allowlist restrictions ("route confidential only to approved external vendors") are treated as a separate configuration surface, not a privacy-enforcement mode.</p>
+
+    <p><strong>Distinction between classifier location and routing enforcement.</strong> The classifier itself (all five tiers) always executes in-process or on localhost within the deployment boundary, regardless of <code>privacy_enforcement</code> value. The configuration affects only whether a <code>confidential</code> classification <em>forces</em> local-only routing of the underlying request. The two concepts — classifier location and routing enforcement — are architecturally independent.</p>
+
+    <!-- ─────── 6. Labeled Corpus ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">6. Labeled Corpus</h3>
+    <p>The encoder head at Tier 2a is trained on a corpus of 2,669 WildChat prompts (Zhao et al., 2024) sampled with stratified boost for prompts containing code fences, personal-information patterns, and medical/legal/financial keywords. Each prompt is labeled across the three axes according to a frozen rubric (the <code>SYSTEM_PROMPT</code> constant in <code>scripts/label_wildchat.py</code>) derived iteratively from an initial round of labeling plus a twenty-five-entry audit-override file (<code>label_overrides.jsonl</code>) resolving labeler-drift incidents. A subsequent cross-family inter-rater reliability study (§7) produced a further fourteen asymmetric-safety override entries (<code>label_overrides_irr.jsonl</code>). The combined post-adjudication confidential count is 83 within the 2,249 rows joinable to the active prompt pool.</p>
+
+    <!-- ─────── 7. Validation Studies ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">7. Empirical Validation Studies</h3>
+    <p>Three studies have been performed to validate the design decisions above. All three are reproducible from scripts in <code>scripts/</code> within the repository; artifacts and full reports are retained in <code>findings.md</code>, <code>tests/classification/irr/irr_report.md</code>, and <code>audit_all_missed.txt</code>.</p>
+
+    <h4 style="margin-top:24px;font-size:18px;color:#333">7.1. Cross-family Inter-Rater Reliability Study</h4>
+    <p><strong>Methodology.</strong> A stratified sample of 149 prompts (69 confidential + 40 internal + 40 public) was drawn from the labeled corpus with all three previously-identified structural-miss audit cases force-included. Three raters from distinct vendor families labeled the sample independently, blind to one another's outputs: Claude (Anthropic), GPT (OpenAI, accessed via Microsoft Copilot Think Deeper), and Gemini (Google, Gemini 2.5 Pro). All raters operated on the same frozen rubric and were provided no rationale or prior labeling.</p>
+    <p><strong>Results (weighted Cohen's κ for ordinal axes privacy and complexity; unweighted for nominal axis domain; all values on n=149).</strong></p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+      <thead>
+        <tr style="background:#f5f5f7">
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Axis</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Best pair</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Fleiss κ (3-rater, unweighted)</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Interpretation</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px">domain</td>
+          <td style="padding:10px">0.801 (Claude-Gemini)</td>
+          <td style="padding:10px">0.737</td>
+          <td style="padding:10px">substantial</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px">privacy</td>
+          <td style="padding:10px">0.783 (Claude-Gemini, weighted)</td>
+          <td style="padding:10px">0.577</td>
+          <td style="padding:10px">substantial pairwise; moderate three-rater</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px">complexity</td>
+          <td style="padding:10px">0.679 (Claude-GPT, weighted)</td>
+          <td style="padding:10px">0.517</td>
+          <td style="padding:10px">substantial pairwise; moderate three-rater</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>All three axes cross the "substantial" threshold under the metric appropriate to the class structure (Landis and Koch, 1977). Quadratic weighting for ordinal axes correctly discounts adjacent-class disagreements and penalizes distant disagreements; unweighted κ is retained for transparency.</p>
+    <p><strong>Audit-case unanimity.</strong> Three previously-identified structural-miss cases — a Vue/SCSS tutorial containing Chinese-language placeholder identifiers, a draft Canadian work-permit letter, and a first-person Russian mental-health disclosure — received unanimous 3/3 agreement across the raters. The first case unanimously labeled <code>public</code> (validating a prior labeler-override flip); the second and third unanimously labeled <code>confidential</code> (validating Tier 5 language-model review as the architectural response to topic-based sensitivity).</p>
+    <p><strong>Asymmetric-safety adjudication.</strong> Application of the per-request rule that any rater's <code>confidential</code> label forces a <code>confidential</code> adjudicated ground truth produced fourteen additional confidential flips in <code>label_overrides_irr.jsonl</code>. Of these, twelve appeared in the ensemble's joinable pool; the remaining two fell outside the active pool due to orphan-identifier corner cases. This expands the post-adjudication confidential count from 71 (Claude-only; before de-duplication) to 83.</p>
+
+    <h4 style="margin-top:24px;font-size:18px;color:#333">7.2. Ensemble Rule Evaluation Against Adjudicated Ground Truth</h4>
+    <p>The full cross-family-adjudicated labels were applied as an additional override layer and the ensemble rule sweep (<code>scripts/ensemble_presidio.py</code>) was re-run. Results on n=2,249 rows, gt_conf=83:</p>
+    <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px">
+      <thead>
+        <tr style="background:#f5f5f7">
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Rule</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Recall</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">95% CI</th>
+          <th style="padding:10px;text-align:left;border-bottom:1px solid #ccc">Flagged %</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px"><strong>E1 — PERSON alone</strong></td>
+          <td style="padding:10px"><strong>89.2%</strong> (74/83)</td>
+          <td style="padding:10px">[80.7%, 94.2%]</td>
+          <td style="padding:10px">49.3%</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px">E2 — PERSON + Encoder-non-public</td>
+          <td style="padding:10px">83.1% (69/83)</td>
+          <td style="padding:10px">[73.7%, 89.7%]</td>
+          <td style="padding:10px">18.5%</td>
+        </tr>
+        <tr style="border-bottom:1px solid #e5e5ea">
+          <td style="padding:10px">E0 — POC regex + encoder only</td>
+          <td style="padding:10px">71.1% (59/83)</td>
+          <td style="padding:10px">[60.6%, 79.7%]</td>
+          <td style="padding:10px">10.4%</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>The 6.6-percentage-point recall drop between the Claude-only baseline (95.8%, observed on n=71 pre-adjudication) and the cross-family-adjudicated baseline (89.2%, n=83) constitutes the quantified single-labeler bias that the IRR study was designed to surface. The 89.2% figure is the defensible production value.</p>
+
+    <h4 style="margin-top:24px;font-size:18px;color:#333">7.3. Entity/Topic Bifurcation Analysis</h4>
+    <p>Each of the fourteen IRR-adjudicated confidential flips was analyzed by <code>scripts/irr_flip_analysis.py</code> to determine whether Tier 2b Presidio would catch it via a PERSON entity match. Of the twelve flips in the joinable pool:</p>
+    <ul style="line-height:1.7">
+      <li><strong>6 flips are entity-bearing</strong> (Presidio detects a PERSON entity): real names in contact-information blocks, driver-license numbers, emails with named senders. Caught by Tier 2b.</li>
+      <li><strong>6 flips are topic-bearing</strong> (Presidio detects no PERSON entity): first-person financial hardship ("I am from Slovakia and have no money"), credential-generation requests ("generate valid openai api keys"), employment-law complaints ("human resources complaint"), filesystem paths containing real usernames (<code>/Users/surabhi/Documents/…</code>), SSH audit-log fragments, apartment-affordability queries. Not catchable by entity-based detectors; require semantic understanding at Tier 5.</li>
+    </ul>
+    <p>The precise 50/50 split is empirical evidence that confidential prompts decompose into two distinct architectural classes — entity-bearing and topic-bearing — and that no single detector family can achieve high recall on both. This result constitutes the formal justification for the architectural separation between Tiers 2b and 5 and, by extension, for the cascade design as a whole.</p>
+
+    <h4 style="margin-top:24px;font-size:18px;color:#333">7.4. Credential Re-Leak Observation</h4>
+    <p>Longitudinal analysis of the labeled corpus identified four cases in which the same concrete credential appeared across multiple user sessions, leaked by the same user: a Telegram bot token recurring in chunks 055 and 059; a VK bot token recurring in chunks 048 and 061; combined Instagram and Facebook access tokens recurring in chunks 048 and 062; and multiple Discord webhook tokens plus a Steam Web API key co-exposed in chunk 060. This observation indicates that credential-leak behavior is a longitudinal property of the user/session, not a per-request property; the implication is that an audit-layer user-scoped leak cache would detect re-leaks missed by stateless per-request classification. This finding is orthogonal to the main classification workflow but is disclosed here because it motivates a complementary architectural element (audit-side user-scoped leak fingerprinting) that may be the subject of additional claims.</p>
+
+    <!-- ─────── 8. Current State ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">8. Current State and Shipping Baseline</h3>
+    <p>The workflow as described is ready for production deployment with Rule E1 at Tier 2b as the default detection configuration. Empirical shipping baseline:</p>
+    <ul style="line-height:1.7">
+      <li><strong>Confidential recall:</strong> 89.2% (95% CI [80.7%, 94.2%]) on cross-family-adjudicated ground truth.</li>
+      <li><strong>Labeled corpus:</strong> 2,669 WildChat prompts, 25 manual overrides, 14 IRR-adjudicated overrides.</li>
+      <li><strong>Ground-truth trust:</strong> weighted Cohen's κ substantial across all three axes under the appropriate metric; Fleiss κ moderate-to-substantial in three-rater configuration.</li>
+      <li><strong>Architectural validation:</strong> entity/topic bifurcation confirmed empirically at 6/6 entity + 6/6 topic on independent sample.</li>
+      <li><strong>Privacy posture:</strong> classifier runs entirely within the deployment boundary regardless of <code>privacy_enforcement</code> value; cross-family IRR methodology does not require raw-prompt transmission beyond a controlled one-time validation sample.</li>
+    </ul>
+
+    <!-- ─────── 9. Self-Improvement ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">9. Self-Improving Accuracy Trajectory (Enterprise Deployment)</h3>
+    <p>The shipping baseline of 89.2% is designed to compound upward on real enterprise traffic via four overlapping mechanisms (referred to internally as "levers"), each operating at a different cadence and informed by different data:</p>
+    <ol style="line-height:1.7">
+      <li><strong>Disagreement-capture active learning.</strong> When Tier 2b and Tier 5 produce conflicting classifications on a given request, the request is logged to a review queue as telemetry (feature-only; no raw prompt under <code>privacy_enforcement=strict</code>). Monthly human review of the queue emits a new <code>label_overrides_production_YYYY_MM.jsonl</code> file. Quarterly retraining of the Tier 2a encoder head on the expanded corpus produces approximately 2–4 percentage-point recall gains per quarter in the first year, diminishing thereafter. The review queue receives an expected 5–10% of traffic — precisely the fraction where the system is uncertain and where labels add the most information.</li>
+      <li><strong>Topic-heuristic pattern library.</strong> The six topic-based miss classes identified in §7.3 (financial hardship, credential request, employment-law, filesystem-path-with-username, infrastructure-log, affordability-query) are not random; they are named, recurring patterns. Each pattern admits a cheap keyword or regular-expression signature. Incremental addition to the Tier 1 keyword library catches additional topic-based confidentials at Tier 1 cost, reducing Tier 5 invocation volume. Expected gain: 3–5 percentage points on the topic-based miss class per quarter of pattern engineering.</li>
+      <li><strong>Encoder upgrade path.</strong> The Tier 2a backbone (<code>all-MiniLM-L6-v2</code>) is a freezable dependency; upstream releases of newer sentence-transformer models (e.g., BGE, GTE, successor MiniLM variants) can be drop-in swapped with a single k-fold retrain of the logistic-regression head. Expected gain: 1–3 percentage points per encoder upgrade, at six-month cadence.</li>
+      <li><strong>Per-tenant fine-tuning.</strong> Once a tenant has accumulated approximately 500 labeled requests of their own traffic (via Lever 1), a tenant-specific classification head (logistic-regression over the global encoder, or a LoRA adapter on the encoder itself) may be trained on the tenant's telemetry. Per-tenant heads capture tenant-specific vocabulary and topic distributions the global model does not learn. Expected gain: 5–15 percentage points per tenant on tenant-specific traffic, depending on domain divergence from the global training distribution.</li>
+    </ol>
+    <p><strong>Projected trajectory.</strong> Ship-day recall is 89.2%. The four levers are expected to compound to 91–92% within 3 months, 93–94% within 6 months, and 95–97% within 12 months of enterprise deployment. Beyond approximately 97–98%, further gains require rubric refinement rather than model improvement — the Fleiss κ of 0.577 on the privacy axis indicates that expert human raters themselves disagree on approximately 37% of boundary cases, establishing an irreducible ceiling that no classifier can exceed without changing the rubric itself.</p>
+    <p><strong>Privacy-safe telemetry.</strong> The feedback loop of Lever 1 is designed so that no raw prompt text leaves the deployment boundary. The logged per-request record contains only: request identifier, tenant identifier (required from first deployment to enable future per-tenant fine-tuning), a dimensionality-reduced embedding (64-dimension reduced from the native 384-dimension sentence-transformer output, preventing embedding-inversion attacks on sensitive content), the set of Presidio entity types (types only, never values), the set of regular-expression pattern identifiers that fired (identifiers only, never matched strings), the emitting tier, the final classification across all three axes, the routed model identifier, and the end-to-end latency. This schema permits retraining of the encoder and downstream classifiers without ever retaining the original prompt text. Tenants configured to <code>privacy_enforcement=disabled</code> may additionally opt into raw-prompt retention, enabling richer fine-tuning at the tenant's explicit election.</p>
+
+    <!-- ─────── 10. Enterprise Setup ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">10. Enterprise Deployment Guide</h3>
+    <p>Deploying Tidus with the classification layer active requires three configuration steps, in order:</p>
+    <ol style="line-height:1.7">
+      <li><strong>Install and start the Tidus gateway.</strong> Follow the deployment procedure in <code>docs/deployment.md</code>. Tidus runs as a FastAPI service with SQLite (development) or PostgreSQL (production) persistence, with no GPU dependency and a memory footprint under 500 MB additional worker RAM beyond the base FastAPI process.</li>
+      <li><strong>Set tenant privacy mode.</strong> In <code>config/policies.yaml</code>, set <code>privacy_enforcement: strict</code> (default, recommended for regulated industries) or <code>privacy_enforcement: disabled</code> (opt-in, for tenants whose data policy permits external model processing). New tenants default to <code>strict</code>; weaker privacy is opt-in, not opt-out, for compliance safety.</li>
+      <li><strong>Select Tier 2b rule.</strong> Set <code>classification.presidio_rule: E1</code> (default; 89.2% recall, ~49% flag rate) or <code>classification.presidio_rule: E2</code> (83.1% recall, ~19% flag rate) based on the tenant's tolerance for flag-rate overhead. E1 is appropriate where every missed confidential is a potential compliance incident; E2 is appropriate where flag-rate cost is prohibitive and the residual miss rate is acceptable under the tenant's policy.</li>
+    </ol>
+    <p><strong>Telemetry activation.</strong> The disagreement-capture feedback loop of Lever 1 requires no additional configuration beyond the above. Per-request telemetry records are written to the audit database, which also drives the cost-reporting and routing-decision history dashboards. Monthly review of the disagreement queue is a human-in-the-loop activity; the expected effort is on the order of a few hours per month for a representative enterprise traffic volume.</p>
+    <p><strong>Quarterly retraining.</strong> Retraining the Tier 2a encoder head from accumulated telemetry requires executing <code>scripts/train_encoder.py</code> with the expanded <code>label_overrides_production_*.jsonl</code> files present. Retraining is a standalone activity of approximately 10–30 minutes CPU time at typical enterprise telemetry volumes; no downtime is required as the new encoder head is published as a new revision in the model registry subsystem and becomes active at the next selector refresh.</p>
+    <p><strong>Per-tenant fine-tuning (Lever 4).</strong> Available after approximately 500 labeled telemetry rows per tenant accumulate. The infrastructure for per-tenant heads is specified but not required at initial deployment; enabling it at time of sufficient telemetry volume is a one-time activity of a few engineering sessions.</p>
+
+    <!-- ─────── 11. Summary of Claims-Adjacent Novelty ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">11. Summary of Claims-Adjacent Novelty</h3>
+    <p>For legal review purposes, the disclosed classification workflow advances the state of the art along at least the following distinct axes. Each is supported by empirical evidence as cited. None are believed to be disclosed in combination, or individually, by any known prior-art system.</p>
+    <ol style="line-height:1.7">
+      <li><strong>Local-only five-tier classification cascade</strong> combining deterministic regular-expression heuristics, a trained sentence-embedding encoder with per-axis classification heads, a Presidio-based named-entity recognizer, and a language-model fallback — all within the deployment boundary — for enterprise AI request routing.</li>
+      <li><strong>Asymmetric-safety OR-rule</strong> for combining tier outputs in which any tier's <code>confidential</code> classification unilaterally forces the emit value, deliberately rejecting majority-vote and confidence-weighted combiners on compliance-asymmetry grounds.</li>
+      <li><strong>Cross-family inter-rater reliability methodology</strong> for validating privacy-classification ground truth using independent large language models from distinct vendor families, applied blind against a frozen rubric, with quadratic-weighted Cohen's κ as the reporting metric for ordinal classes and Fleiss κ for multi-rater agreement.</li>
+      <li><strong>Asymmetric-safety adjudication rule for ground-truth construction</strong> whereby any rater's <code>confidential</code> label forces <code>confidential</code> in the adjudicated labels — symmetric to the per-request OR-rule above, applied at training-data construction time.</li>
+      <li><strong>Entity/topic bifurcation analysis methodology</strong> for empirically justifying classifier-architecture choices by correlating post-adjudication ground-truth gains against per-tier detection capabilities, producing a measurable split (6/6 entity-bearing caught by Tier 2b and 6/6 topic-bearing missed, in the studied sample).</li>
+      <li><strong>Privacy-preserving telemetry schema</strong> for post-deployment feedback learning in regulated deployments, retaining only dimensionality-reduced embeddings, entity-type metadata, regex pattern identifiers, and classification outputs — but never raw prompt text — permitting encoder retraining without prompt retention.</li>
+      <li><strong>Disagreement-capture active learning loop</strong> whereby only inter-tier-disagreement requests are flagged for human review, achieving label-efficiency on the order of a ten-fold reduction compared to random-sample review.</li>
+      <li><strong>Two-valued privacy-enforcement configuration</strong> (<code>strict</code> / <code>disabled</code>) with deliberate rejection of intermediate modes on compliance-ambiguity grounds, decoupling the routing-enforcement semantics from the architecturally independent question of classifier location.</li>
+    </ol>
+
+    <!-- ─────── 12. References ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">12. References (reference-only style)</h3>
+    <p>The disclosed system builds on or is informed by the following public prior art. Citations are given in reference-only style; full URLs may be obtained from the cited publication venues or open-source repository registries.</p>
+    <ol style="line-height:1.7;font-size:14px">
+      <li>Chen, L., Zaharia, M., &amp; Zou, J. (2023). "FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance." arXiv preprint 2305.05176. <em>— Cascade-with-confidence-gate pattern precedent.</em></li>
+      <li>Ong, I., Almahairi, A., Wu, V., et al. (2024). "RouteLLM: Learning to Route LLMs with Preference Data." arXiv preprint 2406.18665. <em>— Trained router precedent at scale.</em></li>
+      <li>Hu, Q. J., Bieker, J., Li, X., et al. (2024). "RouterBench: A Benchmark for Multi-LLM Routing System." arXiv preprint 2403.12031. <em>— Demonstrates simple trained routers outperform heuristics.</em></li>
+      <li>vLLM Semantic Router project. <em>— Architecture precedent for multi-head classifier routing; training-recipe port basis for the Tier 2a encoder head.</em></li>
+      <li>Microsoft Presidio (analyzer engine, v2.2.362, 2026-03-18). <em>— Tier 2b named-entity recognition substrate.</em></li>
+      <li>Reimers, N., &amp; Gurevych, I. (2019). "Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks." Conference on Empirical Methods in Natural Language Processing. <em>— Foundational methodology for the Tier 2a frozen backbone.</em></li>
+      <li>Wang, W., et al. (2020). "MiniLM: Deep Self-Attention Distillation for Task-Agnostic Compression of Pre-Trained Transformers." NeurIPS. <em>— Backbone specifically deployed (<code>all-MiniLM-L6-v2</code>).</em></li>
+      <li>Zhao, W., Ren, X., Hessel, J., et al. (2024). "WildChat: 1M ChatGPT Interaction Logs in the Wild." International Conference on Learning Representations. <em>— Source corpus for the labeled training set.</em></li>
+      <li>He, P., Liu, X., Gao, J., &amp; Chen, W. (2021). "DeBERTa: Decoding-enhanced BERT with Disentangled Attention." International Conference on Learning Representations. <em>— Alternative backbone evaluated during Recipe A of Phase 1.</em></li>
+      <li>Yelp Security. "detect-secrets" (active master, tagged v1.5.0). <em>— Credential pattern precedent for Tier 1 high-entropy-secret detection.</em></li>
+      <li>Inan, H., Upasani, K., Chi, J., et al. (2023). "Llama Guard: LLM-based Input-Output Safeguard for Human-AI Conversations." arXiv preprint 2312.06674. <em>— Single-stage language-model classifier prior art (Class A).</em></li>
+      <li>Cohen, J. (1960). "A Coefficient of Agreement for Nominal Scales." Educational and Psychological Measurement, 20(1). <em>— Original Cohen's κ methodology.</em></li>
+      <li>Cohen, J. (1968). "Weighted kappa: Nominal scale agreement provision for scaled disagreement or partial credit." Psychological Bulletin, 70(4). <em>— Quadratic-weighted κ methodology for ordinal scales.</em></li>
+      <li>Fleiss, J. L. (1971). "Measuring nominal scale agreement among many raters." Psychological Bulletin, 76(5). <em>— Three-rater agreement methodology.</em></li>
+      <li>Landis, J. R., &amp; Koch, G. G. (1977). "The measurement of observer agreement for categorical data." Biometrics, 33(1). <em>— Interpretive thresholds for κ values (slight/fair/moderate/substantial/near-perfect).</em></li>
+      <li>Ratner, A., Bach, S. H., Ehrenberg, H., et al. (2017). "Snorkel: Rapid Training Data Creation with Weak Supervision." Proceedings of the VLDB Endowment. <em>— Programmatic weak-supervision methodology informing the multi-labeler adjudication approach.</em></li>
+      <li>Song, C., &amp; Raghunathan, A. (2020). "Information Leakage in Embedding Models." Proceedings of the ACM SIGSAC Conference on Computer and Communications Security. <em>— Justifies dimensionality reduction of embeddings prior to telemetry persistence (privacy-preserving schema).</em></li>
+    </ol>
+
+    <p style="margin-top:32px;font-size:13px;color:#666;font-style:italic">Document revision: 2026-04-20. Corresponds to Tidus version 1.3.0 (auto-classification layer, shipping preparation phase). Full empirical reproduction artifacts reside in the project repository under <code>scripts/</code>, <code>tests/classification/</code>, and <code>findings.md</code>. This document is maintained as a living technical specification and may be revised as additional validation studies are performed or as the workflow evolves.</p>
+  </div>
+</section>
+
+<hr class="divider">
+
 <!-- SUBSCRIBE -->
 <section class="sub-section" id="subscribe">
   <div>

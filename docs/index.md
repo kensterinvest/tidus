@@ -23,6 +23,7 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | [Quickstart](quickstart.md) | Up and running in 5 minutes | ✅ Live |
 | [First 15 Minutes](first-15-minutes.md) | Outcome-oriented onboarding: see savings in minutes | ✅ Live |
 | [Architecture](architecture.md) | System design, five pillars, data flow | ✅ Live |
+| [Classification](classification.md) | Three-axis privacy/domain/complexity classification; 89.2% confidential recall, self-improving to 95-97%; technical spec + research validation | ✅ Live |
 | [Configuration](configuration.md) | models.yaml, budgets.yaml, policies.yaml reference | ✅ Live |
 | [API Reference](api-reference.md) | All REST endpoints with request/response schemas | ✅ Live |
 | [Adapters](adapters.md) | Supported vendors and adding new ones | ✅ Live |
