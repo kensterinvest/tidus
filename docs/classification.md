@@ -1,6 +1,9 @@
 # Multi-Axis Request Classification — Domain, Complexity, Privacy
 
-**Status:** Research complete (2026-04-20). Shipping preparation.
+**Author:** Kenny Wong (<lapkei01@gmail.com>)
+**Published:** 2026-04-20
+**Version:** 1.0 — v1.3.0 auto-classification layer
+**Status:** Research complete. Shipping preparation.
 **Current baseline:** 89.2% confidential recall (CI [80.7%, 94.2%]) on cross-family-validated ground truth.
 
 Tidus classifies every incoming AI request across three dimensions before routing:

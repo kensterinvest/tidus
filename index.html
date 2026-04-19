@@ -1898,6 +1898,17 @@ response = client.chat.completions.create(
     <h2 class="section-title">The Tidus Multi-Axis Request Classification Workflow</h2>
     <p class="section-sub" style="max-width:none">How Tidus converts a raw user prompt into a structured three-axis classification — <strong>domain</strong> (task type), <strong>complexity</strong> (cognitive load), and <strong>privacy</strong> (content sensitivity) — using a five-tier pipeline of local detectors and a language-model fallback, without transmitting the prompt outside the deployment boundary. Includes empirical validation via cross-family inter-rater reliability, an honest accuracy baseline of 89.2% confidential recall at ship, and a telemetry-driven self-improvement trajectory to 95–97% within twelve months of enterprise deployment.</p>
 
+    <!-- Byline / attribution block -->
+    <div style="margin:24px 0 8px 0;padding:16px 20px;background:#fff;border-radius:8px;border:1px solid #e5e5ea;font-size:13px;color:#334155">
+      <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:baseline">
+        <div><strong style="color:#111">Author:</strong> Kenny Wong</div>
+        <div><strong style="color:#111">Published:</strong> 2026-04-20</div>
+        <div><strong style="color:#111">Version:</strong> 1.0 (v1.3.0 auto-classification layer)</div>
+        <div><strong style="color:#111">Correspondence:</strong> <a href="mailto:lapkei01@gmail.com" style="color:#3b82f6">lapkei01@gmail.com</a></div>
+      </div>
+      <div style="margin-top:10px;font-size:12px;color:#64748b"><em>Reproducibility:</em> all numbers, studies, and figures below are reproducible from scripts and data in the <a href="https://github.com/kensterinvest/tidus" style="color:#3b82f6">kensterinvest/tidus</a> repository (see <code>scripts/</code>, <code>tests/classification/</code>, and <code>findings.md</code>). This document is intended both as an enterprise-evaluation technical specification and as prior-art disclosure in support of patent filing.</div>
+    </div>
+
     <!-- ─── Worked examples — what the classifier actually outputs ─── -->
     <h3 style="margin-top:48px;font-size:22px;color:#111">What the classifier outputs — worked examples</h3>
     <p>Every incoming prompt receives one label per axis. The routing stage downstream uses all three: <strong>domain</strong> narrows the candidate-model set, <strong>complexity</strong> sets the tier ceiling, and <strong>privacy</strong> enforces local-only routing when <code>confidential</code>. The examples below are drawn from the labeled corpus and show both the classifier output and which tier resolved it.</p>
