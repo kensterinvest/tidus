@@ -1,6 +1,6 @@
 # Enterprise: Data Residency
 
-*This feature is on the roadmap for the Enterprise tier.*
+*On the product roadmap. Will be included in the open-source release — free for every organisation.*
 
 Contact lapkei01@gmail.com to discuss early access or to share requirements.
 

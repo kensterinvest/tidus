@@ -1,6 +1,6 @@
 # How to Use Tidus — Step-by-Step Guide for New Users
 
-> Get Tidus running for **free** in under 10 minutes. No credit card needed — free for individuals, hobbyists, and small organisations (under 1,000 AI users).
+> Get Tidus running for **free** in under 10 minutes. No credit card needed — free and open-source for every organisation, regardless of size.
 
 Tidus is an AI router — it sits between your apps/scripts and AI models, automatically picking the **cheapest capable model** for every request. This guide gets you from zero to routing real AI requests using either free local models or a single low-cost API key.
 
@@ -8,23 +8,26 @@ Tidus is an AI router — it sits between your apps/scripts and AI models, autom
 
 ---
 
-## Freemium Model — What's Free vs. Enterprise
+## What You Get (All of It, For Free)
 
-| | Free (Community) | Enterprise |
-|---|---|---|
-| **Who it's for** | Individuals, hobbyists, small orgs (< 1,000 AI users) | Organisations with 1,000+ AI users |
-| **Model routing** | ✅ Full 5-stage routing | ✅ Full 5-stage routing |
-| **Budget enforcement** | ❌ | ✅ |
-| **Dashboard & analytics** | Limited | Full |
-| **MCP integration** | ✅ | ✅ |
-| **Caching** | Basic | Advanced (semantic caching) |
-| **On-prem / VPC deployment** | ❌ | ✅ |
-| **SSO / OIDC / RBAC** | ❌ | ✅ |
-| **SLA & data residency** | ❌ | ✅ |
-| **Dedicated support** | Community | Dedicated + SLA |
-| **Price** | **Free** | Contact sales |
+Every capability listed below is in the open-source release — no tier-gating, no feature locks, no usage caps. The same software runs for a solo developer and for a 10,000-seat deployment.
 
-> **Need enterprise?** Open an inquiry at [github.com/kensterinvest/tidus/issues](https://github.com/kensterinvest/tidus/issues) or email the team directly. We'll scope a deployment plan for your organisation.
+| Capability | Included |
+|---|---|
+| **5-stage model routing** | ✅ Full algorithm (hard constraints → guardrails → complexity ceiling → budget → weighted score) |
+| **Three-axis classification** | ✅ Domain / complexity / privacy — in-process, local-only |
+| **Budget enforcement** | ✅ Per-team, per-workflow, per-agent policies with hard stop or warn modes |
+| **Dashboard & analytics** | ✅ Full cost-visibility UI at `/dashboard/` |
+| **MCP integration** | ✅ Connect Claude Desktop, Cursor, Zed, and any MCP-compatible client |
+| **Semantic caching** | ✅ Cluster-wide exact + semantic cache (Pillar 3) |
+| **On-prem / VPC deployment** | ✅ Run in your own infrastructure — no data leaves your network |
+| **SSO / OIDC / RBAC** | ✅ Integrate with Okta, Azure AD, Google Workspace, Auth0 |
+| **Audit logs & compliance** | ✅ Full request/response audit trail for GDPR / SOC 2 / HIPAA |
+| **Data residency** | On the roadmap (open-source when shipped) |
+| **Custom model registry** | ✅ Add private or fine-tuned models to the routing tier system |
+| **Price** | **Free — Apache 2.0 licence** |
+
+**Optional paid services** (offered separately from the product): managed hosting, integration consulting, dedicated support, and formal SLAs. Email **lapkei01@gmail.com** if you need any of these.
 
 ---
 
@@ -563,35 +566,34 @@ Now that Tidus is running at home, explore these features:
 
 ---
 
-## 15. Enterprise Tier
+## 15. Enterprise Deployment
 
-Tidus is **free** for individuals and small organisations with fewer than 1,000 AI users. When your organisation grows beyond that threshold — or when you need on-premises deployment, compliance guarantees, or a dedicated SLA — the Enterprise tier is designed for you.
+Tidus is **free and open-source for every organisation**, at any scale — individual developers, startups, and enterprises with thousands of users all run the same software, no tier-gating, no per-seat fees, no usage caps.
 
-### What's Included in Enterprise
+### Enterprise-Grade Capabilities (Included Out of the Box)
 
-| Feature | Details |
+| Capability | Details |
 |---|---|
 | **On-prem / VPC deployment** | Run Tidus inside your own infrastructure — no data leaves your network |
 | **SSO / OIDC / RBAC** | Integrate with your existing identity provider (Okta, Azure AD, Google Workspace) |
-| **Advanced semantic caching** | Reduce repeat compute costs by up to 50% with cluster-wide semantic cache |
+| **Semantic caching** | Reduce repeat compute costs by up to 50% with cluster-wide semantic cache |
 | **Full budget enforcement** | Per-team, per-workflow, per-agent budget policies with hard stop or warn modes |
 | **Audit logs & compliance** | Full request/response audit trail for GDPR, SOC 2, HIPAA, or internal governance |
 | **Data residency** | Choose which cloud region (or your own servers) processes and stores your data |
-| **Dedicated SLA** | Uptime guarantees, priority incident response, dedicated Slack channel |
 | **Custom model registry** | Add private or fine-tuned models to the routing tier system |
-| **Enterprise onboarding** | Assisted deployment, configuration review, and team training |
+| **Privacy-aware classification** | Three-axis classifier (domain / complexity / privacy) keeps confidential prompts on local models — see the [Classification doc](classification.md) |
 
-### Who Should Upgrade
+### When to Self-Host at Scale
 
 - Organisations routing AI requests for **1,000+ users**
 - Teams handling sensitive/regulated data that cannot leave your perimeter
 - Engineering orgs that need SSO and RBAC across multiple teams
-- Companies that need a formal SLA for production AI infrastructure
+- Anyone who wants to keep 100% of the AI-spend savings — no vendor subscription to deduct
 
-### How to Get Started
+### Getting Started
 
-1. Open an inquiry at **[github.com/kensterinvest/tidus/issues](https://github.com/kensterinvest/tidus/issues)** (label: `enterprise-inquiry`)
-2. Describe your scale (number of users, request volume, deployment environment)
-3. We'll respond with a scoping call and pricing estimate
+1. Clone from **[github.com/kensterinvest/tidus](https://github.com/kensterinvest/tidus)**
+2. Follow the [Deployment guide](deployment.md) for your environment (Docker, Kubernetes, or bare metal)
+3. Optional: open a discussion at **[github.com/kensterinvest/tidus/issues](https://github.com/kensterinvest/tidus/issues)** (label: `enterprise-inquiry`) if you want help with sizing, integration patterns, or a pre-deployment review
 
-Enterprise pricing is usage-based and scoped to your deployment. There are no surprise per-seat fees — you pay for what you route.
+Need managed hosting, integration consulting, or dedicated support? Email **lapkei01@gmail.com** — these services are offered separately from the product itself.

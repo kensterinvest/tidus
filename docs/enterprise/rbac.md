@@ -1,6 +1,6 @@
 # Enterprise: Role-Based Access Control (RBAC)
 
-*Available in the Enterprise tier and shipped with Tidus v1.1.0 (Phase 8).*
+*Included in the open-source release (shipped with Tidus v1.1.0 / Phase 8). Free for every organisation.*
 
 Tidus enforces a five-role hierarchy on every API endpoint. Role is extracted
 from the OIDC token's role claim (configurable via `OIDC_ROLE_CLAIM`) and

@@ -32,8 +32,7 @@ Tidus is an enterprise AI governance and routing system. Every AI request in you
 | [MCP Integration](mcp-integration.md) | Connect Claude Desktop, Cursor, and other agents | ✅ Live |
 | [Dashboard](dashboard.md) | Cost visibility UI at `/dashboard/` | ✅ Live |
 | [Deployment](deployment.md) | Docker, production setup, PostgreSQL migration | ✅ Live |
-| [Pricing](pricing.md) | Tidus subscription tiers | Live |
-| [ROI Calculator](roi-calculator.md) | Calculate your enterprise savings | Live |
+| [ROI Calculator](roi-calculator.md) | Estimate your AI-spend savings | Live |
 | [Savings Report](savings-report.md) | Monthly AI savings report API — local, no external dependency | ✅ Live |
 | [Troubleshooting](troubleshooting.md) | Top 10 first-run issues with exact fixes | ✅ Live |
 | [Enterprise: RBAC](enterprise/rbac.md) | Role-based access control | ✅ Live |

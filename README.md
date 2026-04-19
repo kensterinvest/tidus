@@ -34,14 +34,14 @@ Most AI systems default every request to the most powerful (most expensive) mode
 
 ### Cost Impact — 500 users × 200 requests/day
 
-| Scenario | Monthly AI Cost | Tidus Fee | Net Cost | Saving |
-|----------|----------------|-----------|---------|--------|
-| Without Tidus (always Claude Opus 4.6) | $63,000 | — | $63,000 | — |
-| Tidus Pro — Pillar 1+2 tiered routing | $8,400 | $99 | $8,499 | **87%** |
-| Tidus Business — + local models | $4,200 | $499 | $4,699 | **93%** |
-| Tidus Business — + caching (Phase 4) | ~$2,100 | $499 | $2,599 | **96%** |
+| Scenario | Monthly AI Cost | Saving |
+|----------|----------------|--------|
+| Without Tidus (always Claude Opus 4.6) | $63,000 | — |
+| Tidus — Pillar 1+2 tiered routing | $8,400 | **87%** |
+| Tidus — + local models | $4,200 | **93%** |
+| Tidus — + semantic caching (Phase 4) | ~$2,100 | **96%** |
 
-*Based on real 2026 pricing. DeepSeek R1 wins critical reasoning at $0.00055/1K input vs. Claude Opus at $0.005/1K — a 9× cost difference for tier-1 quality.*
+*Based on real 2026 pricing. DeepSeek R1 wins critical reasoning at $0.00055/1K input vs. Claude Opus at $0.005/1K — a 9× cost difference for tier-1 quality. Tidus itself is free — every dollar of savings stays with your organisation.*
 
 See [docs/roi-calculator.md](docs/roi-calculator.md) for your custom calculation.
 
@@ -168,24 +168,19 @@ See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/
 | Perplexity | Sonar Pro, Sonar | 1–3 | 🔧 In progress |
 | Together AI | Llama 4 Maverick | 3 | 🔧 In progress |
 
-## Pricing
+## Free and Open Source — for Every Organisation
 
-Tidus is priced to pay for itself — the AI cost savings Tidus delivers typically exceed the subscription fee within the first day of use.
+Tidus is free and open-source (Apache 2.0) for any organisation, at any scale — individual developers, startups, and enterprises with thousands of users all run the same software. **No tier-gating. No per-seat fees. No usage caps. No subscription.** Every dollar of AI-spend savings stays with your organisation.
 
-| Tier | Price | Requests/month | Key Features |
-|------|-------|---------------|-------------|
-| **Community** | Free | 10,000 | 5-stage routing, single team, no budget enforcement |
-| **Pro** | $99/month | 100,000 | Budget enforcement + guardrails, dashboard, multi-team |
-| **Business** | $499/month | 1,000,000 | MCP server, response caching (exact + semantic), audit logs, Docker |
-| **Enterprise** | from $2,000/month | Unlimited | SSO/OIDC + RBAC (live), on-prem / data residency (roadmap), SLA, dedicated support |
+All capabilities — 5-stage routing, budget enforcement, dashboard, multi-team, MCP server, semantic caching, audit logs, SSO/OIDC, RBAC, and the three-axis classification layer — are included in the open-source release. See [docs/roi-calculator.md](docs/roi-calculator.md) for your custom savings calculation.
 
-See [docs/pricing.md](docs/pricing.md) for full tier details and ROI calculations, or the [How to Use guide](docs/how-to-use.md#15-enterprise-tier) for enterprise onboarding steps.
+**Optional paid services:** if your deployment needs managed hosting, integration consulting, a formal SLA, or dedicated support, email **lapkei01@gmail.com**. Services are offered separately from the product itself.
 
 ## Get Started
 
 **New to Tidus?** → [How to Use Tidus — Step-by-Step Guide for New Users](docs/how-to-use.md)
 
-Free for individuals and small organisations (< 1,000 AI users). No credit card needed.
+Clone from GitHub and follow the deployment guide. No credit card needed — ever.
 
 ## Documentation
 
@@ -200,7 +195,6 @@ Free for individuals and small organisations (< 1,000 AI users). No credit card 
 - [MCP Integration](docs/mcp-integration.md)
 - [Dashboard](docs/dashboard.md)
 - [Deployment](docs/deployment.md)
-- [Pricing](docs/pricing.md)
 - [ROI Calculator](docs/roi-calculator.md)
 
 ## Build Status

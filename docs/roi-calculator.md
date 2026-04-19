@@ -1,6 +1,6 @@
 # ROI Calculator
 
-Use this to estimate your monthly AI cost savings with Tidus versus always routing to a premium model.
+Use this to estimate your monthly AI cost savings with Tidus versus always routing to a premium model. Tidus itself is **free and open-source** — these numbers are pure AI-spend reduction.
 
 ---
 
@@ -13,8 +13,7 @@ Baseline cost  = monthly_requests x avg_input_tokens x premium_model_input_price
 Tidus cost     = sum over task mix of:
                  (fraction x monthly_requests x tidus_selected_model_cost)
 
-Monthly saving = Baseline cost - Tidus cost - Tidus subscription fee
-Payback period = Tidus fee / Monthly saving
+Monthly saving = Baseline cost - Tidus cost
 ```
 
 ---
@@ -56,12 +55,12 @@ Tidus monthly AI cost = 3,000,000 * $0.000280 = $840
 
 ### Results Table
 
-| Scenario | Monthly AI Cost | Tidus Fee | Net Cost | Saving vs Baseline | % Saving |
-|----------|----------------|-----------|---------|-------------------|----------|
-| Baseline (always Claude Opus) | $51,750 | — | $51,750 | — | — |
-| Tidus Pro — Pillars 1+2 | $840 | $99 | $939 | $50,811 | **98%** |
-| Tidus Business — + local models | ~$500 | $499 | $999 | $50,751 | **98%** |
-| Tidus Business — + caching (Phase 4) | ~$250 | $499 | $749 | $51,001 | **99%** |
+| Scenario | Monthly AI Cost | Saving vs Baseline | % Saving |
+|----------|----------------|-------------------|----------|
+| Baseline (always Claude Opus) | $51,750 | — | — |
+| Tidus — smart routing (Pillars 1+2) | $840 | $50,910 | **98%** |
+| Tidus — + local models | ~$500 | $51,250 | **99%** |
+| Tidus — + semantic caching (Phase 4) | ~$250 | $51,500 | **99.5%** |
 
 *Note: The 98% figure assumes DeepSeek R1 wins critical/complex tasks at $0.00055/1K input — 9× cheaper than Claude Opus. Real savings depend on your task mix and whether you enable local models.*
 
@@ -71,10 +70,10 @@ Tidus monthly AI cost = 3,000,000 * $0.000280 = $840
 
 If only 50% of requests can be down-routed (mixed workload with more complex tasks):
 
-| Scenario | Monthly AI Cost | Net Cost | Saving |
-|----------|----------------|---------|--------|
-| Baseline (always Claude Opus) | $51,750 | $51,750 | — |
-| Tidus Pro — conservative mix | $4,200 | $4,299 | **92%** |
+| Scenario | Monthly AI Cost | Saving |
+|----------|----------------|--------|
+| Baseline (always Claude Opus) | $51,750 | — |
+| Tidus — conservative mix | $4,200 | **92%** |
 
 ---
 
@@ -115,12 +114,6 @@ baseline_cost = monthly_requests
 
 ---
 
-## Payback Period
+## Time to Value
 
-At Tidus Pro ($99/month) with a conservative $5,000/month saving:
-
-```
-Payback period = $99 / $5,000 = 0.02 months = less than 1 day
-```
-
-Tidus pays for itself on the first day it routes any non-trivial volume.
+Tidus is free and open-source — there is no subscription fee to recoup. Savings begin on the first request routed. For the worked example above, a conservative $5,000/month saving equates to ~$60,000/year captured entirely by your organisation.

@@ -727,7 +727,7 @@ footer{background:#0a0f1e;padding:48px}
     <a href="#sources">Sources</a>
     <a href="#magazine">Report &amp; Catalog</a>
   </div>
-  <a href="#subscribe" class="nav-cta">Subscribe Free</a>
+  <a href="#subscribe" class="nav-cta">Get the weekly report</a>
 </nav>
 
 <!-- HERO -->
@@ -739,7 +739,7 @@ footer{background:#0a0f1e;padding:48px}
     </div>
     <div class="hero-badge">Now tracking 55 models across 13 vendors · Weekly price sync</div>
     <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
-    <p class="hero-sub">Tidus selects the most cost-effective capable model for every AI request — automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted.</p>
+    <p class="hero-sub"><strong style="color:rgba(255,255,255,.92)">Free and open-source for every organisation — any size, any industry.</strong> Tidus selects the cheapest capable model for every AI request, automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted. Every dollar saved stays with you.</p>
     <div class="hero-actions">
       <a href="https://github.com/kensterinvest/tidus" class="btn-hero primary">⭐ View on GitHub</a>
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
@@ -1378,7 +1378,7 @@ response = client.chat.completions.create(
           <div class="roi-res-label">Projected spend with Tidus</div>
         </div>
       </div>
-      <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task mix and model availability. Tidus is fully self-hosted — no subscription fee.</p>
+      <p class="roi-note">Estimates assume unoptimised Tier 1/2 routing today. Actual savings depend on your task mix and model availability. <strong>Tidus is free and open-source — no subscription fee, no usage cap, no per-seat pricing. Keep 100% of what you save.</strong></p>
     </div>
   </div>
 </section>
@@ -1986,6 +1986,7 @@ response = client.chat.completions.create(
 
     <!-- ─────── 1. Abstract ─────── -->
     <h3 style="margin-top:50px;font-size:22px;color:#111">1. Abstract</h3>
+    <p style="font-size:15px;color:#334155;padding:14px 18px;background:#eef2ff;border-left:4px solid #6366f1;border-radius:6px;margin-bottom:18px"><strong>Plain English:</strong> every request is read locally and tagged for task type, difficulty, and sensitivity before routing — with confidential prompts never leaving your deployment.</p>
     <p>Tidus classifies every incoming AI request across three dimensions — <strong>domain</strong> (task type), <strong>complexity</strong> (cognitive load required for correctness), and <strong>privacy</strong> (content sensitivity) — before the request reaches any underlying language model. Classification is performed by a five-tier cascade of local detectors, each tier cheaper and faster than the next. Classification output drives downstream routing within the Tidus five-stage model-selection algorithm disclosed elsewhere in this document. The novel aspects of the classification layer disclosed herein include: (i) an asymmetric-safety OR-rule whereby any tier's <code>confidential</code> classification unilaterally forces local-only routing regardless of other tiers' outputs; (ii) a cross-family inter-rater reliability methodology for validating classification ground truth using independent large language models from distinct vendor families (Anthropic, OpenAI, Google); (iii) a disagreement-capture active learning loop that accumulates retraining signal from production traffic while persisting only feature metadata, never raw prompt content; and (iv) an entity/topic bifurcation analysis empirically justifying architectural separation between cheap entity detectors and language-model topic review.</p>
 
     <!-- ─────── 2. Field of Application ─────── -->
@@ -1998,6 +1999,30 @@ response = client.chat.completions.create(
     <p><strong>Class A — single-stage language-model classifiers (e.g., Llama Guard, prompt-classification services).</strong> These systems achieve high accuracy by invoking a language model on every request. They are unsuitable for privacy-sensitive routing because the act of classifying a confidential prompt requires transmitting that prompt to the classifier, typically outside the deployment boundary. This establishes a privacy paradox: the mechanism intended to determine whether content may leave the system is itself a mechanism that causes content to leave the system.</p>
     <p><strong>Class B — static pattern-matching detectors (e.g., Presidio, regex-based secret scanners, DLP systems).</strong> These systems are local and fast but detect only explicit identifiers (names, credit card numbers, email addresses, named entities). They systematically miss <em>topic-based</em> confidential content — prompts where sensitivity arises from subject matter (self-disclosed medical condition, employment-law dispute, immigration status, financial hardship) rather than from the presence of a recognizable identifier. Empirical analysis reported in §7 demonstrates that approximately half of enterprise confidential prompts fall into this topic-based class.</p>
     <p>No prior art known to the inventor combines (a) local-only classifier execution suitable for regulated deployments, (b) coverage of both entity-based and topic-based confidentiality signals, (c) per-tier asymmetric-safety semantics consistent with enterprise compliance obligations, and (d) a telemetry feedback mechanism that permits continuous accuracy improvement without raw-prompt retention.</p>
+
+    <!-- Visual summary: three-class comparison -->
+    <div style="margin:24px 0 8px 0;padding:20px;background:#fff;border-radius:10px;border:1px solid #e5e5ea;overflow-x:auto">
+      <div style="text-align:center;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:700">Prior art comparison — at a glance</div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:700px">
+        <thead>
+          <tr>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111">Dimension</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #b91c1c;color:#b91c1c">Class A — cloud LLM classifier</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #b45309;color:#b45309">Class B — regex / NER only</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #6d28d9;color:#6d28d9">Tidus — tiered asymmetric</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #eef2f7"><td style="padding:10px"><strong>Runs inside deployment boundary?</strong></td><td style="padding:10px;color:#b91c1c">❌ Usually cloud-hosted</td><td style="padding:10px;color:#059669">✅</td><td style="padding:10px;color:#059669">✅ All five tiers local</td></tr>
+          <tr style="border-bottom:1px solid #eef2f7"><td style="padding:10px"><strong>Catches entity confidentials?</strong></td><td style="padding:10px;color:#059669">✅ (at cost)</td><td style="padding:10px;color:#059669">✅</td><td style="padding:10px;color:#059669">✅ Tier 2b</td></tr>
+          <tr style="border-bottom:1px solid #eef2f7"><td style="padding:10px"><strong>Catches topic confidentials?</strong></td><td style="padding:10px;color:#059669">✅</td><td style="padding:10px;color:#b91c1c">❌ ~50% missed (§7.3)</td><td style="padding:10px;color:#059669">✅ via Tier 5 LLM</td></tr>
+          <tr style="border-bottom:1px solid #eef2f7"><td style="padding:10px"><strong>Per-request latency</strong></td><td style="padding:10px">100–300 ms + network</td><td style="padding:10px;color:#059669">&lt; 5 ms</td><td style="padding:10px;color:#059669">5 ms fast path · 200 ms fallback</td></tr>
+          <tr style="border-bottom:1px solid #eef2f7"><td style="padding:10px"><strong>Privacy paradox?</strong></td><td style="padding:10px;color:#b91c1c">⚠️ Yes — classifier itself leaks</td><td style="padding:10px;color:#059669">✅ None</td><td style="padding:10px;color:#059669">✅ None</td></tr>
+          <tr><td style="padding:10px"><strong>Self-improves from traffic?</strong></td><td style="padding:10px;color:#b91c1c">❌</td><td style="padding:10px;color:#b91c1c">❌</td><td style="padding:10px;color:#059669">✅ Disagreement-capture (§9)</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#64748b;margin:12px 0 0 0;font-style:italic">No prior art combines all six rows. The Tidus column is what §4–§11 of this document disclose in detail.</p>
+    </div>
 
     <!-- ─────── 4. System Architecture ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">4. System Architecture — Five-Tier Classification Cascade</h3>
@@ -2154,6 +2179,63 @@ for the request</pre>
     <h3 style="margin-top:40px;font-size:22px;color:#111">6. Labeled Corpus</h3>
     <p>The encoder head at Tier 2a is trained on a corpus of 2,669 WildChat prompts (Zhao et al., 2024) sampled with stratified boost for prompts containing code fences, personal-information patterns, and medical/legal/financial keywords. Each prompt is labeled across the three axes according to a frozen rubric (the <code>SYSTEM_PROMPT</code> constant in <code>scripts/label_wildchat.py</code>) derived iteratively from an initial round of labeling plus a twenty-five-entry audit-override file (<code>label_overrides.jsonl</code>) resolving labeler-drift incidents. A subsequent cross-family inter-rater reliability study (§7) produced a further fourteen asymmetric-safety override entries (<code>label_overrides_irr.jsonl</code>). The combined post-adjudication confidential count is 83 within the 2,249 rows joinable to the active prompt pool.</p>
 
+    <!-- Research-journey timeline (between §6 and §7) -->
+    <div style="margin:32px 0 8px 0;padding:24px;background:#fff;border-radius:10px;border:1px solid #e5e5ea">
+      <div style="text-align:center;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:20px;font-weight:700">How we got from "idea" to "89.2% shipping baseline" — research journey</div>
+      <div style="display:grid;grid-template-columns:repeat(8, 1fr);gap:6px;min-width:900px;overflow-x:auto">
+
+        <div style="padding:12px 8px;background:#f5f3ff;border-left:4px solid #7c3aed;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#7c3aed;font-weight:700">STEP 1</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">POC</div>
+          <div style="font-size:11px;color:#64748b">1,889 synthetic cases · 99.6% privacy recall · 2026-04-17</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#f5f3ff;border-left:4px solid #7c3aed;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#7c3aed;font-weight:700">STEP 2</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Phase-0 gate</div>
+          <div style="font-size:11px;color:#64748b">Label 2,669 WildChat prompts · CI-lower-bound gate</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#f5f3ff;border-left:4px solid #7c3aed;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#7c3aed;font-weight:700">STEP 3</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Recipe A</div>
+          <div style="font-size:11px;color:#64748b">LoRA-on-DeBERTa-v3-xsmall · multi-head heads</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#f5f3ff;border-left:4px solid #7c3aed;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#7c3aed;font-weight:700">STEP 4</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Recipe B ✓</div>
+          <div style="font-size:11px;color:#64748b">Frozen ST + logistic heads — selected for simplicity</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#fef3c7;border-left:4px solid #d97706;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#d97706;font-weight:700">STEP 5</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Ensemble sweep</div>
+          <div style="font-size:11px;color:#64748b">8 rules tested (E0–E7) · E1 chosen as default</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#fef3c7;border-left:4px solid #d97706;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#d97706;font-weight:700">STEP 6</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">3-case audit</div>
+          <div style="font-size:11px;color:#64748b">Chinese Vue · Canadian permit · Russian disclosure</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#dbeafe;border-left:4px solid #2563eb;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#2563eb;font-weight:700">STEP 7</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Cross-family IRR</div>
+          <div style="font-size:11px;color:#64748b">Claude + GPT + Gemini · n=149 blind · κ 0.68–0.78</div>
+        </div>
+
+        <div style="padding:12px 8px;background:#dcfce7;border-left:4px solid #16a34a;border-radius:4px;text-align:center">
+          <div style="font-size:11px;color:#16a34a;font-weight:700">STEP 8</div>
+          <div style="font-weight:700;font-size:13px;color:#111;margin:4px 0">Ship 89.2% →</div>
+          <div style="font-size:11px;color:#64748b">14 IRR flips · self-improving to 95–97% (§9)</div>
+        </div>
+
+      </div>
+      <p style="font-size:12px;color:#64748b;margin:16px 0 0 0;font-style:italic;text-align:center">Purple = build · amber = validate · blue = cross-check · green = ship. Full artifacts in <code>findings.md</code> + <code>tests/classification/irr/irr_report.md</code>.</p>
+    </div>
+
     <!-- ─────── 7. Validation Studies ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">7. Empirical Validation Studies</h3>
     <p>Three studies have been performed to validate the design decisions above. All three are reproducible from scripts in <code>scripts/</code> within the repository; artifacts and full reports are retained in <code>findings.md</code>, <code>tests/classification/irr/irr_report.md</code>, and <code>audit_all_missed.txt</code>.</p>
@@ -2263,6 +2345,28 @@ for the request</pre>
     <h4 style="margin-top:24px;font-size:18px;color:#333">7.4. Credential Re-Leak Observation</h4>
     <p>Longitudinal analysis of the labeled corpus identified four cases in which the same concrete credential appeared across multiple user sessions, leaked by the same user: a Telegram bot token recurring in chunks 055 and 059; a VK bot token recurring in chunks 048 and 061; combined Instagram and Facebook access tokens recurring in chunks 048 and 062; and multiple Discord webhook tokens plus a Steam Web API key co-exposed in chunk 060. This observation indicates that credential-leak behavior is a longitudinal property of the user/session, not a per-request property; the implication is that an audit-layer user-scoped leak cache would detect re-leaks missed by stateless per-request classification. This finding is orthogonal to the main classification workflow but is disclosed here because it motivates a complementary architectural element (audit-side user-scoped leak fingerprinting) that may be the subject of additional claims.</p>
 
+    <!-- Credential re-leak longitudinal visual -->
+    <div style="margin:20px 0 8px 0;padding:20px;background:#fef2f2;border-radius:10px;border:1px solid #fecaca">
+      <div style="text-align:center;font-size:12px;color:#991b1b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:700">Same user · same token · across sessions — 4 observed cases</div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;background:#fff;border-radius:6px;overflow:hidden">
+        <thead>
+          <tr style="background:#fee2e2">
+            <th style="padding:10px;text-align:left;color:#7f1d1d;border-bottom:1px solid #fca5a5">#</th>
+            <th style="padding:10px;text-align:left;color:#7f1d1d;border-bottom:1px solid #fca5a5">Credential type</th>
+            <th style="padding:10px;text-align:left;color:#7f1d1d;border-bottom:1px solid #fca5a5">First appearance</th>
+            <th style="padding:10px;text-align:left;color:#7f1d1d;border-bottom:1px solid #fca5a5">Re-leak appearance</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #fecaca"><td style="padding:10px;color:#991b1b;font-weight:700">1</td><td style="padding:10px">Telegram bot token</td><td style="padding:10px"><code>chunk 055</code> · session A</td><td style="padding:10px"><code>chunk 059</code> · session A, later</td></tr>
+          <tr style="border-bottom:1px solid #fecaca"><td style="padding:10px;color:#991b1b;font-weight:700">2</td><td style="padding:10px">VK bot token</td><td style="padding:10px"><code>chunk 048</code> · session B</td><td style="padding:10px"><code>chunk 061</code> · session B, later</td></tr>
+          <tr style="border-bottom:1px solid #fecaca"><td style="padding:10px;color:#991b1b;font-weight:700">3</td><td style="padding:10px">Instagram + Facebook access tokens</td><td style="padding:10px"><code>chunk 048</code> · session C</td><td style="padding:10px"><code>chunk 062</code> · session C, later</td></tr>
+          <tr><td style="padding:10px;color:#991b1b;font-weight:700">4</td><td style="padding:10px">Discord webhooks + Steam Web API key</td><td style="padding:10px"><code>chunk 060</code> · co-exposed</td><td style="padding:10px"><code>chunk 060</code> · same request</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#991b1b;margin:12px 0 0 0;font-style:italic"><strong>Architectural implication:</strong> per-request classifiers see each prompt in isolation and cannot recognize "this user has leaked this exact token before." A user-scoped fingerprint cache in the audit layer recovers the signal — a complementary control surface to the five-tier classifier.</p>
+    </div>
+
     <!-- ─────── 8. Current State ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">8. Current State and Shipping Baseline</h3>
     <p>The workflow as described is ready for production deployment with Rule E1 at Tier 2b as the default detection configuration. Empirical shipping baseline:</p>
@@ -2368,17 +2472,36 @@ tenants:
 
     <!-- ─────── 11. Summary of Claims-Adjacent Novelty ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">11. Summary of Claims-Adjacent Novelty</h3>
-    <p>For legal review purposes, the disclosed classification workflow advances the state of the art along at least the following distinct axes. Each is supported by empirical evidence as cited. None are believed to be disclosed in combination, or individually, by any known prior-art system.</p>
-    <ol style="line-height:1.7">
-      <li><strong>Local-only five-tier classification cascade</strong> combining deterministic regular-expression heuristics, a trained sentence-embedding encoder with per-axis classification heads, a Presidio-based named-entity recognizer, and a language-model fallback — all within the deployment boundary — for enterprise AI request routing.</li>
-      <li><strong>Asymmetric-safety OR-rule</strong> for combining tier outputs in which any tier's <code>confidential</code> classification unilaterally forces the emit value, deliberately rejecting majority-vote and confidence-weighted combiners on compliance-asymmetry grounds.</li>
-      <li><strong>Cross-family inter-rater reliability methodology</strong> for validating privacy-classification ground truth using independent large language models from distinct vendor families, applied blind against a frozen rubric, with quadratic-weighted Cohen's κ as the reporting metric for ordinal classes and Fleiss κ for multi-rater agreement.</li>
-      <li><strong>Asymmetric-safety adjudication rule for ground-truth construction</strong> whereby any rater's <code>confidential</code> label forces <code>confidential</code> in the adjudicated labels — symmetric to the per-request OR-rule above, applied at training-data construction time.</li>
-      <li><strong>Entity/topic bifurcation analysis methodology</strong> for empirically justifying classifier-architecture choices by correlating post-adjudication ground-truth gains against per-tier detection capabilities, producing a measurable split (6/6 entity-bearing caught by Tier 2b and 6/6 topic-bearing missed, in the studied sample).</li>
-      <li><strong>Privacy-preserving telemetry schema</strong> for post-deployment feedback learning in regulated deployments, retaining only dimensionality-reduced embeddings, entity-type metadata, regex pattern identifiers, and classification outputs — but never raw prompt text — permitting encoder retraining without prompt retention.</li>
-      <li><strong>Disagreement-capture active learning loop</strong> whereby only inter-tier-disagreement requests are flagged for human review, achieving label-efficiency on the order of a ten-fold reduction compared to random-sample review.</li>
-      <li><strong>Two-valued privacy-enforcement configuration</strong> (<code>strict</code> / <code>disabled</code>) with deliberate rejection of intermediate modes on compliance-ambiguity grounds, decoupling the routing-enforcement semantics from the architecturally independent question of classifier location.</li>
-    </ol>
+    <p>For legal review purposes, the disclosed classification workflow advances the state of the art along at least the following distinct axes. Each claim is grouped below by the architectural layer it applies to. Each is supported by empirical evidence as cited. None are believed to be disclosed in combination, or individually, by any known prior-art system.</p>
+
+    <!-- Claim map — 4 types × 8 claims -->
+    <div style="margin:24px 0;padding:20px;background:#fff;border-radius:10px;border:1px solid #e5e5ea;overflow-x:auto">
+      <div style="text-align:center;font-size:12px;color:#64748b;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-weight:700">Claim map — grouped by architectural layer</div>
+      <table style="width:100%;border-collapse:collapse;font-size:14px;min-width:760px">
+        <thead>
+          <tr style="background:#f5f5f7">
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:18%">Layer</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:8%">#</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:46%">Claim</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:28%">Evidence in this document</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #e5e5ea;background:#eef2ff"><td rowspan="2" style="padding:10px;color:#4338ca;font-weight:700;vertical-align:top;border-right:2px solid #6366f1">Per-request runtime</td><td style="padding:10px;font-weight:700">1</td><td style="padding:10px"><strong>Local-only five-tier classification cascade</strong> combining deterministic regex heuristics, trained sentence-embedding encoder with per-axis classification heads, Presidio-based named-entity recognizer, and a language-model fallback — all within the deployment boundary — for enterprise AI request routing.</td><td style="padding:10px;color:#64748b">§4 System Architecture</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea;background:#eef2ff"><td style="padding:10px;font-weight:700">2</td><td style="padding:10px"><strong>Asymmetric-safety OR-rule</strong> for combining tier outputs: any tier's <code>confidential</code> classification unilaterally forces the emit value, deliberately rejecting majority-vote and confidence-weighted combiners on compliance-asymmetry grounds.</td><td style="padding:10px;color:#64748b">§4 merge rule</td></tr>
+
+          <tr style="border-bottom:1px solid #e5e5ea;background:#fef3c7"><td rowspan="3" style="padding:10px;color:#92400e;font-weight:700;vertical-align:top;border-right:2px solid #d97706">Training-data &amp; methodology</td><td style="padding:10px;font-weight:700">3</td><td style="padding:10px"><strong>Cross-family inter-rater reliability methodology</strong> for validating privacy-classification ground truth using independent LLMs from distinct vendor families, applied blind against a frozen rubric, with quadratic-weighted Cohen's κ for ordinal classes and Fleiss κ for multi-rater agreement.</td><td style="padding:10px;color:#64748b">§7.1 IRR study</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea;background:#fef3c7"><td style="padding:10px;font-weight:700">4</td><td style="padding:10px"><strong>Asymmetric-safety adjudication rule for ground-truth construction</strong>: any rater's <code>confidential</code> label forces <code>confidential</code> in the adjudicated labels — symmetric to the per-request OR-rule, applied at training-data construction time.</td><td style="padding:10px;color:#64748b">§7.1 adjudication</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea;background:#fef3c7"><td style="padding:10px;font-weight:700">5</td><td style="padding:10px"><strong>Entity/topic bifurcation analysis methodology</strong> for empirically justifying classifier-architecture choices by correlating post-adjudication ground-truth gains against per-tier detection capabilities (measured split: 6/6 entity-bearing caught by Tier 2b; 6/6 topic-bearing missed).</td><td style="padding:10px;color:#64748b">§7.3 bifurcation</td></tr>
+
+          <tr style="border-bottom:1px solid #e5e5ea;background:#dcfce7"><td rowspan="2" style="padding:10px;color:#166534;font-weight:700;vertical-align:top;border-right:2px solid #16a34a">Telemetry &amp; feedback</td><td style="padding:10px;font-weight:700">6</td><td style="padding:10px"><strong>Privacy-preserving telemetry schema</strong> for post-deployment feedback learning in regulated deployments, retaining only dimensionality-reduced embeddings, entity-type metadata, regex pattern identifiers, and classification outputs — never raw prompt text — permitting encoder retraining without prompt retention.</td><td style="padding:10px;color:#64748b">§9 Lever 1</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea;background:#dcfce7"><td style="padding:10px;font-weight:700">7</td><td style="padding:10px"><strong>Disagreement-capture active learning loop</strong> whereby only inter-tier-disagreement requests are flagged for human review, achieving label-efficiency on the order of a ten-fold reduction compared to random-sample review.</td><td style="padding:10px;color:#64748b">§9 Lever 1</td></tr>
+
+          <tr style="background:#f3e8ff"><td style="padding:10px;color:#6b21a8;font-weight:700;vertical-align:top;border-right:2px solid #9333ea">Configuration surface</td><td style="padding:10px;font-weight:700">8</td><td style="padding:10px"><strong>Two-valued privacy-enforcement configuration</strong> (<code>strict</code> / <code>disabled</code>) with deliberate rejection of intermediate modes on compliance-ambiguity grounds, decoupling the routing-enforcement semantics from the architecturally independent question of classifier location.</td><td style="padding:10px;color:#64748b">§5 privacy_enforcement</td></tr>
+        </tbody>
+      </table>
+      <p style="font-size:12px;color:#64748b;margin:14px 0 0 0;font-style:italic">Each of the eight claims is severable — any subset may be pursued independently. Combinations across layers (e.g., claims 2 + 4, or claims 6 + 7) constitute additional dependent-claim surface.</p>
+    </div>
 
     <!-- ─────── 12. References ─────── -->
     <h3 style="margin-top:40px;font-size:22px;color:#111">12. References (reference-only style)</h3>
@@ -2416,7 +2539,7 @@ tenants:
     <p>55 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
     <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
       <input type="email" id="sub-email" placeholder="you@company.com" required>
-      <button type="submit">Subscribe Free</button>
+      <button type="submit">Get the weekly report</button>
     </form>
     <p id="sub-note">No spam. Unsubscribe anytime via one-click link in any email.</p>
     <p id="sub-msg"></p>
@@ -2451,8 +2574,8 @@ tenants:
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 Kenny Wong · MIT License · Built with ❤️ for enterprises that don't want to overpay for AI</p>
-    <p>Contact: <a href="mailto:lapkei01@gmail.com">lapkei01@gmail.com</a></p>
+    <p>© 2026 Kenny Wong · Apache 2.0 License · Free and open-source for any organisation, any size · Built for teams that want to keep every dollar of AI-spend savings</p>
+    <p style="margin-top:8px">Need managed hosting, integration consulting, or dedicated support for your deployment? These services are offered separately — email <a href="mailto:lapkei01@gmail.com">lapkei01@gmail.com</a>.</p>
   </div>
 </footer>
 
@@ -2557,14 +2680,14 @@ async function handleSub(e){
       msg.className = "sub-err";
       msg.textContent = data.detail || "Something went wrong. Please try again.";
       btn.disabled = false;
-      btn.textContent = "Subscribe Free";
+      btn.textContent = "Get the weekly report";
     }
   } catch(err) {
     msg.style.display = "block";
     msg.className = "sub-err";
     msg.textContent = "Network error. Please try again.";
     btn.disabled = false;
-    btn.textContent = "Subscribe Free";
+    btn.textContent = "Get the weekly report";
   }
 }
 

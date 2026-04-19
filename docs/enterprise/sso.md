@@ -1,6 +1,6 @@
 # Enterprise: SSO / OIDC Integration
 
-*Available in the Enterprise tier and shipped with Tidus v1.1.0 (Phase 8).*
+*Included in the open-source release (shipped with Tidus v1.1.0 / Phase 8). Free for every organisation.*
 
 Set `OIDC_ISSUER_URL`, `OIDC_CLIENT_ID`, and the claim mapping in `.env` —
 see `deployment.md` for the step-by-step guide. Leave the issuer empty to
