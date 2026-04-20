@@ -500,7 +500,7 @@ Full artifacts: `findings.md`, `tests/classification/irr/irr_report.md`, `script
 
 ## Shipping Plan — Stages A-D (2026-04-20)
 
-Baseline ship target: **E1 recall = 89.2% [80.7, 94.2]** on cross-family-validated ground truth. The product thesis is self-improving: ship at 89%, reach 95-97% via telemetry-driven feedback loops on real enterprise traffic within 12 months.
+Baseline ship target: **E1 recall = 89.2% [80.7, 94.2]** on cross-family-validated ground truth. The product thesis is self-improving: ship at 89% and *target* 95-97% via telemetry-driven feedback loops on real enterprise traffic. The trajectory is conditional on adoption volume (three of four levers dormant pre-adoption), so a parallel research programme runs continuously regardless of customer count to advance the baseline independently — see "Pre-Adoption Research Programme" section below.
 
 ### Stage A — Wire classifier into the 5-tier stack (~1 week)
 
@@ -619,7 +619,7 @@ Two modes only. No middle value — "relaxed" invites compliance confusion and a
 
 ## Accuracy Improvement Roadmap (Post-Ship)
 
-Four compounding levers. Trajectory from ship-day 89.2% to 95-97% within 12 months without additional hand-labeling. Ceiling at ~97-98% set by rubric ambiguity (Fleiss κ = 0.577 → humans disagree on ~37% of privacy boundary cases).
+Four compounding levers. **Trajectory from ship-day 89.2% targets 95-97% within ~12 months *under sustained enterprise adoption*.** Three of four levers are dormant pre-adoption (Lever 1, 3 cadence-driven, and 4 all require customer traffic). Pre-adoption research programme (next section) runs in parallel to advance the baseline regardless of adoption pace. Ceiling at ~97-98% set by rubric ambiguity (Fleiss κ = 0.577 → humans disagree on ~37% of privacy boundary cases) — only rubric re-engineering raises that ceiling.
 
 | Lever | Trigger | Expected gain | Cost/cadence |
 |---|---|---|---|
@@ -635,9 +635,35 @@ Four compounding levers. Trajectory from ship-day 89.2% to 95-97% within 12 mont
 | Ship (week 3) | 89.2% [80.7, 94.2] | Current IRR-adjudicated baseline |
 | +3 months | 91-92% | Lever 1 first adjudication cycle + Lever 2 initial patterns |
 | +6 months | 93-94% | Lever 1 continuing + Lever 3 first encoder swap |
-| +12 months | **95-97% global / higher per-tenant** | All four levers compounding + Lever 4 online for active tenants |
+| +12 months | **95-97% target / higher per-tenant** *(conditional on adoption)* | All four levers compounding + Lever 4 online for active tenants |
 
-**Explicitly NOT on the roadmap:** further WildChat hand-labeling (diminishing returns confirmed); external-LLM ensembles at Tier 5 (cost + privacy risk without evidence of gain); research-style generalization probe as labeled training data (Enron subset is the *canary*, not training signal).
+> ⚠️ **Trajectory is conditional, not contractual.** The percentages above assume sustained enterprise adoption supplying telemetry and per-tenant labels. Pre-adoption pacing is set instead by the Pre-Adoption Research Programme below.
+
+**Explicitly NOT on the roadmap:** further *random* WildChat hand-labeling (diminishing returns confirmed under random sampling — but see "Lever P1" below: uncertainty-sampled labeling on the same pool is on the roadmap and is a different mechanism); external-LLM ensembles at Tier 5 (cost + privacy risk without evidence of gain); research-style generalization probe as labeled training data (Enron subset enters via Lever P2 corpus diversification rather than the Stage-D canary path).
+
+---
+
+## Pre-Adoption Research Programme (2026-04-20, Advisor-Recommended)
+
+**Premise.** The post-ship "self-improvement" roadmap above relies on enterprise-traffic accumulation. Three of its four levers are dormant before the first customer lands. To prevent the trajectory from collapsing into "wait for adoption," four research methods run continuously and *independently of customer count*. These methods advance the baseline ahead of, and independently from, the four customer-conditional levers — narrowing the gap that those levers must subsequently close.
+
+| Lever | Method | Cost | Expected gain (per cycle) | Triggered by |
+|---|---|---|---|---|
+| **P1** | **Uncertainty-sampled active learning** on the unlabeled remainder of the WildChat pool (5,000 − 2,669 = 2,331 prompts). Run current encoder on all unlabeled, pick the lowest-softmax-margin 200, label, retrain. | Days per cycle | +2-3 pp | Each retrain cycle (monthly cadence) |
+| **P2** | **Corpus diversification.** Add stratified labels from Enron email subset (CMU public release), Reddit privacy-disclosure threads (r/legaladvice, r/personalfinance subset), ShareGPT work-task slice. ~500 new prompts per source per quarter. | ~1 week per source | +2-4 pp | Quarterly |
+| **P3** | **Rubric re-engineering** of the internal-versus-confidential boundary. Add 20 borderline examples; rerun cross-family IRR study at n=50. **Only mechanism that raises the rubric ambiguity ceiling** (currently Fleiss κ = 0.577 → ceiling ~97-98%; targeting κ = 0.70+ → ceiling ~99%+). | 2 days | Raises ceiling, not just baseline | Once before next major release |
+| **P4** | **Cheap encoder ensembling.** Average softmax across MiniLM-L6 + BGE-small + E5-small. No new labels required. | Half a day | +1-2 pp | One-time, then repeat with future encoder swaps |
+
+**Reference for P1:** Settles, B. (2009). "Active Learning Literature Survey." Computer Sciences Technical Report 1648, University of Wisconsin-Madison. Uncertainty sampling is typically 3-5× more label-efficient than random sampling, which makes it materially different from the diminishing-returns observation that random hand-labeling produced.
+
+**Reference for P3:** an alternative framing — the limit of any classifier on this rubric is the inter-rater agreement of expert humans on the same rubric. Levers 1-4 (post-ship) chase that ceiling; only P3 lifts it. Investing in P3 once is a higher-leverage move than investing in any compounding lever twice.
+
+**Sequencing.**
+- **Weeks 1-4 post-ship:** P1 first cycle (uncertainty sampling → retrain → measure on cross-family IRR set). Concrete, fast, deterministic. Expected outcome: 89.2% → ~91-92%.
+- **Weeks 1-4 in parallel:** P3 (rubric re-engineering + IRR re-run). Frees the ceiling for all subsequent work.
+- **Months 2-3:** P2 (corpus diversification, one source per month). Broadens the distribution beyond consumer-ChatGPT before enterprise traffic arrives.
+- **Months 2-4:** P4 (encoder ensembling) when next encoder swap is on the table.
+- **First enterprise customer:** Lever 1 (disagreement-capture) becomes real. Combine with continued P1 cycles.
 
 ---
 

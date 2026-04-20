@@ -78,7 +78,7 @@ Stage 5 — Score & Select
 | Category | Feature |
 |----------|---------|
 | **Routing** | 5-stage model selection: hard constraints → guardrails → tier ceiling → budget → scoring |
-| **Classification** | Local three-axis classifier — **domain** (task type), **complexity** (cognitive load), **privacy** (content sensitivity) — with 89.2% confidential recall on cross-family-validated ground truth. Self-improving to 95–97% over 12 months via disagreement-capture active learning. Full spec at [docs/classification.md](docs/classification.md) or the Technical Specification section at the bottom of the [landing page](https://kensterinvest.github.io/). |
+| **Classification** | Local three-axis classifier — **domain** (task type), **complexity** (cognitive load), **privacy** (content sensitivity) — with 89.2% confidential recall on cross-family-validated ground truth. Targets 95–97% over time via a self-improvement design (disagreement-capture active learning) plus a parallel pre-adoption research programme (uncertainty sampling, corpus diversification, rubric refinement, encoder ensembling). The 95–97% figure is a target conditional on enterprise-traffic accumulation, not a contractual SLA. Full spec at [docs/classification.md](docs/classification.md) or the Technical Specification section at the bottom of the [landing page](https://kensterinvest.github.io/). |
 | **Complexity** | Per-model `min_complexity`/`max_complexity` — prevents routing simple tasks to premium models |
 | **Cost** | Token accounting with 15% safety buffer, per-call cost logging, weekly price sync |
 | **Budget** | Per-team and per-workflow limits with hard-stop or warn-only behaviour |

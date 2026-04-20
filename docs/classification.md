@@ -32,7 +32,7 @@ See the **Technical Specification** section at the bottom of the [Tidus landing 
    - Entity/topic bifurcation analysis (50/50 split, motivating the Tier 2b/Tier 5 separation)
    - Credential re-leak observation (longitudinal user-scoped leak pattern)
 8. Current shipping baseline and self-improvement trajectory
-9. Per-lever accuracy improvement roadmap (→ 95–97% within 12 months)
+9. Per-lever accuracy improvement roadmap (95–97% target conditional on enterprise-traffic accumulation; parallel pre-adoption research programme)
 10. Enterprise deployment guide
 11. Summary of claims-adjacent novel aspects (patent-supporting)
 12. References (reference-only style, 17 citations)
@@ -83,7 +83,7 @@ IRR report: `tests/classification/irr/irr_report.md`.
 
 **Why 89.2% and not 95%?** The 95.8% number initially observed under single-labeler ground truth was upwardly biased. Cross-family inter-rater reliability adjudication surfaced 14 additional confidentials that a single labeler missed, dropping recall to 89.2%. The new number is honest; the old number overstated real-world coverage. See §7.2 of the Technical Specification.
 
-**Will it reach 95% at deployment?** Yes, on real enterprise traffic, via four compounding feedback mechanisms over approximately 12 months. Active learning on tier-disagreement + pattern library expansion + encoder upgrades + per-tenant fine-tuning together target 95–97% at the 12-month mark. See §9 of the Technical Specification.
+**Will it reach 95% at deployment?** The 95–97% number is a *target conditional on enterprise-traffic accumulation*, not a contractual SLA. Three of the four self-improvement levers (disagreement-capture active learning, encoder upgrades at-scale, and per-tenant fine-tuning) only activate once customer deployments are supplying telemetry and per-tenant labeled requests; the rate at which the trajectory plays out therefore depends on adoption volume. To avoid being adoption-blocked, a parallel research programme runs continuously and independently of customer traffic — uncertainty-sampling re-labeling on the remaining WildChat pool, corpus diversification (Enron, Reddit privacy disclosures, ShareGPT work-tasks), rubric re-engineering at the internal/confidential boundary, and cheap encoder ensembling — narrowing the gap that the four customer-conditional levers must subsequently close. See §9 of the Technical Specification.
 
 **Does the classifier ever send my prompt outside my deployment?** No — not when `privacy_enforcement=strict` (the default). The classifier runs entirely in-process or on localhost. Under `privacy_enforcement=disabled` (opt-in), the classifier still runs locally; what changes is only whether a `confidential` classification *forces* local-only routing of the underlying request. See §5.
 
