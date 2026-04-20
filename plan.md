@@ -282,7 +282,24 @@ analyzer.registry.remove_recognizer("SpacyRecognizer")  # disable NER-driven rec
 - MMLU 69.0, BBH 69.0 — top accuracy-per-dollar in 3B class
 - Quantization: Q4_K_M GGUF (~2.4 GB), Q5_K_M (~2.8 GB)
 
-**Alternative:** Llama-3.2-3B-Instruct (Llama 3.2 Community License, <700M MAU OK, "Built with Llama" attribution required) — switch if Phi-3.5-mini underfits Tidus's taxonomy
+**Alternatives under consideration (not yet shipped; gated behind the Benchmark Protocol below):**
+
+| Model | Params (effective / actual) | License | Known advantages | Known concerns |
+|---|---|---|---|---|
+| **Llama-3.2-3B-Instruct** | 3.2 B / 3.2 B | Llama 3.2 Community (< 700 M MAU OK, "Built with Llama" attribution) | Mature, widely deployed, known CPU p95 ~ 300-600 ms Q4_K_M | Licence restrictions on very large deployments |
+| **Gemma-4-E2B-it** (Apr 2026) | 2.3 B / 5.1 B (Per-Layer Embeddings) | **Apache 2.0** (matches Tidus's own licence, explicit patent grant) | Strong on Gemma-family classification benchmark, multimodal future-proof, 128 K context (unused at T5 but free), small RAM footprint (~1.5 GB on-device) | **No published Q4 CPU benchmarks on x86 server hardware.** Mobile/GPU benchmarks only. System-RAM inference extrapolates to ~20 tok/s — *3× over the 500 ms T5 budget for a 30-token JSON response* |
+| **Gemma-4-E4B-it** (Apr 2026) | 4.5 B / 8 B (PLE) | Apache 2.0 | **93% on the Gemma-family classification benchmark (+5 over family avg — best classifier in family)** | **< 10 tok/s on system-RAM CPU inference reported** — extrapolates to *~3 s for a 30-token JSON response, 6× over the 500 ms T5 budget.* Likely GPU-class for Tidus's 4-8 vCPU no-GPU constraint |
+
+**Benchmark Protocol — dual gate before any alternative ships (2026-04-20):**
+
+No alternative replaces Phi-3.5-mini at Tier 5 without passing BOTH gates on a representative 4-vCPU x86 box (no GPU) with Q4_K_M quantization via Ollama or llama.cpp:
+
+1. **Accuracy gate (must equal or beat Phi-3.5-mini):** run the candidate against the 83-confidential cross-family IRR ground truth (`tests/classification/label_overrides_irr.jsonl` ∪ `label_overrides.jsonl` ∪ `chunks/labels_*.jsonl`). Emit the standard three-axis JSON via grammar-constrained output. Score confidential-recall, precision, and per-axis κ vs. the adjudicated labels. Gate: recall ≥ Phi-3.5-mini's recall on the same set AND weighted κ ≥ Phi's weighted κ on domain and complexity.
+2. **Latency gate (p95 ≤ 500 ms):** 200 representative classification prompts through Ollama with grammar-constrained JSON output, warm cache disabled. Measure p95 end-to-end (prompt ingestion → JSON emit). Fail-fast: if p95 > 500 ms, skip the accuracy gate entirely — the model is disqualified for Tidus's deployment constraint regardless of accuracy.
+
+**Gate ordering matters:** run the latency gate FIRST. It is cheaper (hours vs. a day for accuracy eval) and it can disqualify a candidate before accuracy eval is started. A classification-winner that loses on latency is still a no-go.
+
+**Architectural reminder — why the cascade stays:** running any LLM on *every* incoming message (cascade replacement) is out of scope regardless of which model wins. The cascade exists because 60-70% of traffic short-circuits at T1/T2 in < 10 ms; an LLM at < 10 tok/s on every request blows the **50 ms total-classification budget** by 30-60×. Gemma at Tier 5 is a swap candidate for the ~2% of traffic where T1-T4 are uncertain. It is not a replacement for the cascade.
 
 **Deployment:** Ollama on localhost
 - Process isolation, independent OOM domain, crash containment, audit trail
