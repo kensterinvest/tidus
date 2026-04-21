@@ -41,6 +41,16 @@ env/
 tidus/classification/weights/adapter/
 tidus/classification/weights/checkpoints/
 tidus/classification/weights_b/checkpoints/
+# Lever P1 ablation variants (2026-04-20) — null-result training runs
+# reproducible via scripts/p1_step1_baseline.py + p1_step4_postbaseline.py.
+# Final production weights remain in weights_b/ (unsuffixed).
+tidus/classification/weights_b_p1/
+tidus/classification/weights_b_p1_nocw/
+tidus/classification/weights_b_ctrl/
+tidus/classification/weights_b_ctrl_nocw/
+
+# One-off inspection artifacts (uncertainty sample dumps etc.)
+tmp_pack_*.txt
 
 # Labeled dataset — distributed separately on Hugging Face Datasets
 # (https://huggingface.co/datasets/kensterinvest/tidus-wildchat-classification)
