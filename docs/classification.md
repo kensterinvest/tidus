@@ -1,10 +1,11 @@
 # Multi-Axis Request Classification — Domain, Complexity, Privacy
 
 **Author:** Kenny Wong (<lapkei01@gmail.com>)
-**Published:** 2026-04-20
-**Version:** 1.0 — v1.3.0 auto-classification layer
-**Status:** Research complete. Shipping preparation.
+**Published:** 2026-04-20 · **Updated:** 2026-04-21 (Stages A + B shipped)
+**Version:** 1.1 — v1.3.0 auto-classification layer
+**Status:** **Shipped.** Stage A (classifier cascade T0→T5) + Stage B (PII-safe telemetry) live on `main`. Pre-ship blocker: GPU Phi-3.5-mini latency bench.
 **Current baseline:** 89.2% confidential recall (CI [80.7%, 94.2%]) on cross-family-validated ground truth.
+**Test coverage:** 756 tests passing (unit + integration).
 
 Tidus classifies every incoming AI request across three dimensions before routing:
 
@@ -37,6 +38,23 @@ See the **Technical Specification** section at the bottom of the [Tidus landing 
 11. Summary of claims-adjacent novel aspects (patent-supporting)
 12. References (reference-only style, 17 citations)
 
+## Implementation status (shipped 2026-04-21)
+
+| Stage | Deliverable | Status |
+|---|---|---|
+| **A.1** | T0 caller override + T1 heuristic fast-path (regex + keywords + token estimator) | ✅ Shipped |
+| **A.2** | T2 trained encoder (Recipe B: frozen MiniLM + 3 sklearn LR heads) | ✅ Shipped |
+| **A.3** | T2b Presidio NER in parallel with T2 via `asyncio.gather` | ✅ Shipped |
+| **A.4** | T5 local LLM escalation (Ollama, grammar-constrained JSON, sliding-window limiter, TTL cache) | ✅ Shipped |
+| **A.5** | `POST /api/v1/classify` endpoint + `/complete` + `/route` migration to Optional classification fields | ✅ Shipped |
+| **B** | PII-safe per-request telemetry (PCA 384→64 embedding, type-only entity/regex lists, `model_routed` after routing) | ✅ Shipped |
+| **C** | Disagreement-capture active learning (monthly encoder retrain from adjudicated overrides) | 🔄 Post-ship, triggered by enterprise telemetry |
+| **D** | Enron canary regression test (weekly E1-recall monitoring on frozen 100–150 prompts) | 🔄 Planned |
+
+**Pre-ship blocker:** GPU Phi-3.5-mini p95 latency bench (task #54). CPU-only SKU ships today at 89.2% recall baseline without T5.
+
+**Test coverage:** 756 tests across unit + integration, covering every tier (T0 through T5), the E1/E2 rule switch, asymmetric-safety OR merge, T5 uncertainty gate, PCA reduction, and the rationale-never-logged invariant. See `tests/unit/classification/` and `tests/unit/observability/`.
+
 ## Configuration
 
 See `config/policies.yaml` for:
@@ -45,6 +63,7 @@ See `config/policies.yaml` for:
 
 See `plan.md` for the full shipping sequence (Stages A through D) and the four-lever accuracy improvement roadmap.
 See `findings.md` for the research evidence document with full tables and methodology.
+See `CHANGELOG.md` for the full v1.3.0 changelog entry (added/changed/fixed/security).
 
 ## Dataset
 

@@ -5,6 +5,50 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v1.3.0] — 2026-04-21 — Auto-Classification Layer (Stages A + B)
+
+### Highlights
+
+- **Callers no longer need to supply `complexity` / `domain` / `privacy` / `estimated_input_tokens`.** Tidus classifies every request internally via a five-tier cascade (T0 caller override → T1 regex/keywords → T2 trained encoder ∥ T2b Presidio NER → T5 Ollama LLM). Backward compatible: callers who do supply fields still win via the `caller_override` merge.
+- **New endpoint `POST /api/v1/classify`** — run the cascade without routing. Useful for offline classification previews, UI surfaces, and integration tests.
+- **Asymmetric-safety privacy merge** — ANY tier voting `confidential` forces `confidential` on the final verdict. Confidence scales with agreement count. `public_floor` prevents weakly-supported `public` emissions from the encoder.
+- **Two SKU architecture** — CPU-only (89.2% confidential recall baseline) and Enterprise (GPU-bound, T5 LLM escalation for topic-bearing confidentials). See `docs/hardware-requirements.md`.
+- **Stage B PII-safe telemetry** — per-request structured log with PCA-reduced embedding (384→64, 57.7% variance retained), type-only entity/pattern lists, and `model_routed` populated from the router's decision. Never emits raw prompts or matched values. Foundation for Stage C active-learning feedback loop.
+- **Per-tier async locks** preserve intra-request T2∥T2b parallelism while serializing across concurrent FastAPI requests (torch + spaCy are not thread-safe).
+- **Measured baseline:** E1 rule (PERSON alone triggers confidential) = 89.2% [80.7, 94.2] confidential recall on cross-family IRR-adjudicated ground truth (n=83 confidentials in n=2,249 total). E2 (PERSON + encoder-non-public) = 83.1% [73.7, 89.7] at 3.5× better precision.
+
+### Added
+
+- **Classification package (`tidus/classification/`)**: `models.py` (Pydantic types — `EncoderResult.embedding`, `PresidioResult.entity_scores`, `ClassificationTier` literal), `classifier.py` (`TaskClassifier` T0→T5 orchestrator), `heuristics.py` (T1 regex — 13 pattern IDs, Luhn+BIN for credit cards), `keywords.py` (medical/legal/financial/hr/hardship/credential_request — keyword veto for complexity floor), `encoder.py` (T2 — frozen MiniLM + 3 sklearn LR heads; `EncoderProtocol` for DI), `presidio_wrapper.py` (T2b — spaCy `en_core_web_sm`, `HIGH_TRUST_ENTITIES` frozenset), `llm_classifier.py` (T5 — Ollama localhost, JSON-format, `_SlidingWindowLimiter`, `_TTLCache`).
+- **Observability package additions** (`tidus/observability/`): `classification_metrics.py` (Prometheus counters `tidus_classify_t5_calls_total`, `tidus_classify_t5_flips_total`, latency histogram `tidus_classify_t5_latency_seconds`), `classification_telemetry.py` (Stage B emitter — PCA load/cache/reduce, structlog `classification` event).
+- **Auth: `TokenPayload.tenant_id`** — JWT claim in OIDC mode; `X-Tenant-ID` header in dev mode only (header fallback dropped in OIDC to prevent per-tenant telemetry poisoning); falls back to `team_id`.
+- **Settings**: `auto_classify_enabled`, `classify_encoder_dir`, `classify_encoder_max_chars`, `classify_tier5_enabled`, `classify_tier5_model`, `classify_tier5_rate_limit_per_minute`, `classify_privacy_threshold`, `classify_domain_threshold`, `classify_complexity_threshold`, `classify_privacy_public_floor`, `classify_presidio_enabled`, `classify_presidio_parallel`, `classify_presidio_max_chars`, `classify_presidio_rule` (E1/E2), `classify_cache_ttl_seconds`, `classify_cache_max_entries`, `classify_telemetry_enabled`, `classify_pca_path`, `oidc_tenant_claim`, `tenant_header_name`.
+- **Scripts**: `fit_pca_64d.py` (one-time PCA fit on labeled corpus → `weights_b/pca_64d.joblib`), `uncertainty_sample.py` (Lever P1 uncertainty-sampled active learning — null result, see `tests/classification/p1_uncertain/RESULTS.md`).
+- **Tests**: 756 passing — `tests/unit/classification/*` (7 files), `tests/unit/observability/*` (2 files), `tests/integration/test_{classify_endpoint,auto_classify_endpoints,stage_b_telemetry,encoder_integration,presidio_integration,tier5_integration}.py`.
+- **Docs**: `docs/hardware-requirements.md` (two-SKU positioning + GPU FAQ), `findings.md` (research writeup — 3-rater IRR study, E1 vs E2 empirical trade-off, 50/50 entity/topic split).
+
+### Changed
+
+- **`POST /api/v1/complete`** and **`POST /api/v1/route`** — `complexity`, `domain`, `privacy`, `estimated_input_tokens` are now **Optional**. When omitted, Tidus auto-classifies. When all four supplied, T0 short-circuits the cascade (zero overhead). Partial override merged via `caller_override` rule; asymmetric safety still applies to `privacy`.
+- **`/ready` endpoint** — now includes `classifier` health block (`encoder_loaded`, `presidio_loaded`, `llm_loaded`, `sku`).
+- **`LLM_CONFIDENCE` renamed to `LLM_VOTER_STRENGTH`** — constant is voter weight in the merge arithmetic, NOT a calibrated probability. Rename + docstring makes the semantics self-documenting.
+- **`EncoderResult` gains `embedding: list[float] | None`** — the 384-d MiniLM vector, surfaced so Stage B telemetry can dim-reduce to 64-d. Optional (None by default, populated by the concrete encoder).
+- **`PresidioResult` gains `entity_scores: dict[str, float]`** — max score per detected entity type. Not plumbed into merge logic yet; surfaced in `debug` payload for observability.
+
+### Fixed
+
+- **`model_routed` was always `None` on `/complete` and `/route` telemetry** — observer fired before `selector.select()`, so the chosen model was unknown when the record was emitted. Fix: `_TelemetryCapture` buffers classifier intermediates; endpoint calls `capture.emit(model_routed=decision.chosen_model_id)` after routing completes.
+- **Float precision drift** in `_merge_privacy` — `0.90 + 0.05 = 0.9500000000000001` broke downstream equality checks. Now rounded to 4 decimals.
+- **T5 cache key missed model name** — stale cache hits from a prior model could leak into a new model's traffic. Key now `f"{model}|{text[:MAX_CHARS]}"`.
+- **T5 over-eager triggering** — broad `bool(kw_hits)` gate fired T5 on every medical/legal/HR question, blowing the Enterprise GPU cost envelope. Now gated by encoder-uncertainty (`t2 is None OR t2.privacy == "public" OR t2.confidence["privacy"] < threshold`).
+- **Tier label honesty** — `_apply_t5` now only sets `classification_tier="llm"` when T5 actually flipped the verdict (not when T5 agreed with the pre-T5 result).
+- **Presidio `DATE_TIME` removed from `HIGH_TRUST_ENTITIES`** — every "tomorrow" or "next Tuesday" would have been a confidential vote. Now documented why.
+
+### Security
+
+- **Tenant-header poisoning gate** — in OIDC mode, `tenant_id` resolves from the JWT claim only. `X-Tenant-ID` header is *only* honored in dev mode. Prevents authenticated callers from writing to another tenant's Stage B / Stage C feedback stream.
+- **`rationale` field stripped from Stage B records** — T5's free-text `rationale` could paraphrase the prompt verbatim. The telemetry emitter never includes it. Test `test_rationale_is_never_in_record` locks the invariant.
+
 ## [v1.2.0] — 2026-04-17 — Comprehensive Review Hardening
 
 ### Highlights

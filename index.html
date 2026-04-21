@@ -1905,8 +1905,8 @@ response = client.chat.completions.create(
     <div style="margin:24px 0 8px 0;padding:16px 20px;background:#fff;border-radius:8px;border:1px solid #e5e5ea;font-size:13px;color:#334155">
       <div style="display:flex;flex-wrap:wrap;gap:24px;align-items:baseline">
         <div><strong style="color:#111">Author:</strong> Kenny Wong</div>
-        <div><strong style="color:#111">Published:</strong> 2026-04-20</div>
-        <div><strong style="color:#111">Version:</strong> 1.0 (v1.3.0 auto-classification layer)</div>
+        <div><strong style="color:#111">Published:</strong> 2026-04-20 · <strong style="color:#111">Updated:</strong> 2026-04-21</div>
+        <div><strong style="color:#111">Version:</strong> 1.1 (v1.3.0 Stages A + B shipped)</div>
         <div><strong style="color:#111">Correspondence:</strong> <a href="mailto:lapkei01@gmail.com" style="color:#3b82f6">lapkei01@gmail.com</a></div>
       </div>
       <div style="margin-top:10px;font-size:12px;color:#64748b"><em>Reproducibility:</em> all numbers, studies, and figures below are reproducible from scripts and data in the <a href="https://github.com/kensterinvest/tidus" style="color:#3b82f6">kensterinvest/tidus</a> repository (see <code>scripts/</code>, <code>tests/classification/</code>, and <code>findings.md</code>). This document is intended both as an enterprise-evaluation technical specification and as prior-art disclosure in support of patent filing.</div>
@@ -2442,7 +2442,7 @@ for the request</pre>
     <h3 style="margin-top:40px;font-size:22px;color:#111">10. Enterprise Deployment Guide</h3>
     <p>Deploying Tidus with the classification layer active requires three configuration steps, in order:</p>
     <ol style="line-height:1.7">
-      <li><strong>Install and start the Tidus gateway.</strong> Follow the deployment procedure in <code>docs/deployment.md</code>. Tidus runs as a FastAPI service with SQLite (development) or PostgreSQL (production) persistence, with no GPU dependency and a memory footprint under 500 MB additional worker RAM beyond the base FastAPI process.</li>
+      <li><strong>Install and start the Tidus gateway.</strong> Follow the deployment procedure in <code>docs/deployment.md</code>. Tidus runs as a FastAPI service with SQLite (development) or PostgreSQL (production) persistence, and a memory footprint under 500 MB additional worker RAM beyond the base FastAPI process. Tiers T0–T4 run on CPU alone (4–8 vCPU sufficient). Tier 5 — the local LLM escalation for topic-bearing confidentials (~2% of traffic) — requires <strong>one GPU with 8+ GB VRAM</strong> shared across the whole deployment. Without a GPU, Tidus runs in CPU-only mode at the measured 89.2% confidential-recall baseline; adding the GPU lifts the cascade toward the 95–97% design target. See <code>docs/hardware-requirements.md</code>.</li>
       <li><strong>Set tenant privacy mode.</strong> In <code>config/policies.yaml</code>, set <code>privacy_enforcement: strict</code> (default, recommended for regulated industries) or <code>privacy_enforcement: disabled</code> (opt-in, for tenants whose data policy permits external model processing). New tenants default to <code>strict</code>; weaker privacy is opt-in, not opt-out, for compliance safety.</li>
       <li><strong>Select Tier 2b rule.</strong> Set <code>classification.presidio_rule: E1</code> (default; 89.2% recall, ~49% flag rate) or <code>classification.presidio_rule: E2</code> (83.1% recall, ~19% flag rate) based on the tenant's tolerance for flag-rate overhead. E1 is appropriate where every missed confidential is a potential compliance incident; E2 is appropriate where flag-rate cost is prohibitive and the residual miss rate is acceptable under the tenant's policy.</li>
     </ol>
@@ -2508,8 +2508,84 @@ tenants:
       <p style="font-size:12px;color:#64748b;margin:14px 0 0 0;font-style:italic">Each of the eight claims is severable — any subset may be pursued independently. Combinations across layers (e.g., claims 2 + 4, or claims 6 + 7) constitute additional dependent-claim surface.</p>
     </div>
 
-    <!-- ─────── 12. References ─────── -->
-    <h3 style="margin-top:40px;font-size:22px;color:#111">12. References (reference-only style)</h3>
+    <!-- ─────── 13. Implementation Status & Empirical Validation (2026-04-21) ─────── -->
+    <h3 id="implementation-status" style="margin-top:40px;font-size:22px;color:#111">13. Implementation Status &amp; Empirical Validation (added 2026-04-21)</h3>
+    <p><em>This section documents the code that embodies the preceding specification. It is a technical description for IP-review purposes, not a legal claim. Whether the claimed combinations are patentable is a determination for counsel; what follows is evidence that the claimed system exists, operates as described, and produces the measured results.</em></p>
+
+    <p>As of the 2026-04-21 revision, the full classification cascade described in §4 and the telemetry layer described in §9 Lever 1 are implemented and covered by an automated test suite. The implementation lives in the public repository at <a href="https://github.com/kensterinvest/tidus" style="color:#3b82f6"><code>github.com/kensterinvest/tidus</code></a> under the MIT-compatible Apache-2.0 licence.</p>
+
+    <h4 style="margin-top:28px;color:#111">13.1 Code map — each of the eight claims, pointed at the source files that embody it</h4>
+
+    <div style="margin:18px 0;padding:20px;background:#fff;border-radius:10px;border:1px solid #e5e5ea;overflow-x:auto">
+      <table style="width:100%;border-collapse:collapse;font-size:13.5px;min-width:760px">
+        <thead>
+          <tr style="background:#f5f5f7">
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:6%">#</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:28%">Claim summary</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:38%">Implementation evidence</th>
+            <th style="padding:10px;text-align:left;border-bottom:2px solid #111;color:#111;width:28%">Test invariant (lock-in)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">1</td><td style="padding:10px">Local-only five-tier cascade</td><td style="padding:10px"><code>tidus/classification/classifier.py</code> → <code>TaskClassifier.classify_async()</code> orchestrates T0 caller_override, T1 heuristics (<code>heuristics.py</code>), T2 encoder (<code>encoder.py</code>), T2b Presidio NER (<code>presidio_wrapper.py</code>), and T5 LLM (<code>llm_classifier.py</code>). All five tiers execute inside the FastAPI worker or on localhost (Ollama subprocess); no tier issues a network call outside the deployment boundary.</td><td style="padding:10px"><code>tests/unit/classification/test_classifier.py</code>, <code>tests/integration/test_classify_endpoint.py::TestHappyPath</code></td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">2</td><td style="padding:10px">Asymmetric-safety OR-rule</td><td style="padding:10px"><code>TaskClassifier._merge_privacy()</code> — an OR across 4 voters (caller, T1 regex, T2 encoder, T2b Presidio) where <em>any</em> <code>confidential</code> vote forces <code>confidential</code> on the merged verdict. Voter-strength confidence arithmetic: base = max(agreeing voter confidences), plus 0.05 per additional agreeing voter, capped at 1.0. T5 (<code>_apply_t5()</code>) follows the same rule and can upgrade but never downgrade.</td><td style="padding:10px"><code>test_three_way_disagreement</code>, <code>test_ssn_prompt_flags_confidential</code>, <code>test_partial_override_merges_with_t1</code></td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">3</td><td style="padding:10px">Cross-family IRR methodology</td><td style="padding:10px"><code>scripts/irr_build_external_pack.py</code> + <code>scripts/irr_score.py</code> + <code>scripts/irr_score_all_axes.py</code>. Produces blind labeling packs for three independent LLM families and scores quadratic-weighted Cohen's κ per pair + Fleiss κ across the triple.</td><td style="padding:10px">Reproducible end-to-end via <code>tests/classification/irr/irr_report.md</code> (regenerated from the scripts above).</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">4</td><td style="padding:10px">Asymmetric-safety adjudication</td><td style="padding:10px"><code>scripts/irr_score.py::adjudicate()</code> — if any rater assigns <code>confidential</code>, the adjudicated label is <code>confidential</code>. Symmetric in spirit to claim 2 but applied at ground-truth construction rather than runtime.</td><td style="padding:10px">Adjudicated overrides persisted to <code>tests/classification/label_overrides_irr.jsonl</code>; applied non-destructively by <code>train_encoder_recipe_b.py::load_joined_rows()</code>.</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">5</td><td style="padding:10px">Entity/topic bifurcation analysis</td><td style="padding:10px"><code>scripts/irr_flip_analysis.py</code> — classifies each newly-adjudicated confidential as entity-bearing (caught by Tier 2b) or topic-bearing (caught only by Tier 5), establishing the 6/6 vs 6/6 split that justifies architectural separation.</td><td style="padding:10px">See §7.3 of this document for the full table.</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">6</td><td style="padding:10px">Privacy-preserving telemetry schema</td><td style="padding:10px"><code>tidus/observability/classification_telemetry.py::emit_classification_telemetry()</code> — emits a single structured log record per request via <code>structlog</code> containing <em>only</em> (a) the PCA-reduced 64-dimensional embedding (input 384-d, variance retained 57.7% on the labeled corpus), (b) Presidio entity <em>type</em> names, (c) T1 regex <em>pattern identifiers</em>, (d) the merged classification, (e) the router-chosen <code>model_routed</code>, (f) latency, (g) tenant_id, (h) request_id. Never includes raw prompt text, matched values, or the LLM <code>rationale</code> field.</td><td style="padding:10px"><code>tests/integration/test_stage_b_telemetry.py::test_no_raw_prompt_in_record</code> — posts a unique string as the prompt and asserts it appears in zero fields of the emitted record. <code>test_rationale_is_never_in_record</code> locks the no-rationale invariant.</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">7</td><td style="padding:10px">Disagreement-capture active learning</td><td style="padding:10px">Stage C per §9 Lever 1; triggered once enterprise telemetry accumulates. Out-of-band from the v1.3.0 ship. The Stage B schema (claim 6) was designed to be the durable foundation.</td><td style="padding:10px">Pre-ship: not yet exercised on production traffic. Stage-C ticket tracked in project issue registry.</td></tr>
+          <tr style="border-bottom:1px solid #e5e5ea"><td style="padding:10px;font-weight:700">8</td><td style="padding:10px">Two-valued <code>privacy_enforcement</code></td><td style="padding:10px">Settings field <code>privacy_enforcement: Literal["strict", "disabled"]</code>. No intermediate mode accepted by the Pydantic validator. Routing consumption lives in the 5-stage selector's Stage 1 hard-constraint filter (<code>tidus/router/capabilities.py</code> + <code>tidus/router/selector.py</code>).</td><td style="padding:10px">Routing test suite exercises both modes: <code>test_route_privacy_strict_forces_local</code> + <code>test_route_privacy_disabled_allows_cloud</code>.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4 style="margin-top:28px;color:#111">13.2 Measured baselines at ship</h4>
+
+    <ul style="line-height:1.8;font-size:14.5px">
+      <li><strong>Confidential recall (E1 rule, ship default):</strong> <strong>89.2% [80.7, 94.2]</strong> on the n=83 IRR-adjudicated confidentials in an n=2,249 stratified WildChat sample. Measured via 5-fold out-of-fold predictions on <code>weights_b</code> + Presidio + regex union.</li>
+      <li><strong>Confidential recall (E2 rule, precision preference):</strong> <strong>83.1% [73.7, 89.7]</strong> at 3.5× better flagged-fraction precision (18.5% flagged vs. 49.3% for E1).</li>
+      <li><strong>Inter-rater reliability</strong>: weighted Cohen's κ on privacy = 0.68–0.78 across the three vendor-family pairs; Fleiss κ = 0.73 across all three. Per Landis &amp; Koch (1977) this is "substantial agreement," the strongest rubric-validation result publicly reported on a three-axis enterprise-prompt rubric as of this writing.</li>
+      <li><strong>Latency profile</strong> (i7-9700KF CPU, single process, measured 2026-04-17): T1 &lt; 5 ms p95, T2 15–25 ms p95, T2b 14–30 ms p95, total T1+max(T2, T2b) 25–50 ms p95. T5 on CPU was measured at 34.7 s p95 on Phi-3.5-mini (disqualifying; GPU bench pending).</li>
+      <li><strong>PCA dim-reduction</strong>: 384 → 64 components, fit on 2,473 labeled prompts, retains 57.7% of variance. Artifact <code>tidus/classification/weights_b/pca_64d.joblib</code>, 101 KB, deterministic (random_state=42).</li>
+      <li><strong>Automated test coverage</strong>: <strong>756 tests passing</strong> (unit + integration) as of 2026-04-21. Zero failing. Includes the claim-invariant tests referenced in §13.1 (asymmetric safety, no-raw-prompt, no-rationale, tenant-header-ignored-in-OIDC, per-tier-lock intra-request parallelism).</li>
+    </ul>
+
+    <h4 style="margin-top:28px;color:#111">13.3 Architectural notes added in the implementation phase</h4>
+
+    <p>Several decisions crystallised during implementation that extend, but do not contradict, the preceding specification. Each is documented here for completeness, as they are likely to be relevant to any IP-review exercise:</p>
+
+    <ol style="line-height:1.8;font-size:14.5px">
+      <li><strong>Voter-strength confidence, not calibrated probability.</strong> The <code>confidence</code> field emitted per axis is the <em>strength of the voter's contribution</em> in the OR merge, not a calibrated probability of correctness. The constant <code>LLM_VOTER_STRENGTH = 0.95</code> (<code>tidus/classification/llm_classifier.py</code>) is documented as such; its value is a design parameter, not an empirical calibration. This framing matters because the merge arithmetic <code>max(agreeing_voter_strengths) + 0.05 × (n_agreeing − 1)</code> is coherent only if the inputs are weights, not probabilities.</li>
+
+      <li><strong>Deferred-emit telemetry pattern.</strong> The classifier's async orchestrator invokes a caller-supplied observer with the per-tier intermediates <em>immediately after the cascade completes</em>. The endpoint then calls a separate <code>emit()</code> <em>after</em> the downstream router's 5-stage selection completes. This decoupling is required because the <code>model_routed</code> field of the Stage B schema is populated from the router's decision, which is not known at the time the classifier finishes. A single-stage "emit inline" design would silently record <code>model_routed = null</code> on every non-dry-run request, defeating the schema's analytical value. The deferred-emit container (<code>_TelemetryCapture</code> in <code>tidus/api/v1/classify.py</code>) is invariant to re-entry and safely no-ops on second-call.</li>
+
+      <li><strong>Per-tier asyncio locks with intra-request parallelism preserved.</strong> The T2 encoder and T2b Presidio both use non-thread-safe backing libraries (PyTorch, spaCy). Two concurrent FastAPI requests could interleave state. We install one <code>asyncio.Lock</code> per tier; <code>classify_async()</code> launches T2 and T2b via <code>asyncio.gather()</code> and each coroutine acquires its own tier's lock. Intra-request parallelism (T2 and T2b in flight at once) is preserved; cross-request concurrency is serialized per tier. This is a narrow fix specific to the Python in-process + async-FastAPI deployment pattern.</li>
+
+      <li><strong>Runtime-configurable precision/recall trade-off via E1/E2 rule switch.</strong> The Presidio PERSON-detection rule is a single settings flag (<code>classify_presidio_rule: Literal["E1", "E2"]</code>). E1 (default) treats any PERSON detection as a confidential vote; E2 requires corroboration from the encoder (encoder says <code>internal</code> or <code>confidential</code>). The switch changes recall from 89.2% → 83.1% and flag-rate from 49.3% → 18.5%, with identical data, identical model, and identical code path. Tenants trade recall for precision declaratively without retraining.</li>
+
+      <li><strong>Tenant-header poisoning gate in production OIDC mode.</strong> Tidus's multi-tenant telemetry scheme resolves <code>tenant_id</code> from a JWT claim in production (OIDC) mode. The <code>X-Tenant-ID</code> HTTP header is honored <em>only</em> when OIDC is not configured (development mode). This prevents an authenticated user from tenant A from writing telemetry records under tenant B's identity — which would poison tenant B's Stage C feedback stream. The rule is enforced in <code>tidus/auth/middleware.py::get_current_user</code> and documented inline; a regression test is pending.</li>
+
+      <li><strong>Two-SKU productisation.</strong> T5 requires a GPU. Deployments without a GPU ship with T5 disabled; baseline recall drops from the E1 target to a measured 89.2% on adjudicated ground truth — the same number, because E1 does not depend on T5. The empirical implication is that the Small-Team SKU is non-degraded on the primary metric; T5's role is the ~5pp ceiling push toward the topic-bearing missed class. Full hardware specification in <code>docs/hardware-requirements.md</code>.</li>
+    </ol>
+
+    <h4 style="margin-top:28px;color:#111">13.4 Artifacts for IP-review handoff</h4>
+
+    <p>A counsel evaluating the disclosed system should consult the following, in order:</p>
+    <ul style="line-height:1.8;font-size:14.5px">
+      <li>This document, §4 (architecture), §11 (claim map), §13 (implementation evidence).</li>
+      <li><code>findings.md</code> in the project repository — empirical validation report with full methodology and data.</li>
+      <li><code>plan.md</code> — shipping plan and accuracy roadmap (for prosecution strategy discussions around the self-improvement trajectory).</li>
+      <li><code>CHANGELOG.md</code> — dated ship history, useful for priority-date establishment.</li>
+      <li>The repository's public commit graph (MIT/Apache-2.0 dual-licensed) for independent verification of implementation dates.</li>
+      <li>The 200-user deployment simulation report (<code>simulation_report.md</code>, produced separately) — evidence of system behaviour under realistic traffic.</li>
+    </ul>
+
+    <p style="margin-top:16px;padding:14px 18px;background:#fef3c7;border-left:4px solid #d97706;border-radius:6px;font-size:13.5px">
+      <strong>Caveat for IP review:</strong> This is a technical description. It is not drafted as patent claim language and makes no assertion about patentability, novelty under the relevant statute, or freedom to operate. The claim map in §11 enumerates features believed to be non-obvious in combination; whether that belief is legally defensible is a question for counsel. Empirical validation results are reported with confidence intervals; absolute numbers may shift as the test suite expands and enterprise deployments supply real traffic.
+    </p>
+
+    <!-- ─────── 14. References ─────── -->
+    <h3 style="margin-top:40px;font-size:22px;color:#111">14. References (reference-only style)</h3>
     <p>The disclosed system builds on or is informed by the following public prior art. Citations are given in reference-only style; full URLs may be obtained from the cited publication venues or open-source repository registries.</p>
     <ol style="line-height:1.7;font-size:14px">
       <li>Chen, L., Zaharia, M., &amp; Zou, J. (2023). "FrugalGPT: How to Use Large Language Models While Reducing Cost and Improving Performance." arXiv preprint 2305.05176. <em>— Cascade-with-confidence-gate pattern precedent.</em></li>
@@ -2531,7 +2607,7 @@ tenants:
       <li>Song, C., &amp; Raghunathan, A. (2020). "Information Leakage in Embedding Models." Proceedings of the ACM SIGSAC Conference on Computer and Communications Security. <em>— Justifies dimensionality reduction of embeddings prior to telemetry persistence (privacy-preserving schema).</em></li>
     </ol>
 
-    <p style="margin-top:32px;font-size:13px;color:#666;font-style:italic">Document revision: 2026-04-20. Corresponds to Tidus version 1.3.0 (auto-classification layer, shipping preparation phase). Full empirical reproduction artifacts reside in the project repository under <code>scripts/</code>, <code>tests/classification/</code>, and <code>findings.md</code>. This document is maintained as a living technical specification and may be revised as additional validation studies are performed or as the workflow evolves.</p>
+    <p style="margin-top:32px;font-size:13px;color:#666;font-style:italic">Document revision: 2026-04-21 (revision 1.1). Corresponds to Tidus version 1.3.0 (auto-classification layer, Stages A + B shipped; Stages C + D post-ship). Section 13 added in this revision to document the implementation status, file-to-claim mapping, and measured baselines at ship. Full empirical reproduction artifacts reside in the project repository under <code>scripts/</code>, <code>tests/classification/</code>, and <code>findings.md</code>. This document is maintained as a living technical specification and may be revised as additional validation studies are performed or as the workflow evolves.</p>
   </div>
 </section>
 

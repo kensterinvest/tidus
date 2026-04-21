@@ -22,8 +22,23 @@ Tidus's 5-stage router works, but callers must supply `complexity`, `domain`, `p
 | Extended-path latency (Tier 1 + 2 + 2b) | p95 < 50ms |
 | Fallback-path latency (Tier 3) | p95 < 500ms |
 | Worker memory budget | < 500 MB additional RAM |
-| CPU assumption | 4-8 vCPUs x86, no GPU |
+| **CPU assumption (T0-T4)** | **4-8 vCPUs x86, no GPU** |
+| **T5 hardware assumption (2026-04-21 revision)** | **1 × 8+ GB VRAM GPU** — CPU-only measured 34.7 s p95 for Phi-3.5-mini Q4, disqualifying CPU T5. See `docs/hardware-requirements.md`. |
 | Dependencies | Open-source only (MIT / Apache / BSD) |
+
+### Two supported SKUs (2026-04-21)
+
+Tidus ships as **two deployment SKUs** differing only in whether T5 is enabled:
+
+| SKU | T5 enabled? | GPU required? | Confidential recall |
+|---|---|---|---|
+| **CPU-only (small-team / pilot / eval)** | no | no — any 4-8 vCPU x86 | **89.2% measured** (E1 baseline, no T5) |
+| **Enterprise (full recall SLA)** | yes | **yes — 1× 8+ GB VRAM GPU** | **95-97% design goal** (not yet measured with T5 in production) |
+
+The **GPU is Tidus's only hardware requirement**, and only for the Enterprise SKU.
+T0-T4 run on CPU in both SKUs and have no hardware cost beyond standard server
+compute. T5 config flag `classify_tier5_enabled` toggles the SKU. Full spec:
+`docs/hardware-requirements.md`.
 
 ---
 
@@ -282,17 +297,21 @@ analyzer.registry.remove_recognizer("SpacyRecognizer")  # disable NER-driven rec
 - MMLU 69.0, BBH 69.0 — top accuracy-per-dollar in 3B class
 - Quantization: Q4_K_M GGUF (~2.4 GB), Q5_K_M (~2.8 GB)
 
+> ⚠️ **Latency claim contradicted by measurement (2026-04-21):** Phi-3.5-mini Q4_K_M on Intel i7-9700KF (8C/8T @ 3.6 GHz, ≥ 4-vCPU server equivalent, Ollama 0.20.5) measures **p95 = 34.7 s, p50 = 16.2 s, 3.88 tok/s** — 32-70× over the 500 ms T5 budget. The "300-600 ms" CPU-latency claim for 3B-class Q4_K_M models is NOT supported on representative hardware. See `tests/classification/t5_bench_results.md`. Load-bearing implication: either the 500ms budget must change, or T5 requires GPU/accelerator, or the production target isn't actually 4-vCPU CPU-only. No T5 candidate can be evaluated until this is resolved.
+
 **Alternatives under consideration (not yet shipped; gated behind the Benchmark Protocol below):**
 
 | Model | Params (effective / actual) | License | Known advantages | Known concerns |
 |---|---|---|---|---|
 | **Llama-3.2-3B-Instruct** | 3.2 B / 3.2 B | Llama 3.2 Community (< 700 M MAU OK, "Built with Llama" attribution) | Mature, widely deployed, known CPU p95 ~ 300-600 ms Q4_K_M | Licence restrictions on very large deployments |
 | **Gemma-4-E2B-it** (Apr 2026) | 2.3 B / 5.1 B (Per-Layer Embeddings) | **Apache 2.0** (matches Tidus's own licence, explicit patent grant) | Strong on Gemma-family classification benchmark, multimodal future-proof, 128 K context (unused at T5 but free), small RAM footprint (~1.5 GB on-device) | **No published Q4 CPU benchmarks on x86 server hardware.** Mobile/GPU benchmarks only. System-RAM inference extrapolates to ~20 tok/s — *3× over the 500 ms T5 budget for a 30-token JSON response* |
-| **Gemma-4-E4B-it** (Apr 2026) | 4.5 B / 8 B (PLE) | Apache 2.0 | **93% on the Gemma-family classification benchmark (+5 over family avg — best classifier in family)** | **< 10 tok/s on system-RAM CPU inference reported** — extrapolates to *~3 s for a 30-token JSON response, 6× over the 500 ms T5 budget.* Likely GPU-class for Tidus's 4-8 vCPU no-GPU constraint |
+| **Gemma-4-E4B-it** (Apr 2026) | 4.5 B / 8 B (PLE) | Apache 2.0 | **93% on the Gemma-family classification benchmark (+5 over family avg — best classifier in family)** | **DISQUALIFIED on latency, 2026-04-21** — measured p95 **44.2 s** (88× over budget) and **1.98 tok/s** on Intel i7-9700KF (8C/8T @ 3.6 GHz, Q4_K_M via Ollama 0.20.5). Also ~2× slower than llama3.1:8B on same hardware despite equal parameter count — PLE saves RAM but costs compute. See `tests/classification/t5_bench_results.md`. |
 
-**Benchmark Protocol — dual gate before any alternative ships (2026-04-20):**
+**Benchmark Protocol — dual gate before any alternative ships (2026-04-20, revised 2026-04-21):**
 
-No alternative replaces Phi-3.5-mini at Tier 5 without passing BOTH gates on a representative 4-vCPU x86 box (no GPU) with Q4_K_M quantization via Ollama or llama.cpp:
+> **Revision 2026-04-21:** The original protocol specified "4-vCPU x86 box (no GPU)" hardware. Empirical bench on Intel i7-9700KF (8C/8T @ 3.6 GHz, ≥ 4-vCPU-equivalent) measured Phi-3.5-mini Q4_K_M at p95 **34.7 s** — 70× over the 500 ms budget. CPU-only T5 is disqualified at the architecture level, not the model level. Updated bench harness: **4-vCPU x86 + 1× 8+ GB VRAM GPU** with Q4_K_M quantization via Ollama or llama.cpp. The latency budget and gate ordering both stand; only the hardware assumption changed.
+
+No alternative replaces Phi-3.5-mini at Tier 5 without passing BOTH gates on a representative 4-vCPU x86 + GPU box with Q4_K_M quantization via Ollama or llama.cpp:
 
 1. **Accuracy gate (must equal or beat Phi-3.5-mini):** run the candidate against the 83-confidential cross-family IRR ground truth (`tests/classification/label_overrides_irr.jsonl` ∪ `label_overrides.jsonl` ∪ `chunks/labels_*.jsonl`). Emit the standard three-axis JSON via grammar-constrained output. Score confidential-recall, precision, and per-axis κ vs. the adjudicated labels. Gate: recall ≥ Phi-3.5-mini's recall on the same set AND weighted κ ≥ Phi's weighted κ on domain and complexity.
 2. **Latency gate (p95 ≤ 500 ms):** 200 representative classification prompts through Ollama with grammar-constrained JSON output, warm cache disabled. Measure p95 end-to-end (prompt ingestion → JSON emit). Fail-fast: if p95 > 500 ms, skip the accuracy gate entirely — the model is disqualified for Tidus's deployment constraint regardless of accuracy.
@@ -519,6 +538,17 @@ Full artifacts: `findings.md`, `tests/classification/irr/irr_report.md`, `script
 
 Baseline ship target: **E1 recall = 89.2% [80.7, 94.2]** on cross-family-validated ground truth. The product thesis is self-improving: ship at 89% and *target* 95-97% via telemetry-driven feedback loops on real enterprise traffic. The trajectory is conditional on adoption volume (three of four levers dormant pre-adoption), so a parallel research programme runs continuously regardless of customer count to advance the baseline independently — see "Pre-Adoption Research Programme" section below.
 
+**Stage progress (2026-04-21):**
+
+| Stage | Status | Notes |
+|---|---|---|
+| A (A.1–A.5) | ✅ SHIPPED | Full T0→T5 cascade; `/classify` endpoint; `/complete` + `/route` migrated to Optional classification fields |
+| B | ✅ SHIPPED | PII-safe structured-log emitter, PCA 384→64 (57.7% variance), type-only entity/regex list, model_routed populated after routing |
+| C | 🔄 POST-SHIP | Triggered once enterprise telemetry accumulates (per plan.md §Stage-C) |
+| D | 🔄 PLANNED | Enron canary regression test, weekly E1-recall monitoring |
+
+**Pre-ship blockers:** task #54 (GPU Phi-3.5-mini p95 latency bench for the Enterprise SKU SLA), task #55 (agent-depth-gate rejection telemetry gap — low priority follow-up).
+
 ### Stage A — Wire classifier into the 5-tier stack (~1 week)
 
 - **Ship default: E1** (PERSON alone triggers confidential). Configurable per deployment to E2 (PERSON + encoder-non-public) for precision-preferred tenants. See "E1 vs E2 Decision Matrix" section below.
@@ -537,7 +567,11 @@ Per-request log schema — features only, never raw prompts (foundation of feedb
   "embedding_reduced_64d": [...],            // dim-reduced; raw 384-d is semi-reversible
   "presidio_entities": ["PERSON","EMAIL"],   // types only, never values
   "regex_hits": ["SSN_PATTERN"],             // pattern IDs, not matched strings
-  "tier_decided": 4,
+  "tier_decided": "encoder",                 // ClassificationTier literal — one of
+                                             //   caller_override | heuristic | default |
+                                             //   encoder | llm | cached
+                                             // (initially drafted as int 4, promoted to
+                                             // named literal in A.5 for readability)
   "classification": {"domain": "...", "complexity": "...", "privacy": "..."},
   "model_routed": "claude-haiku-4-5",
   "latency_ms": 59
@@ -666,7 +700,7 @@ Four compounding levers. **Trajectory from ship-day 89.2% targets 95-97% within 
 
 | Lever | Method | Cost | Expected gain (per cycle) | Triggered by |
 |---|---|---|---|---|
-| **P1** | **Uncertainty-sampled active learning** on the unlabeled remainder of the WildChat pool (5,000 − 2,669 = 2,331 prompts). Run current encoder on all unlabeled, pick the lowest-softmax-margin 200, label, retrain. | Days per cycle | +2-3 pp | Each retrain cycle (monthly cadence) |
+| **P1** | **Uncertainty-sampled active learning** on the unlabeled remainder of the WildChat pool (5,000 − 2,669 = 2,331 prompts). Run current encoder on all unlabeled, pick the lowest-softmax-margin 200, label, retrain. ⚠️ **P1-v1 executed 2026-04-20, null result — see below.** | Days per cycle | +2-3 pp (not yet realized) | Each retrain cycle (monthly cadence) |
 | **P2** | **Corpus diversification.** Add stratified labels from Enron email subset (CMU public release), Reddit privacy-disclosure threads (r/legaladvice, r/personalfinance subset), ShareGPT work-task slice. ~500 new prompts per source per quarter. | ~1 week per source | +2-4 pp | Quarterly |
 | **P3** | **Rubric re-engineering** of the internal-versus-confidential boundary. Add 20 borderline examples; rerun cross-family IRR study at n=50. **Only mechanism that raises the rubric ambiguity ceiling** (currently Fleiss κ = 0.577 → ceiling ~97-98%; targeting κ = 0.70+ → ceiling ~99%+). | 2 days | Raises ceiling, not just baseline | Once before next major release |
 | **P4** | **Cheap encoder ensembling.** Average softmax across MiniLM-L6 + BGE-small + E5-small. No new labels required. | Half a day | +1-2 pp | One-time, then repeat with future encoder swaps |
@@ -681,6 +715,36 @@ Four compounding levers. **Trajectory from ship-day 89.2% targets 95-97% within 
 - **Months 2-3:** P2 (corpus diversification, one source per month). Broadens the distribution beyond consumer-ChatGPT before enterprise traffic arrives.
 - **Months 2-4:** P4 (encoder ensembling) when next encoder swap is on the table.
 - **First enterprise customer:** Lever 1 (disagreement-capture) becomes real. Combine with continued P1 cycles.
+
+### P1-v1 Execution Record (2026-04-20)
+
+**Status:** Executed and measured. **Null result** — P1 as executed added no measurable improvement over no labels.
+
+**What was done:**
+- `scripts/uncertainty_sample.py` scored the 2,292 unlabeled WildChat prompts (margin range 0.0001-0.191), picked the 200 most-uncertain stratified by predicted privacy class (60 public / 70 internal / 70 confidential).
+- In-session Claude (single labeler) produced `tests/classification/chunks/labels_066-069.jsonl`. Final distribution: 166 public / 22 internal / 12 confidential. Flip rate vs encoder: 109/200 overcaution + 9/200 underdetection.
+- 4-condition ablation (pre, post, control −IRR −P1, no-class-weight) — see `tests/classification/p1_uncertain/RESULTS.md`.
+
+**Key finding (ablation):**
+| Condition | Pool confidential flag-rate |
+|---|---|
+| A — pre (+IRR +P1 in training) | 4.59% (leaked) |
+| C — control (−IRR −P1) | 3.01% |
+| B — post (−IRR +P1) | 3.30% |
+
+Removing 14 IRR rows drove a −1.58 pp shift; adding 200 P1 rows then drove +0.29 pp back upward. **Net contribution of P1 alone: +0.29 pp, noise-floor indistinguishable from zero.**
+
+**Root cause:** `class_weight="balanced"` computes per-sample weight as `n/(K*bincount)`. 188 of 200 P1 labels fell in majority (public/internal) classes, where reweighting architecturally cancels their gradient contribution. Only the 12 P1 confidentials carried non-trivial signal, below noise floor. Verified: disabling `class_weight` collapses confidential recall to 0.
+
+**Corrective variants (not yet executed):**
+- **P1-v2 rare-class-only:** sample 200 labels exclusively from prompts where the encoder predicted confidential (or margin is low AND score is non-trivial on confidential). Blocker: only ~100 such candidates in the current pool; need pool expansion.
+- **Cost-sensitive sampling:** replace softmax margin with expected-cost-of-error weighting that puts more selection probability on rare-class borders.
+
+**What P1-v1 did NOT prove:**
+- That Recipe B is globally saturated at 2.4k labels.
+- That Recipe A (LoRA-on-DeBERTa) or Gemma-4-E4B-it T5-swap would fare better — those remain unvalidated hypotheses.
+
+**Implication for sequencing:** P1 as originally specified is paused pending either (a) P1-v2 execution with rare-class sampling, or (b) P3 rubric re-engineering + IRR expansion to give future P1 cycles a larger confidential candidate pool. P3 is now the more leveraged next move per the table above.
 
 ---
 
