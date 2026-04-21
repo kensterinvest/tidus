@@ -44,7 +44,6 @@ import uuid
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
@@ -285,10 +284,7 @@ async def run_simulation(
 
     # Late imports — these pull in the real classifier + encoder + Presidio.
     from tidus.classification.classifier import TaskClassifier
-    from tidus.observability.classification_telemetry import (
-        emit_classification_telemetry,
-        _reset_cache_for_tests,
-    )
+    from tidus.observability.classification_telemetry import _reset_cache_for_tests
     from tidus.settings import get_settings
 
     rng = random.Random(seed)
@@ -300,7 +296,7 @@ async def run_simulation(
     settings = get_settings()
     _reset_cache_for_tests()
 
-    print(f"[simulation] Building classifier (loads MiniLM + Presidio + label heads)...")
+    print("[simulation] Building classifier (loads MiniLM + Presidio + label heads)...")
     classifier = TaskClassifier(settings=settings)
     await classifier.startup()
     print(f"[simulation] Classifier health: {classifier.healthy}")
@@ -544,8 +540,8 @@ def _write_report(
 
     a("## Headline results")
     a("")
-    a(f"| Metric | Value |")
-    a(f"|---|---|")
+    a("| Metric | Value |")
+    a("|---|---|")
     a(f"| Total requests | {total} |")
     a(f"| Confidential flagged | {conf_total} ({conf_flag_pct:.1f}%) |")
     a(f"| Domain-axis template agreement | "
