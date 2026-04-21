@@ -161,8 +161,13 @@ means. The 6.6-point difference is the quantified label bias; reporting
 only the pre-IRR number would overstate real-world recall.
 
 **Production deployment.** E1 at 89.2% with Tier-5 LLM escalation for
-topic-based residue is the defensible architecture. Per-request latency
-p95 = 59ms at Tier 4, ~1500ms at Tier 5.
+topic-based residue is the defensible architecture. Per-request latency:
+p95 = 59 ms at Tier 4 (CPU). Tier 5 latency depends on deployment SKU —
+CPU-only: disqualified (measured 34.7 s p95 for Phi-3.5-mini Q4 on
+Intel i7-9700KF, see `tests/classification/t5_bench_results.md`); GPU-required
+Enterprise SKU: estimated 150-500 ms p95 on 8+ GB VRAM GPU (verify on
+deployment hardware). See `docs/hardware-requirements.md` for the full
+hardware spec.
 
 ---
 
