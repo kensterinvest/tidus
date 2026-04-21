@@ -25,6 +25,7 @@ from tidus.api.v1 import (
     audit,
     billing,
     budgets,
+    classify,
     complete,
     dashboard,
     guardrails,
@@ -167,6 +168,7 @@ def create_app() -> FastAPI:
                 "health":    "/health",
                 "route":     "/api/v1/route",
                 "complete":  "/api/v1/complete",
+                "classify":  "/api/v1/classify",
                 "models":    "/api/v1/models",
                 "budgets":   "/api/v1/budgets",
                 "usage":     "/api/v1/usage/summary",
@@ -181,11 +183,20 @@ def create_app() -> FastAPI:
 
     @app.get("/ready", tags=["Health"], summary="Readiness check")
     async def ready():
-        return {"status": "ready"}
+        # Include classifier per-tier load state when classification is enabled —
+        # lets operators distinguish "service up, classifier degraded" from
+        # fully-ready. Advisor A.2 Bug #2 / task #44.
+        from tidus.api.deps import get_classifier_optional
+        payload: dict = {"status": "ready"}
+        classifier = get_classifier_optional()
+        if classifier is not None:
+            payload["classifier"] = classifier.healthy
+        return payload
 
     # ── API v1 routers ────────────────────────────────────────────────────────
     app.include_router(route.router, prefix="/api/v1")
     app.include_router(complete.router, prefix="/api/v1")
+    app.include_router(classify.router, prefix="/api/v1")
     app.include_router(models.router, prefix="/api/v1")
     app.include_router(budgets.router, prefix="/api/v1")
     app.include_router(usage.router, prefix="/api/v1")

@@ -18,13 +18,16 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException, Request
 from pydantic import BaseModel, Field
 
-from tidus.api.deps import get_audit_logger, get_selector
+from tidus.api.deps import get_audit_logger, get_classifier_optional, get_selector
+from tidus.api.v1.classify import enrich_task_fields, make_telemetry_capture
 from tidus.audit.logger import AuditLogger
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
+from tidus.classification import TaskClassifier
 from tidus.models.routing import RejectionReason, RoutingDecision
 from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
 from tidus.router.selector import ModelSelectionError, ModelSelector
+from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
 
@@ -36,14 +39,29 @@ router = APIRouter(prefix="/route", tags=["Routing"])
 class RouteRequest(BaseModel):
     """Routing request — describes the task to be routed.
 
-    All fields except team_id, complexity, domain, and messages have
-    sensible defaults to minimise required fields for simple requests.
+    As of v1.3.0, `complexity`, `domain`, `privacy`, and `estimated_input_tokens`
+    are all OPTIONAL. When omitted, Tidus runs the internal classification
+    cascade (T0→T5) against the last user message and fills them in. Explicit
+    values still override the classifier via the caller_override merge rule —
+    except for privacy, where asymmetric safety applies (ANY tier saying
+    `confidential` forces `confidential`).
     """
     team_id: str = Field(..., description="Team making the request")
-    complexity: Complexity = Field(..., description="Task complexity tier")
-    domain: Domain = Field(..., description="Primary task domain")
-    privacy: Privacy = Field(Privacy.public, description="Data sensitivity level")
-    estimated_input_tokens: int = Field(500, gt=0, description="Estimated input tokens")
+    complexity: Complexity | None = Field(
+        None, description="Task complexity tier (auto-classified if omitted)",
+    )
+    domain: Domain | None = Field(
+        None, description="Primary task domain (auto-classified if omitted)",
+    )
+    privacy: Privacy | None = Field(
+        None,
+        description="Data sensitivity level (auto-classified if omitted). "
+                    "Caller-supplied values are not lowered by the classifier.",
+    )
+    estimated_input_tokens: int | None = Field(
+        None, gt=0,
+        description="Estimated input tokens (char-based T1 estimate if omitted)",
+    )
     estimated_output_tokens: int = Field(256, gt=0, description="Estimated output tokens")
     messages: list[dict] = Field(
         default_factory=lambda: [{"role": "user", "content": ""}],
@@ -86,6 +104,7 @@ async def route_task(
     body: RouteRequest,
     selector: Annotated[ModelSelector, Depends(get_selector)],
     audit: Annotated[AuditLogger, Depends(get_audit_logger)],
+    classifier: Annotated[TaskClassifier | None, Depends(get_classifier_optional)],
     _auth: Annotated[TokenPayload, Depends(require_role(
         Role.developer, Role.team_manager, Role.admin, Role.service_account,
     ))],
@@ -95,16 +114,36 @@ async def route_task(
     Does **not** call any vendor API — use `POST /api/v1/complete` to execute.
 
     Raises:
+        422: Missing classification fields and classifier is disabled.
         422: No model survived all 5 selection stages (budget, tier, guardrails, etc.)
     """
-    task = TaskDescriptor(
-        team_id=_auth.team_id or body.team_id,
-        workflow_id=body.workflow_id,
-        agent_session_id=body.agent_session_id,
+    # v1.3.0: auto-classify when callers omit any of
+    # complexity/domain/privacy/estimated_input_tokens. Caller values are
+    # preserved via caller_override; asymmetric safety still applies to privacy.
+    settings = get_settings()
+    capture = make_telemetry_capture(
+        enabled=settings.classify_telemetry_enabled,
+        tenant_id=_auth.tenant_id,
+        pca_path=settings.classify_pca_path,
+    )
+    fields = await enrich_task_fields(
+        classifier=classifier,
         complexity=body.complexity,
         domain=body.domain,
         privacy=body.privacy,
         estimated_input_tokens=body.estimated_input_tokens,
+        messages=body.messages,
+        telemetry_observer=capture.observer,
+    )
+
+    task = TaskDescriptor(
+        team_id=_auth.team_id or body.team_id,
+        workflow_id=body.workflow_id,
+        agent_session_id=body.agent_session_id,
+        complexity=fields["complexity"],
+        domain=fields["domain"],
+        privacy=fields["privacy"],
+        estimated_input_tokens=fields["estimated_input_tokens"],
         estimated_output_tokens=body.estimated_output_tokens,
         messages=body.messages,
         preferred_model_id=body.preferred_model_id,
@@ -130,6 +169,9 @@ async def route_task(
             rejection_reason=str(exc),
             metadata={"stage": exc.stage},
         )
+        # Stage B: still emit telemetry on rejection; model_routed=None records
+        # that no model was picked (useful for drift analysis on rejection reasons).
+        capture.emit(model_routed=None)
         raise HTTPException(
             status_code=422,
             detail={
@@ -152,6 +194,7 @@ async def route_task(
         outcome="success",
         metadata={"chosen_model_id": decision.chosen_model_id, "estimated_cost_usd": decision.estimated_cost_usd},
     )
+    capture.emit(model_routed=decision.chosen_model_id)
 
     return RouteResponse(
         task_id=decision.task_id,

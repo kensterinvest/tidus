@@ -17,6 +17,7 @@ from tidus.adapters.adapter_factory import get_adapter
 from tidus.api.deps import (
     get_agent_guard,
     get_audit_logger,
+    get_classifier_optional,
     get_cost_logger,
     get_enforcer,
     get_exact_cache,
@@ -24,17 +25,20 @@ from tidus.api.deps import (
     get_selector,
     get_session_store,
 )
+from tidus.api.v1.classify import enrich_task_fields, make_telemetry_capture
 from tidus.audit.logger import AuditLogger
 from tidus.auth.middleware import TokenPayload
 from tidus.auth.rbac import Role, require_role
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cache.exact_cache import ExactCache
+from tidus.classification import TaskClassifier
 from tidus.cost.logger import CostLogger
 from tidus.guardrails.agent_guard import AgentGuard
 from tidus.guardrails.session_store import SessionStore
 from tidus.models.task import Complexity, Domain, Privacy, TaskDescriptor
 from tidus.router.registry import ModelRegistry
 from tidus.router.selector import ModelSelectionError, ModelSelector
+from tidus.settings import get_settings
 
 log = structlog.get_logger(__name__)
 
@@ -44,12 +48,20 @@ router = APIRouter(tags=["complete"])
 # ── Request / Response models ─────────────────────────────────────────────────
 
 class CompleteRequest(BaseModel):
+    """Request body for `POST /api/v1/complete`.
+
+    v1.3.0: `complexity`, `domain`, `privacy`, `estimated_input_tokens` are
+    OPTIONAL. When any is None, Tidus runs the classification cascade (T0→T5)
+    against the last user message and auto-fills. Caller-supplied values are
+    preserved except where asymmetric safety applies (any tier saying
+    `confidential` forces `confidential`).
+    """
     team_id: str
-    complexity: Complexity
-    domain: Domain
-    estimated_input_tokens: int = Field(ge=1)
+    complexity: Complexity | None = None
+    domain: Domain | None = None
+    privacy: Privacy | None = None
+    estimated_input_tokens: int | None = Field(None, ge=1)
     messages: list[dict]
-    privacy: Privacy = Privacy.public
     estimated_output_tokens: int = Field(256, ge=1)
     agent_depth: int = Field(0, ge=0, le=5)
     preferred_model_id: str | None = None
@@ -87,6 +99,7 @@ async def complete(
     session_store: Annotated[SessionStore, Depends(get_session_store)],
     agent_guard: Annotated[AgentGuard, Depends(get_agent_guard)],
     exact_cache: Annotated[ExactCache | None, Depends(get_exact_cache)],
+    classifier: Annotated[TaskClassifier | None, Depends(get_classifier_optional)],
     _auth: Annotated[TokenPayload, Depends(require_role(
         Role.developer, Role.team_manager, Role.admin, Role.service_account,
     ))],
@@ -97,6 +110,24 @@ async def complete(
 
     # Assign task_id up front so every error path can audit against the same ID.
     task_id = str(uuid.uuid4())
+
+    # v1.3.0 — auto-classify missing fields before agent-depth gate so any
+    # classification errors surface before server-session work.
+    settings = get_settings()
+    capture = make_telemetry_capture(
+        enabled=settings.classify_telemetry_enabled,
+        tenant_id=_auth.tenant_id,
+        pca_path=settings.classify_pca_path,
+    )
+    classified = await enrich_task_fields(
+        classifier=classifier,
+        complexity=req.complexity,
+        domain=req.domain,
+        privacy=req.privacy,
+        estimated_input_tokens=req.estimated_input_tokens,
+        messages=req.messages,
+        telemetry_observer=capture.observer,
+    )
 
     async def _audit_error(status_code: int, reason: str, **extra) -> None:
         """Record an audit entry for a failed request (Fix 20). Non-fatal."""
@@ -145,7 +176,7 @@ async def complete(
                 detail=f"Agent session '{req.agent_session_id}' not owned by caller's team.",
             )
         guard_result = await agent_guard.check_and_advance(
-            req.agent_session_id, req.estimated_input_tokens,
+            req.agent_session_id, classified["estimated_input_tokens"],
         )
         if not guard_result.allowed:
             await _audit_error(
@@ -166,10 +197,10 @@ async def complete(
         agent_session_id=req.agent_session_id,
         # Authoritative depth from the server session, NOT the client body.
         agent_depth=server_depth,
-        complexity=req.complexity,
-        domain=req.domain,
-        privacy=req.privacy,
-        estimated_input_tokens=req.estimated_input_tokens,
+        complexity=classified["complexity"],
+        domain=classified["domain"],
+        privacy=classified["privacy"],
+        estimated_input_tokens=classified["estimated_input_tokens"],
         estimated_output_tokens=req.estimated_output_tokens,
         messages=req.messages,
         preferred_model_id=req.preferred_model_id,
@@ -195,6 +226,9 @@ async def complete(
             failure_stage=exc.stage,
             failure_reason=str(failure_reason),
         )
+        # Stage B telemetry: emit with model_routed=None so drift analysis
+        # can see what prompts trigger selection failures.
+        capture.emit(model_routed=None)
         raise HTTPException(
             status_code=422,
             detail={
@@ -208,6 +242,11 @@ async def complete(
             },
         )
 
+    # Stage B: emit with the chosen model as soon as it's known. Subsequent
+    # exit paths (cache hit, adapter missing, budget fail, adapter error) all
+    # happen AFTER this emit; _captured resets so they're no-ops.
+    capture.emit(model_routed=decision.chosen_model_id)
+
     spec = registry.get(decision.chosen_model_id)
     if spec is None:
         await _audit_error(
@@ -220,7 +259,9 @@ async def complete(
     # Confidential tasks bypass the cache entirely — no content from sensitive
     # prompts is ever persisted outside the one-shot adapter call.
     cache_key: str | None = None
-    cache_eligible = exact_cache is not None and req.privacy != Privacy.confidential
+    # Confidential tasks bypass the cache — use the classifier-resolved value,
+    # not the raw request field (which may be None when auto-classifying).
+    cache_eligible = exact_cache is not None and classified["privacy"] != Privacy.confidential.value
     if cache_eligible:
         cache_key = exact_cache.make_key(
             effective_team_id, req.messages, decision.chosen_model_id,

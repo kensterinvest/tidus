@@ -207,7 +207,7 @@ def main() -> int:
     print("\nPack composition (by encoder's current hard prediction):")
     for cls, n in sorted(Counter(picked_preds).items()):
         print(f"  {cls}: {n}")
-    print(f"\nMargin distribution (lower = more uncertain):")
+    print("\nMargin distribution (lower = more uncertain):")
     print(f"  min={min(picked_margins):.4f}  "
           f"median={float(np.median(picked_margins)):.4f}  "
           f"max={max(picked_margins):.4f}")

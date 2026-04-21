@@ -15,6 +15,7 @@ from tidus.audit.logger import AuditLogger
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.budget.policies import load_budget_policies
 from tidus.cache.exact_cache import ExactCache
+from tidus.classification.classifier import TaskClassifier
 from tidus.cost.counter import RedisSpendCounter, SpendCounter
 from tidus.cost.engine import CostEngine
 from tidus.cost.logger import CostLogger
@@ -42,6 +43,7 @@ _audit_logger: AuditLogger | None = None
 _metering: MeteringService | None = None
 _override_manager: OverrideManager | None = None
 _exact_cache: ExactCache | None = None
+_classifier: TaskClassifier | None = None
 
 
 def _build_spend_counter(settings) -> SpendCounter | RedisSpendCounter:
@@ -65,7 +67,7 @@ async def build_singletons() -> None:
     revision. Called once from the FastAPI lifespan on startup. Safe to call
     again (re-initializes, useful for testing overrides).
     """
-    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering, _override_manager, _exact_cache
+    global _registry, _selector, _enforcer, _guardrail_policy, _session_store, _agent_guard, _cost_logger, _audit_logger, _metering, _override_manager, _exact_cache, _classifier
 
     settings = get_settings()
 
@@ -103,6 +105,16 @@ async def build_singletons() -> None:
         )
     else:
         _exact_cache = None
+
+    # TaskClassifier — loaded once at startup so first-request latency
+    # isn't inflated by ~5s encoder warm-up. Degrades gracefully: any tier
+    # load failure (encoder, Presidio, T5 LLM) logs a warning and disables
+    # that tier for the session; other tiers proceed.
+    if settings.auto_classify_enabled:
+        _classifier = TaskClassifier(settings=settings)
+        await _classifier.startup()
+    else:
+        _classifier = None
 
 
 # ── Dependency getters (used with FastAPI Depends) ────────────────────────────
@@ -160,6 +172,22 @@ def get_override_manager() -> OverrideManager:
 def get_exact_cache() -> ExactCache | None:
     """Return the process-wide ExactCache, or None if cache is disabled."""
     return _exact_cache
+
+
+def get_classifier() -> TaskClassifier:
+    """Return the process-wide TaskClassifier. Raises if auto_classify_enabled
+    is False — callers should guard with `settings.auto_classify_enabled`."""
+    assert _classifier is not None, (
+        "TaskClassifier not built — set auto_classify_enabled=True and ensure "
+        "build_singletons() ran during startup"
+    )
+    return _classifier
+
+
+def get_classifier_optional() -> TaskClassifier | None:
+    """Return the TaskClassifier or None when classification is disabled.
+    Use this in route handlers that want to gracefully degrade."""
+    return _classifier
 
 
 def get_session_factory():
