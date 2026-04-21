@@ -52,6 +52,11 @@ tidus/classification/weights_b_ctrl_nocw/
 # One-off inspection artifacts (uncertainty sample dumps etc.)
 tmp_pack_*.txt
 
+# Local out/ scratch directory — default-ignore everything, then re-include
+# the canonical simulation_200_users artifacts (lawyer-review evidence).
+/out/*
+!/out/simulation_200_users/
+
 # Labeled dataset — distributed separately on Hugging Face Datasets
 # (https://huggingface.co/datasets/kensterinvest/tidus-wildchat-classification)
 # because a small number of prompts contain real credential patterns from
