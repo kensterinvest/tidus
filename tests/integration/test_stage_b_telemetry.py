@@ -212,3 +212,38 @@ class TestStageBModelRouted:
         record = records[-1]
         assert record["model_routed"] is not None
         assert record["model_routed"] == resp.json()["chosen_model_id"]
+
+
+class TestStageBRejectionPaths:
+    """Task #55: rejection paths that occur AFTER classification ran must
+    still emit the Stage B record, with model_routed=None. This lets drift
+    analysis see 'classified + gate-rejected' as a category.
+
+    The easiest rejection path to trigger deterministically is the agent-
+    depth gate: agent_depth > 0 without agent_session_id is a synchronous
+    400 with no other setup needed.
+    """
+
+    def test_agent_depth_gate_rejection_still_emits(
+        self, client: TestClient, captured_log,
+    ):
+        resp = client.post("/api/v1/complete", json={
+            "team_id": "team-dev",
+            "messages": [{"role": "user", "content": "hello there"}],
+            "agent_depth": 1,
+            # Intentionally omit agent_session_id → triggers the 400 rejection
+            # at tidus/api/v1/complete.py line ~152.
+        })
+        assert resp.status_code == 400
+        assert "agent_session_id" in resp.json()["detail"]
+
+        records = [r for r in captured_log.records if r.get("event") == "classification"]
+        assert records, (
+            "Stage B record should still emit on agent-depth-gate rejection; "
+            "the classifier ran before the gate fired."
+        )
+        record = records[-1]
+        # Classification axes populated (cascade completed).
+        assert "classification" in record
+        # Model routed None — rejection happened before selector.select().
+        assert record["model_routed"] is None

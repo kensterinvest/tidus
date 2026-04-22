@@ -151,6 +151,10 @@ async def complete(
     if req.agent_depth > 0:
         if not req.agent_session_id:
             await _audit_error(400, "agent_depth_without_session")
+            # Stage B: classification ran — emit record so drift analysis can
+            # see "classified + agent-gate-rejected" as a category. model_routed
+            # is None because routing never got to run (task #55).
+            capture.emit(model_routed=None)
             raise HTTPException(
                 status_code=400,
                 detail="agent_depth > 0 requires an agent_session_id created via "
@@ -159,6 +163,7 @@ async def complete(
         session = await session_store.get(req.agent_session_id)
         if session is None:
             await _audit_error(400, "unknown_agent_session", session_id=req.agent_session_id)
+            capture.emit(model_routed=None)
             raise HTTPException(
                 status_code=400,
                 detail=f"Unknown agent session '{req.agent_session_id}'.",
@@ -171,6 +176,7 @@ async def complete(
                 session_id=req.agent_session_id,
                 session_team=session.team_id,
             )
+            capture.emit(model_routed=None)
             raise HTTPException(
                 status_code=400,
                 detail=f"Agent session '{req.agent_session_id}' not owned by caller's team.",
@@ -184,6 +190,7 @@ async def complete(
                 session_id=req.agent_session_id,
                 guard_reason=guard_result.reason,
             )
+            capture.emit(model_routed=None)
             raise HTTPException(
                 status_code=429,
                 detail=guard_result.reason or "Agent guardrail exceeded",
