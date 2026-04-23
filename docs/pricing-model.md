@@ -242,8 +242,9 @@ FeedSource:      confidence = 0.85   ← wins if both are within threshold
 
 **File:** `tidus/registry/pipeline.py`
 
-The pipeline is the transactional heart of the pricing system. It runs on a **weekly schedule**
-(Sunday 02:00 UTC by default) and produces a new database revision if prices have changed.
+The pipeline is the transactional heart of the pricing system. It runs on a **Sun + Wed schedule**
+(02:00 UTC by default, via `.github/workflows/weekly-sync.yml`) and produces a new database
+revision if prices have changed.
 
 ### Pipeline Steps
 
@@ -451,12 +452,13 @@ expr: tidus_registry_models_stale_count > 10
 ## Frequently Asked Questions
 
 **Q: How often do prices update?**  
-The weekly sync runs every Sunday at 02:00 UTC. Price changes smaller than 5% are ignored to
+The pricing sync runs Sundays and Wednesdays at 02:00 UTC (cadence set 2026-04-23 to keep
+routing costs current as the AI market moves). Price changes smaller than 5% are ignored to
 prevent noise. A new revision is only created if at least one model changed by ≥ 5%.
 
-**Q: What if a vendor announces a price change mid-week?**  
-The `POST /api/v1/sync/prices` endpoint triggers an immediate sync. The weekly job is a safety
-net; any operator can trigger an ad-hoc sync at any time.
+**Q: What if a vendor announces a price change between syncs?**  
+The `POST /api/v1/sync/prices` endpoint triggers an immediate sync. The scheduled job is a
+safety net; any operator can trigger an ad-hoc sync at any time.
 
 **Q: Models that are in the YAML but not in the hardcoded source — what price do they use?**  
 Their price from the YAML seed (the initial `seed-v0` revision) is preserved. The pipeline only

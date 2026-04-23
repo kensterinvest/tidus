@@ -1,7 +1,14 @@
-"""APScheduler wiring — health probe (5 min) + weekly price sync.
+"""APScheduler wiring — health probe (5 min) + optional in-process price sync.
 
-Started from the FastAPI lifespan alongside the app. Both jobs are
+Started from the FastAPI lifespan alongside the app. All jobs are
 non-blocking background tasks; failures are logged but don't crash the server.
+
+Note: the in-process pricing_sync job is `enabled: false` by default
+(see `config/policies.yaml`). Canonical pricing sync runs via GitHub Actions
+(`.github/workflows/weekly-sync.yml`, Sundays and Wednesdays at 02:00 UTC)
+so the DB + reports + landing page commits land on `main` directly.
+Flip `pricing_sync.enabled: true` in `policies.yaml` to run it in-process
+for self-hosted deployments without GitHub Actions.
 
 Example:
     scheduler = TidusScheduler(registry, session_factory)
@@ -71,13 +78,16 @@ class TidusScheduler:
         )
 
         if not sync_cfg.get("enabled", True):
-            log.warning("price_sync_disabled", reason="managed by Claude Code cron — see scripts/weekly_full_sync.py")
+            log.warning(
+                "price_sync_disabled",
+                reason="managed by GitHub Actions — see .github/workflows/weekly-sync.yml (Sun + Wed 02:00 UTC)",
+            )
         else:
             self._scheduler.add_job(
                 self._run_price_sync,
                 trigger=CronTrigger(day_of_week=sync_day, hour=sync_hour, timezone="UTC"),
                 id="price_sync",
-                name="Weekly price sync",
+                name="Price sync (in-process, opt-in)",
                 misfire_grace_time=3600,
             )
 

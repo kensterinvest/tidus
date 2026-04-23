@@ -340,7 +340,7 @@ Trigger a health probe for all enabled models immediately (normally runs every 5
 
 ### POST /api/v1/sync/prices
 
-Trigger a price sync for all models immediately (normally runs weekly).
+Trigger a price sync for all models immediately (normally runs on the scheduled cadence — Sundays and Wednesdays at 02:00 UTC).
 
 ```json
 {"changes_detected": 2, "changes": [

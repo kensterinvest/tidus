@@ -46,7 +46,7 @@ Each entry defines one model. Fields are validated against `ModelSpec` (Pydantic
     - "mistral-small"
     - "llama4-scout-ollama"
 
-  last_price_check: "2026-03-26"   # ISO 8601 date; updated by weekly sync job
+  last_price_check: "2026-03-26"   # ISO 8601 date; updated by pricing sync (Sun + Wed)
   last_health_check: null          # ISO 8601 datetime; updated by 5-min health probe
 ```
 

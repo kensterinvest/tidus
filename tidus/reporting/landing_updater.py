@@ -2,8 +2,8 @@
 active registry revision and pushes to both kensterinvest/tidus and
 kensterinvest/kensterinvest.github.io.
 
-Called every Sunday after the weekly price sync so the landing page always
-reflects the same prices as the weekly email report.
+Called after every pricing sync (Sun + Wed 02:00 UTC via GitHub Actions) so
+the landing page always reflects the same prices as the email report.
 """
 
 from __future__ import annotations

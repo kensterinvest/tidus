@@ -32,7 +32,13 @@ pass so models removed from `models.yaml` are dropped from new revisions.
          └──────────────────────┘
 ```
 
-Every Sunday at 02:00 UTC, `TidusScheduler` fires `run_price_sync_cycle()`:
+Sundays and Wednesdays at 02:00 UTC, the GitHub Actions workflow
+[`weekly-sync.yml`](../.github/workflows/weekly-sync.yml) runs `scripts/weekly_full_sync.py`,
+which calls `run_price_sync_cycle()`:
+
+> The in-process `TidusScheduler` has `pricing_sync.enabled: false` in `config/policies.yaml`
+> since v1.3.0 — the canonical scheduler is the GitHub Actions workflow above.
+> Leaving this section in the docs so the pipeline steps themselves stay easy to reason about.
 
 1. All available `PricingSource` instances are queried concurrently
 2. `PriceConsensus` resolves quotes using MAD outlier detection (see below)
@@ -128,15 +134,33 @@ Special cases:
 
 ## Configuring the Sync Schedule
 
-Edit `config/policies.yaml`:
+The canonical scheduler is the GitHub Actions workflow
+[`.github/workflows/weekly-sync.yml`](../.github/workflows/weekly-sync.yml), which
+fires on Sundays and Wednesdays at 02:00 UTC:
+
+```yaml
+on:
+  schedule:
+    - cron: '0 2 * * 0,3'  # Sundays and Wednesdays at 02:00 UTC
+  workflow_dispatch:       # allow manual fire from Actions tab
+```
+
+The in-process `TidusScheduler` (APScheduler in `tidus/sync/scheduler.py`) is
+**disabled by default** (`enabled: false` in `config/policies.yaml`). The YAML
+keys below are retained so operators can re-enable it for self-hosted deployments
+that don't use GitHub Actions:
 
 ```yaml
 pricing_sync:
-  day_of_week: 6          # 0=Monday … 6=Sunday
+  enabled: false          # set true to run in-process instead of via GitHub Actions
+  day_of_week: 6          # 0=Monday … 6=Sunday (in-process scheduler accepts a single day)
   hour_utc: 2             # 02:00 UTC
   change_threshold: 0.05  # 5% delta triggers a revision
   min_feed_interval_seconds: 3600  # rate guard for TidusPricingFeedSource
 ```
+
+For multi-day cadences in the in-process scheduler, edit the `CronTrigger` call
+in `tidus/sync/scheduler.py:start()` to accept a list (e.g. `day_of_week="sun,wed"`).
 
 ## Manually Triggering a Sync
 

@@ -37,7 +37,7 @@ class CostRecord(BaseModel):
 
 
 class PriceChangeRecord(BaseModel):
-    """Audit record written when the weekly price sync detects a price change."""
+    """Audit record written when the scheduled price sync (Sun + Wed) detects a price change."""
 
     id: str
     model_id: str

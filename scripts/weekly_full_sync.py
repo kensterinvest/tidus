@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Tidus weekly full sync — standalone orchestration script.
+"""Tidus full pricing sync — standalone orchestration script.
 
 Runs outside the FastAPI server (no canary probes, no APScheduler).
-Invoked by the Claude Code cron each Sunday after price research is complete.
+Invoked by the GitHub Actions workflow `.github/workflows/weekly-sync.yml`
+on Sundays and Wednesdays at 02:00 UTC. (File name kept as `weekly_full_sync.py`
+for git-history continuity — the workflow file and cron cadence are the
+source of truth for when this actually fires.)
 
 Usage:
     TIDUS_CANARY_SAMPLE_SIZE=0 uv run python scripts/weekly_full_sync.py

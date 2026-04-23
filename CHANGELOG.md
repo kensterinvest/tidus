@@ -5,6 +5,16 @@ All notable changes to Tidus will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- **Pricing sync cadence**: weekly Sunday → Sundays and Wednesdays at 02:00 UTC (2026-04-23). `.github/workflows/weekly-sync.yml` now uses `cron: '0 2 * * 0,3'` (≈104 runs/year vs. 52). The AI market moves fast enough that a 7-day gap leaves routing cost estimates stale; a 3-4 day cadence keeps pricing, the DB, the landing page magazine, and subscriber emails current. Local Windows Task Scheduler script (`C:\Users\OWNER\scripts\tidus\setup_windows_schedule.ps1`) follows the same cadence (Sun + Wed 03:00 local). File name `weekly-sync.yml` kept for git-history continuity; workflow display name is now "Pricing Sync (Sun + Wed)". Docs updated in `docs/pricing-sync.md`, `docs/deployment.md`, `docs/pricing-model.md`, `docs/architecture.md`, `docs/configuration.md`, `docs/api-reference.md`, `README.md`. User-facing "Weekly Edition" branding on the magazine + subscribe page intentionally left unchanged — existing subscribers signed up for a weekly report and will now receive it at a higher cadence without a breaking promise.
+
+### Known gaps (follow-up candidates)
+
+- **OpenRouter vendor map is hardcoded** (`C:\Users\OWNER\scripts\tidus\sync_pricing.py:OPENROUTER_MAP`, 34 entries). The Layer 2 sync does not discover new vendors or models that appear on OpenRouter — they must be added manually to the dict. The canonical Layer 1 (GitHub Actions) uses `HardcodedSource` + optional `TidusPricingFeedSource` from `tidus/sync/pricing/`, which has the same manual-curation model via `config/models.yaml`. A true "market research" step (diff OpenRouter catalog vs. local map, propose additions) is not implemented.
+
 ## [v1.3.0] — 2026-04-21 — Auto-Classification Layer (Stages A + B)
 
 ### Highlights

@@ -624,7 +624,7 @@ class RegistryPipeline:
     async def write_weekly_snapshot(self, revision_id: str) -> int:
         """Write one price snapshot row per non-local model for time-series graphs.
 
-        Called every Sunday regardless of whether prices changed. Uses
+        Called on every pricing-sync fire (Sun + Wed 02:00 UTC) regardless of whether prices changed. Uses
         INSERT OR IGNORE (via UniqueConstraint) so re-runs are idempotent.
         Returns the number of rows written.
         """

@@ -127,32 +127,58 @@ server {
 Tidus includes a two-layer system that keeps model prices accurate automatically.
 Accurate prices matter because the routing score weights cost at **70%**.
 
-### Layer 1 — Server-side sync (built-in)
+### Layer 1 — GitHub Actions workflow (canonical, runs twice a week)
 
-`TidusScheduler` runs `POST /api/v1/sync/prices` automatically every Sunday at 02:00 UTC.
-No configuration needed — it starts with the server.
+The repo ships [`.github/workflows/weekly-sync.yml`](../.github/workflows/weekly-sync.yml),
+which runs `scripts/weekly_full_sync.py` on **Sundays and Wednesdays at 02:00 UTC**.
+Each run: pulls live prices, creates a new DB revision if anything moved 5%+,
+writes a snapshot row, regenerates the pricing report (md + html), emails active
+subscribers, regenerates `index.html`, and pushes DB + reports + landing-page
+changes back to `main` (and to `kensterinvest.github.io` if `DEPLOY_PAT` is
+configured).
 
-To trigger manually:
+Manual fire from the Actions tab: click "Run workflow" on the "Pricing Sync
+(Sun + Wed)" workflow. Or hit the API directly on your Tidus server:
+
 ```bash
 curl -X POST http://localhost:8000/api/v1/sync/prices \
   -H "Authorization: Bearer <admin-token>"
 ```
 
-To adjust the schedule, edit `config/policies.yaml`:
+**To change the cadence** — edit the `cron:` line in the workflow file
+(e.g. `'0 2 * * 1,4'` for Mon + Thu). Standard 5-field GitHub Actions cron
+in UTC.
+
+### Layer 1b — In-process APScheduler (disabled by default)
+
+`TidusScheduler` in `tidus/sync/scheduler.py` carries an APScheduler-driven
+`pricing_sync` job that would run inside the FastAPI worker. It is
+**disabled by default** (`pricing_sync.enabled: false` in `config/policies.yaml`)
+because the GitHub Actions workflow above covers the same work and keeps the
+DB commit trail on `main`. Self-hosted deployments without GitHub Actions can
+flip `enabled: true`:
+
 ```yaml
 pricing_sync:
-  day_of_week: 6      # 0=Monday … 6=Sunday
+  enabled: true
+  day_of_week: 6      # 0=Monday … 6=Sunday (single day — edit scheduler.py for multi-day)
   hour_utc: 2
   change_threshold: 0.05
 ```
 
-### Layer 2 — External host script (optional, recommended)
+### Layer 2 — External host script (optional, maintainer-only)
 
-For maintainers who push pricing updates to GitHub, a standalone `sync_pricing.py`
-can be scheduled locally (e.g. Windows Task Scheduler, cron) to:
-- Fetch live prices from the OpenRouter public API
-- Update `config/models.yaml` and `tidus/sync/price_sync.py`
-- Git commit and push to GitHub so all deployments stay in sync
+For maintainers who push pricing updates from a workstation, a standalone
+`sync_pricing.py` can be scheduled locally. The reference setup at
+`C:\Users\OWNER\scripts\tidus\setup_windows_schedule.ps1` uses Windows Task
+Scheduler with a Sun + Wed 03:00 local trigger. The script:
+
+- Fetches live prices from the OpenRouter public API
+- Updates `config/models.yaml` and `tidus/sync/pricing/hardcoded_source.py`
+- Git commits and pushes to GitHub so all deployments stay in sync
+
+This layer is redundant with Layer 1 and exists for belt-and-braces scenarios
+where the maintainer wants a local commit trail independent of GitHub Actions.
 
 See [docs/pricing-sync.md](pricing-sync.md) for the full architecture and setup guide.
 

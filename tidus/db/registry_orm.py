@@ -243,11 +243,13 @@ class PriceMarketHistoryORM(Base):
 
 
 class ModelPriceSnapshotORM(Base):
-    """Weekly full-catalog price snapshot — one row per model per sync cycle.
+    """Full-catalog price snapshot — one row per model per sync cycle.
 
-    Written every Sunday by RegistryPipeline.write_weekly_snapshot() regardless
-    of whether prices changed. Provides the clean time-series data for graphing
-    price trends over time.
+    Written every pricing-sync fire (Sun + Wed 02:00 UTC) by
+    RegistryPipeline.write_weekly_snapshot() regardless of whether prices
+    changed. Provides the clean time-series data for graphing price trends
+    over time. (Class and method names kept for git-history continuity —
+    the snapshot rows are no longer weekly but are still idempotent per-day.)
 
     Query pattern for a price history graph:
         SELECT snapshot_date, model_id, input_usd_1m, output_usd_1m

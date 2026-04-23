@@ -1,14 +1,19 @@
-name: Weekly Pricing Sync
+name: Pricing Sync (Sun + Wed)
 
 # Replaces the session-scoped Claude Code cron (see commit 00b9b9d).
 # Root cause: Claude Code crons don't persist across sessions — the Sunday
 # 2026-04-19 run was missed because the registering session had ended.
 # This workflow runs on GitHub infrastructure, independent of any local session.
+#
+# Cadence change (2026-04-23): weekly Sunday → Sun + Wed. The AI market
+# moves fast enough that a 7-day gap leaves prices stale; a 3-4 day
+# cadence keeps the magazine and routing cost estimates current without
+# doubling subscriber email load compared to a true daily fire.
 
 on:
   schedule:
-    - cron: '0 2 * * 0'  # Sunday 02:00 UTC
-  workflow_dispatch:     # allow manual fire from Actions tab
+    - cron: '0 2 * * 0,3'  # Sundays and Wednesdays at 02:00 UTC
+  workflow_dispatch:       # allow manual fire from Actions tab
 
 permissions:
   contents: write        # needed for pushing DB/reports/index.html back to main
@@ -45,7 +50,7 @@ jobs:
           git config --global user.name  "tidus-bot[bot]"
           git config --global user.email "tidus-bot@users.noreply.github.com"
 
-      - name: Run weekly sync (price + snapshot + report + email + landing)
+      - name: Run pricing sync (price + snapshot + report + email + landing)
         env:
           TIDUS_CANARY_SAMPLE_SIZE: "0"
           RESEND_API_KEY:  ${{ secrets.RESEND_API_KEY }}
@@ -57,7 +62,7 @@ jobs:
           git add tidus.db reports/ || true
           if ! git diff --cached --quiet; then
             DATE=$(date -u +%Y-%m-%d)
-            git commit -m "chore(weekly): DB + reports sync ${DATE}"
+            git commit -m "chore(pricing-sync): DB + reports sync ${DATE}"
             git push origin HEAD:main
           else
             echo "No DB or report changes to commit."

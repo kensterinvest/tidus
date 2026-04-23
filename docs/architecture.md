@@ -180,7 +180,7 @@ Planned (Phase 4):
 
 - **Health probe** every 5 minutes: 10-token test prompt per model, records latency.
   Three consecutive failures → `enabled=False` + alert. Updates `latency_p50_ms` (rolling P50).
-- **Price sync** weekly (Sunday 02:00 UTC): compares current vendor pricing against YAML.
+- **Price sync** Sundays and Wednesdays at 02:00 UTC (GitHub Actions): compares current vendor pricing against YAML.
   Delta >5% → update YAML + write `PriceChangeRecord` to DB + emit alert.
 
 ### MCP Server (`tidus/mcp/`) — Phase 6
