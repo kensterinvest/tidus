@@ -134,8 +134,9 @@ which runs `scripts/weekly_full_sync.py` on **Sundays and Wednesdays at 02:00 UT
 Each run: pulls live prices, creates a new DB revision if anything moved 5%+,
 writes a snapshot row, regenerates the pricing report (md + html), emails active
 subscribers, regenerates `index.html`, and pushes DB + reports + landing-page
-changes back to `main` (and to `kensterinvest.github.io` if `DEPLOY_PAT` is
-configured).
+changes back to `main`. GitHub Pages (served from the `tidus` repo's main
+branch, root) picks up the updated `index.html` within ~1-2 minutes and
+publishes to <https://kensterinvest.github.io/tidus/>.
 
 Manual fire from the Actions tab: click "Run workflow" on the "Pricing Sync
 (Sun + Wed)" workflow. Or hit the API directly on your Tidus server:

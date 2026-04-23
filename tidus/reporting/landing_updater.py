@@ -1,16 +1,22 @@
 """LandingPageUpdater — regenerates index.html's magazine section and MODELS array from the
-active registry revision and pushes to both kensterinvest/tidus and
-kensterinvest/kensterinvest.github.io.
+active registry revision and pushes to kensterinvest/tidus.
 
 Called after every pricing sync (Sun + Wed 02:00 UTC via GitHub Actions) so
-the landing page always reflects the same prices as the email report.
+the landing page always reflects the same prices as the email report. The live
+site is served by GitHub Pages from the tidus repo's main branch at
+https://kensterinvest.github.io/tidus/.
+
+Note (2026-04-23): Previously also pushed a copy into kensterinvest.github.io
+(which is "Aynnor's Jewelry E-Commerce website", not Tidus). That cross-repo
+push was a footgun — it would have overwritten the jewelry site's index.html
+had a DEPLOY_PAT secret ever been added. The second-repo push block was
+removed and Pages was enabled on the tidus repo directly.
 """
 
 from __future__ import annotations
 
 import re
 import subprocess
-import tempfile
 from collections import defaultdict
 from datetime import date, timedelta
 from pathlib import Path
@@ -601,11 +607,12 @@ class LandingPageUpdater:
         return re.sub(pattern, f"Updated {label}", content)
 
     def _git_push(self, today: date) -> None:
-        """Commit index.html and push to tidus repo + github.io repo."""
+        """Commit index.html and push to the tidus repo. GitHub Pages (served
+        from main branch / root) picks up the change automatically within
+        ~1-2 minutes and publishes to https://kensterinvest.github.io/tidus/."""
         repo = self._index_path.parent
         msg  = f"magazine: update pricing table to {today}"
 
-        # ── Push to tidus repo ────────────────────────────────────────────────
         try:
             subprocess.run(["git", "-C", str(repo), "add", "index.html"], check=True)
             result = subprocess.run(
@@ -621,27 +628,5 @@ class LandingPageUpdater:
                 log.info("landing_pushed_tidus", date=today)
             else:
                 log.info("landing_no_changes_to_push")
-                return
         except subprocess.CalledProcessError as exc:
             log.error("landing_push_tidus_failed", error=str(exc))
-            return
-
-        # ── Push to github.io repo ────────────────────────────────────────────
-        try:
-            remote_result = subprocess.run(
-                ["git", "-C", str(repo), "remote", "get-url", "origin"],
-                capture_output=True, text=True, check=True,
-            )
-            tidus_remote      = remote_result.stdout.strip()
-            github_io_remote  = re.sub(r"/tidus(\.git)?$", "/kensterinvest.github.io", tidus_remote)
-
-            with tempfile.TemporaryDirectory() as tmp:
-                subprocess.run(["git", "clone", github_io_remote, tmp], check=True)
-                import shutil
-                shutil.copy(str(self._index_path), str(Path(tmp) / "index.html"))
-                subprocess.run(["git", "-C", tmp, "add", "index.html"], check=True)
-                subprocess.run(["git", "-C", tmp, "commit", "-m", msg], check=True)
-                subprocess.run(["git", "-C", tmp, "push"], check=True)
-            log.info("landing_pushed_github_io", date=today)
-        except subprocess.CalledProcessError as exc:
-            log.error("landing_push_github_io_failed", error=str(exc))

@@ -30,11 +30,10 @@ jobs:
       - name: Checkout repo (with tidus.db committed state)
         uses: actions/checkout@v4
         with:
-          # DEPLOY_PAT is a PAT with `repo` scope if cross-repo push to
-          # kensterinvest.github.io is desired. Falls back to GITHUB_TOKEN,
-          # which only has permission on this repo (github.io push will fail
-          # silently — landing_updater catches and logs the error).
-          token: ${{ secrets.DEPLOY_PAT || secrets.GITHUB_TOKEN }}
+          # Default GITHUB_TOKEN is enough — we only push to this repo.
+          # (Cross-repo push to kensterinvest.github.io was removed 2026-04-23
+          # when Pages was enabled on the tidus repo directly. That repo is
+          # actually the jewelry e-commerce site, not Tidus.)
           fetch-depth: 1
 
       - name: Install uv

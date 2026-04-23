@@ -6,7 +6,7 @@
 **Project:** [kensterinvest/tidus](https://github.com/kensterinvest/tidus)
 **License (this document):** CC-BY 4.0 where not superseded by patent filing
 **Related:**
-- Landing-page technical specification: <https://kensterinvest.github.io/#classification-workflow>
+- Landing-page technical specification: <https://kensterinvest.github.io/tidus/#classification-workflow>
 - Implementation plan: [`plan.md`](plan.md)
 - Concise reference: [`docs/classification.md`](docs/classification.md)
 - **Dataset (separate distribution):** <https://huggingface.co/datasets/kensterinvest/tidus-wildchat-classification> — 2,669 labels + IRR study artifacts + overrides. Distributed on Hugging Face Datasets rather than committed to the main git repo because a small number of prompts contain real credential patterns (Telegram bot tokens, FB/Instagram access tokens, OpenAI key templates) inherited from upstream WildChat-1M; these are the evidentiary basis of Finding #4 (credential re-leak) and are preserved in the dataset.

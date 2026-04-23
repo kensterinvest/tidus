@@ -19,7 +19,7 @@ Classification runs entirely within the deployment boundary via a five-tier casc
 
 ## Full technical specification
 
-See the **Technical Specification** section at the bottom of the [Tidus landing page](https://kensterinvest.github.io/#classification-workflow) (also available in-repo at `index.html`, section id `classification-workflow`). That document covers:
+See the **Technical Specification** section at the bottom of the [Tidus landing page](https://kensterinvest.github.io/tidus/#classification-workflow) (also available in-repo at `index.html`, section id `classification-workflow`). That document covers:
 
 1. Abstract and field of application
 2. Problem statement and prior art gap
