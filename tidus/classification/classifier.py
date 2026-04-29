@@ -310,6 +310,17 @@ class TaskClassifier:
                 "caller_override_applied": bool(caller_override),
             }
 
+        # confidence_warning fires when ANY axis is below its calibrated
+        # threshold. Caller-overridden axes report confidence=1.0 and so
+        # naturally clear; this still flags the cascade-derived axes on
+        # partial overrides. _apply_t5 may later OR-in its own warning when
+        # T5 was intended but unavailable.
+        warn = (
+            domain_conf < self._settings.classify_domain_threshold
+            or cmplx_conf < self._settings.classify_complexity_threshold
+            or privacy_conf < self._settings.classify_privacy_threshold
+        )
+
         return ClassificationResult(
             domain=domain,
             complexity=complexity,
@@ -321,7 +332,7 @@ class TaskClassifier:
                 "complexity": cmplx_conf,
                 "privacy": privacy_conf,
             },
-            confidence_warning=False,  # A.4 sets on T5-unavailable fallback
+            confidence_warning=warn,
             debug=debug,
         )
 

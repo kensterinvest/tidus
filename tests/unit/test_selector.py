@@ -222,6 +222,73 @@ async def test_moderate_task_ceiling_excludes_tier4():
     assert decision.chosen_model_id != "local"
 
 
+@pytest.mark.asyncio
+async def test_confidential_complex_relaxes_ceiling_to_local():
+    """Confidential + complex hits the structural dead zone when no local model
+    is tier ≤ 2: cloud models fail privacy_violation, local fails ceiling.
+    The selector relaxes the ceiling to keep the request routable on local
+    hardware — privacy beats capability when the alternative is no routing.
+    """
+    cloud = _make_spec(
+        "cloud-mid", tier=2, input_price=0.003, output_price=0.015, is_local=False
+    )
+    local = _make_spec(
+        "local-only", tier=4, input_price=0.0, output_price=0.0, is_local=True
+    )
+    selector = _build_selector([cloud, local])
+    task = _make_task(complexity=Complexity.complex, privacy=Privacy.confidential)
+    decision = await selector.select(task)
+    assert decision.accepted
+    assert decision.chosen_model_id == "local-only"
+
+
+@pytest.mark.asyncio
+async def test_confidential_critical_relaxes_ceiling_to_local():
+    """Same dead-zone relaxation also covers the critical+confidential case
+    (ceiling=1, all local models still tier 4)."""
+    cloud_premium = _make_spec(
+        "cloud-premium", tier=1, input_price=0.015, output_price=0.060, is_local=False
+    )
+    local = _make_spec(
+        "local-only", tier=4, input_price=0.0, output_price=0.0, is_local=True
+    )
+    selector = _build_selector([cloud_premium, local])
+    task = _make_task(complexity=Complexity.critical, privacy=Privacy.confidential)
+    decision = await selector.select(task)
+    assert decision.accepted
+    assert decision.chosen_model_id == "local-only"
+
+
+@pytest.mark.asyncio
+async def test_confidential_complex_prefers_in_tier_local_over_relaxation():
+    """When a tier ≤ ceiling local model exists, no relaxation is needed —
+    that model wins normally."""
+    in_tier_local = _make_spec(
+        "in-tier-local", tier=2, input_price=0.0, output_price=0.0, is_local=True
+    )
+    above_ceiling_local = _make_spec(
+        "above-ceiling-local", tier=4, input_price=0.0, output_price=0.0, is_local=True
+    )
+    selector = _build_selector([in_tier_local, above_ceiling_local])
+    task = _make_task(complexity=Complexity.complex, privacy=Privacy.confidential)
+    decision = await selector.select(task)
+    assert decision.chosen_model_id == "in-tier-local"
+
+
+@pytest.mark.asyncio
+async def test_non_confidential_complex_does_not_relax_ceiling():
+    """Relaxation is gated on privacy=confidential. A public complex task with
+    only tier-4 models still fails (the original behaviour)."""
+    local_only = _make_spec(
+        "local-only", tier=4, input_price=0.0, output_price=0.0, is_local=True
+    )
+    selector = _build_selector([local_only])
+    task = _make_task(complexity=Complexity.complex, privacy=Privacy.public)
+    with pytest.raises(ModelSelectionError) as exc_info:
+        await selector.select(task)
+    assert exc_info.value.stage == 3
+
+
 # ── Stage 4: Budget enforcement ───────────────────────────────────────────────
 
 @pytest.mark.asyncio

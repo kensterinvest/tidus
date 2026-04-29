@@ -24,7 +24,7 @@ from tidus.budget.enforcer import BudgetEnforcer
 from tidus.cost.engine import CostEngine
 from tidus.models.model_registry import ModelSpec
 from tidus.models.routing import RejectionReason, RoutingDecision
-from tidus.models.task import Complexity, TaskDescriptor
+from tidus.models.task import Complexity, Privacy, TaskDescriptor
 from tidus.router.capability_matcher import CapabilityMatcher
 from tidus.router.registry import ModelRegistry
 
@@ -37,6 +37,11 @@ _COMPLEXITY_TIER_CEILING: dict[Complexity, int] = {
     Complexity.complex: 2,
     Complexity.critical: 1,
 }
+
+# Tier ceiling used when relaxing the complexity ceiling for a confidential
+# task with no in-tier local model. Allows tier-4 (local) to satisfy the
+# privacy constraint at the cost of capability — preferable to a hard 422.
+_LOCAL_RELAXED_CEILING = 4
 
 
 class ModelSelectionError(Exception):
@@ -104,8 +109,32 @@ class ModelSelector:
         # ── Stage 3: Complexity tier ceiling ───────────────────────────────
         tier_ceiling = _COMPLEXITY_TIER_CEILING[task.complexity]
         after_tier = [s for s in eligible if s.tier <= tier_ceiling]
+
+        # Confidential + complex/critical hits a structural dead zone when no
+        # local model is tier ≤ ceiling: every cloud model already failed
+        # privacy_violation in Stage 1, and every local model is about to
+        # fail complexity_ceiling here. Relax the ceiling to tier 4 so a
+        # local model can carry the request — privacy beats capability when
+        # the alternative is no routing at all. Logged for observability.
+        if not after_tier and task.privacy == Privacy.confidential:
+            local_above_ceiling = [
+                s for s in eligible
+                if s.is_local and s.tier > tier_ceiling and s.tier <= _LOCAL_RELAXED_CEILING
+            ]
+            if local_above_ceiling:
+                after_tier = local_above_ceiling
+                log.warning(
+                    "routing_confidential_ceiling_relaxed",
+                    task_id=task.task_id,
+                    complexity=str(task.complexity),
+                    original_ceiling=tier_ceiling,
+                    relaxed_ceiling=_LOCAL_RELAXED_CEILING,
+                    candidate_count=len(after_tier),
+                )
+
+        kept_ids = {s.model_id for s in after_tier}
         for spec in eligible:
-            if spec.tier > tier_ceiling:
+            if spec.tier > tier_ceiling and spec.model_id not in kept_ids:
                 all_rejections.append(
                     RoutingDecision(
                         task_id=task.task_id,

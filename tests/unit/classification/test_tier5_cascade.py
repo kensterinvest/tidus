@@ -239,8 +239,17 @@ class TestT5FailureHandling:
 
     @pytest.mark.asyncio
     async def test_no_warning_when_t5_disabled_cpu_sku(self):
-        """CPU-only SKU — no LLM configured, no warning expected."""
-        clf = TaskClassifier(encoder=StubEncoder(_enc(privacy="internal")))
+        """CPU-only SKU — no LLM configured, no warning IF the encoder is
+        confident across all axes. The threshold-driven warning fires
+        independently of T5 state when any axis is below threshold.
+        """
+        clf = TaskClassifier(
+            encoder=StubEncoder(
+                # All confidences clearly above their thresholds
+                # (privacy>=0.75, domain>=0.70, complexity>=0.65)
+                _enc(privacy="internal", prv_c=0.90, dom_c=0.85, cmp_c=0.80)
+            ),
+        )
         r = await clf.classify_async("need an attorney for my HR case")
         assert r.confidence_warning is False
 

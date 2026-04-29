@@ -156,3 +156,53 @@ class TestTokenEstimation:
         r = clf.classify("a" * 40)
         # 40 chars / 4 chars-per-token = 10
         assert r.estimated_input_tokens == 10
+
+
+class TestConfidenceWarning:
+    """confidence_warning fires when any axis falls below its calibrated threshold.
+
+    Defaults: privacy<0.75, domain<0.70, complexity<0.65 each trip the warning.
+    On the T1-only path (no encoder), benign prose has chat=0.30, internal=0.50,
+    moderate=0.30 — all three below threshold, warning fires.
+    """
+
+    def test_benign_prose_warns(self):
+        clf = TaskClassifier()
+        r = clf.classify("what's the weather today")
+        # T1: chat (0.30), internal (0.50), moderate (0.30) — all sub-threshold
+        assert r.confidence_warning is True
+
+    def test_high_confidence_t1_signals_clear_warning(self):
+        """Code fence (0.80) + medical critical (0.90) + SSN regex (0.90)
+        all clear their thresholds — no warning."""
+        clf = TaskClassifier()
+        # Keyword regex uses \b boundaries; "diagnose" must be a standalone
+        # word (not part of an identifier like diagnose_patient).
+        r = clf.classify(
+            "```python\n# diagnose the patient and write prescription notes\n"
+            "user_ssn = 'enter SSN like 123-45-6789'\n```"
+        )
+        assert r.domain == "code"
+        assert r.complexity == "critical"
+        assert r.privacy == "confidential"
+        assert r.confidence_warning is False
+
+    def test_caller_full_override_clears_warning(self):
+        """Full caller override gives 1.0 across the board — warning False."""
+        clf = TaskClassifier()
+        r = clf.classify(
+            "anything",
+            caller_override={"domain": "code", "complexity": "complex", "privacy": "public"},
+        )
+        assert r.confidence_warning is False
+
+    def test_partial_override_warning_reflects_cascade_axes(self):
+        """Caller-supplied axes get 1.0; cascade axes still surface warnings."""
+        clf = TaskClassifier()
+        # Caller pins privacy (1.0), but domain (chat=0.30) and complexity
+        # (moderate=0.30) come from the cascade and are below threshold.
+        r = clf.classify(
+            "hello",
+            caller_override={"privacy": "internal"},
+        )
+        assert r.confidence_warning is True
