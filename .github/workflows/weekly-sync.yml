@@ -49,15 +49,26 @@ jobs:
           git config --global user.name  "tidus-bot[bot]"
           git config --global user.email "tidus-bot@users.noreply.github.com"
 
-      - name: Run pricing sync (price + snapshot + report + email + landing)
+      - name: Run pricing sync (price + snapshot + discovery + report + email + landing)
         env:
           TIDUS_CANARY_SAMPLE_SIZE: "0"
           RESEND_API_KEY:  ${{ secrets.RESEND_API_KEY }}
           TIDUS_SMTP_FROM: ${{ secrets.TIDUS_SMTP_FROM }}
+          # Vendor API keys are optional. Each one missing => that vendor's
+          # `/v1/models` endpoint won't be polled (build_discovery_sources
+          # skips the source). Add them as GitHub secrets to enable
+          # auto-discovery for that vendor.
+          OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          MISTRAL_API_KEY:   ${{ secrets.MISTRAL_API_KEY }}
+          DEEPSEEK_API_KEY:  ${{ secrets.DEEPSEEK_API_KEY }}
+          XAI_API_KEY:       ${{ secrets.XAI_API_KEY }}
         run: uv run python scripts/weekly_full_sync.py
 
-      - name: Commit updated DB + reports to main
+      - name: Commit updated DB + reports + discovered_models to main
         run: |
+          # discovered_models.json is the discovery state sidecar — committed
+          # so first-seen timestamps survive across cron runs.
           git add tidus.db reports/ || true
           if ! git diff --cached --quiet; then
             DATE=$(date -u +%Y-%m-%d)

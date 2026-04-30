@@ -237,6 +237,10 @@ class PricingReport:
     price_changes: list[PriceChange]    # sorted: biggest moves first
     stale_models: list[str]             # model_ids with no hardcoded source entry
     total_models: int
+    # Discovered models (from vendor /v1/models) that are NOT in the active
+    # registry. These are surface-only candidates — they don't route until
+    # a maintainer adds them to models.yaml + hardcoded_source.py.
+    discovery_report: object | None = None  # tidus.sync.discovery.DiscoveryReport
     markdown: str = field(default="", repr=False)
     github_release_body: str = field(default="", repr=False)
     html: str = field(default="", repr=False)
@@ -270,6 +274,7 @@ class PricingReportGenerator:
         self,
         revision_id: str | None = None,    # defaults to current ACTIVE
         base_revision_id: str | None = None,  # defaults to previous (most recent SUPERSEDED)
+        discovery_report=None,             # optional tidus.sync.discovery.DiscoveryReport
     ) -> PricingReport:
         """Generate a pricing report comparing two revisions."""
         from sqlalchemy import text
@@ -357,6 +362,7 @@ class PricingReportGenerator:
             price_changes=price_changes,
             stale_models=stale,
             total_models=len(current_specs),
+            discovery_report=discovery_report,
         )
         report.markdown = self._render_markdown(report, current_specs)
         report.github_release_body = self._render_github_release(report)
@@ -545,6 +551,55 @@ class PricingReportGenerator:
                 f"${s.output_price * 1000:.3f} | {ctx} |"
             )
         lines += [""]
+
+        # Vendor-discovered candidates (surface-only — not yet routable)
+        dr = report.discovery_report
+        if dr is not None and (dr.new_this_run or dr.pending_review or dr.removed_from_vendor):
+            lines += [
+                "## 🔎 Vendor-Discovered Models (Pending Review)",
+                "",
+                "Models surfaced from vendor `/v1/models` endpoints that are NOT in "
+                "the active routing catalog. Pricing is intentionally not shown — "
+                "promotion to routable status requires a maintainer to verify "
+                "pricing and add the model to `config/models.yaml` + "
+                "`tidus/sync/pricing/hardcoded_source.py`.",
+                "",
+                f"*Sources polled: {', '.join(dr.sources_run) or 'none'}"
+                + (f" · skipped (no API key): {', '.join(dr.sources_skipped)}" if dr.sources_skipped else "")
+                + "*",
+                "",
+            ]
+            if dr.new_this_run:
+                lines += [
+                    "### 🆕 First-seen this run",
+                    "",
+                    "| Vendor | Model ID | Vendor ID | Display Name |",
+                    "|---|---|---|---|",
+                ]
+                for m in dr.new_this_run:
+                    name = m.display_name or "—"
+                    lines.append(
+                        f"| {m.vendor} | `{m.model_id}` | `{m.vendor_id}` | {name} |"
+                    )
+                lines += [""]
+            if dr.pending_review:
+                lines += [
+                    "### ⏳ Backlog (previously seen, not yet promoted)",
+                    "",
+                    "| Vendor | Model ID | Vendor ID |",
+                    "|---|---|---|",
+                ]
+                for m in dr.pending_review:
+                    lines.append(f"| {m.vendor} | `{m.model_id}` | `{m.vendor_id}` |")
+                lines += [""]
+            if dr.removed_from_vendor:
+                lines += [
+                    "### 🚫 Absent this run (possibly deprecated upstream)",
+                    "",
+                ]
+                for mid in dr.removed_from_vendor:
+                    lines.append(f"- `{mid}`")
+                lines += [""]
 
         # Stale models warning
         if report.stale_models:

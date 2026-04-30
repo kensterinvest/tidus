@@ -86,6 +86,15 @@ class Settings(BaseSettings):
     # Circuit breaker: seconds before transitioning OPEN → HALF-OPEN.
     pricing_feed_reset_timeout_seconds: int = 300
 
+    # ── Vendor model discovery ──────────────────────────────────────────────
+    # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new
+    # models. Discoveries are SURFACE-only (report + JSON sidecar) — never
+    # auto-routed; promotion to the active routing catalog still requires a
+    # human edit to `config/models.yaml` + `tidus/sync/pricing/hardcoded_source.py`.
+    discovery_enabled: bool = True
+    discovery_state_path: str = "reports/discovered_models.json"
+    discovery_request_timeout_seconds: float = 15.0
+
     # ── Response Cache (v1.1 Pillar 3) ───────────────────────────────────────
     # Exact-match cache: hash(team_id + messages + model_id) → response.
     # Disabled in prod only for debugging / A-B testing cache impact.

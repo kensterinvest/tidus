@@ -27,17 +27,22 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 async def main() -> int:
     from tidus.db.engine import create_tables, get_session_factory
-    from tidus.db.repositories.registry_repo import get_active_revision
+    from tidus.db.repositories.registry_repo import (
+        get_active_revision,
+        get_entries_for_revision,
+    )
     from tidus.registry.pipeline import RegistryPipeline
     from tidus.reporting.landing_updater import LandingPageUpdater
     from tidus.reporting.pricing_report import PricingReportGenerator
     from tidus.reporting.subscribers import ReportDelivery, load_subscribers
+    from tidus.settings import get_settings
+    from tidus.sync.discovery import DiscoveryRunner, build_discovery_sources
     from tidus.sync.pricing.hardcoded_source import HardcodedSource
 
     print(f"[weekly_full_sync] {date.today()}")
 
     # ── Step 1: DB setup ──────────────────────────────────────────────────────
-    print("[1/5] Running price sync pipeline...")
+    print("[1/6] Running price sync pipeline...")
     await create_tables()
     sf = get_session_factory()
 
@@ -59,14 +64,44 @@ async def main() -> int:
         print(f"       No price changes. Using active revision: {active_revision_id}")
 
     # ── Step 3: Weekly snapshot (time-series row) ─────────────────────────────
-    print("[2/5] Writing weekly snapshot...")
+    print("[2/6] Writing weekly snapshot...")
     rows = await pipeline.write_weekly_snapshot(active_revision_id)
     print(f"       {rows} snapshot rows written")
 
-    # ── Step 4: Generate pricing report (md + html) ───────────────────────────
-    print("[3/5] Generating pricing report...")
+    # ── Step 4: Vendor model discovery ────────────────────────────────────────
+    # Polls each vendor's `/v1/models` endpoint to detect new models. Surface
+    # only — never auto-routes; promotion still requires a human edit.
+    settings = get_settings()
+    discovery_report = None
+    if settings.discovery_enabled:
+        print("[3/6] Running vendor model discovery...")
+        sources = build_discovery_sources(settings)
+        if not sources:
+            print("       No vendor API keys configured — discovery skipped.")
+        else:
+            entries = await get_entries_for_revision(sf, active_revision_id)
+            registry_ids = {e.model_id for e in entries}
+            runner = DiscoveryRunner(
+                sources,
+                state_path=Path(settings.discovery_state_path),
+                registry_model_ids=registry_ids,
+            )
+            discovery_report = await runner.run()
+            print(
+                f"       Sources run: {len(discovery_report.sources_run)}, "
+                f"new this run: {len(discovery_report.new_this_run)}, "
+                f"pending review: {len(discovery_report.pending_review)}"
+            )
+    else:
+        print("[3/6] Discovery disabled (settings.discovery_enabled=False)")
+
+    # ── Step 5: Generate pricing report (md + html) ───────────────────────────
+    print("[4/6] Generating pricing report...")
     generator = PricingReportGenerator(sf)
-    report = await generator.generate(revision_id=active_revision_id)
+    report = await generator.generate(
+        revision_id=active_revision_id,
+        discovery_report=discovery_report,
+    )
 
     output_dir = Path("reports")
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -77,8 +112,8 @@ async def main() -> int:
     print(f"       {md_path}")
     print(f"       {html_path}")
 
-    # ── Step 5: Deliver to subscribers ────────────────────────────────────────
-    print("[4/5] Delivering report to subscribers...")
+    # ── Step 6: Deliver to subscribers ────────────────────────────────────────
+    print("[5/6] Delivering report to subscribers...")
     subscribers = load_subscribers()
     subject = f"Tidus Pricing Update — {report.report_date}"
     delivery = ReportDelivery()
@@ -90,8 +125,8 @@ async def main() -> int:
     )
     print(f"       Delivered to {delivered}/{len(subscribers)} subscribers")
 
-    # ── Step 6: Regenerate index.html + push to GitHub ────────────────────────
-    print("[5/5] Updating landing page + pushing to GitHub...")
+    # ── Step 7: Regenerate index.html + push to GitHub ────────────────────────
+    print("[6/6] Updating landing page + pushing to GitHub...")
     updater = LandingPageUpdater()
     ok = await updater.update(sf)
     print(f"       Landing update: {'success' if ok else 'failed'}")
