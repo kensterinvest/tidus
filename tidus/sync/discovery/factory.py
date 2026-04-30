@@ -9,6 +9,7 @@ from __future__ import annotations
 from tidus.settings import Settings, get_settings
 from tidus.sync.discovery.anthropic import AnthropicDiscoverySource
 from tidus.sync.discovery.base import DiscoverySource
+from tidus.sync.discovery.google import GoogleDiscoverySource
 from tidus.sync.discovery.openai_compatible import (
     deepseek_source,
     mistral_source,
@@ -25,7 +26,6 @@ def build_discovery_sources(settings: Settings | None = None) -> list[DiscoveryS
     but could expand to include circuit breakers later).
 
     Vendors NOT yet covered:
-      - Google: uses generative-ai-python SDK; not OpenAI-compatible
       - Moonshot, Cohere, Groq, Qwen, Together, Perplexity:
         either disabled in routing or use bespoke shapes — add as needed.
     """
@@ -39,6 +39,13 @@ def build_discovery_sources(settings: Settings | None = None) -> list[DiscoveryS
         sources.append(
             AnthropicDiscoverySource(
                 api_key=s.anthropic_api_key,
+                timeout_seconds=timeout,
+            )
+        )
+    if s.google_api_key:
+        sources.append(
+            GoogleDiscoverySource(
+                api_key=s.google_api_key,
                 timeout_seconds=timeout,
             )
         )

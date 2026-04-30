@@ -16,6 +16,7 @@ from httpx import MockTransport, Request, Response
 
 from tidus.sync.discovery.anthropic import AnthropicDiscoverySource
 from tidus.sync.discovery.base import DiscoveredModel
+from tidus.sync.discovery.google import GoogleDiscoverySource
 from tidus.sync.discovery.openai_compatible import (
     deepseek_source,
     mistral_source,
@@ -145,6 +146,120 @@ async def test_source_returns_empty_on_parse_error(monkeypatch):
 def test_source_unavailable_when_no_api_key():
     src = openai_source(api_key="")
     assert src.is_available is False
+
+
+# ── Google source: REST shape, generateContent gate, multi-page handling ─────
+
+@pytest.mark.asyncio
+async def test_google_filters_to_generate_content_models(monkeypatch):
+    captured: dict = {}
+
+    def handler(request: Request) -> Response:
+        captured["url"] = str(request.url)
+        captured["key_param"] = request.url.params.get("key")
+        return Response(200, json={
+            "models": [
+                {
+                    "name": "models/gemini-2.5-pro",
+                    "displayName": "Gemini 2.5 Pro",
+                    "supportedGenerationMethods": ["generateContent", "countTokens"],
+                    "inputTokenLimit": 2000000,
+                    "outputTokenLimit": 8192,
+                },
+                {
+                    # countTokens-only — must be filtered out
+                    "name": "models/text-tokens-only",
+                    "displayName": "Tokens",
+                    "supportedGenerationMethods": ["countTokens"],
+                },
+                {
+                    # Embedding model — must be filtered even if it lists generateContent
+                    "name": "models/text-embedding-004",
+                    "displayName": "Text Embedding 004",
+                    "supportedGenerationMethods": ["generateContent", "embedContent"],
+                },
+                {
+                    "name": "models/gemini-2.5-flash-latest",
+                    "displayName": "Gemini 2.5 Flash (latest)",
+                    "supportedGenerationMethods": ["generateContent"],
+                },
+                {
+                    # AQA — Q&A specific, filter
+                    "name": "models/aqa",
+                    "displayName": "Attributed QA",
+                    "supportedGenerationMethods": ["generateContent"],
+                },
+            ]
+        })
+
+    _patch_httpx(monkeypatch, handler)
+    src = GoogleDiscoverySource(api_key="g-key")
+    result = await src.list_models()
+
+    by_canonical = {m.model_id: m.vendor_id for m in result}
+    # Only the two real generation-capable Gemini entries pass.
+    # 'gemini-2.5-flash-latest' must canonicalize to 'gemini-2.5-flash'.
+    assert by_canonical == {
+        "gemini-2.5-pro": "gemini-2.5-pro",
+        "gemini-2.5-flash": "gemini-2.5-flash-latest",
+    }
+    # `?key=` query-param auth (NOT a Bearer header)
+    assert captured["key_param"] == "g-key"
+    assert "/v1beta/models" in captured["url"]
+
+
+@pytest.mark.asyncio
+async def test_google_paginates_until_no_token(monkeypatch):
+    """Multi-page Google response — runner must follow nextPageToken until exhausted."""
+    pages = [
+        {
+            "models": [
+                {
+                    "name": "models/gemini-2.5-pro",
+                    "displayName": "Gemini 2.5 Pro",
+                    "supportedGenerationMethods": ["generateContent"],
+                },
+            ],
+            "nextPageToken": "page-2",
+        },
+        {
+            "models": [
+                {
+                    "name": "models/gemini-3.1-pro",
+                    "displayName": "Gemini 3.1 Pro",
+                    "supportedGenerationMethods": ["generateContent"],
+                },
+            ],
+        },
+    ]
+    page_idx = {"i": 0}
+
+    def handler(request: Request) -> Response:
+        body = pages[page_idx["i"]]
+        page_idx["i"] += 1
+        return Response(200, json=body)
+
+    _patch_httpx(monkeypatch, handler)
+    src = GoogleDiscoverySource(api_key="g-key")
+    result = await src.list_models()
+    assert {m.model_id for m in result} == {"gemini-2.5-pro", "gemini-3.1-pro"}
+    assert page_idx["i"] == 2  # second call followed nextPageToken
+
+
+@pytest.mark.asyncio
+async def test_google_returns_empty_on_invalid_key(monkeypatch):
+    def handler(request: Request) -> Response:
+        return Response(400, json={
+            "error": {"code": 400, "message": "API key not valid"}
+        })
+
+    _patch_httpx(monkeypatch, handler)
+    src = GoogleDiscoverySource(api_key="g-bad")
+    assert await src.list_models() == []
+
+
+def test_google_unavailable_when_no_api_key():
+    assert GoogleDiscoverySource(api_key="").is_available is False
 
 
 # ── Anthropic source: date-suffix stripping + auth header shape ───────────────
