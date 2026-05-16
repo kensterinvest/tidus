@@ -54,7 +54,7 @@ from dataclasses import dataclass, field
 
 import structlog
 
-from tidus.sync.pricing.base import PriceQuote
+from tidus.models.model_registry import ModelSpec
 
 log = structlog.get_logger(__name__)
 
@@ -112,13 +112,16 @@ class VerificationResult:
 def build_anomalies_from_changes(
     changes: list[dict],
     threshold_pct: float = _DEFAULT_THRESHOLD_PCT,
-    consensus_quotes: dict[str, PriceQuote] | None = None,
+    specs_by_id: dict[str, ModelSpec] | None = None,
 ) -> list[Anomaly]:
     """Filter pipeline-style change dicts to those above the abs(delta_pct) threshold.
 
     `changes` is the list shape produced by RegistryPipeline (each dict has
-    model_id, field, old_value, new_value, delta_pct). consensus_quotes is
-    used to look up the vendor name when available.
+    model_id, field, old_value, new_value, delta_pct). `specs_by_id` is used
+    to look up the actual vendor (e.g. "openai", "google") — read from
+    ModelSpec.vendor, NOT from PriceQuote.source_name (which is the pricing
+    source like "openrouter"/"hardcoded" and would degrade Claude's
+    verification accuracy).
     """
     out: list[Anomaly] = []
     for c in changes:
@@ -129,8 +132,8 @@ def build_anomalies_from_changes(
             continue
         model_id = c["model_id"]
         vendor = ""
-        if consensus_quotes and model_id in consensus_quotes:
-            vendor = getattr(consensus_quotes[model_id], "source_name", "")
+        if specs_by_id and model_id in specs_by_id:
+            vendor = specs_by_id[model_id].vendor or ""
         out.append(
             Anomaly(
                 model_id=model_id,

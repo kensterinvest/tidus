@@ -35,6 +35,43 @@ class TestBuildAnomalies:
         anomalies = build_anomalies_from_changes(changes, threshold_pct=50.0)
         assert len(anomalies) == 1
 
+    def test_vendor_read_from_modelspec_not_pricequote(self):
+        """Regression test for the advisor-caught bug: vendor must come from
+        ModelSpec.vendor (the actual vendor name like 'openai'), NOT from
+        PriceQuote.source_name (which is the pricing-source provenance like
+        'openrouter')."""
+        from tidus.models.model_registry import ModelSpec
+
+        spec = ModelSpec.model_validate({
+            "model_id":      "gpt-4o",
+            "vendor":        "openai",   # <-- this is what should reach Claude
+            "tier":          2,
+            "max_context":   128000,
+            "input_price":   0.0025,
+            "output_price":  0.01,
+            "tokenizer":     "tiktoken_o200k",
+            "capabilities":  ["chat"],
+            "min_complexity": "simple",
+            "max_complexity": "complex",
+        })
+        changes = [
+            {"model_id": "gpt-4o", "field": "input_price",
+             "old_value": 0.005, "new_value": 0.001, "delta_pct": -80.0},
+        ]
+        anomalies = build_anomalies_from_changes(
+            changes, threshold_pct=50.0, specs_by_id={"gpt-4o": spec},
+        )
+        assert len(anomalies) == 1
+        assert anomalies[0].vendor == "openai"  # NOT "openrouter"
+
+    def test_vendor_blank_when_specs_by_id_missing(self):
+        changes = [
+            {"model_id": "gpt-4o", "field": "input_price",
+             "old_value": 0.005, "new_value": 0.001, "delta_pct": -80.0},
+        ]
+        anomalies = build_anomalies_from_changes(changes, threshold_pct=50.0)
+        assert anomalies[0].vendor == ""
+
     def test_drops_new_model_and_retired(self):
         changes = [
             {"model_id": "newbie", "field": "new_model",

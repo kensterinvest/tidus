@@ -279,13 +279,9 @@ class AutoPromoter:
 
         # AI confirmation pass — the rule-based filters above are the floor;
         # Claude is the ceiling. Closes the gap where a plausible-looking
-        # name + plausible-looking price slip past structural rules.
+        # name + plausible-looking price slips past structural rules.
         ai_rejected_count = 0
         if self._ai_verifier and self._ai_verifier.is_available and promoted:
-            spec_by_id = {s.model_id: s for s in promoted}
-            # Build DiscoveryCandidate inputs from the matching DiscoveredModel
-            # objects (re-read raw_metadata for the prices the model showed
-            # before promotion).
             discovered_by_id = {d.model_id: d for d in discovered}
             candidates: list[DiscoveryCandidate] = []
             for spec in promoted:
@@ -312,9 +308,6 @@ class AutoPromoter:
                 rejected_ids = {r.candidate.model_id for r in verdict.rejected}
                 promoted = [s for s in promoted if s.model_id not in rejected_ids]
                 ai_rejected_count = len(verdict.rejected)
-                # Re-sync spec_by_id (used nowhere downstream, but keeps the
-                # invariant in case anything is appended later).
-                _ = spec_by_id
 
         self._write_file(promoted)
         return AutoPromoteResult(

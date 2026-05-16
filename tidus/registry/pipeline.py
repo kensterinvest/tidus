@@ -292,7 +292,7 @@ class RegistryPipeline:
                 anomalies = build_anomalies_from_changes(
                     changes,
                     threshold_pct=_settings.ai_verify_threshold_pct,
-                    consensus_quotes=consensus.quotes,
+                    specs_by_id=new_specs,
                 )
                 if anomalies:
                     verifier = ClaudeAnomalyVerifier(
