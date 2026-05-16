@@ -106,6 +106,19 @@ class Settings(BaseSettings):
     auto_promote_enabled: bool = True
     auto_promote_yaml_path: str = "config/models.auto.yaml"
 
+    # ── AI verification of anomalous price moves ────────────────────────────
+    # Statistical consensus catches outliers WITHIN a sync cycle, but can't
+    # tell whether a 60% drop is "vendor cut prices last week" or "OpenRouter
+    # parser bug". When enabled, the pipeline asks Claude to second-opinion
+    # every change with abs(delta_pct) >= ai_verify_threshold_pct against its
+    # knowledge of vendor pricing pages. Rejected changes are dropped from
+    # the revision and surfaced in the magazine's drift section. Fail-open:
+    # any API error accepts all anomalies so the magazine still ships.
+    # Requires anthropic_api_key to be set.
+    ai_verify_enabled: bool = True
+    ai_verify_threshold_pct: float = 50.0
+    ai_verify_model: str = "claude-opus-4-7"
+
     # ── Vendor model discovery ──────────────────────────────────────────────
     # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new
     # models. Discoveries are SURFACE-only (report + JSON sidecar) — never

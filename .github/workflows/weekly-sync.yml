@@ -59,6 +59,12 @@ jobs:
           # skips the source). Add them as GitHub secrets to enable
           # auto-discovery for that vendor.
           OPENAI_API_KEY:    ${{ secrets.OPENAI_API_KEY }}
+          # ANTHROPIC_API_KEY: enables BOTH (a) per-vendor discovery against
+          # the Anthropic /v1/models endpoint AND (b) the AI sanity-check gate
+          # in tidus/sync/ai_verifier.py that asks Claude to verify anomalous
+          # (>=50%) price moves before they enter the registry. Without this
+          # secret, the gate fails-open (accepts all moves) and the magazine
+          # still ships.
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           GOOGLE_API_KEY:    ${{ secrets.GOOGLE_API_KEY }}
           MISTRAL_API_KEY:   ${{ secrets.MISTRAL_API_KEY }}

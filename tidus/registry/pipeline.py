@@ -275,8 +275,72 @@ class RegistryPipeline:
                     if yaml_released is not None:
                         new_specs[model_id] = spec.model_copy(update={"released_at": yaml_released})
 
+            # ── Step 5b: AI sanity-check on anomalous price moves ─────────────
+            # Statistical consensus catches OpenRouter outliers within one sync
+            # but can't tell a real vendor cut from a parser bug. For any change
+            # with abs(delta_pct) >= threshold, ask Claude. Fail-open on API
+            # error so the magazine still ships.
+            from tidus.settings import get_settings as _get_settings
+            from tidus.sync.ai_verifier import (
+                ClaudeAnomalyVerifier,
+                build_anomalies_from_changes,
+            )
+
+            _settings = _get_settings()
+            ai_rejected: list[dict] = []
+            if _settings.ai_verify_enabled and _settings.anthropic_api_key and changes:
+                anomalies = build_anomalies_from_changes(
+                    changes,
+                    threshold_pct=_settings.ai_verify_threshold_pct,
+                    consensus_quotes=consensus.quotes,
+                )
+                if anomalies:
+                    verifier = ClaudeAnomalyVerifier(
+                        api_key=_settings.anthropic_api_key,
+                        model=_settings.ai_verify_model,
+                    )
+                    verdict = await verifier.verify(anomalies)
+                    log.info(
+                        "ai_verify_complete",
+                        anomalies=len(anomalies),
+                        accepted=len(verdict.accepted),
+                        rejected=len(verdict.rejected),
+                        skipped=verdict.skipped,
+                    )
+                    if verdict.rejected:
+                        rejected_keys = {
+                            (r.anomaly.model_id, r.anomaly.field)
+                            for r in verdict.rejected
+                        }
+                        # Revert rejected fields on the new specs back to the
+                        # current (DB) values so the revision doesn't ship
+                        # anomalous numbers.
+                        for rejected in verdict.rejected:
+                            mid = rejected.anomaly.model_id
+                            if mid in current_by_id:
+                                current_spec = current_by_id[mid]
+                                new_specs[mid] = new_specs[mid].model_copy(
+                                    update={rejected.anomaly.field:
+                                            getattr(current_spec, rejected.anomaly.field)}
+                                )
+                        # Strip rejected entries from changes; remember them so
+                        # the magazine can surface "AI rejected N moves".
+                        ai_rejected = [
+                            {
+                                "model_id":  r.anomaly.model_id,
+                                "field":     r.anomaly.field,
+                                "delta_pct": r.anomaly.delta_pct,
+                                "reasoning": r.reasoning,
+                            }
+                            for r in verdict.rejected
+                        ]
+                        changes = [
+                            c for c in changes
+                            if (c["model_id"], c.get("field", "")) not in rejected_keys
+                        ]
+
             if not changes:
-                log.info("price_sync_no_changes")
+                log.info("price_sync_no_changes", ai_rejected=len(ai_rejected))
                 return None
 
             all_new_specs = list(new_specs.values())
