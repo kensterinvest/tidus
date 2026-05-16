@@ -4,11 +4,17 @@ from __future__ import annotations
 
 from datetime import UTC, datetime
 from pathlib import Path
+from unittest.mock import AsyncMock
 
 import pytest
 import yaml
 
 from tidus.router.registry import ModelRegistry
+from tidus.sync.ai_verifier import (
+    ClaudeDiscoveryVerifier,
+    DiscoveryVerificationResult,
+    RejectedCandidate,
+)
 from tidus.sync.auto_promote import AutoPromoter
 from tidus.sync.discovery.base import DiscoveredModel
 
@@ -41,10 +47,10 @@ def _disc(
 # ── Promotion rules ───────────────────────────────────────────────────────────
 
 class TestPromotionFilters:
-    def test_priced_known_vendor_is_promoted(self, tmp_path):
+    async def test_priced_known_vendor_is_promoted(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="gemini-3.5-pro")],
             hand_curated_ids=set(),
         )
@@ -63,50 +69,50 @@ class TestPromotionFilters:
         assert spec.enabled is True
         assert spec.deprecated is False
 
-    def test_hand_curated_model_is_skipped(self, tmp_path):
+    async def test_hand_curated_model_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="gemini-2.5-pro")],
             hand_curated_ids={"gemini-2.5-pro"},
         )
         assert result.promoted == []
         assert result.skipped_known == 1
 
-    def test_unknown_vendor_is_skipped(self, tmp_path):
+    async def test_unknown_vendor_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="exotic-model", vendor="some-new-startup")],
             hand_curated_ids=set(),
         )
         assert result.promoted == []
         assert result.skipped_unknown_vendor == 1
 
-    def test_zero_price_is_skipped(self, tmp_path):
+    async def test_zero_price_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="freebie", prompt="0", completion="0")],
             hand_curated_ids=set(),
         )
         assert result.promoted == []
         assert result.skipped_no_price == 1
 
-    def test_missing_price_field_is_skipped(self, tmp_path):
+    async def test_missing_price_field_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="incomplete", prompt=None, completion="0.001")],
             hand_curated_ids=set(),
         )
         assert result.promoted == []
         assert result.skipped_no_price == 1
 
-    def test_preview_variant_is_skipped(self, tmp_path):
+    async def test_preview_variant_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[
                 _disc(model_id="gemini-x-preview", vendor_id="google/gemini-x-preview"),
                 _disc(model_id="claude-test", vendor="anthropic",
@@ -119,10 +125,10 @@ class TestPromotionFilters:
         assert result.promoted == []
         assert result.skipped_variant == 3
 
-    def test_free_variant_is_skipped(self, tmp_path):
+    async def test_free_variant_is_skipped(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        result = promoter.run(
+        result = await promoter.run(
             discovered=[_disc(model_id="gemini-2.5-pro",
                               vendor_id="google/gemini-2.5-pro:free")],
             hand_curated_ids=set(),
@@ -134,10 +140,10 @@ class TestPromotionFilters:
 # ── File output ───────────────────────────────────────────────────────────────
 
 class TestFileOutput:
-    def test_writes_well_formed_yaml(self, tmp_path):
+    async def test_writes_well_formed_yaml(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        promoter.run(
+        await promoter.run(
             discovered=[
                 _disc(model_id="gemini-3.5-pro"),
                 _disc(model_id="claude-opus-5", vendor="anthropic"),
@@ -151,25 +157,25 @@ class TestFileOutput:
         ids = {m["model_id"] for m in data["models"]}
         assert ids == {"gemini-3.5-pro", "claude-opus-5"}
 
-    def test_empty_promotion_still_writes_file_with_header(self, tmp_path):
+    async def test_empty_promotion_still_writes_file_with_header(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        promoter.run(discovered=[], hand_curated_ids=set())
+        await promoter.run(discovered=[], hand_curated_ids=set())
         assert out.exists()
         text = out.read_text(encoding="utf-8")
         assert "DO NOT EDIT BY HAND" in text
         data = yaml.safe_load(text)
         assert data["models"] == []
 
-    def test_rewrites_clean_each_run(self, tmp_path):
+    async def test_rewrites_clean_each_run(self, tmp_path):
         out = tmp_path / "models.auto.yaml"
         promoter = AutoPromoter(auto_yaml_path=out)
-        promoter.run(
+        await promoter.run(
             discovered=[_disc(model_id="gemini-3.5-pro")],
             hand_curated_ids=set(),
         )
         # Second run, gemini gone, claude shows up
-        promoter.run(
+        await promoter.run(
             discovered=[_disc(model_id="claude-opus-5", vendor="anthropic")],
             hand_curated_ids=set(),
         )
@@ -180,15 +186,136 @@ class TestFileOutput:
 
 # ── Kill-switch ───────────────────────────────────────────────────────────────
 
-def test_disabled_promoter_is_noop(tmp_path):
+async def test_disabled_promoter_is_noop(tmp_path):
     out = tmp_path / "models.auto.yaml"
     promoter = AutoPromoter(auto_yaml_path=out, enabled=False)
-    result = promoter.run(
+    result = await promoter.run(
         discovered=[_disc(model_id="gemini-3.5-pro")],
         hand_curated_ids=set(),
     )
     assert result.promoted == []
     assert not out.exists()
+
+
+# ── AI verifier integration ───────────────────────────────────────────────────
+
+def _fake_verifier(verdict_result: DiscoveryVerificationResult) -> ClaudeDiscoveryVerifier:
+    """Return a ClaudeDiscoveryVerifier whose .verify() is mocked to return verdict_result."""
+    v = ClaudeDiscoveryVerifier(api_key="sk-fake")
+    v.verify = AsyncMock(return_value=verdict_result)  # type: ignore[method-assign]
+    return v
+
+
+class TestAIVerifierIntegration:
+    async def test_no_verifier_passes_through(self, tmp_path):
+        out = tmp_path / "models.auto.yaml"
+        promoter = AutoPromoter(auto_yaml_path=out, ai_verifier=None)
+        result = await promoter.run(
+            discovered=[_disc(model_id="gemini-3.5-pro")],
+            hand_curated_ids=set(),
+        )
+        assert len(result.promoted) == 1
+        assert result.ai_rejected == 0
+
+    async def test_verifier_accepts_all(self, tmp_path):
+        out = tmp_path / "models.auto.yaml"
+        verifier = _fake_verifier(DiscoveryVerificationResult())  # empty rejected
+
+        # Pre-populate accepted with the spec the promoter is about to build,
+        # so the merge sees a non-empty accepted list (but the merge logic
+        # only consults rejected to drop entries — empty rejected = accept all).
+        promoter = AutoPromoter(auto_yaml_path=out, ai_verifier=verifier)
+        result = await promoter.run(
+            discovered=[_disc(model_id="gemini-3.5-pro")],
+            hand_curated_ids=set(),
+        )
+
+        assert len(result.promoted) == 1
+        assert result.ai_rejected == 0
+        verifier.verify.assert_awaited_once()
+
+    async def test_verifier_rejects_implausible_model(self, tmp_path):
+        out = tmp_path / "models.auto.yaml"
+        # Promoter will build a spec for "fake-flagship-claude" — rule-based
+        # filters can't catch it (vendor=anthropic is in the allow-list,
+        # price is non-zero, no skip-pattern match). The verifier rejects it.
+        from tidus.sync.ai_verifier import DiscoveryCandidate
+        rejected = DiscoveryVerificationResult(
+            rejected=[
+                RejectedCandidate(
+                    candidate=DiscoveryCandidate(
+                        model_id="fake-flagship-claude",
+                        vendor="anthropic",
+                        openrouter_id="anthropic/fake-flagship-claude",
+                        display_name="Fake",
+                        input_price_per_1m=1.0,
+                        output_price_per_1m=5.0,
+                    ),
+                    reasoning="No public announcement of this model from Anthropic.",
+                )
+            ]
+        )
+        verifier = _fake_verifier(rejected)
+
+        promoter = AutoPromoter(auto_yaml_path=out, ai_verifier=verifier)
+        result = await promoter.run(
+            discovered=[_disc(model_id="fake-flagship-claude", vendor="anthropic")],
+            hand_curated_ids=set(),
+        )
+
+        assert result.promoted == []
+        assert result.ai_rejected == 1
+
+        # File still written, but empty
+        data = yaml.safe_load(out.read_text(encoding="utf-8"))
+        assert data["models"] == []
+
+    async def test_verifier_unavailable_passes_through(self, tmp_path):
+        # is_available=False → integration treats it as "no verifier"
+        verifier = ClaudeDiscoveryVerifier(api_key="", enabled=True)  # no key → unavailable
+        assert verifier.is_available is False
+
+        promoter = AutoPromoter(
+            auto_yaml_path=tmp_path / "models.auto.yaml",
+            ai_verifier=verifier,
+        )
+        result = await promoter.run(
+            discovered=[_disc(model_id="gemini-3.5-pro")],
+            hand_curated_ids=set(),
+        )
+        assert len(result.promoted) == 1
+        assert result.ai_rejected == 0
+
+    async def test_total_evaluated_includes_ai_rejected(self, tmp_path):
+        from tidus.sync.ai_verifier import DiscoveryCandidate
+        rejected = DiscoveryVerificationResult(
+            rejected=[
+                RejectedCandidate(
+                    candidate=DiscoveryCandidate(
+                        model_id="m1",
+                        vendor="google",
+                        openrouter_id="google/m1",
+                        display_name=None,
+                        input_price_per_1m=1.0,
+                        output_price_per_1m=2.0,
+                    ),
+                    reasoning="rejected",
+                )
+            ]
+        )
+        verifier = _fake_verifier(rejected)
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "auto.yaml", ai_verifier=verifier)
+        result = await promoter.run(
+            discovered=[
+                _disc(model_id="m1"),  # rule-pass, AI-reject
+                _disc(model_id="m2", vendor="some-new-startup"),  # vendor-skip
+            ],
+            hand_curated_ids=set(),
+        )
+        # 1 ai_rejected + 1 unknown_vendor = 2 total_evaluated
+        assert result.ai_rejected == 1
+        assert result.skipped_unknown_vendor == 1
+        assert result.total_evaluated == 2
 
 
 # ── ModelRegistry merge ───────────────────────────────────────────────────────

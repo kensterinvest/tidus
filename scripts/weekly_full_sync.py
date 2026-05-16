@@ -51,6 +51,7 @@ async def main() -> int:
     from tidus.reporting.pricing_report import PricingReportGenerator
     from tidus.reporting.subscribers import ReportDelivery, load_subscribers
     from tidus.settings import get_settings
+    from tidus.sync.ai_verifier import ClaudeDiscoveryVerifier
     from tidus.sync.auto_promote import AutoPromoter
     from tidus.sync.discovery import DiscoveryRunner, build_discovery_sources
     from tidus.sync.pricing.base import PricingSource
@@ -104,16 +105,23 @@ async def main() -> int:
             m.get("model_id") for m in hand_curated_raw.get("models", [])
             if m.get("model_id")
         }
+        ai_verifier = None
+        if settings.ai_verify_enabled and settings.anthropic_api_key:
+            ai_verifier = ClaudeDiscoveryVerifier(
+                api_key=settings.anthropic_api_key,
+                model=settings.ai_verify_model,
+            )
         promoter = AutoPromoter(
             auto_yaml_path=settings.auto_promote_yaml_path,
             enabled=True,
+            ai_verifier=ai_verifier,
         )
         # All discovered candidates: new_this_run + pending_review + everything
         # currently in_registry. We rebuild the full file each run so an
         # operator's hand promotion (move from auto.yaml → models.yaml)
         # doesn't get clobbered by the next run.
         all_discovered = list(discovery_report.new_this_run) + list(discovery_report.pending_review)
-        ap_result = promoter.run(
+        ap_result = await promoter.run(
             discovered=all_discovered,
             hand_curated_ids=hand_curated_ids,
         )
@@ -122,7 +130,8 @@ async def main() -> int:
             f"already vetted: {ap_result.skipped_known}, "
             f"unknown vendor: {ap_result.skipped_unknown_vendor}, "
             f"no price: {ap_result.skipped_no_price}, "
-            f"variant: {ap_result.skipped_variant}"
+            f"variant: {ap_result.skipped_variant}, "
+            f"AI-rejected: {ap_result.ai_rejected}"
         )
     else:
         reason = (

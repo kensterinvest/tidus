@@ -1,4 +1,17 @@
-"""ClaudeAnomalyVerifier — second-opinion gate for big price moves.
+"""AI verifiers — Claude as a second-opinion gate for the pricing pipeline.
+
+Two verifiers, both fail-open, both prompt-cached, both calling
+`claude-opus-4-7` once per sync (batched):
+
+  ClaudeAnomalyVerifier   — guards price MOVES with |delta| ≥ threshold.
+                            Wired into RegistryPipeline between consensus
+                            and revision activation.
+  ClaudeDiscoveryVerifier — guards newly DISCOVERED models before they
+                            enter config/models.auto.yaml. Wired into
+                            AutoPromoter between rule-based filtering and
+                            YAML write.
+
+— ClaudeAnomalyVerifier —
 
 Statistical consensus (MAD) catches outliers within a single sync cycle, but
 it can't tell whether a 60% price drop on `gpt-4o` is "OpenAI cut prices last
@@ -296,3 +309,222 @@ class ClaudeAnomalyVerifier:
                 accepted.append(a)
 
         return VerificationResult(accepted=accepted, rejected=rejected)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ClaudeDiscoveryVerifier — sanity gate for newly auto-promoted models
+# ─────────────────────────────────────────────────────────────────────────────
+
+_DISCOVERY_SYSTEM_PROMPT = """\
+You are a model-catalog verification assistant for the Tidus AI router. Tidus \
+discovers new models from OpenRouter's public catalog and considers \
+auto-promoting them into its routing registry. Before that happens, you \
+verify each candidate.
+
+For every candidate, decide two things:
+  1. Is this a real, generally-available model from the named vendor (not a \
+     leaked preview, internal alias, abandoned fork, or hallucinated mirror)?
+  2. Is the listed price plausible for that vendor and model class? Flagship \
+     models priced like budget models, or vice versa, are red flags.
+
+Use your knowledge of public vendor announcements. Be lenient with recently \
+launched models you can plausibly verify; be strict with names that look \
+generated, mirrored, or pre-GA.
+
+Output strict JSON only, matching the schema. No prose, no markdown."""
+
+
+@dataclass
+class DiscoveryCandidate:
+    """A single model under consideration for auto-promotion."""
+
+    model_id: str                  # canonical Tidus id (slash-stripped)
+    vendor: str
+    openrouter_id: str             # raw OpenRouter id for audit
+    display_name: str | None
+    input_price_per_1m: float
+    output_price_per_1m: float
+
+
+@dataclass
+class RejectedCandidate:
+    candidate: DiscoveryCandidate
+    reasoning: str
+
+
+@dataclass
+class DiscoveryVerificationResult:
+    accepted: list[DiscoveryCandidate] = field(default_factory=list)
+    rejected: list[RejectedCandidate] = field(default_factory=list)
+    skipped: bool = False
+    skipped_reason: str = ""
+
+
+class ClaudeDiscoveryVerifier:
+    """Confirms that newly discovered models are real and priced plausibly.
+
+    Runs inside AutoPromoter after the rule-based filters (vendor allow-list,
+    variant patterns, price gates). The Claude pass is a semantic check on
+    top of the structural ones — it catches name-collisions and bogus
+    pricing that rules can't see.
+
+    Fail-open: any error accepts every candidate the rules already
+    approved. The rules-based filters are the floor; this is the ceiling.
+    """
+
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model: str = _DEFAULT_MODEL,
+        max_tokens: int = _DEFAULT_MAX_TOKENS,
+        enabled: bool = True,
+    ) -> None:
+        self._api_key = api_key
+        self._model = model
+        self._max_tokens = max_tokens
+        self._enabled = enabled and bool(api_key)
+
+    @property
+    def is_available(self) -> bool:
+        return self._enabled
+
+    async def verify(
+        self,
+        candidates: list[DiscoveryCandidate],
+    ) -> DiscoveryVerificationResult:
+        if not self._enabled:
+            return DiscoveryVerificationResult(
+                accepted=list(candidates),
+                skipped=True,
+                skipped_reason="ai_verify_disabled",
+            )
+        if not candidates:
+            return DiscoveryVerificationResult()
+
+        try:
+            from anthropic import AsyncAnthropic
+        except ImportError:
+            log.warning("ai_verify_discovery_sdk_missing")
+            return DiscoveryVerificationResult(
+                accepted=list(candidates),
+                skipped=True,
+                skipped_reason="anthropic_sdk_missing",
+            )
+
+        prompt = self._build_prompt(candidates)
+        schema = self._response_schema()
+
+        try:
+            client = AsyncAnthropic(api_key=self._api_key)
+            response = await client.messages.create(
+                model=self._model,
+                max_tokens=self._max_tokens,
+                system=[
+                    {
+                        "type": "text",
+                        "text": _DISCOVERY_SYSTEM_PROMPT,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+                output_config={"format": {"type": "json_schema", "schema": schema}},
+                messages=[{"role": "user", "content": prompt}],
+            )
+        except Exception as exc:
+            log.warning("ai_verify_discovery_api_failed", error=str(exc))
+            return DiscoveryVerificationResult(
+                accepted=list(candidates),
+                skipped=True,
+                skipped_reason=f"api_error: {exc}",
+            )
+
+        text = next(
+            (b.text for b in response.content if getattr(b, "type", "") == "text"),
+            "",
+        )
+        if not text:
+            return DiscoveryVerificationResult(accepted=list(candidates), skipped=True,
+                                                 skipped_reason="empty_response")
+
+        try:
+            payload = json.loads(text)
+        except json.JSONDecodeError as exc:
+            log.warning("ai_verify_discovery_parse_failed", error=str(exc))
+            return DiscoveryVerificationResult(accepted=list(candidates), skipped=True,
+                                                 skipped_reason="json_parse_failed")
+
+        return self._merge_verdict(candidates, payload)
+
+    @staticmethod
+    def _response_schema() -> dict:
+        return {
+            "type": "object",
+            "properties": {
+                "verdicts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "model_id":   {"type": "string"},
+                            "decision":   {"type": "string", "enum": ["accept", "reject"]},
+                            "reasoning":  {"type": "string"},
+                        },
+                        "required": ["model_id", "decision", "reasoning"],
+                        "additionalProperties": False,
+                    },
+                }
+            },
+            "required": ["verdicts"],
+            "additionalProperties": False,
+        }
+
+    def _build_prompt(self, candidates: list[DiscoveryCandidate]) -> str:
+        rows = [
+            {
+                "model_id":          c.model_id,
+                "vendor":            c.vendor,
+                "openrouter_id":     c.openrouter_id,
+                "display_name":      c.display_name or "",
+                "input_usd_per_1M":  round(c.input_price_per_1m, 4),
+                "output_usd_per_1M": round(c.output_price_per_1m, 4),
+            }
+            for c in candidates
+        ]
+        return (
+            "Verify each model-promotion candidate below. For every row, "
+            "return decision=accept if the model is plausibly a real, "
+            "currently-available offering from the named vendor AND its "
+            "pricing is plausible for its class, or decision=reject "
+            "otherwise. Include reasoning of one sentence per row.\n\n"
+            f"Candidates:\n{json.dumps(rows, indent=2)}"
+        )
+
+    @staticmethod
+    def _merge_verdict(
+        candidates: list[DiscoveryCandidate],
+        payload: dict,
+    ) -> DiscoveryVerificationResult:
+        by_id = {v.get("model_id", ""): v for v in payload.get("verdicts", [])}
+
+        accepted: list[DiscoveryCandidate] = []
+        rejected: list[RejectedCandidate] = []
+        for c in candidates:
+            verdict = by_id.get(c.model_id)
+            if verdict is None:
+                accepted.append(c)  # fail-open
+                log.warning("ai_verify_discovery_missing_verdict", model_id=c.model_id)
+                continue
+            decision = verdict.get("decision", "accept")
+            reasoning = verdict.get("reasoning", "")
+            if decision == "reject":
+                rejected.append(RejectedCandidate(candidate=c, reasoning=reasoning))
+                log.info(
+                    "ai_verify_discovery_rejected",
+                    model_id=c.model_id,
+                    vendor=c.vendor,
+                    reasoning=reasoning,
+                )
+            else:
+                accepted.append(c)
+
+        return DiscoveryVerificationResult(accepted=accepted, rejected=rejected)

@@ -48,6 +48,10 @@ import structlog
 import yaml
 
 from tidus.models.model_registry import ModelSpec
+from tidus.sync.ai_verifier import (
+    ClaudeDiscoveryVerifier,
+    DiscoveryCandidate,
+)
 from tidus.sync.discovery.base import DiscoveredModel
 
 log = structlog.get_logger(__name__)
@@ -96,6 +100,7 @@ class AutoPromoteResult:
     skipped_unknown_vendor: int          # vendor not in adapter set
     skipped_no_price: int                # missing or zero pricing
     skipped_variant: int                 # `:free`, `-preview`, etc.
+    ai_rejected: int = 0                 # passed rule-based filters but Claude said no
 
     @property
     def total_evaluated(self) -> int:
@@ -105,6 +110,7 @@ class AutoPromoteResult:
             + self.skipped_unknown_vendor
             + self.skipped_no_price
             + self.skipped_variant
+            + self.ai_rejected
         )
 
 
@@ -188,11 +194,13 @@ class AutoPromoter:
         *,
         auto_yaml_path: str | Path = "config/models.auto.yaml",
         enabled: bool = True,
+        ai_verifier: ClaudeDiscoveryVerifier | None = None,
     ) -> None:
         self._path = Path(auto_yaml_path)
         self._enabled = enabled
+        self._ai_verifier = ai_verifier
 
-    def run(
+    async def run(
         self,
         *,
         discovered: Iterable[DiscoveredModel],
@@ -221,6 +229,10 @@ class AutoPromoter:
                 skipped_no_price=0,
                 skipped_variant=0,
             )
+
+        # Materialize once — `discovered` may be a generator, and the AI
+        # verifier branch below reads it a second time.
+        discovered = list(discovered)
 
         for model in discovered:
             canonical = model.model_id
@@ -265,6 +277,45 @@ class AutoPromoter:
                 output_price=spec.output_price,
             )
 
+        # AI confirmation pass — the rule-based filters above are the floor;
+        # Claude is the ceiling. Closes the gap where a plausible-looking
+        # name + plausible-looking price slip past structural rules.
+        ai_rejected_count = 0
+        if self._ai_verifier and self._ai_verifier.is_available and promoted:
+            spec_by_id = {s.model_id: s for s in promoted}
+            # Build DiscoveryCandidate inputs from the matching DiscoveredModel
+            # objects (re-read raw_metadata for the prices the model showed
+            # before promotion).
+            discovered_by_id = {d.model_id: d for d in discovered}
+            candidates: list[DiscoveryCandidate] = []
+            for spec in promoted:
+                disc = discovered_by_id.get(spec.model_id)
+                candidates.append(
+                    DiscoveryCandidate(
+                        model_id=spec.model_id,
+                        vendor=spec.vendor,
+                        openrouter_id=(disc.vendor_id if disc else spec.model_id),
+                        display_name=(disc.display_name if disc else None),
+                        input_price_per_1m=spec.input_price * 1000,
+                        output_price_per_1m=spec.output_price * 1000,
+                    )
+                )
+            verdict = await self._ai_verifier.verify(candidates)
+            log.info(
+                "auto_promote_ai_verify_complete",
+                candidates=len(candidates),
+                accepted=len(verdict.accepted),
+                rejected=len(verdict.rejected),
+                skipped=verdict.skipped,
+            )
+            if verdict.rejected:
+                rejected_ids = {r.candidate.model_id for r in verdict.rejected}
+                promoted = [s for s in promoted if s.model_id not in rejected_ids]
+                ai_rejected_count = len(verdict.rejected)
+                # Re-sync spec_by_id (used nowhere downstream, but keeps the
+                # invariant in case anything is appended later).
+                _ = spec_by_id
+
         self._write_file(promoted)
         return AutoPromoteResult(
             promoted=promoted,
@@ -272,6 +323,7 @@ class AutoPromoter:
             skipped_unknown_vendor=skipped_unknown_vendor,
             skipped_no_price=skipped_no_price,
             skipped_variant=skipped_variant,
+            ai_rejected=ai_rejected_count,
         )
 
     def _write_file(self, specs: list[ModelSpec]) -> None:
