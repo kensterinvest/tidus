@@ -64,12 +64,20 @@ drift:
     lookback_days: 30
 
 pricing_sync:
-  enabled: false        # Replaced by Claude Code cron — see scripts/weekly_full_sync.py
+  enabled: false        # Replaced by GitHub Actions cron — see .github/workflows/weekly-sync.yml
   # Day of week (0=Monday … 6=Sunday) and UTC hour for weekly price sync
   day_of_week: 6        # Sunday
   hour_utc: 2
-  # Minimum price delta (fraction) to log a PriceChangeRecord
-  change_threshold: 0.05  # 5%
+  # Minimum signed price delta (as a fraction) that triggers a new revision.
+  # Was 0.05 (5%) when the only source was the manual hardcoded table — at
+  # that cadence, sub-5% moves were noise. With OpenRouter providing live
+  # quotes twice a week, real 1-4% vendor adjustments should now register.
+  change_threshold: 0.01  # 1%
+  # If the active revision hasn't changed in this many days AND a live
+  # pricing source ran successfully during the current sync, the magazine
+  # emits a drift-alarm banner. Catches the "no updates for a month while
+  # job runs green" failure mode that hid from us through April-May 2026.
+  drift_alarm_days: 21
 
 canary:
   # Number of randomly sampled models to probe before promoting a revision.

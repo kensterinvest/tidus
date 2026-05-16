@@ -109,12 +109,40 @@ async def main() -> int:
     else:
         print("[3/6] Discovery disabled (settings.discovery_enabled=False)")
 
+    # ── Drift alarm: did the active revision sit unchanged for too long? ─────
+    # Triggers only when a live source (OpenRouter or external feed) is in
+    # play this run — a stuck revision with only HardcodedSource is expected
+    # behavior, not a market signal. Reads the threshold from policies.yaml so
+    # operators can tune it without code changes.
+    from datetime import UTC as _UTC
+    from datetime import datetime as _dt
+
+    from tidus.utils.yaml_loader import load_yaml
+
+    drift_alarm_days: int | None = None
+    if result is None and settings.openrouter_enabled:
+        policies = load_yaml(settings.policies_config_path)
+        threshold_days = int(policies.get("pricing_sync", {}).get("drift_alarm_days", 21))
+        active_rev = await get_active_revision(sf)
+        if active_rev and active_rev.activated_at:
+            activated_at = active_rev.activated_at
+            if activated_at.tzinfo is None:
+                activated_at = activated_at.replace(tzinfo=_UTC)
+            days_stale = (_dt.now(_UTC) - activated_at).days
+            if days_stale >= threshold_days:
+                drift_alarm_days = days_stale
+                print(
+                    f"       ⚠️ Drift alarm: active revision unchanged for "
+                    f"{days_stale} days (threshold: {threshold_days})."
+                )
+
     # ── Step 5: Generate pricing report (md + html) ───────────────────────────
     print("[4/6] Generating pricing report...")
     generator = PricingReportGenerator(sf)
     report = await generator.generate(
         revision_id=active_revision_id,
         discovery_report=discovery_report,
+        drift_alarm_days=drift_alarm_days,
     )
 
     output_dir = Path("reports")
