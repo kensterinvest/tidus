@@ -14,7 +14,6 @@ from tidus.sync.pricing.openrouter_source import (
     _canonical_from_openrouter,
 )
 
-
 # ── Pure helper: id mapping ───────────────────────────────────────────────────
 
 class TestCanonicalMapping:

@@ -12,7 +12,6 @@ from tidus.sync.ai_verifier import (
     build_anomalies_from_changes,
 )
 
-
 # ── Change → Anomaly filtering ────────────────────────────────────────────────
 
 class TestBuildAnomalies:
