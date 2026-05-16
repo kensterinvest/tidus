@@ -96,6 +96,16 @@ class Settings(BaseSettings):
     openrouter_base_url: str = "https://openrouter.ai"
     openrouter_request_timeout_seconds: float = 15.0
 
+    # ── Auto-promotion of discovered models ─────────────────────────────────
+    # When True (default), the weekly sync writes a config/models.auto.yaml
+    # containing every OpenRouter-discovered model that has live pricing and
+    # belongs to a vendor Tidus has an adapter for. ModelRegistry.load()
+    # merges that file in alongside the hand-curated config/models.yaml so
+    # auto-promoted entries become immediately routable. Set False to revert
+    # to surface-only discovery (no automatic catalog growth).
+    auto_promote_enabled: bool = True
+    auto_promote_yaml_path: str = "config/models.auto.yaml"
+
     # ── Vendor model discovery ──────────────────────────────────────────────
     # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new
     # models. Discoveries are SURFACE-only (report + JSON sidecar) — never

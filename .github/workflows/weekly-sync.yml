@@ -66,15 +66,19 @@ jobs:
           XAI_API_KEY:       ${{ secrets.XAI_API_KEY }}
         run: uv run python scripts/weekly_full_sync.py
 
-      - name: Commit updated DB + reports + discovered_models to main
+      - name: Commit updated DB + reports + auto-promoted catalog to main
         run: |
-          # discovered_models.json is the discovery state sidecar — committed
-          # so first-seen timestamps survive across cron runs.
-          git add tidus.db reports/ || true
+          # discovered_models.json (under reports/) is the discovery state
+          # sidecar — first-seen timestamps survive across cron runs.
+          # config/models.auto.yaml is the auto-promoted catalog written by
+          # tidus/sync/auto_promote.py; it must be committed so ModelRegistry
+          # picks it up on the NEXT run (and so a `git status` doesn't show
+          # spurious diffs locally).
+          git add tidus.db reports/ config/models.auto.yaml || true
           if ! git diff --cached --quiet; then
             DATE=$(date -u +%Y-%m-%d)
-            git commit -m "chore(pricing-sync): DB + reports sync ${DATE}"
+            git commit -m "chore(pricing-sync): DB + reports + auto catalog ${DATE}"
             git push origin HEAD:main
           else
-            echo "No DB or report changes to commit."
+            echo "No DB, report, or auto-catalog changes to commit."
           fi

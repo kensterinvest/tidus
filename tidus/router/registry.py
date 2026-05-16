@@ -26,18 +26,45 @@ class ModelRegistry:
     # ── Construction ─────────────────────────────────────────────────────────
 
     @classmethod
-    def load(cls, path: str | Path = "config/models.yaml") -> "ModelRegistry":
-        """Load registry from a YAML file.
+    def load(
+        cls,
+        path: str | Path = "config/models.yaml",
+        auto_path: str | Path | None = "config/models.auto.yaml",
+    ) -> "ModelRegistry":
+        """Load registry from one or two YAML files.
 
-        Raises FileNotFoundError if the file is missing.
-        Raises ValueError if the YAML is invalid or any ModelSpec fails validation.
+        The primary `path` is the hand-curated catalog — the source of truth
+        for every model an operator has explicitly vetted. `auto_path`, when
+        present on disk, is an auto-generated catalog produced by the
+        weekly sync's auto-promote pass (see tidus/sync/auto_promote.py);
+        it carries models surfaced by discovery that have live pricing but
+        haven't been hand-reviewed yet.
 
-        Example:
-            registry = ModelRegistry.load("config/models.yaml")
+        Conflict resolution: hand-curated entries always win. If a model_id
+        appears in both files, the primary path's spec is kept and the auto
+        spec is silently dropped. This means an operator can promote an
+        auto-discovered model to "vetted" status simply by adding it to
+        `models.yaml` — the auto entry then becomes a harmless duplicate
+        that the next sync will rewrite or remove.
+
+        Raises FileNotFoundError if `path` is missing (auto_path missing is
+        fine — treated as empty). Raises ValueError on any validation error.
         """
         raw: dict[str, Any] = load_yaml(path)
         entries: list[dict] = raw.get("models", [])
         specs = [ModelSpec.model_validate(entry) for entry in entries]
+        primary_ids = {s.model_id for s in specs}
+
+        if auto_path is not None:
+            auto_p = Path(auto_path)
+            if auto_p.exists():
+                auto_raw: dict[str, Any] = load_yaml(auto_p)
+                for entry in auto_raw.get("models", []):
+                    spec = ModelSpec.model_validate(entry)
+                    if spec.model_id in primary_ids:
+                        continue
+                    specs.append(spec)
+
         return cls(specs)
 
     # ── Queries ───────────────────────────────────────────────────────────────
