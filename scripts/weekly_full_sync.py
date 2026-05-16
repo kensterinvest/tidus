@@ -158,10 +158,16 @@ async def main() -> int:
     pipeline = RegistryPipeline(sf, registry=None)
     result = await pipeline.run_price_sync_cycle(pricing_sources)
 
+    ai_rejected_from_pipeline: list[dict] = []
     if result is not None:
         active_revision_id = result.revision_id
         n_changes = len(result.changes)
-        print(f"       Revision created: {active_revision_id} ({n_changes} changes)")
+        ai_rejected_from_pipeline = list(getattr(result, "ai_rejected", []) or [])
+        n_ai_rejected = len(ai_rejected_from_pipeline)
+        print(
+            f"       Revision created: {active_revision_id} "
+            f"({n_changes} changes, {n_ai_rejected} AI-rejected)"
+        )
     else:
         rev = await get_active_revision(sf)
         if rev is None:
@@ -205,6 +211,7 @@ async def main() -> int:
         revision_id=active_revision_id,
         discovery_report=discovery_report,
         drift_alarm_days=drift_alarm_days,
+        ai_rejected=ai_rejected_from_pipeline,
     )
 
     output_dir = Path("reports")

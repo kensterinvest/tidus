@@ -27,7 +27,7 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 
 import structlog
@@ -68,6 +68,12 @@ class PipelineResult:
     sources_used: list[str]
     single_source_models: list[str]
     ingestion_run_ids: list[str]
+    # Anomalous price moves the AI verifier (ClaudeAnomalyVerifier) rejected
+    # before revision activation. Each entry: {model_id, field, delta_pct,
+    # reasoning}. Empty when AI is disabled, unreachable, or accepted everything.
+    # Surfaced in the magazine's "AI Verifier" section so operators can see
+    # which real moves (if any) Claude blocked.
+    ai_rejected: list[dict] = field(default_factory=list)
 
 
 @dataclass
@@ -428,6 +434,7 @@ class RegistryPipeline:
                 sources_used=sources_used,
                 single_source_models=single_source_models,
                 ingestion_run_ids=ingestion_run_ids,
+                ai_rejected=ai_rejected,
             )
 
         finally:

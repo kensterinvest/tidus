@@ -246,6 +246,10 @@ class PricingReport:
     # is almost certainly moving but our sources aren't catching it. Banner
     # surfaces at the top of the magazine so it can't be missed.
     drift_alarm_days: int | None = None
+    # AI-verifier rejections — each entry: {model_id, field, delta_pct,
+    # reasoning}. Carried from PipelineResult.ai_rejected. Surfaced in the
+    # "🤖 AI Verifier" section so operators see which moves Claude blocked.
+    ai_rejected: list[dict] = field(default_factory=list)
     markdown: str = field(default="", repr=False)
     github_release_body: str = field(default="", repr=False)
     html: str = field(default="", repr=False)
@@ -281,6 +285,7 @@ class PricingReportGenerator:
         base_revision_id: str | None = None,  # defaults to previous (most recent SUPERSEDED)
         discovery_report=None,             # optional tidus.sync.discovery.DiscoveryReport
         drift_alarm_days: int | None = None,
+        ai_rejected: list[dict] | None = None,
     ) -> PricingReport:
         """Generate a pricing report comparing two revisions."""
         from sqlalchemy import text
@@ -370,6 +375,7 @@ class PricingReportGenerator:
             total_models=len(current_specs),
             discovery_report=discovery_report,
             drift_alarm_days=drift_alarm_days,
+            ai_rejected=list(ai_rejected or []),
         )
         report.markdown = self._render_markdown(report, current_specs)
         report.github_release_body = self._render_github_release(report)
@@ -618,6 +624,29 @@ class PricingReportGenerator:
                 for mid in dr.removed_from_vendor:
                     lines.append(f"- `{mid}`")
                 lines += [""]
+
+        # AI verifier rejections — comes BEFORE stale-models so operators
+        # see what Claude blocked alongside the moves that did ship.
+        if report.ai_rejected:
+            lines += [
+                "## 🤖 AI Verifier",
+                "",
+                f"Claude rejected **{len(report.ai_rejected)}** anomalous price "
+                f"move(s) before they entered the registry this cycle. Each entry "
+                f"shows the original move plus Claude's reasoning. If any look "
+                f"like real vendor changes Claude got wrong, override via the "
+                f"registry API or temporarily disable `ai_verify_enabled`.",
+                "",
+                "| Model | Field | Δ% | Reasoning |",
+                "|---|---|---:|---|",
+            ]
+            for r in report.ai_rejected:
+                model = r.get("model_id", "?")
+                field = r.get("field", "?")
+                delta = r.get("delta_pct", 0)
+                reasoning = (r.get("reasoning") or "").replace("|", "\\|")
+                lines.append(f"| `{model}` | {field} | {delta:+.1f}% | {reasoning} |")
+            lines += [""]
 
         # Stale models warning
         if report.stale_models:
