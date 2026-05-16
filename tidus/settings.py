@@ -86,6 +86,16 @@ class Settings(BaseSettings):
     # Circuit breaker: seconds before transitioning OPEN → HALF-OPEN.
     pricing_feed_reset_timeout_seconds: int = 300
 
+    # ── OpenRouter live pricing + discovery ─────────────────────────────────
+    # OpenRouter's public /api/v1/models endpoint lists every brokered model
+    # with current per-token pricing — no auth required. Used by both the
+    # pricing pipeline (live "second opinion" against HardcodedSource) and
+    # the discovery runner (surface new vendor models that haven't been
+    # added to config/models.yaml yet).
+    openrouter_enabled: bool = True
+    openrouter_base_url: str = "https://openrouter.ai"
+    openrouter_request_timeout_seconds: float = 15.0
+
     # ── Vendor model discovery ──────────────────────────────────────────────
     # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new
     # models. Discoveries are SURFACE-only (report + JSON sidecar) — never

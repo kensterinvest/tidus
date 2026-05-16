@@ -16,18 +16,24 @@ from tidus.sync.discovery.openai_compatible import (
     openai_source,
     xai_source,
 )
+from tidus.sync.discovery.openrouter import OpenRouterDiscoverySource
 
 
 def build_discovery_sources(settings: Settings | None = None) -> list[DiscoverySource]:
     """Return the configured discovery sources.
 
-    A vendor is included iff its API key env var is set. The runner will
-    further filter on `is_available` (which currently equals key-presence
-    but could expand to include circuit breakers later).
+    Ordering matters: first-listed source wins on duplicate canonical
+    model_ids inside the runner's dedup loop. Per-vendor first-party
+    sources are registered before OpenRouter so an authoritative quote
+    from the vendor itself takes precedence; OpenRouter is the catch-all
+    that keeps discovery working when no vendor API keys are configured.
 
-    Vendors NOT yet covered:
-      - Moonshot, Cohere, Groq, Qwen, Together, Perplexity:
-        either disabled in routing or use bespoke shapes — add as needed.
+    Vendors with first-party sources: OpenAI, Anthropic, Google, Mistral,
+    DeepSeek, xAI. Their entries are included iff the corresponding API
+    key env var is set. OpenRouter is included whenever
+    `openrouter_enabled` is true (no API key required) and covers
+    every vendor it brokers — Moonshot, Cohere, Groq, Qwen, Together,
+    Perplexity, Meta, Alibaba, plus the six above.
     """
     s = settings or get_settings()
     timeout = s.discovery_request_timeout_seconds
@@ -55,5 +61,13 @@ def build_discovery_sources(settings: Settings | None = None) -> list[DiscoveryS
         sources.append(deepseek_source(s.deepseek_api_key))
     if s.xai_api_key:
         sources.append(xai_source(s.xai_api_key))
+
+    if s.openrouter_enabled:
+        sources.append(
+            OpenRouterDiscoverySource(
+                base_url=s.openrouter_base_url,
+                timeout_seconds=s.openrouter_request_timeout_seconds,
+            )
+        )
 
     return sources

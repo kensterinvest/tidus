@@ -37,7 +37,9 @@ async def main() -> int:
     from tidus.reporting.subscribers import ReportDelivery, load_subscribers
     from tidus.settings import get_settings
     from tidus.sync.discovery import DiscoveryRunner, build_discovery_sources
+    from tidus.sync.pricing.base import PricingSource
     from tidus.sync.pricing.hardcoded_source import HardcodedSource
+    from tidus.sync.pricing.openrouter_source import OpenRouterPricingSource
 
     print(f"[weekly_full_sync] {date.today()}")
 
@@ -47,8 +49,21 @@ async def main() -> int:
     sf = get_session_factory()
 
     # ── Step 2: Price sync → new DB revision (or detect no changes) ───────────
+    # HardcodedSource is the verified-baseline anchor; OpenRouter provides a
+    # live "second opinion" so consensus.py can catch real vendor price moves
+    # between manual hardcoded-table edits. Both fail-safe to [] on network
+    # error — the pipeline tolerates any subset being unavailable.
+    settings = get_settings()
+    pricing_sources: list[PricingSource] = [HardcodedSource()]
+    if settings.openrouter_enabled:
+        pricing_sources.append(
+            OpenRouterPricingSource(
+                base_url=settings.openrouter_base_url,
+                timeout_seconds=settings.openrouter_request_timeout_seconds,
+            )
+        )
     pipeline = RegistryPipeline(sf, registry=None)
-    result = await pipeline.run_price_sync_cycle([HardcodedSource()])
+    result = await pipeline.run_price_sync_cycle(pricing_sources)
 
     if result is not None:
         active_revision_id = result.revision_id
@@ -71,7 +86,6 @@ async def main() -> int:
     # ── Step 4: Vendor model discovery ────────────────────────────────────────
     # Polls each vendor's `/v1/models` endpoint to detect new models. Surface
     # only — never auto-routes; promotion still requires a human edit.
-    settings = get_settings()
     discovery_report = None
     if settings.discovery_enabled:
         print("[3/6] Running vendor model discovery...")
