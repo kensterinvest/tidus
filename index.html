@@ -745,8 +745,8 @@ footer{background:#0a0f1e;padding:48px}
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-val">53+</div><div class="stat-lbl">Models Tracked</div></div>
-      <div class="stat-card"><div class="stat-val">12</div><div class="stat-lbl">AI Vendors</div></div>
+      <div class="stat-card"><div class="stat-val">200+</div><div class="stat-lbl">Models Tracked</div></div>
+      <div class="stat-card"><div class="stat-val">15</div><div class="stat-lbl">AI Vendors</div></div>
       <div class="stat-card"><div class="stat-val">70%</div><div class="stat-lbl">Cost Weight in Routing</div></div>
       <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Cost-Control Pillars</div></div>
     </div>
@@ -1098,53 +1098,63 @@ response = client.chat.completions.create(
     </div>
 
     <div style="margin-top:36px">
-      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">13 Vendors Currently Tracked</h3>
-      <p style="font-size:14px;color:#888;margin-bottom:16px">Click any vendor to visit their AI platform. Model counts reflect the active catalog as of April 2026.</p>
+      <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">15 Vendor Families Currently Tracked</h3>
+      <p style="font-size:14px;color:#888;margin-bottom:16px">Click any vendor to visit their AI platform. Counts include both the hand-curated baseline and live OpenRouter-discovered entries that have passed AI verification. Refreshed every Sun + Wed sync.</p>
       <div class="vendor-grid">
 
-        <a class="v-card" href="https://www.anthropic.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Anthropic</span><span class="v-count">4 models</span></div>
-          <div class="v-focus">Safety-first LLMs for enterprise. Known for Constitutional AI and the Claude family — industry benchmark for reasoning and instruction-following.</div>
-        </a>
-
         <a class="v-card" href="https://platform.openai.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">OpenAI</span><span class="v-count">10 models</span></div>
-          <div class="v-focus">The broadest model portfolio: GPT flagship chat models, o-series deep reasoning models, Codex coding specialists, and ultra-cheap inference models like gpt-oss-120b.</div>
-        </a>
-
-        <a class="v-card" href="https://ai.google.dev" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Google DeepMind</span><span class="v-count">6 models</span></div>
-          <div class="v-focus">Gemini multimodal AI — strong at long-context, vision, and code. Tightly integrated with Google Cloud and Workspace. Gemini 2.5 Pro leads on context window size.</div>
-        </a>
-
-        <a class="v-card" href="https://mistral.ai" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Mistral AI</span><span class="v-count">7 models</span></div>
-          <div class="v-focus">European open-weight pioneer. Specialises in efficient code models (Codestral, Devstral) and multilingual LLMs. Largest model count in the Tidus catalog.</div>
-        </a>
-
-        <a class="v-card" href="https://www.deepseek.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">DeepSeek</span><span class="v-count">3 models</span></div>
-          <div class="v-focus">Chinese AI lab driving aggressive pricing competition. DeepSeek-R1 matches frontier reasoning at a fraction of the cost. Consistently the cheapest non-local option for complex tasks.</div>
+          <div class="v-card-top"><span class="v-name">OpenAI</span><span class="v-count">48 models</span></div>
+          <div class="v-focus">The broadest model portfolio in the catalog: GPT flagship chat, the o-series deep-reasoning line, Codex coding specialists, GPT-5.x family across mini/pro/codex/image variants, plus open-weight ultra-cheap models like gpt-oss-120b.</div>
         </a>
 
         <a class="v-card" href="https://qwenlm.github.io" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">3 models</span></div>
-          <div class="v-focus">Qwen series from Alibaba DAMO Academy. Strong multilingual performance — especially Chinese, Arabic, and Southeast Asian languages. Tracked in pricing but not yet wired as a live adapter.</div>
+          <div class="v-card-top"><span class="v-name">Alibaba (Qwen)</span><span class="v-count">43 models</span></div>
+          <div class="v-focus">Qwen series from Alibaba DAMO Academy — the second-largest vendor presence after OpenAI. Strong multilingual performance, especially Chinese, Arabic, and Southeast Asian languages. Tracked in pricing; adapter routing is partial.</div>
+        </a>
+
+        <a class="v-card" href="https://mistral.ai" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Mistral AI</span><span class="v-count">29 models</span></div>
+          <div class="v-focus">European open-weight pioneer. Specialises in efficient code models (Codestral, Devstral) and multilingual LLMs. Wide variety of fine-tuned and quantised variants brokered via OpenRouter.</div>
+        </a>
+
+        <a class="v-card" href="https://ai.google.dev" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Google DeepMind</span><span class="v-count">15 models</span></div>
+          <div class="v-focus">Gemini multimodal AI — strong at long-context (up to 2M tokens), vision, and code. Tightly integrated with Google Cloud and Workspace. Gemini 3.x family + open-weight Gemma releases.</div>
         </a>
 
         <a class="v-card" href="https://ollama.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Ollama (local)</span><span class="v-count">1 model</span></div>
+          <div class="v-card-top"><span class="v-name">Ollama (local)</span><span class="v-count">11 models</span></div>
           <div class="v-focus">Self-hosted local inference — the only adapter that keeps confidential data fully on-prem. Any task marked <code>privacy=confidential</code> is routed exclusively to Ollama.</div>
         </a>
 
+        <a class="v-card" href="https://www.deepseek.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">DeepSeek</span><span class="v-count">10 models</span></div>
+          <div class="v-focus">Chinese AI lab driving aggressive pricing competition. DeepSeek-R1, V3, V4 match frontier reasoning at a fraction of the cost. Consistently the cheapest non-local option for complex tasks.</div>
+        </a>
+
+        <a class="v-card" href="https://llama.meta.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Meta (Llama)</span><span class="v-count">10 models</span></div>
+          <div class="v-focus">Llama 3 and Llama 4 open-weight families — brokered through OpenRouter to multiple hosting providers. Strong cost/performance for mid-tier workloads when local Ollama isn't required.</div>
+        </a>
+
+        <a class="v-card" href="https://cohere.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Cohere</span><span class="v-count">6 models</span></div>
+          <div class="v-focus">Enterprise NLP specialist. Command models optimised for RAG (retrieval-augmented generation), summarisation, and structured enterprise workflows. Strong in regulated industries.</div>
+        </a>
+
+        <a class="v-card" href="https://www.anthropic.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Anthropic</span><span class="v-count">4 models</span></div>
+          <div class="v-focus">Safety-first LLMs for enterprise. Constitutional AI and the Claude family — Opus 4.7 and 4.6, Sonnet 4.6, Haiku 4.5 — industry benchmark for reasoning, instruction-following, and tool use.</div>
+        </a>
+
         <a class="v-card" href="https://moonshot.cn" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Moonshot (Kimi)</span><span class="v-count">1 model</span></div>
-          <div class="v-focus">Chinese frontier lab behind the Kimi family. Long-context models competitive with Claude and Gemini on document-heavy workloads.</div>
+          <div class="v-card-top"><span class="v-name">Moonshot (Kimi)</span><span class="v-count">4 models</span></div>
+          <div class="v-focus">Chinese frontier lab behind the Kimi family. Kimi-K2.5 supports extremely long context (200K+ tokens) and is competitive with Claude and Gemini on document-heavy workloads.</div>
         </a>
 
         <a class="v-card" href="https://x.ai" target="_blank" rel="noopener">
           <div class="v-card-top"><span class="v-name">xAI</span><span class="v-count">3 models</span></div>
-          <div class="v-focus">Grok models from Elon Musk's lab. Real-time access to X (Twitter) data. Grok-4 sits at the premium tier alongside Grok-3 and Grok-3-Fast — blended cost $15/1M input+output.</div>
+          <div class="v-focus">Grok models from Elon Musk's lab. Real-time access to X data. Grok-4 sits at the premium tier alongside Grok-3 and Grok-3-Fast — blended cost $15/1M input+output.</div>
         </a>
 
         <a class="v-card" href="https://groq.com" target="_blank" rel="noopener">
@@ -1152,24 +1162,19 @@ response = client.chat.completions.create(
           <div class="v-focus">LPU (Language Processing Unit) inference hardware built for speed, not model training. Hosts open-source models (DeepSeek-R1, Llama 4 Maverick) at industry-leading throughput.</div>
         </a>
 
-        <a class="v-card" href="https://cohere.com" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Cohere</span><span class="v-count">2 models</span></div>
-          <div class="v-focus">Enterprise NLP specialist. Command models optimised for RAG (retrieval-augmented generation), summarisation, and structured enterprise workflows. Strong in regulated industries.</div>
-        </a>
-
         <a class="v-card" href="https://www.perplexity.ai/api" target="_blank" rel="noopener">
           <div class="v-card-top"><span class="v-name">Perplexity</span><span class="v-count">2 models</span></div>
           <div class="v-focus">Search-augmented AI with built-in real-time web access. Sonar models return cited answers grounded in live search results — distinct from pure generation models.</div>
         </a>
 
-        <a class="v-card" href="https://www.moonshot.cn" target="_blank" rel="noopener">
-          <div class="v-card-top"><span class="v-name">Moonshot (Kimi)</span><span class="v-count">1 model</span></div>
-          <div class="v-focus">Chinese AI startup known for extremely long context windows. Kimi-K2.5 supports up to 200K token context and is strong on Chinese-language tasks and document processing.</div>
-        </a>
-
         <a class="v-card" href="https://www.together.ai" target="_blank" rel="noopener">
           <div class="v-card-top"><span class="v-name">Together AI</span><span class="v-count">1 model</span></div>
-          <div class="v-focus">Open-source model hosting and fine-tuning platform. Offers the Llama 4 Maverick at $0.27/1M — one of the cheapest capable models in the economy tier.</div>
+          <div class="v-focus">Open-source model hosting and fine-tuning platform. Offers Llama 4 Maverick at $0.27/1M — one of the cheapest capable models in the economy tier.</div>
+        </a>
+
+        <a class="v-card" href="https://qianwen.aliyun.com" target="_blank" rel="noopener">
+          <div class="v-card-top"><span class="v-name">Alibaba Cloud</span><span class="v-count">1 model</span></div>
+          <div class="v-focus">Native Alibaba Cloud-branded model entries (distinct from the open-weight Qwen series above). Brokered via OpenRouter; pricing tracked but adapter routing pending.</div>
         </a>
 
       </div>
@@ -1891,7 +1896,7 @@ response = client.chat.completions.create(
     <!-- ═══════ PLAIN ENGLISH SUMMARY ═══════ -->
     <div class="how-summary">
       <h3 style="font-size:20px;font-weight:800;margin:0 0 16px;color:#1e1b4b">Plain-English Summary for the Record</h3>
-      <p>Tidus is an automated AI model routing system. When an application sends an AI request, Tidus receives metadata about that request — its complexity, the type of task, privacy sensitivity, and cost budget. Tidus then applies a five-stage deterministic algorithm to select the optimal AI model from its registry of 53+ tracked models.</p>
+      <p>Tidus is an automated AI model routing system. When an application sends an AI request, Tidus receives metadata about that request — its complexity, the type of task, privacy sensitivity, and cost budget. Tidus then applies a five-stage deterministic algorithm to select the optimal AI model from its registry of 200+ tracked models across 15 vendor families.</p>
       <p style="margin-top:12px">The first two stages are safety filters: Stage 1 ensures the selected model is technically capable of performing the task; Stage 2 enforces data privacy law by preventing confidential data from being sent to external cloud providers. Stages 3 and 4 are economic filters: Stage 3 prevents over-provisioning by matching task complexity to model capability tier; Stage 4 enforces spending limits. Stage 5 applies a patented weighted scoring formula — 70% cost, 20% quality tier, 10% response speed — to rank surviving candidates and select the best one.</p>
       <p style="margin-top:12px">Separately, Tidus maintains an always-current pricing registry. It ingests prices from multiple independent sources, applies statistical outlier detection (Modified Z-Score / Median Absolute Deviation) to reject anomalous data, and stores every price change as a versioned, audited revision. This ensures routing decisions are always based on current, verified market prices — not stale hardcoded values.</p>
       <p style="margin-top:12px">The combination of these two systems — the five-stage routing algorithm and the self-healing pricing registry — constitutes the core patentable invention of the Tidus platform.</p>
