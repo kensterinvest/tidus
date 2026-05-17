@@ -2877,8 +2877,11 @@ function fmt(n){
 }
 
 (function renderTable(){
-  // Sort by blended cost descending — (input + output) / 2 per 1M tokens
-  var sorted = MODELS.slice().sort(function(a,b){ return b.b - a.b; });
+  // Sort by blended cost ASCENDING — cheapest first. Tidus's whole pitch is
+  // "find the cheapest capable model", so leading with premium tier on
+  // the magazine table was the wrong frame. Cheapest first matches the
+  // router's actual scoring weight (cost_weight=0.70 in policies.yaml).
+  var sorted = MODELS.slice().sort(function(a,b){ return a.b - b.b; });
   var tbody = document.getElementById("model-tbody");
   var html = "";
   for(var i=0; i<sorted.length; i++){

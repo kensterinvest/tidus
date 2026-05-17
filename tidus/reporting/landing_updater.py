@@ -300,7 +300,7 @@ class LandingPageUpdater:
 
         headline       = self._build_headline(changes, new_models, today)
         exec_sum       = self._build_exec_summary(paid_specs, changes, new_models, today)
-        changes_html   = self._build_changes_html(changes, new_models)
+        changes_html   = self._build_changes_html(changes, new_models, all_specs)
         tips_html      = self._build_tips_html(paid_specs, changes)
 
         return (
@@ -441,7 +441,12 @@ class LandingPageUpdater:
 
         return "  ".join(paras)
 
-    def _build_changes_html(self, changes: list[dict], new_models: list) -> str:
+    def _build_changes_html(
+        self,
+        changes: list[dict],
+        new_models: list,
+        all_specs: dict,
+    ) -> str:
         if not changes and not new_models:
             return (
                 '<div class="mag-sec-title">&#x1F4C9; Price Changes This Week</div>'
@@ -461,21 +466,43 @@ class LandingPageUpdater:
             drops_m  = [c for c in mchanges if c["delta_pct"] < 0]
             card_type = "drop" if len(drops_m) >= (len(mchanges) - len(drops_m)) else "rise"
             vname = _VENDOR_NAMES.get(mchanges[0]["vendor"], mchanges[0]["vendor"].title())
+
+            # Always render BOTH input and output rows for context, so readers
+            # see the price relationship even when only one side moved.
+            # Earlier versions showed only the changed field, which made it
+            # hard to judge whether a 20% input drop was a $0.15 → $0.12 move
+            # on a cheap model or a $30 → $24 move on a premium one.
+            changes_by_field = {c["field"]: c for c in mchanges}
+            spec = all_specs.get(model_id)
+
             rows = ""
-            for ch in mchanges:
-                fl        = "Input" if ch["field"] == "input" else "Output"
-                sign      = "&minus;" if ch["delta_pct"] < 0 else "+"
-                val_cls   = "drop" if ch["delta_pct"] < 0 else "rise"
-                badge_cls = "d-drop" if ch["delta_pct"] < 0 else "d-rise"
-                rows += (
-                    f'<div class="cc-row">'
-                    f'<span class="cc-lbl">{fl}</span>'
-                    f'<span class="cc-old">${ch["old_1m"]:.3f}</span>'
-                    f'<span>&rarr;</span>'
-                    f'<span class="cc-new {val_cls}">${ch["new_1m"]:.3f}</span>'
-                    f'<span class="cc-delta {badge_cls}">{sign}{abs(ch["delta_pct"]):.1f}%</span>'
-                    f'</div>'
-                )
+            for field_key, field_label in (("input", "Input"), ("output", "Output")):
+                ch = changes_by_field.get(field_key)
+                if ch is not None:
+                    # Changed field — show old → new with delta badge.
+                    sign      = "&minus;" if ch["delta_pct"] < 0 else "+"
+                    val_cls   = "drop" if ch["delta_pct"] < 0 else "rise"
+                    badge_cls = "d-drop" if ch["delta_pct"] < 0 else "d-rise"
+                    rows += (
+                        f'<div class="cc-row">'
+                        f'<span class="cc-lbl">{field_label}</span>'
+                        f'<span class="cc-old">${ch["old_1m"]:.3f}</span>'
+                        f'<span>&rarr;</span>'
+                        f'<span class="cc-new {val_cls}">${ch["new_1m"]:.3f}</span>'
+                        f'<span class="cc-delta {badge_cls}">{sign}{abs(ch["delta_pct"]):.1f}%</span>'
+                        f'</div>'
+                    )
+                elif spec is not None:
+                    # Unchanged field — show current value greyed out so readers
+                    # see "vs $X on the other side" at a glance.
+                    price = spec.input_price if field_key == "input" else spec.output_price
+                    rows += (
+                        f'<div class="cc-row">'
+                        f'<span class="cc-lbl">{field_label}</span>'
+                        f'<span class="cc-old" style="color:#aaa">${price * 1000:.3f}</span>'
+                        f'<span style="color:#aaa;font-size:11px">unchanged</span>'
+                        f'</div>'
+                    )
             cards.append(
                 f'<div class="cc-card {card_type}">'
                 f'<div class="cc-model">{model_id}</div>'
