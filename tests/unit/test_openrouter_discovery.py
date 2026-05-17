@@ -43,6 +43,46 @@ class TestVendorFromOrId:
 # ── HTTP fetch ────────────────────────────────────────────────────────────────
 
 @pytest.mark.asyncio
+async def test_anthropic_dot_versioned_ids_canonicalized_to_dashes(monkeypatch):
+    """Regression for the dot/dash duplicate bug (2026-05-17):
+
+    Before the fix, the discovery source slash-stripped `anthropic/claude-opus-4.6`
+    to `claude-opus-4.6` (dot preserved) while the pricing source — using the
+    OPENROUTER_TO_TIDUS table — produced `claude-opus-4-6` (dash). That meant
+    the same model existed under two canonical ids; auto-promote wrote the
+    dot version into models.auto.yaml as a duplicate of hand-curated entries,
+    and any routing decision that picked it would 404 against api.anthropic.com.
+
+    After the fix, both sources share canonical_from_openrouter() from
+    tidus/sync/openrouter_id_map.py, so this test asserts the discovery
+    source now produces the dash-named canonical id."""
+    def handler(request: Request) -> Response:
+        return Response(200, json={
+            "data": [
+                {"id": "anthropic/claude-opus-4.7",   "pricing": {"prompt": "0.000005", "completion": "0.000025"}},
+                {"id": "anthropic/claude-opus-4.6",   "pricing": {"prompt": "0.000005", "completion": "0.000025"}},
+                {"id": "anthropic/claude-sonnet-4.6", "pricing": {"prompt": "0.000003", "completion": "0.000015"}},
+                {"id": "anthropic/claude-haiku-4.5",  "pricing": {"prompt": "0.000001", "completion": "0.000005"}},
+            ]
+        })
+
+    _patch_httpx_with(monkeypatch, handler)
+    models = await OpenRouterDiscoverySource().list_models()
+
+    ids = {m.model_id for m in models}
+    # ALL DASH, no dot — matches the hand-curated yaml canonical form
+    assert ids == {
+        "claude-opus-4-7",
+        "claude-opus-4-6",
+        "claude-sonnet-4-6",
+        "claude-haiku-4-5",
+    }
+    # vendor_id (raw OpenRouter id) is preserved for audit
+    by_canonical = {m.model_id: m.vendor_id for m in models}
+    assert by_canonical["claude-opus-4-6"] == "anthropic/claude-opus-4.6"
+
+
+@pytest.mark.asyncio
 async def test_list_models_parses_data_and_captures_pricing_metadata(monkeypatch):
     def handler(request: Request) -> Response:
         return Response(200, json={

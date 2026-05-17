@@ -55,6 +55,11 @@ from typing import Any
 import httpx
 import structlog
 
+from tidus.sync.openrouter_id_map import (
+    OPENROUTER_TO_TIDUS,
+    canonical_from_openrouter,
+    strip_variant,
+)
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
 log = structlog.get_logger(__name__)
@@ -64,72 +69,10 @@ _DEFAULT_TIMEOUT = 15.0
 _CONFIDENCE = 0.75
 _TOKENS_PER_THOUSAND = 1000.0  # OpenRouter quotes per token; Tidus stores per 1K
 
-# OpenRouter id → Tidus canonical id. Only listed when slash-strip + suffix
-# stripping doesn't already produce the right answer. Keep this list short
-# and well-justified; the slash-strip path covers most cases.
-#
-# How to extend: when OpenRouter ships a model Tidus knows under a different
-# canonical id, add the exact OpenRouter id (left) → Tidus id (right). Verify
-# both ids actually exist in their respective catalogs first.
-_OPENROUTER_TO_TIDUS: dict[str, str] = {
-    # Anthropic — OpenRouter sometimes lacks Tidus's date-versioned suffix.
-    "anthropic/claude-opus-4.7":     "claude-opus-4-7",
-    "anthropic/claude-opus-4.6":     "claude-opus-4-6",
-    "anthropic/claude-sonnet-4.6":   "claude-sonnet-4-6",
-    "anthropic/claude-haiku-4.5":    "claude-haiku-4-5",
-    # OpenAI — codex variants
-    "openai/gpt-5-codex":            "gpt-5-codex",
-    "openai/codex-mini":             "codex-mini-latest",
-    "openai/gpt-oss-120b":           "gpt-oss-120b",
-    # DeepSeek — Tidus uses short ids; OpenRouter often appends -chat / -base
-    "deepseek/deepseek-r1":          "deepseek-r1",
-    "deepseek/deepseek-chat":        "deepseek-v3",
-    "deepseek/deepseek-v3":          "deepseek-v3",
-    "deepseek/deepseek-v4":          "deepseek-v4",
-    # xAI
-    "x-ai/grok-4":                   "grok-4",
-    "x-ai/grok-3":                   "grok-3",
-    "x-ai/grok-3-fast":              "grok-3-fast",
-    # Moonshot
-    "moonshotai/kimi-k2.5":          "kimi-k2.5",
-    # Mistral
-    "mistralai/mistral-large":       "mistral-large-3",
-    "mistralai/mistral-medium":      "mistral-medium",
-    "mistralai/mistral-small":       "mistral-small",
-    "mistralai/mistral-nemo":        "mistral-nemo",
-    "mistralai/codestral":           "codestral",
-    "mistralai/devstral":            "devstral",
-    "mistralai/devstral-small":      "devstral-small",
-}
-
-
-def _strip_variant(or_id: str) -> str:
-    """OpenRouter sometimes appends `:free` / `:nitro` / `:beta` etc. Strip it."""
-    return or_id.split(":", 1)[0]
-
-
-def _canonical_from_openrouter(or_id: str) -> str | None:
-    """Return the Tidus canonical id for an OpenRouter id, or None if the
-    model isn't part of the Tidus catalog.
-
-    Resolution order:
-      1. Strip OpenRouter variant suffix (`:free`, `:nitro`, ...).
-      2. Exact match in the override table → use mapped value.
-      3. Drop the `vendor/` prefix and use what's left.
-
-    Returning None — rather than guessing — is intentional. Adding a
-    new model to the routing catalog needs `config/models.yaml` + (ideally)
-    a hardcoded baseline price; consensus.py will pick up the OpenRouter
-    quote automatically once the canonical id is in the YAML.
-    """
-    base = _strip_variant(or_id)
-    if base in _OPENROUTER_TO_TIDUS:
-        return _OPENROUTER_TO_TIDUS[base]
-    if "/" not in base:
-        return None
-    _, suffix = base.split("/", 1)
-    return suffix or None
-
+# Re-exports — preserved for backwards compatibility with existing test imports.
+_OPENROUTER_TO_TIDUS = OPENROUTER_TO_TIDUS
+_strip_variant = strip_variant
+_canonical_from_openrouter = canonical_from_openrouter
 
 def _parse_price(raw: Any) -> float:
     """OpenRouter encodes prices as strings — sometimes scientific notation.

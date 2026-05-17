@@ -28,6 +28,7 @@ import httpx
 import structlog
 
 from tidus.sync.discovery.base import DiscoveredModel, DiscoverySource
+from tidus.sync.openrouter_id_map import canonical_from_openrouter, strip_variant
 
 log = structlog.get_logger(__name__)
 
@@ -58,8 +59,8 @@ def _vendor_from_or_id(or_id: str) -> str:
     return _VENDOR_PREFIX_MAP.get(prefix, prefix)
 
 
-def _strip_variant(or_id: str) -> str:
-    return or_id.split(":", 1)[0]
+# Re-export for backwards compatibility with existing tests.
+_strip_variant = strip_variant
 
 
 class OpenRouterDiscoverySource(DiscoverySource):
@@ -122,16 +123,21 @@ class OpenRouterDiscoverySource(DiscoverySource):
             if not raw_id or "/" not in raw_id:
                 continue
 
-            base = _strip_variant(raw_id)
-            _, suffix = base.split("/", 1)
-            if not suffix:
+            # Use the shared OpenRouter → Tidus canonical map. Plain
+            # slash-strip produces dot-versioned Anthropic ids
+            # (`claude-opus-4.6`) that duplicate hand-curated dash ids
+            # (`claude-opus-4-6`) and would 404 if routed. The shared
+            # map normalizes both sources to the same answer.
+            canonical = canonical_from_openrouter(raw_id)
+            if not canonical:
                 continue
 
             # First-write wins on duplicate canonicals (OpenRouter sometimes
-            # lists the same model under multiple variant tags).
-            if suffix in seen_canonical:
+            # lists the same model under multiple variant tags that resolve
+            # to the same Tidus canonical id).
+            if canonical in seen_canonical:
                 continue
-            seen_canonical.add(suffix)
+            seen_canonical.add(canonical)
 
             vendor = _vendor_from_or_id(raw_id)
 
@@ -152,7 +158,7 @@ class OpenRouterDiscoverySource(DiscoverySource):
 
             out.append(
                 DiscoveredModel(
-                    model_id=suffix,
+                    model_id=canonical,
                     vendor_id=raw_id,
                     vendor=vendor,
                     display_name=item.get("name"),
