@@ -7,13 +7,75 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Changed
+### Added — Pricing sync overhaul (2026-05-16 → 2026-05-17)
 
-- **Pricing sync cadence**: weekly Sunday → Sundays and Wednesdays at 02:00 UTC (2026-04-23). `.github/workflows/weekly-sync.yml` now uses `cron: '0 2 * * 0,3'` (≈104 runs/year vs. 52). The AI market moves fast enough that a 7-day gap leaves routing cost estimates stale; a 3-4 day cadence keeps pricing, the DB, the landing page magazine, and subscriber emails current. Local Windows Task Scheduler script (`C:\Users\OWNER\scripts\tidus\setup_windows_schedule.ps1`) follows the same cadence (Sun + Wed 03:00 local). File name `weekly-sync.yml` kept for git-history continuity; workflow display name is now "Pricing Sync (Sun + Wed)". Docs updated in `docs/pricing-sync.md`, `docs/deployment.md`, `docs/pricing-model.md`, `docs/architecture.md`, `docs/configuration.md`, `docs/api-reference.md`, `README.md`. User-facing "Weekly Edition" branding on the magazine + subscribe page intentionally left unchanged — existing subscribers signed up for a weekly report and will now receive it at a higher cadence without a breaking promise.
+Closes the gap that had the magazine functionally frozen for 30 days even though
+the GitHub Actions job kept running green. Catalog grew from 55 hand-curated
+entries → 188 effective (55 hand-curated + 133 AI-vetted auto-promoted) across
+15 vendor families.
+
+- **OpenRouterPricingSource** (`tidus/sync/pricing/openrouter_source.py`, commit
+  `4b03da4`) — live multi-vendor pricing via `https://openrouter.ai/api/v1/models`,
+  no auth required. Confidence 0.75; consensus tie-break on `effective_date`
+  promotes live quotes over stale hardcoded entries.
+- **OpenRouterDiscoverySource** (`tidus/sync/discovery/openrouter.py`) — surfaces
+  every model OpenRouter brokers, no per-vendor API keys needed.
+- **AutoPromoter** (`tidus/sync/auto_promote.py`, commit `b5812aa`) — writes
+  `config/models.auto.yaml` from discovered+priced models. `ModelRegistry.load()`
+  merges with `models.yaml` (hand-curated wins on conflict). Conservative
+  defaults: tier 3, `capabilities=[chat]`, `max_complexity=moderate`,
+  `fallbacks=[]`. Kill-switch via `settings.auto_promote_enabled`.
+- **ClaudeAnomalyVerifier** (`tidus/sync/ai_verifier.py`, commit `93c430e`) —
+  Claude Opus 4.7 second-opinions any price move with `abs(delta_pct) ≥ 50%`
+  before revision activation. Prompt-cached, json-schema output, fail-open on
+  API error (magazine ships even during Anthropic outages). Surfaces rejections
+  in `PipelineResult.ai_rejected`.
+- **ClaudeDiscoveryVerifier** (commit `936f2b1`) — same pattern for newly
+  auto-promoted models: "is this real? is the price plausible?". Closes the
+  loop where rule-based filters can't catch semantic plausibility.
+- **Magazine surfaces AI rejections** (commit `de19f5a`) — new "🤖 AI Verifier"
+  section in pricing report shows model_id + reasoning for every Claude-blocked
+  move, so operators can audit if any real cuts got false-positive rejected.
+
+### Changed — Sensitivity & display
+
+- **`change_threshold`** lowered `0.05 → 0.01` (`config/policies.yaml`, commit
+  `9cef3a7`). The 5% threshold was sized for the manual-edit cadence; with live
+  OpenRouter data, real 1-4% vendor adjustments should now register.
+- **Drift alarm** (`drift_alarm_days: 21`) — magazine renders a top banner if
+  the active revision hasn't moved in N+ days despite live sources running
+  successfully. Catches the exact "green CI, stale data" failure mode.
+- **Magazine sort order flipped to cheapest-first** (`index.html`, commit
+  `5c96932`) — Tidus's whole pitch is "find the cheapest capable model"; the
+  marketing surface now leads with economy tier instead of premium.
+- **Change cards show input AND output** alongside the changed field, with the
+  unchanged side greyed and labeled — readers can judge moves in context.
+
+### Fixed
+
+- **Dot/dash duplicate bug** (commit `6c09261`) — `OpenRouterDiscoverySource`
+  was slash-stripping `anthropic/claude-opus-4.6` to `claude-opus-4.6` (dot),
+  duplicating the hand-curated `claude-opus-4-6` (dash). Routing the dot
+  version would 404 against `api.anthropic.com`. Fixed by sharing the
+  `OPENROUTER_TO_TIDUS` canonicalization map between pricing + discovery
+  sources via a new `tidus/sync/openrouter_id_map.py` module.
+- **Rule-based catalog prune** (commit `321a68c`) — 29 auto-promoted entries
+  with broken-for-Tidus model IDs removed: dated vendor snapshots,
+  speculative Grok versions, distilled variants, retired legacy models.
+  Backstop for when AI verifier can't run (no credits). See
+  `scripts/prune_auto_yaml_rules.py`.
 
 ### Known gaps (follow-up candidates)
 
 - **OpenRouter vendor map is hardcoded** (`C:\Users\OWNER\scripts\tidus\sync_pricing.py:OPENROUTER_MAP`, 34 entries). The Layer 2 sync does not discover new vendors or models that appear on OpenRouter — they must be added manually to the dict. The canonical Layer 1 (GitHub Actions) uses `HardcodedSource` + optional `TidusPricingFeedSource` from `tidus/sync/pricing/`, which has the same manual-curation model via `config/models.yaml`. A true "market research" step (diff OpenRouter catalog vs. local map, propose additions) is not implemented.
+- **ANTHROPIC_API_KEY** in GitHub Actions secrets is currently empty / has no
+  account credit balance, so both AI verifiers fail-open. Set the secret in
+  the repo settings + top up Anthropic API credits to enable verification on
+  the next sync.
+
+### Changed — earlier this cycle
+
+- **Pricing sync cadence**: weekly Sunday → Sundays and Wednesdays at 02:00 UTC (2026-04-23). `.github/workflows/weekly-sync.yml` now uses `cron: '0 2 * * 0,3'` (≈104 runs/year vs. 52). The AI market moves fast enough that a 7-day gap leaves routing cost estimates stale; a 3-4 day cadence keeps pricing, the DB, the landing page magazine, and subscriber emails current. Local Windows Task Scheduler script (`C:\Users\OWNER\scripts\tidus\setup_windows_schedule.ps1`) follows the same cadence (Sun + Wed 03:00 local). File name `weekly-sync.yml` kept for git-history continuity; workflow display name is now "Pricing Sync (Sun + Wed)". Docs updated in `docs/pricing-sync.md`, `docs/deployment.md`, `docs/pricing-model.md`, `docs/architecture.md`, `docs/configuration.md`, `docs/api-reference.md`, `README.md`. User-facing "Weekly Edition" branding on the magazine + subscribe page intentionally left unchanged — existing subscribers signed up for a weekly report and will now receive it at a higher cadence without a breaking promise.
 
 ## [v1.3.0] — 2026-04-21 — Auto-Classification Layer (Stages A + B)
 

@@ -147,7 +147,13 @@ Response:
 
 See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/v1/complete` (route + execute).
 
-## Supported Models (55 total, 45 enabled across 13 vendors — prices verified 2026-04-17)
+## Supported Models — 200+ models across 15 vendors
+
+**Catalog composition:**
+- **55 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
+- **130+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog.
+
+**Synced twice weekly** (Sun + Wed 02:00 UTC) via GitHub Actions. Live OpenRouter feed + hardcoded baseline + AI verification, all merged through MAD-based consensus before a new revision activates. See [docs/pricing-sync.md](docs/pricing-sync.md) for the pipeline.
 
 **8 production adapters live. 5 adapters in progress (models registered, adapters coming).**
 

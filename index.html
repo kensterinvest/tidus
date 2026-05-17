@@ -737,7 +737,7 @@ footer{background:#0a0f1e;padding:48px}
       <div class="hero-logo">tidus<span class="dot">.</span></div>
       <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
     </div>
-    <div class="hero-badge">Now tracking 55 models across 13 vendors · Weekly price sync</div>
+    <div class="hero-badge">Now tracking 200+ models across 15 vendors · Live OpenRouter sync + AI verification · Sun + Wed</div>
     <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
     <p class="hero-sub"><strong style="color:rgba(255,255,255,.92)">Free and open-source for every organisation — any size, any industry.</strong> Tidus selects the cheapest capable model for every AI request, automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted. Every dollar saved stays with you.</p>
     <div class="hero-actions">
@@ -1177,14 +1177,21 @@ response = client.chat.completions.create(
 
     <div style="margin-top:40px">
       <h3 style="font-size:17px;font-weight:700;color:#1a1a2e;margin-bottom:6px">How Pricing Data Is Obtained</h3>
-      <p style="font-size:14px;color:#888;margin-bottom:20px">Two independent sources are queried every Sunday. A MAD-based consensus algorithm cross-checks them and rejects outliers before any revision is created.</p>
+      <p style="font-size:14px;color:#888;margin-bottom:20px">Three independent sources are queried every Sunday and Wednesday. A MAD-based consensus algorithm cross-checks them and rejects outliers before any revision is created. New models that pass an AI sanity check enter the catalog automatically.</p>
       <div class="src-grid">
 
         <div class="src-card">
           <div class="src-badge always">Always Available</div>
           <div class="src-title">HardcodedSource</div>
           <div class="src-conf">confidence = 0.70</div>
-          <div class="src-desc">A built-in verified price table covering all 55 models. Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. Updated at least weekly. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+          <div class="src-desc">A built-in verified price table covering the hand-curated set (55 routing-critical models). Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+        </div>
+
+        <div class="src-card">
+          <div class="src-badge always">Live · No Auth</div>
+          <div class="src-title">OpenRouterPricingSource</div>
+          <div class="src-conf">confidence = 0.75</div>
+          <div class="src-desc">Pulls live per-token pricing for every model OpenRouter brokers — Google, OpenAI, Anthropic, DeepSeek, xAI, Mistral, Moonshot, Cohere, Qwen, Meta, Alibaba — through a single unauthenticated GET. Per-token prices are converted to Tidus's per-1K convention and surface as fresh quotes; the freshness tie-breaker in consensus lets a live OpenRouter quote dated today beat a hardcoded entry from weeks ago, so real vendor price cuts show up the same week they ship.</div>
         </div>
 
         <div class="src-card">
@@ -1198,7 +1205,14 @@ response = client.chat.completions.create(
           <div class="src-badge algo">Consensus Algorithm</div>
           <div class="src-title">MAD Outlier Detection</div>
           <div class="src-conf">Modified Z-Score · threshold = 3.5</div>
-          <div class="src-desc">When both sources provide a quote for the same model, the Modified Z-Score (Median Absolute Deviation) detects statistical outliers and rejects them. If one source shows $0.27/1M and the other shows $2.70/1M, the outlier is discarded — not averaged. If all sources agree exactly (MAD = 0), all are accepted. Only after consensus passes does a new versioned revision get written to the DB.</div>
+          <div class="src-desc">When multiple sources provide a quote for the same model, the Modified Z-Score (Median Absolute Deviation) detects statistical outliers and rejects them. If one source shows $0.27/1M and another shows $2.70/1M, the outlier is discarded — not averaged. If all sources agree exactly (MAD = 0), all are accepted. Only after consensus passes does a new versioned revision get written to the DB.</div>
+        </div>
+
+        <div class="src-card">
+          <div class="src-badge algo">AI Verification</div>
+          <div class="src-title">ClaudeAnomalyVerifier + ClaudeDiscoveryVerifier</div>
+          <div class="src-conf">Claude Opus 4.7 · fail-open</div>
+          <div class="src-desc">After consensus, Claude second-opinions any price move ≥50% and every newly discovered model — "is this price plausible? is this a real vendor model?". Rejected entries are dropped from the revision and surfaced in the magazine's AI Verifier section. Fail-open on API error means the magazine still ships during outages; same posture all the way down the stack.</div>
         </div>
 
       </div>
@@ -1283,7 +1297,7 @@ response = client.chat.completions.create(
   <div class="section-inner">
     <p class="section-tag">Latest Report</p>
     <h2 class="section-title">Weekly AI Market Intelligence</h2>
-    <p class="section-sub">Tidus continuously tracks prices across 55 models and 13 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday we generate this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings this week.</p>
+    <p class="section-sub">Tidus continuously tracks prices across 200+ models and 15 vendors — because accurate pricing is what makes intelligent routing possible. Every Sunday and Wednesday we run a multi-source sync (HardcodedSource + live OpenRouter feed + AI verification) and publish this market intelligence report to summarise what changed, which models rose or fell, and where routing teams can capture new savings.</p>
     <div style="margin-top:40px">
       <!-- TIDUS:MAG-CARD:START -->
       <div class="mag-card">
@@ -1731,7 +1745,7 @@ response = client.chat.completions.create(
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 1</div>
             <div class="exs-title">Capability Match</div>
-            <div class="exs-body">Task needs: <code>chat</code>. 55 models checked. All chat-capable models pass. Result: <strong>52 models survive</strong> (3 multimodal-only eliminated).</div>
+            <div class="exs-body">Task needs: <code>chat</code>. 200+ models checked. All chat-capable models pass. Result: <strong>~95% survive</strong> (multimodal-only and audio-only eliminated).</div>
           </div>
           <div class="ex-stage ex-pass">
             <div class="exs-num">Stage 2</div>
@@ -2617,7 +2631,7 @@ tenants:
 <section class="sub-section" id="subscribe">
   <div>
     <h2>Get the weekly AI pricing report</h2>
-    <p>55 models tracked. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
+    <p>200+ models tracked across 15 vendors. Price drops surfaced. Savings opportunities identified. Free, forever.</p>
     <form class="sub-form" id="sub-form" onsubmit="handleSub(event)">
       <input type="email" id="sub-email" placeholder="you@company.com" required>
       <button type="submit">Get the weekly report</button>
@@ -2661,7 +2675,9 @@ tenants:
 </footer>
 
 <script>
-// Model data — 55 models. b = blended cost = (input + output) / 2 per 1M tokens.
+// Model data — regenerated each sync (Sun + Wed) from the active registry revision.
+// b = blended cost = (input + output) / 2 per 1M tokens. Sorted client-side by
+// ascending blended cost so the cheapest models lead the table.
 const MODELS = [
   {id:"o1-pro", v:"OpenAI", t:3, b:375.00, i:150.00, o:600.00, ctx:200},
   {id:"gpt-5.5-pro", v:"OpenAI", t:3, b:105.00, i:30.00, o:180.00, ctx:1050},

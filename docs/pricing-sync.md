@@ -8,28 +8,37 @@ pass so models removed from `models.yaml` are dropped from new revisions.
 ## Architecture
 
 ```
-┌──────────────────┐   ┌─────────────────────────────┐
-│  HardcodedSource │   │  TidusPricingFeedSource      │
-│  confidence=0.7  │   │  confidence=0.85 (optional)  │
-│  41 models       │   │  TIDUS_PRICING_FEED_URL       │
-└────────┬─────────┘   └──────────────┬──────────────┘
-         │ PriceQuote[]               │ PriceQuote[]
-         └──────────┬─────────────────┘
-                    ▼
-         ┌──────────────────────┐
-         │   PriceConsensus     │  MAD-based outlier detection
-         │   (per model_id)     │  confidence-weighted selection
-         └──────────┬───────────┘
-                    ▼
-         ┌──────────────────────┐
-         │  RegistryPipeline    │  Three-tier validation
-         │  run_price_sync_cycle│  Atomic two-phase DB write
-         └──────────┬───────────┘
-                    ▼
-         ┌──────────────────────┐
-         │ model_catalog_       │  New ACTIVE revision
-         │ revisions (DB)       │  Old revision → SUPERSEDED
-         └──────────────────────┘
+┌──────────────────┐   ┌─────────────────────────────┐   ┌──────────────────────────────┐
+│  HardcodedSource │   │  OpenRouterPricingSource     │   │  TidusPricingFeedSource       │
+│  confidence=0.70 │   │  confidence=0.75             │   │  confidence=0.85 (optional)   │
+│  55 hand-curated │   │  live; ~200 models           │   │  TIDUS_PRICING_FEED_URL        │
+└────────┬─────────┘   └──────────────┬──────────────┘   └───────────────┬───────────────┘
+         │ PriceQuote[]               │ PriceQuote[]                     │ PriceQuote[]
+         └────────────────────────┬───┴──────────────────────────────────┘
+                                  ▼
+                       ┌──────────────────────┐
+                       │   PriceConsensus     │  MAD-based outlier detection
+                       │   (per model_id)     │  confidence + freshness tie-break
+                       └──────────┬───────────┘
+                                  ▼
+                       ┌──────────────────────┐
+                       │ ClaudeAnomalyVerifier│  AI sanity-check on ≥50% moves
+                       │ (fail-open on error) │  rejected → not in revision
+                       └──────────┬───────────┘
+                                  ▼
+                       ┌──────────────────────┐
+                       │  RegistryPipeline    │  Three-tier validation
+                       │  run_price_sync_cycle│  Atomic two-phase DB write
+                       └──────────┬───────────┘
+                                  ▼
+                       ┌──────────────────────┐
+                       │ model_catalog_       │  New ACTIVE revision
+                       │ revisions (DB)       │  Old revision → SUPERSEDED
+                       └──────────────────────┘
+
+  Parallel: OpenRouterDiscoverySource finds new models →
+            AutoPromoter + ClaudeDiscoveryVerifier →
+            config/models.auto.yaml (merged at registry load)
 ```
 
 Sundays and Wednesdays at 02:00 UTC, the GitHub Actions workflow
@@ -40,23 +49,34 @@ which calls `run_price_sync_cycle()`:
 > since v1.3.0 — the canonical scheduler is the GitHub Actions workflow above.
 > Leaving this section in the docs so the pipeline steps themselves stay easy to reason about.
 
-1. All available `PricingSource` instances are queried concurrently
-2. `PriceConsensus` resolves quotes using MAD outlier detection (see below)
-3. Models where the consensus price differs from the current active revision by ≥ `change_threshold` (5%) are collected
-4. If no models changed: exit — no new revision
-5. Tier 1 (Pydantic schema) + Tier 2 (cross-field invariants) validation run
-6. If validation passes: Phase A write inserts a PENDING revision + all entries
-7. Tier 3 canary probe samples up to 3 models with live health checks
-8. If canary passes: Phase B atomic flip promotes revision to ACTIVE (old → SUPERSEDED)
-9. `EffectiveRegistry` is refreshed, changes become live immediately
+1. Vendor discovery runs first (OpenRouter + per-vendor `/v1/models`), AutoPromoter writes verified-priced new entries to `config/models.auto.yaml`
+2. All available `PricingSource` instances are queried concurrently — HardcodedSource always, OpenRouterPricingSource by default, TidusPricingFeedSource if `TIDUS_PRICING_FEED_URL` is set
+3. `PriceConsensus` resolves quotes using MAD outlier detection; ties broken by source confidence, effective_date, retrieved_at (so a live OpenRouter quote dated today beats a stale hardcoded entry)
+4. Models where the consensus price differs from the current active revision by ≥ `change_threshold` (1%, lowered from 5% in 2026-05-16 for finer detection of vendor adjustments) are collected
+5. `ClaudeAnomalyVerifier` second-opinions every change with abs(delta_pct) ≥ 50%; rejected changes revert before the revision is written
+6. If no models changed: exit — no new revision
+7. Tier 1 (Pydantic schema) + Tier 2 (cross-field invariants) validation run
+8. If validation passes: Phase A write inserts a PENDING revision + all entries
+9. Tier 3 canary probe samples up to 3 models with live health checks
+10. If canary passes: Phase B atomic flip promotes revision to ACTIVE (old → SUPERSEDED)
+11. `EffectiveRegistry` is refreshed, changes become live immediately
 
 ## Pricing Sources
 
-### HardcodedSource (`confidence=0.7`)
+### HardcodedSource (`confidence=0.70`)
 
-Built-in price table in `tidus/sync/pricing/hardcoded_source.py`. Covers 41 models across
-Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Moonshot, Groq, Cohere, Qwen, Together AI.
-Always available. Updated manually when vendor prices change.
+Built-in price table in `tidus/sync/pricing/hardcoded_source.py`. Covers the 55 hand-curated
+routing-critical models — Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Moonshot,
+Cohere, Qwen, Groq, Together AI, Perplexity. Always available; manually verified against
+official vendor pricing pages. This is the ground-truth fallback when external sources fail.
+
+### OpenRouterPricingSource (`confidence=0.75`)
+
+Live multi-vendor pricing via OpenRouter's public `/api/v1/models` endpoint. No API key
+required. Pulls per-token pricing for ~200 models brokered by OpenRouter and converts to
+Tidus's per-1K convention. Higher confidence than hardcoded for freshness; the consensus
+tie-breaker on `effective_date` lets a live OpenRouter quote dated today win over a
+hardcoded entry from weeks ago, so real vendor price cuts surface within a sync cycle.
 
 ### TidusPricingFeedSource (`confidence=0.85`)
 

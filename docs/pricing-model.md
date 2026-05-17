@@ -103,7 +103,7 @@ _KNOWN_PRICES = {
     "claude-haiku-4-5":  {"input": 0.0008,  "output": 0.004},    # $0.80/$4 per 1M
     "claude-opus-4-6":   {"input": 0.015,   "output": 0.075},    # $15/$75 per 1M
     "gpt-4.1-mini":      {"input": 0.0004,  "output": 0.0016},   # $0.40/$1.60 per 1M
-    # ... 22 models total
+    # ... 55 hand-curated entries; ~130 more arrive via OpenRouter at sync time
 }
 ```
 
