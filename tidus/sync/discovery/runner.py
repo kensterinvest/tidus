@@ -32,7 +32,7 @@ from __future__ import annotations
 import asyncio
 import json
 from collections.abc import Iterable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -54,6 +54,14 @@ class DiscoveryReport:
     pending_review: list[DiscoveredModel]  # known + not yet in registry
     removed_from_vendor: list[str]         # ids absent this run (canonical_id only)
     total_discovered: int                  # total unique canonical ids known
+    # EVERY model returned by the vendor discovery sources this cycle, regardless
+    # of whether it's brand-new, pending review, or already in the registry.
+    # AutoPromoter MUST read this (not new_this_run+pending_review) — otherwise
+    # models that were promoted on a previous run get silently dropped from
+    # config/models.auto.yaml on the next run, because once they're in_registry
+    # the bucketing above hides them. That's the 2026-05-20 regression that
+    # collapsed the catalog from 188 to 56.
+    all_current: list[DiscoveredModel] = field(default_factory=list)
 
     @property
     def has_findings(self) -> bool:
@@ -152,6 +160,10 @@ class DiscoveryRunner:
             pending_review=sorted(pending_review, key=lambda m: (m.vendor, m.model_id)),
             removed_from_vendor=sorted(removed),
             total_discovered=len(merged_state),
+            # AutoPromoter needs the full set so previously-promoted models
+            # (now in_registry, hidden from the buckets above) don't fall
+            # off auto.yaml on the next run.
+            all_current=sorted(all_models.values(), key=lambda m: (m.vendor, m.model_id)),
         )
 
         log.info(

@@ -357,6 +357,48 @@ async def test_runner_first_seen_separates_new_vs_known(tmp_path: Path):
 
 
 @pytest.mark.asyncio
+async def test_runner_exposes_all_current_for_auto_promoter(tmp_path: Path):
+    """Regression for the 2026-05-20 catalog collapse (188 → 56).
+
+    AutoPromoter rewrites config/models.auto.yaml from its `promoted` list every
+    run. If it only sees new_this_run + pending_review, models that were
+    promoted on a PREVIOUS run (and are therefore now in_registry) get filtered
+    out by DiscoveryRunner's bucketing and silently fall off auto.yaml on the
+    next run — then the pricing pipeline's retirement logic drops them from
+    the DB. The fix: DiscoveryReport.all_current exposes EVERY discovered
+    model regardless of in_registry status, so AutoPromoter can re-evaluate
+    the full set each cycle."""
+    state = tmp_path / "discovered.json"
+
+    # Three models — two already in the registry (would normally be hidden
+    # from new_this_run/pending_review), one brand new.
+    src = StubSource(
+        "openai-models",
+        "openai",
+        [
+            _mk("gpt-5", "openai"),       # in registry
+            _mk("gpt-4.1", "openai"),     # in registry
+            _mk("gpt-5-mini", "openai"),  # brand new
+        ],
+    )
+    runner = DiscoveryRunner(
+        [src],
+        state_path=state,
+        registry_model_ids={"gpt-5", "gpt-4.1"},  # two are already routable
+    )
+    report = await runner.run()
+
+    # Bucketed lists hide the in_registry pair (this is the bug-prone surface)
+    assert {m.model_id for m in report.new_this_run} == {"gpt-5-mini"}
+    assert report.pending_review == []
+
+    # all_current must include ALL three so AutoPromoter doesn't lose the
+    # in_registry pair on the next regeneration of auto.yaml.
+    assert {m.model_id for m in report.all_current} == {"gpt-5", "gpt-4.1", "gpt-5-mini"}
+    assert len(report.all_current) == 3
+
+
+@pytest.mark.asyncio
 async def test_runner_records_models_absent_this_cycle(tmp_path: Path):
     state = tmp_path / "discovered.json"
 

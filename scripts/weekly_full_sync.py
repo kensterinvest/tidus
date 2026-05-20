@@ -116,11 +116,14 @@ async def main() -> int:
             enabled=True,
             ai_verifier=ai_verifier,
         )
-        # All discovered candidates: new_this_run + pending_review + everything
-        # currently in_registry. We rebuild the full file each run so an
-        # operator's hand promotion (move from auto.yaml → models.yaml)
-        # doesn't get clobbered by the next run.
-        all_discovered = list(discovery_report.new_this_run) + list(discovery_report.pending_review)
+        # MUST pass discovery_report.all_current (NOT new_this_run + pending_review).
+        # The bucketed lists hide models that are already in_registry, but those
+        # are EXACTLY the ones AutoPromoter needs to re-confirm each run — it
+        # rewrites auto.yaml from its `promoted` output, so anything missing
+        # from the input falls off the file and gets retired from the DB on
+        # the next price-sync cycle. (The 2026-05-20 regression that collapsed
+        # the catalog from 188 → 56 was this exact mis-wiring.)
+        all_discovered = list(discovery_report.all_current)
         ap_result = await promoter.run(
             discovered=all_discovered,
             hand_curated_ids=hand_curated_ids,
