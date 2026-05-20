@@ -3,7 +3,7 @@
     "display_name": "AionLabs: Aion-1.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -23,7 +23,7 @@
     "display_name": "AionLabs: Aion-1.0-Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -43,7 +43,7 @@
     "display_name": "AionLabs: Aion-2.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -63,7 +63,7 @@
     "display_name": "AionLabs: Aion-RP 1.0 (8B)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -83,7 +83,7 @@
     "display_name": "Auto Router",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 2000000,
       "input_modalities": [
@@ -107,7 +107,7 @@
     "display_name": "Body Builder (beta)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -126,8 +126,8 @@
   "claude-3-haiku": {
     "display_name": "Anthropic: Claude 3 Haiku",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -147,8 +147,8 @@
   "claude-3.5-haiku": {
     "display_name": "Anthropic: Claude 3.5 Haiku",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -164,6 +164,28 @@
     "source": "openrouter-discovery",
     "vendor": "anthropic",
     "vendor_id": "anthropic/claude-3.5-haiku"
+  },
+  "claude-haiku-4-5": {
+    "display_name": "Anthropic: Claude Haiku 4.5",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 200000,
+      "input_modalities": [
+        "text",
+        "image",
+        "file"
+      ],
+      "openrouter_id": "anthropic/claude-haiku-4.5",
+      "pricing": {
+        "completion": "0.000005",
+        "prompt": "0.000001"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "anthropic",
+    "vendor_id": "anthropic/claude-haiku-4.5"
   },
   "claude-haiku-4.5": {
     "display_name": "Anthropic: Claude Haiku 4.5",
@@ -191,7 +213,7 @@
     "display_name": "Anthropic Claude Haiku Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -212,8 +234,8 @@
   "claude-opus-4": {
     "display_name": "Anthropic: Claude Opus 4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -231,11 +253,55 @@
     "vendor": "anthropic",
     "vendor_id": "anthropic/claude-opus-4"
   },
+  "claude-opus-4-6": {
+    "display_name": "Anthropic: Claude Opus 4.6",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 1000000,
+      "input_modalities": [
+        "text",
+        "image",
+        "file"
+      ],
+      "openrouter_id": "anthropic/claude-opus-4.6",
+      "pricing": {
+        "completion": "0.000025",
+        "prompt": "0.000005"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "anthropic",
+    "vendor_id": "anthropic/claude-opus-4.6"
+  },
+  "claude-opus-4-7": {
+    "display_name": "Anthropic: Claude Opus 4.7",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 1000000,
+      "input_modalities": [
+        "text",
+        "image",
+        "file"
+      ],
+      "openrouter_id": "anthropic/claude-opus-4.7",
+      "pricing": {
+        "completion": "0.000025",
+        "prompt": "0.000005"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "anthropic",
+    "vendor_id": "anthropic/claude-opus-4.7"
+  },
   "claude-opus-4.1": {
     "display_name": "Anthropic: Claude Opus 4.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -256,8 +322,8 @@
   "claude-opus-4.5": {
     "display_name": "Anthropic: Claude Opus 4.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -300,8 +366,8 @@
   "claude-opus-4.6-fast": {
     "display_name": "Anthropic: Claude Opus 4.6 (Fast)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -344,8 +410,8 @@
   "claude-opus-4.7-fast": {
     "display_name": "Anthropic: Claude Opus 4.7 (Fast)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -367,7 +433,7 @@
     "display_name": "Anthropic: Claude Opus Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -388,8 +454,8 @@
   "claude-sonnet-4": {
     "display_name": "Anthropic: Claude Sonnet 4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -407,11 +473,33 @@
     "vendor": "anthropic",
     "vendor_id": "anthropic/claude-sonnet-4"
   },
+  "claude-sonnet-4-6": {
+    "display_name": "Anthropic: Claude Sonnet 4.6",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 1000000,
+      "input_modalities": [
+        "text",
+        "image",
+        "file"
+      ],
+      "openrouter_id": "anthropic/claude-sonnet-4.6",
+      "pricing": {
+        "completion": "0.000015",
+        "prompt": "0.000003"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "anthropic",
+    "vendor_id": "anthropic/claude-sonnet-4.6"
+  },
   "claude-sonnet-4.5": {
     "display_name": "Anthropic: Claude Sonnet 4.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -455,7 +543,7 @@
     "display_name": "Anthropic Claude Sonnet Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -477,7 +565,7 @@
     "display_name": "Baidu Qianfan: CoBuddy (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -497,7 +585,7 @@
     "display_name": "AlfredPros: CodeLLaMa 7B Instruct Solidity",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 4096,
       "input_modalities": [
@@ -517,7 +605,7 @@
     "display_name": "Arcee AI: Coder Large",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -536,8 +624,8 @@
   "codestral-2508": {
     "display_name": "Mistral: Codestral 2508",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -558,7 +646,7 @@
     "display_name": "Deep Cogito: Cogito v2.1 671B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -577,8 +665,8 @@
   "command-a": {
     "display_name": "Cohere: Command A",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -597,8 +685,8 @@
   "command-r-08-2024": {
     "display_name": "Cohere: Command R (08-2024)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -617,8 +705,8 @@
   "command-r-plus-08-2024": {
     "display_name": "Cohere: Command R+ (08-2024)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -637,8 +725,8 @@
   "command-r7b-12-2024": {
     "display_name": "Cohere: Command R7B (12-2024)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -658,7 +746,7 @@
     "display_name": "TheDrummer: Cydonia 24B V4.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -697,8 +785,8 @@
   "deepseek-chat-v3-0324": {
     "display_name": "DeepSeek: DeepSeek V3 0324",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -717,8 +805,8 @@
   "deepseek-chat-v3.1": {
     "display_name": "DeepSeek: DeepSeek V3.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -738,7 +826,7 @@
     "display_name": "DeepSeek: R1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -757,8 +845,8 @@
   "deepseek-r1-0528": {
     "display_name": "DeepSeek: R1 0528",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -777,8 +865,8 @@
   "deepseek-r1-distill-llama-70b": {
     "display_name": "DeepSeek: R1 Distill Llama 70B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -797,8 +885,8 @@
   "deepseek-r1-distill-qwen-32b": {
     "display_name": "DeepSeek: R1 Distill Qwen 32B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -814,11 +902,31 @@
     "vendor": "deepseek",
     "vendor_id": "deepseek/deepseek-r1-distill-qwen-32b"
   },
+  "deepseek-v3": {
+    "display_name": "DeepSeek: DeepSeek V3",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 163840,
+      "input_modalities": [
+        "text"
+      ],
+      "openrouter_id": "deepseek/deepseek-chat",
+      "pricing": {
+        "completion": "0.00000089",
+        "prompt": "0.00000032"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "deepseek",
+    "vendor_id": "deepseek/deepseek-chat"
+  },
   "deepseek-v3.1-nex-n1": {
     "display_name": "Nex AGI: DeepSeek V3.1 Nex N1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -837,8 +945,8 @@
   "deepseek-v3.1-terminus": {
     "display_name": "DeepSeek: DeepSeek V3.1 Terminus",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -857,8 +965,8 @@
   "deepseek-v3.2": {
     "display_name": "DeepSeek: DeepSeek V3.2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -877,8 +985,8 @@
   "deepseek-v3.2-exp": {
     "display_name": "DeepSeek: DeepSeek V3.2 Exp",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -897,8 +1005,8 @@
   "deepseek-v3.2-speciale": {
     "display_name": "DeepSeek: DeepSeek V3.2 Speciale",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -918,7 +1026,7 @@
     "display_name": "DeepSeek: DeepSeek V4 Flash (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -937,8 +1045,8 @@
   "deepseek-v4-pro": {
     "display_name": "DeepSeek: DeepSeek V4 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -957,8 +1065,8 @@
   "devstral-2512": {
     "display_name": "Mistral: Devstral 2 2512",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -978,8 +1086,8 @@
   "devstral-medium": {
     "display_name": "Mistral: Devstral Medium",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1000,7 +1108,7 @@
     "display_name": "Mistral: Devstral Small 1.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1021,7 +1129,7 @@
     "display_name": "Venice: Uncensored (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -1041,7 +1149,7 @@
     "display_name": "Baidu: ERNIE 4.5 21B A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1061,7 +1169,7 @@
     "display_name": "Baidu: ERNIE 4.5 21B A3B Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1081,7 +1189,7 @@
     "display_name": "Baidu: ERNIE 4.5 300B A47B ",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1101,7 +1209,7 @@
     "display_name": "Baidu: ERNIE 4.5 VL 28B A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1122,7 +1230,7 @@
     "display_name": "Baidu: ERNIE 4.5 VL 424B A47B ",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1143,7 +1251,7 @@
     "display_name": "Free Models Router",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -1163,8 +1271,8 @@
   "gemini-2.0-flash-001": {
     "display_name": "Google: Gemini 2.0 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1187,8 +1295,8 @@
   "gemini-2.0-flash-lite-001": {
     "display_name": "Google: Gemini 2.0 Flash Lite",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1212,7 +1320,7 @@
     "display_name": "Google: Gemini 2.5 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1235,8 +1343,8 @@
   "gemini-2.5-flash-image": {
     "display_name": "Google: Nano Banana (Gemini 2.5 Flash Image)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -1256,8 +1364,8 @@
   "gemini-2.5-flash-lite": {
     "display_name": "Google: Gemini 2.5 Flash Lite",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1281,7 +1389,7 @@
     "display_name": "Google: Gemini 2.5 Flash Lite Preview 09-2025",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1305,7 +1413,7 @@
     "display_name": "Google: Gemini 2.5 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1329,7 +1437,7 @@
     "display_name": "Google: Gemini 2.5 Pro Preview 06-05",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1352,7 +1460,7 @@
     "display_name": "Google: Gemini 2.5 Pro Preview 05-06",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1376,7 +1484,7 @@
     "display_name": "Google: Gemini 3 Flash Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1400,7 +1508,7 @@
     "display_name": "Google: Nano Banana Pro (Gemini 3 Pro Image Preview)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -1421,7 +1529,7 @@
     "display_name": "Google: Nano Banana 2 (Gemini 3.1 Flash Image Preview)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1441,8 +1549,8 @@
   "gemini-3.1-flash-lite": {
     "display_name": "Google: Gemini 3.1 Flash Lite",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1466,7 +1574,7 @@
     "display_name": "Google: Gemini 3.1 Flash Lite Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1490,7 +1598,7 @@
     "display_name": "Google: Gemini 3.1 Pro Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1514,7 +1622,7 @@
     "display_name": "Google: Gemini 3.1 Pro Preview Custom Tools",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048756,
       "input_modalities": [
@@ -1534,24 +1642,48 @@
     "vendor": "google",
     "vendor_id": "google/gemini-3.1-pro-preview-customtools"
   },
-  "gemini-flash-latest": {
-    "display_name": "Google Gemini Flash Latest",
-    "first_seen": "2026-05-17T05:52:25.712663+00:00",
+  "gemini-3.5-flash": {
+    "display_name": "Google: Gemini 3.5 Flash",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
         "text",
         "image",
+        "video",
         "file",
-        "audio",
-        "video"
+        "audio"
+      ],
+      "openrouter_id": "google/gemini-3.5-flash",
+      "pricing": {
+        "completion": "0.000009",
+        "prompt": "0.0000015"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "google",
+    "vendor_id": "google/gemini-3.5-flash"
+  },
+  "gemini-flash-latest": {
+    "display_name": "Google Gemini Flash Latest",
+    "first_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": false,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 1048576,
+      "input_modalities": [
+        "text",
+        "image",
+        "video",
+        "file",
+        "audio"
       ],
       "openrouter_id": "~google/gemini-flash-latest",
       "pricing": {
-        "completion": "0.000003",
-        "prompt": "0.0000005"
+        "completion": "0.000009",
+        "prompt": "0.0000015"
       }
     },
     "source": "openrouter-discovery",
@@ -1562,7 +1694,7 @@
     "display_name": "Google Gemini Pro Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -1585,8 +1717,8 @@
   "gemma-2-27b-it": {
     "display_name": "Google: Gemma 2 27B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -1605,8 +1737,8 @@
   "gemma-3-12b-it": {
     "display_name": "Google: Gemma 3 12B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1626,8 +1758,8 @@
   "gemma-3-27b-it": {
     "display_name": "Google: Gemma 3 27B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1647,8 +1779,8 @@
   "gemma-3-4b-it": {
     "display_name": "Google: Gemma 3 4B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1668,8 +1800,8 @@
   "gemma-3n-e4b-it": {
     "display_name": "Google: Gemma 3n 4B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -1689,7 +1821,7 @@
     "display_name": "Google: Gemma 4 26B A4B  (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -1711,7 +1843,7 @@
     "display_name": "Google: Gemma 4 31B (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -1733,7 +1865,7 @@
     "display_name": "Z.ai: GLM 4 32B ",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -1753,7 +1885,7 @@
     "display_name": "Z.ai: GLM 4.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1773,7 +1905,7 @@
     "display_name": "Z.ai: GLM 4.5 Air (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1793,7 +1925,7 @@
     "display_name": "Z.ai: GLM 4.5V",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -1814,7 +1946,7 @@
     "display_name": "Z.ai: GLM 4.6",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1834,7 +1966,7 @@
     "display_name": "Z.ai: GLM 4.6V",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -1856,7 +1988,7 @@
     "display_name": "Z.ai: GLM 4.7",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1876,7 +2008,7 @@
     "display_name": "Z.ai: GLM 4.7 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1896,7 +2028,7 @@
     "display_name": "Z.ai: GLM 5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1916,7 +2048,7 @@
     "display_name": "Z.ai: GLM 5 Turbo",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1936,16 +2068,16 @@
     "display_name": "Z.ai: GLM 5.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
-      "context_length": 202752,
+      "context_length": 202800,
       "input_modalities": [
         "text"
       ],
       "openrouter_id": "z-ai/glm-5.1",
       "pricing": {
-        "completion": "0.00000308",
-        "prompt": "0.00000098"
+        "completion": "0",
+        "prompt": "0"
       }
     },
     "source": "openrouter-discovery",
@@ -1956,7 +2088,7 @@
     "display_name": "Z.ai: GLM 5V Turbo",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 202752,
       "input_modalities": [
@@ -1977,8 +2109,8 @@
   "gpt-3.5-turbo": {
     "display_name": "OpenAI: GPT-3.5 Turbo",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 16385,
       "input_modalities": [
@@ -1997,8 +2129,8 @@
   "gpt-3.5-turbo-0613": {
     "display_name": "OpenAI: GPT-3.5 Turbo (older v0613)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 4095,
       "input_modalities": [
@@ -2017,8 +2149,8 @@
   "gpt-3.5-turbo-16k": {
     "display_name": "OpenAI: GPT-3.5 Turbo 16k",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 16385,
       "input_modalities": [
@@ -2037,8 +2169,8 @@
   "gpt-3.5-turbo-instruct": {
     "display_name": "OpenAI: GPT-3.5 Turbo Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 4095,
       "input_modalities": [
@@ -2057,8 +2189,8 @@
   "gpt-4": {
     "display_name": "OpenAI: GPT-4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8191,
       "input_modalities": [
@@ -2077,8 +2209,8 @@
   "gpt-4-0314": {
     "display_name": "OpenAI: GPT-4 (older v0314)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8191,
       "input_modalities": [
@@ -2098,7 +2230,7 @@
     "display_name": "OpenAI: GPT-4 Turbo (older v1106)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2117,8 +2249,8 @@
   "gpt-4-turbo": {
     "display_name": "OpenAI: GPT-4 Turbo",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2139,7 +2271,7 @@
     "display_name": "OpenAI: GPT-4 Turbo Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2159,7 +2291,7 @@
     "display_name": "OpenAI: GPT-4.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1047576,
       "input_modalities": [
@@ -2181,7 +2313,7 @@
     "display_name": "OpenAI: GPT-4.1 Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1047576,
       "input_modalities": [
@@ -2203,7 +2335,7 @@
     "display_name": "OpenAI: GPT-4.1 Nano",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1047576,
       "input_modalities": [
@@ -2225,7 +2357,7 @@
     "display_name": "OpenAI: GPT-4o",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2246,8 +2378,8 @@
   "gpt-4o-2024-05-13": {
     "display_name": "OpenAI: GPT-4o (2024-05-13)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2268,8 +2400,8 @@
   "gpt-4o-2024-08-06": {
     "display_name": "OpenAI: GPT-4o (2024-08-06)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2290,8 +2422,8 @@
   "gpt-4o-2024-11-20": {
     "display_name": "OpenAI: GPT-4o (2024-11-20)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2313,7 +2445,7 @@
     "display_name": "OpenAI: GPT-4o Audio",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2334,7 +2466,7 @@
     "display_name": "OpenAI: GPT-4o-mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2355,8 +2487,8 @@
   "gpt-4o-mini-2024-07-18": {
     "display_name": "OpenAI: GPT-4o-mini (2024-07-18)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2378,7 +2510,7 @@
     "display_name": "OpenAI: GPT-4o-mini Search Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2398,7 +2530,7 @@
     "display_name": "OpenAI: GPT-4o Search Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2417,8 +2549,8 @@
   "gpt-5": {
     "display_name": "OpenAI: GPT-5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2439,8 +2571,8 @@
   "gpt-5-chat": {
     "display_name": "OpenAI: GPT-5 Chat",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2462,7 +2594,7 @@
     "display_name": "OpenAI: GPT-5 Codex",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2482,8 +2614,8 @@
   "gpt-5-image": {
     "display_name": "OpenAI: GPT-5 Image",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2504,8 +2636,8 @@
   "gpt-5-image-mini": {
     "display_name": "OpenAI: GPT-5 Image Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2526,8 +2658,8 @@
   "gpt-5-mini": {
     "display_name": "OpenAI: GPT-5 Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2548,8 +2680,8 @@
   "gpt-5-nano": {
     "display_name": "OpenAI: GPT-5 Nano",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2570,8 +2702,8 @@
   "gpt-5-pro": {
     "display_name": "OpenAI: GPT-5 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2592,8 +2724,8 @@
   "gpt-5.1": {
     "display_name": "OpenAI: GPT-5.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2614,8 +2746,8 @@
   "gpt-5.1-chat": {
     "display_name": "OpenAI: GPT-5.1 Chat",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2636,8 +2768,8 @@
   "gpt-5.1-codex": {
     "display_name": "OpenAI: GPT-5.1-Codex",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2657,8 +2789,8 @@
   "gpt-5.1-codex-max": {
     "display_name": "OpenAI: GPT-5.1-Codex-Max",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2678,8 +2810,8 @@
   "gpt-5.1-codex-mini": {
     "display_name": "OpenAI: GPT-5.1-Codex-Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2699,8 +2831,8 @@
   "gpt-5.2": {
     "display_name": "OpenAI: GPT-5.2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2721,8 +2853,8 @@
   "gpt-5.2-chat": {
     "display_name": "OpenAI: GPT-5.2 Chat",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2743,8 +2875,8 @@
   "gpt-5.2-codex": {
     "display_name": "OpenAI: GPT-5.2-Codex",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2764,8 +2896,8 @@
   "gpt-5.2-pro": {
     "display_name": "OpenAI: GPT-5.2 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2786,8 +2918,8 @@
   "gpt-5.3-chat": {
     "display_name": "OpenAI: GPT-5.3 Chat",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -2808,8 +2940,8 @@
   "gpt-5.3-codex": {
     "display_name": "OpenAI: GPT-5.3-Codex",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2830,8 +2962,8 @@
   "gpt-5.4": {
     "display_name": "OpenAI: GPT-5.4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1050000,
       "input_modalities": [
@@ -2852,8 +2984,8 @@
   "gpt-5.4-image-2": {
     "display_name": "OpenAI: GPT-5.4 Image 2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 272000,
       "input_modalities": [
@@ -2874,8 +3006,8 @@
   "gpt-5.4-mini": {
     "display_name": "OpenAI: GPT-5.4 Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2896,8 +3028,8 @@
   "gpt-5.4-nano": {
     "display_name": "OpenAI: GPT-5.4 Nano",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -2918,8 +3050,8 @@
   "gpt-5.4-pro": {
     "display_name": "OpenAI: GPT-5.4 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1050000,
       "input_modalities": [
@@ -2940,8 +3072,8 @@
   "gpt-5.5": {
     "display_name": "OpenAI: GPT-5.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1050000,
       "input_modalities": [
@@ -2962,8 +3094,8 @@
   "gpt-5.5-pro": {
     "display_name": "OpenAI: GPT-5.5 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1050000,
       "input_modalities": [
@@ -2984,8 +3116,8 @@
   "gpt-audio": {
     "display_name": "OpenAI: GPT Audio",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -3005,8 +3137,8 @@
   "gpt-audio-mini": {
     "display_name": "OpenAI: GPT Audio Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -3026,8 +3158,8 @@
   "gpt-chat-latest": {
     "display_name": "OpenAI: GPT Chat Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -3049,7 +3181,7 @@
     "display_name": "OpenAI GPT Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1050000,
       "input_modalities": [
@@ -3071,7 +3203,7 @@
     "display_name": "OpenAI GPT Mini Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 400000,
       "input_modalities": [
@@ -3093,7 +3225,7 @@
     "display_name": "OpenAI: gpt-oss-120b (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3113,7 +3245,7 @@
     "display_name": "OpenAI: gpt-oss-20b (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3132,8 +3264,8 @@
   "gpt-oss-safeguard-20b": {
     "display_name": "OpenAI: gpt-oss-safeguard-20b",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3153,7 +3285,7 @@
     "display_name": "IBM: Granite 4.0 Micro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131000,
       "input_modalities": [
@@ -3173,7 +3305,7 @@
     "display_name": "IBM: Granite 4.1 8B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3192,8 +3324,8 @@
   "grok-4.20": {
     "display_name": "xAI: Grok 4.20",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 2000000,
       "input_modalities": [
@@ -3214,8 +3346,8 @@
   "grok-4.20-multi-agent": {
     "display_name": "xAI: Grok 4.20 Multi-Agent",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 2000000,
       "input_modalities": [
@@ -3236,8 +3368,8 @@
   "grok-4.3": {
     "display_name": "xAI: Grok 4.3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -3258,7 +3390,7 @@
     "display_name": "NousResearch: Hermes 2 Pro - Llama-3 8B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -3278,7 +3410,7 @@
     "display_name": "Nous: Hermes 3 405B Instruct (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3298,7 +3430,7 @@
     "display_name": "Nous: Hermes 3 70B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3318,7 +3450,7 @@
     "display_name": "Nous: Hermes 4 405B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3338,7 +3470,7 @@
     "display_name": "Nous: Hermes 4 70B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3358,7 +3490,7 @@
     "display_name": "Tencent: Hunyuan A13B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3378,7 +3510,7 @@
     "display_name": "Tencent: Hy3 preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3398,7 +3530,7 @@
     "display_name": "Inflection: Inflection 3 Pi",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8000,
       "input_modalities": [
@@ -3418,7 +3550,7 @@
     "display_name": "Inflection: Inflection 3 Productivity",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8000,
       "input_modalities": [
@@ -3438,7 +3570,7 @@
     "display_name": "Prime Intellect: INTELLECT-3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3458,7 +3590,7 @@
     "display_name": "AI21: Jamba Large 1.7",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -3478,7 +3610,7 @@
     "display_name": "Kwaipilot: KAT-Coder-Pro V2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -3497,8 +3629,8 @@
   "kimi-k2": {
     "display_name": "MoonshotAI: Kimi K2 0711",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3517,8 +3649,8 @@
   "kimi-k2-0905": {
     "display_name": "MoonshotAI: Kimi K2 0905",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3537,8 +3669,8 @@
   "kimi-k2-thinking": {
     "display_name": "MoonshotAI: Kimi K2 Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3558,7 +3690,7 @@
     "display_name": "MoonshotAI: Kimi K2.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3578,8 +3710,8 @@
   "kimi-k2.6": {
     "display_name": "MoonshotAI: Kimi K2.6",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3600,7 +3732,7 @@
     "display_name": "MoonshotAI Kimi Latest",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3621,7 +3753,7 @@
     "display_name": "Sao10k: Llama 3 Euryale 70B v2.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -3641,7 +3773,7 @@
     "display_name": "Sao10K: Llama 3 8B Lunaris",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -3661,7 +3793,7 @@
     "display_name": "Sao10K: Llama 3.1 70B Hanami x1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 16000,
       "input_modalities": [
@@ -3681,7 +3813,7 @@
     "display_name": "Sao10K: Llama 3.1 Euryale 70B v2.2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3701,7 +3833,7 @@
     "display_name": "Sao10K: Llama 3.3 Euryale 70B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3721,7 +3853,7 @@
     "display_name": "Poolside: Laguna M.1 (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3741,7 +3873,7 @@
     "display_name": "Poolside: Laguna XS.2 (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3761,7 +3893,7 @@
     "display_name": "LiquidAI: LFM2-24B-A2B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -3781,7 +3913,7 @@
     "display_name": "LiquidAI: LFM2.5-1.2B-Instruct (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -3801,7 +3933,7 @@
     "display_name": "LiquidAI: LFM2.5-1.2B-Thinking (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -3821,7 +3953,7 @@
     "display_name": "inclusionAI: Ling-2.6-1T",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3841,7 +3973,7 @@
     "display_name": "inclusionAI: Ling-2.6-flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -3860,8 +3992,8 @@
   "llama-3-70b-instruct": {
     "display_name": "Meta: Llama 3 70B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -3880,8 +4012,8 @@
   "llama-3-8b-instruct": {
     "display_name": "Meta: Llama 3 8B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8192,
       "input_modalities": [
@@ -3900,8 +4032,8 @@
   "llama-3.1-70b-instruct": {
     "display_name": "Meta: Llama 3.1 70B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3920,8 +4052,8 @@
   "llama-3.1-8b-instruct": {
     "display_name": "Meta: Llama 3.1 8B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3940,8 +4072,8 @@
   "llama-3.2-11b-vision-instruct": {
     "display_name": "Meta: Llama 3.2 11B Vision Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3961,8 +4093,8 @@
   "llama-3.2-1b-instruct": {
     "display_name": "Meta: Llama 3.2 1B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -3982,7 +4114,7 @@
     "display_name": "Meta: Llama 3.2 3B Instruct (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4002,7 +4134,7 @@
     "display_name": "Meta: Llama 3.3 70B Instruct (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4022,7 +4154,7 @@
     "display_name": "NVIDIA: Llama 3.3 Nemotron Super 49B V1.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4041,8 +4173,8 @@
   "llama-4-maverick": {
     "display_name": "Meta: Llama 4 Maverick",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4062,8 +4194,8 @@
   "llama-4-scout": {
     "display_name": "Meta: Llama 4 Scout",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 10000000,
       "input_modalities": [
@@ -4083,8 +4215,8 @@
   "llama-guard-3-8b": {
     "display_name": "Llama Guard 3 8B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4103,8 +4235,8 @@
   "llama-guard-4-12b": {
     "display_name": "Meta: Llama Guard 4 12B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 163840,
       "input_modalities": [
@@ -4125,7 +4257,7 @@
     "display_name": "Google: Lyria 3 Clip Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4146,7 +4278,7 @@
     "display_name": "Google: Lyria 3 Pro Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4167,7 +4299,7 @@
     "display_name": "Arcee AI: Maestro Reasoning",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4187,7 +4319,7 @@
     "display_name": "Magnum v4 72B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -4207,7 +4339,7 @@
     "display_name": "Inception: Mercury 2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -4227,7 +4359,7 @@
     "display_name": "Xiaomi: MiMo-V2-Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4247,7 +4379,7 @@
     "display_name": "Xiaomi: MiMo-V2-Omni",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4270,7 +4402,7 @@
     "display_name": "Xiaomi: MiMo-V2-Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4290,7 +4422,7 @@
     "display_name": "Xiaomi: MiMo-V2.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4313,7 +4445,7 @@
     "display_name": "Xiaomi: MiMo-V2.5-Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -4333,7 +4465,7 @@
     "display_name": "MiniMax: MiniMax-01",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000192,
       "input_modalities": [
@@ -4354,7 +4486,7 @@
     "display_name": "MiniMax: MiniMax M1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -4374,7 +4506,7 @@
     "display_name": "MiniMax: MiniMax M2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 204800,
       "input_modalities": [
@@ -4394,7 +4526,7 @@
     "display_name": "MiniMax: MiniMax M2-her",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -4414,7 +4546,7 @@
     "display_name": "MiniMax: MiniMax M2.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 204800,
       "input_modalities": [
@@ -4434,7 +4566,7 @@
     "display_name": "MiniMax: MiniMax M2.5 (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 204800,
       "input_modalities": [
@@ -4454,7 +4586,7 @@
     "display_name": "MiniMax: MiniMax M2.7",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 204800,
       "input_modalities": [
@@ -4473,8 +4605,8 @@
   "ministral-14b-2512": {
     "display_name": "Mistral: Ministral 3 14B 2512",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4494,8 +4626,8 @@
   "ministral-3b-2512": {
     "display_name": "Mistral: Ministral 3 3B 2512",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4515,8 +4647,8 @@
   "ministral-8b-2512": {
     "display_name": "Mistral: Ministral 3 8B 2512",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4536,8 +4668,8 @@
   "mistral-7b-instruct-v0.1": {
     "display_name": "Mistral: Mistral 7B Instruct v0.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 4096,
       "input_modalities": [
@@ -4577,8 +4709,8 @@
   "mistral-large-2407": {
     "display_name": "Mistral Large 2407",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4598,8 +4730,8 @@
   "mistral-large-2411": {
     "display_name": "Mistral Large 2411",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4619,8 +4751,8 @@
   "mistral-large-2512": {
     "display_name": "Mistral: Mistral Large 3 2512",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4638,11 +4770,32 @@
     "vendor": "mistral",
     "vendor_id": "mistralai/mistral-large-2512"
   },
+  "mistral-large-3": {
+    "display_name": "Mistral Large",
+    "first_seen": "2026-05-20T06:13:14.676607+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
+    "raw_metadata": {
+      "context_length": 128000,
+      "input_modalities": [
+        "text",
+        "file"
+      ],
+      "openrouter_id": "mistralai/mistral-large",
+      "pricing": {
+        "completion": "0.000006",
+        "prompt": "0.000002"
+      }
+    },
+    "source": "openrouter-discovery",
+    "vendor": "mistral",
+    "vendor_id": "mistralai/mistral-large"
+  },
   "mistral-medium-3": {
     "display_name": "Mistral: Mistral Medium 3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4663,8 +4816,8 @@
   "mistral-medium-3-5": {
     "display_name": "Mistral: Mistral Medium 3.5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4685,8 +4838,8 @@
   "mistral-medium-3.1": {
     "display_name": "Mistral: Mistral Medium 3.1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4708,7 +4861,7 @@
     "display_name": "Mistral: Mistral Nemo",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -4716,7 +4869,7 @@
       ],
       "openrouter_id": "mistralai/mistral-nemo",
       "pricing": {
-        "completion": "0.00000004",
+        "completion": "0.00000003",
         "prompt": "0.00000002"
       }
     },
@@ -4727,8 +4880,8 @@
   "mistral-saba": {
     "display_name": "Mistral: Saba",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -4748,8 +4901,8 @@
   "mistral-small-24b-instruct-2501": {
     "display_name": "Mistral: Mistral Small 3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -4768,8 +4921,8 @@
   "mistral-small-2603": {
     "display_name": "Mistral: Mistral Small 4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4789,8 +4942,8 @@
   "mistral-small-3.1-24b-instruct": {
     "display_name": "Mistral: Mistral Small 3.1 24B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -4810,8 +4963,8 @@
   "mistral-small-3.2-24b-instruct": {
     "display_name": "Mistral: Mistral Small 3.2 24B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -4831,8 +4984,8 @@
   "mixtral-8x22b-instruct": {
     "display_name": "Mistral: Mixtral 8x22B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -4853,7 +5006,7 @@
     "display_name": "Morph: Morph V3 Fast",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 81920,
       "input_modalities": [
@@ -4873,7 +5026,7 @@
     "display_name": "Morph: Morph V3 Large",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -4893,7 +5046,7 @@
     "display_name": "MythoMax 13B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 4096,
       "input_modalities": [
@@ -4913,7 +5066,7 @@
     "display_name": "NVIDIA: Nemotron 3 Nano 30B A3B (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -4933,7 +5086,7 @@
     "display_name": "NVIDIA: Nemotron 3 Nano Omni (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -4956,7 +5109,7 @@
     "display_name": "NVIDIA: Nemotron 3 Super (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -4976,7 +5129,7 @@
     "display_name": "NVIDIA: Nemotron Nano 12B 2 VL (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -4998,7 +5151,7 @@
     "display_name": "NVIDIA: Nemotron Nano 9B V2 (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -5018,7 +5171,7 @@
     "display_name": "Amazon: Nova 2 Lite",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5041,7 +5194,7 @@
     "display_name": "Amazon: Nova Lite 1.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 300000,
       "input_modalities": [
@@ -5062,7 +5215,7 @@
     "display_name": "Amazon: Nova Micro 1.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -5082,7 +5235,7 @@
     "display_name": "Amazon: Nova Premier 1.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5103,7 +5256,7 @@
     "display_name": "Amazon: Nova Pro 1.0",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 300000,
       "input_modalities": [
@@ -5123,8 +5276,8 @@
   "o1": {
     "display_name": "OpenAI: o1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5145,8 +5298,8 @@
   "o1-pro": {
     "display_name": "OpenAI: o1-pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5168,7 +5321,7 @@
     "display_name": "OpenAI: o3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5189,8 +5342,8 @@
   "o3-deep-research": {
     "display_name": "OpenAI: o3 Deep Research",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5211,8 +5364,8 @@
   "o3-mini": {
     "display_name": "OpenAI: o3 Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5232,8 +5385,8 @@
   "o3-mini-high": {
     "display_name": "OpenAI: o3 Mini High",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5253,8 +5406,8 @@
   "o3-pro": {
     "display_name": "OpenAI: o3 Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5276,7 +5429,7 @@
     "display_name": "OpenAI: o4 Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5297,8 +5450,8 @@
   "o4-mini-deep-research": {
     "display_name": "OpenAI: o4 Mini Deep Research",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5319,8 +5472,8 @@
   "o4-mini-high": {
     "display_name": "OpenAI: o4 Mini High",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -5342,7 +5495,7 @@
     "display_name": "AllenAI: Olmo 3 32B Think",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -5362,7 +5515,7 @@
     "display_name": "Owl Alpha",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048756,
       "input_modalities": [
@@ -5382,7 +5535,7 @@
     "display_name": "Writer: Palmyra X5",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1040000,
       "input_modalities": [
@@ -5402,7 +5555,7 @@
     "display_name": "Pareto Code Router",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 2000000,
       "input_modalities": [
@@ -5422,7 +5575,7 @@
     "display_name": "Perceptron: Perceptron Mk1",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -5444,7 +5597,7 @@
     "display_name": "Microsoft: Phi 4",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 16384,
       "input_modalities": [
@@ -5464,7 +5617,7 @@
     "display_name": "Microsoft: Phi 4 Mini Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5483,8 +5636,8 @@
   "pixtral-large-2411": {
     "display_name": "Mistral: Pixtral Large 2411",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5506,7 +5659,7 @@
     "display_name": "Baidu: Qianfan-OCR-Fast",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -5526,8 +5679,8 @@
   "qwen-2.5-72b-instruct": {
     "display_name": "Qwen2.5 72B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5546,8 +5699,8 @@
   "qwen-2.5-7b-instruct": {
     "display_name": "Qwen: Qwen2.5 7B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5566,8 +5719,8 @@
   "qwen-2.5-coder-32b-instruct": {
     "display_name": "Qwen2.5 Coder 32B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -5587,7 +5740,7 @@
     "display_name": "Qwen: Qwen-Plus",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5606,8 +5759,8 @@
   "qwen-plus-2025-07-28": {
     "display_name": "Qwen: Qwen Plus 0728 (thinking)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5626,8 +5779,8 @@
   "qwen2.5-vl-72b-instruct": {
     "display_name": "Qwen: Qwen2.5 VL 72B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5647,8 +5800,8 @@
   "qwen3-14b": {
     "display_name": "Qwen: Qwen3 14B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131702,
       "input_modalities": [
@@ -5667,8 +5820,8 @@
   "qwen3-235b-a22b": {
     "display_name": "Qwen: Qwen3 235B A22B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5687,8 +5840,8 @@
   "qwen3-235b-a22b-2507": {
     "display_name": "Qwen: Qwen3 235B A22B Instruct 2507",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5707,8 +5860,8 @@
   "qwen3-235b-a22b-thinking-2507": {
     "display_name": "Qwen: Qwen3 235B A22B Thinking 2507",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5727,8 +5880,8 @@
   "qwen3-30b-a3b": {
     "display_name": "Qwen: Qwen3 30B A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5747,8 +5900,8 @@
   "qwen3-30b-a3b-instruct-2507": {
     "display_name": "Qwen: Qwen3 30B A3B Instruct 2507",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5767,8 +5920,8 @@
   "qwen3-30b-a3b-thinking-2507": {
     "display_name": "Qwen: Qwen3 30B A3B Thinking 2507",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5787,8 +5940,8 @@
   "qwen3-32b": {
     "display_name": "Qwen: Qwen3 32B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5807,8 +5960,8 @@
   "qwen3-8b": {
     "display_name": "Qwen: Qwen3 8B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -5828,7 +5981,7 @@
     "display_name": "Qwen: Qwen3 Coder 480B A35B (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1048576,
       "input_modalities": [
@@ -5847,8 +6000,8 @@
   "qwen3-coder-30b-a3b-instruct": {
     "display_name": "Qwen: Qwen3 Coder 30B A3B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 160000,
       "input_modalities": [
@@ -5867,8 +6020,8 @@
   "qwen3-coder-flash": {
     "display_name": "Qwen: Qwen3 Coder Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5887,8 +6040,8 @@
   "qwen3-coder-next": {
     "display_name": "Qwen: Qwen3 Coder Next",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5907,8 +6060,8 @@
   "qwen3-coder-plus": {
     "display_name": "Qwen: Qwen3 Coder Plus",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -5927,8 +6080,8 @@
   "qwen3-max": {
     "display_name": "Qwen: Qwen3 Max",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5947,8 +6100,8 @@
   "qwen3-max-thinking": {
     "display_name": "Qwen: Qwen3 Max Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5968,7 +6121,7 @@
     "display_name": "Qwen: Qwen3 Next 80B A3B Instruct (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -5987,8 +6140,8 @@
   "qwen3-next-80b-a3b-thinking": {
     "display_name": "Qwen: Qwen3 Next 80B A3B Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6007,8 +6160,8 @@
   "qwen3-vl-235b-a22b-instruct": {
     "display_name": "Qwen: Qwen3 VL 235B A22B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6028,8 +6181,8 @@
   "qwen3-vl-235b-a22b-thinking": {
     "display_name": "Qwen: Qwen3 VL 235B A22B Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6049,8 +6202,8 @@
   "qwen3-vl-30b-a3b-instruct": {
     "display_name": "Qwen: Qwen3 VL 30B A3B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6070,8 +6223,8 @@
   "qwen3-vl-30b-a3b-thinking": {
     "display_name": "Qwen: Qwen3 VL 30B A3B Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6091,8 +6244,8 @@
   "qwen3-vl-32b-instruct": {
     "display_name": "Qwen: Qwen3 VL 32B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6112,8 +6265,8 @@
   "qwen3-vl-8b-instruct": {
     "display_name": "Qwen: Qwen3 VL 8B Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -6133,8 +6286,8 @@
   "qwen3-vl-8b-thinking": {
     "display_name": "Qwen: Qwen3 VL 8B Thinking",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -6154,8 +6307,8 @@
   "qwen3.5-122b-a10b": {
     "display_name": "Qwen: Qwen3.5-122B-A10B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6176,8 +6329,8 @@
   "qwen3.5-27b": {
     "display_name": "Qwen: Qwen3.5-27B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6198,8 +6351,8 @@
   "qwen3.5-35b-a3b": {
     "display_name": "Qwen: Qwen3.5-35B-A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6210,7 +6363,7 @@
       "openrouter_id": "qwen/qwen3.5-35b-a3b",
       "pricing": {
         "completion": "0.000001",
-        "prompt": "0.00000014"
+        "prompt": "0.000000139"
       }
     },
     "source": "openrouter-discovery",
@@ -6220,8 +6373,8 @@
   "qwen3.5-397b-a17b": {
     "display_name": "Qwen: Qwen3.5 397B A17B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6242,8 +6395,8 @@
   "qwen3.5-9b": {
     "display_name": "Qwen: Qwen3.5-9B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6264,8 +6417,8 @@
   "qwen3.5-flash-02-23": {
     "display_name": "Qwen: Qwen3.5-Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -6286,8 +6439,8 @@
   "qwen3.5-plus-02-15": {
     "display_name": "Qwen: Qwen3.5 Plus 2026-02-15",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -6308,8 +6461,8 @@
   "qwen3.5-plus-20260420": {
     "display_name": "Qwen: Qwen3.5 Plus 2026-04-20",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -6330,8 +6483,8 @@
   "qwen3.6-27b": {
     "display_name": "Qwen: Qwen3.6 27B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6352,8 +6505,8 @@
   "qwen3.6-35b-a3b": {
     "display_name": "Qwen: Qwen3.6 35B A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6374,8 +6527,8 @@
   "qwen3.6-flash": {
     "display_name": "Qwen: Qwen3.6 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -6397,7 +6550,7 @@
     "display_name": "Qwen: Qwen3.6 Max Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6416,8 +6569,8 @@
   "qwen3.6-plus": {
     "display_name": "Qwen: Qwen3.6 Plus",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 1000000,
       "input_modalities": [
@@ -6439,7 +6592,7 @@
     "display_name": "Reka Edge",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 16384,
       "input_modalities": [
@@ -6461,7 +6614,7 @@
     "display_name": "Reka Flash 3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
@@ -6481,7 +6634,7 @@
     "display_name": "Relace: Relace Apply 3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -6501,7 +6654,7 @@
     "display_name": "Relace: Relace Search",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 256000,
       "input_modalities": [
@@ -6521,7 +6674,7 @@
     "display_name": "ReMM SLERP 13B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 6144,
       "input_modalities": [
@@ -6541,7 +6694,7 @@
     "display_name": "inclusionAI: Ring-2.6-1T",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6561,7 +6714,7 @@
     "display_name": "EssentialAI: Rnj 1 Instruct",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -6581,7 +6734,7 @@
     "display_name": "TheDrummer: Rocinante 12B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -6601,7 +6754,7 @@
     "display_name": "Switchpoint Router",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6621,7 +6774,7 @@
     "display_name": "ByteDance Seed: Seed 1.6",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6643,7 +6796,7 @@
     "display_name": "ByteDance Seed: Seed 1.6 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6665,7 +6818,7 @@
     "display_name": "ByteDance Seed: Seed-2.0-Lite",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6687,7 +6840,7 @@
     "display_name": "ByteDance Seed: Seed-2.0-Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6709,7 +6862,7 @@
     "display_name": "TheDrummer: Skyfall 36B V2",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -6729,7 +6882,7 @@
     "display_name": "Upstage: Solar Pro 3",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -6749,7 +6902,7 @@
     "display_name": "Perplexity: Sonar",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 127072,
       "input_modalities": [
@@ -6770,7 +6923,7 @@
     "display_name": "Perplexity: Sonar Deep Research",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -6790,7 +6943,7 @@
     "display_name": "Perplexity: Sonar Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": true,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -6811,7 +6964,7 @@
     "display_name": "Perplexity: Sonar Pro Search",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 200000,
       "input_modalities": [
@@ -6832,7 +6985,7 @@
     "display_name": "Perplexity: Sonar Reasoning Pro",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -6853,7 +7006,7 @@
     "display_name": "Arcee AI: Spotlight",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6874,7 +7027,7 @@
     "display_name": "StepFun: Step 3.5 Flash",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6893,8 +7046,8 @@
   "tongyi-deepresearch-30b-a3b": {
     "display_name": "Tongyi DeepResearch 30B A3B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6914,7 +7067,7 @@
     "display_name": "Arcee AI: Trinity Large Preview",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131000,
       "input_modalities": [
@@ -6934,7 +7087,7 @@
     "display_name": "Arcee AI: Trinity Large Thinking (free)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 262144,
       "input_modalities": [
@@ -6954,7 +7107,7 @@
     "display_name": "Arcee AI: Trinity Mini",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -6974,7 +7127,7 @@
     "display_name": "ByteDance: UI-TARS 7B ",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 128000,
       "input_modalities": [
@@ -6995,7 +7148,7 @@
     "display_name": "TheDrummer: UnslopNemo 12B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32768,
       "input_modalities": [
@@ -7015,7 +7168,7 @@
     "display_name": "Arcee AI: Virtuoso Large",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 131072,
       "input_modalities": [
@@ -7034,8 +7187,8 @@
   "voxtral-small-24b-2507": {
     "display_name": "Mistral: Voxtral Small 24B 2507",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
-    "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "in_registry": true,
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 32000,
       "input_modalities": [
@@ -7057,7 +7210,7 @@
     "display_name": "Mancer: Weaver (alpha)",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 8000,
       "input_modalities": [
@@ -7077,7 +7230,7 @@
     "display_name": "WizardLM-2 8x22B",
     "first_seen": "2026-05-17T05:52:25.712663+00:00",
     "in_registry": false,
-    "last_seen": "2026-05-17T05:52:25.712663+00:00",
+    "last_seen": "2026-05-20T06:13:14.676607+00:00",
     "raw_metadata": {
       "context_length": 65536,
       "input_modalities": [
