@@ -1,19 +1,18 @@
-name: Pricing Sync (Sun + Wed)
+name: Pricing Sync (manual / emergency)
 
-# Replaces the session-scoped Claude Code cron (see commit 00b9b9d).
-# Root cause: Claude Code crons don't persist across sessions — the Sunday
-# 2026-04-19 run was missed because the registering session had ended.
-# This workflow runs on GitHub infrastructure, independent of any local session.
+# Cadence note: scheduled cron was REMOVED 2026-05-21 when the canonical
+# scheduler moved to a systemd timer on the z-tidus VPS (tidus-sync.timer
+# runs the same pipeline Sun + Wed 02:00 UTC). This workflow stays in
+# place purely as a manual / emergency fallback — fire it from the
+# Actions tab if the VPS is down or you need an out-of-band magazine run.
 #
-# Cadence change (2026-04-23): weekly Sunday → Sun + Wed. The AI market
-# moves fast enough that a 7-day gap leaves prices stale; a 3-4 day
-# cadence keeps the magazine and routing cost estimates current without
-# doubling subscriber email load compared to a true daily fire.
+# History (kept for context):
+#   - Originally replaced session-scoped Claude Code cron (commit 00b9b9d).
+#   - Cadence widened weekly Sunday → Sun + Wed (2026-04-23).
+#   - schedule: removed (2026-05-21), VPS systemd timer became canonical.
 
 on:
-  schedule:
-    - cron: '0 2 * * 0,3'  # Sundays and Wednesdays at 02:00 UTC
-  workflow_dispatch:       # allow manual fire from Actions tab
+  workflow_dispatch:       # manual emergency fallback only
 
 permissions:
   contents: write        # needed for pushing DB/reports/index.html back to main
