@@ -33,10 +33,11 @@ flock -n 9 || { echo "Another tidus-sync is running; exiting."; exit 0; }
 
 cd "$TIDUS_DIR"
 
-# Pull secrets / SMTP_FROM into env so weekly_full_sync.py + git push see them.
-set -a
-[ -f /etc/tidus/env ] && . /etc/tidus/env
-set +a
+# Env vars (RESEND_API_KEY, ANTHROPIC_API_KEY, vendor keys, TIDUS_SMTP_FROM)
+# come from /etc/tidus/env via systemd's EnvironmentFile= directive — not
+# bash-sourced here, because values containing < or > (e.g. an SMTP_FROM
+# address like "Tidus Reports <onboarding@resend.dev>") would be parsed as
+# redirection by bash.
 
 # 1. Preserve local subscriber writes
 if git status --porcelain "$SUB_FILE_REL" | grep -q .; then
