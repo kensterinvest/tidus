@@ -1,0 +1,10 @@
+[Unit]
+Description=Run Tidus pricing-sync + magazine pipeline (Sun + Wed 02:00 UTC)
+
+[Timer]
+OnCalendar=Sun,Wed *-*-* 02:00:00 UTC
+Persistent=true
+Unit=tidus-sync.service
+
+[Install]
+WantedBy=timers.target
