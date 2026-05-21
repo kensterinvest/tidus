@@ -197,3 +197,78 @@ See [docs/pricing-sync.md](pricing-sync.md) for the full architecture and setup 
 - [ ] Review `config/policies.yaml` guardrail limits
 - [ ] Verify pricing sync is running (`GET /api/v1/audit/events?action=price_change`)
 - [ ] Schedule monthly savings reports: `GET /api/v1/reports/monthly`
+
+---
+
+## Reference: Production VPS Deployment (z-tidus, 2026-05-21)
+
+The canonical Tidus production deployment lives on the shared z-tidus VPS at `77.68.95.23`, fronted by Caddy at `https://ai-router.z-tidus.com`. Only the **subscribe API + landing page** are exposed publicly; the full router/classify/complete surface stays internal.
+
+### Architecture
+
+```
+Internet → :443 Caddy ──┬─→ /api/v1/subscribe ─→ 127.0.0.1:9000 (tidus-web.service)
+                        └─→ /                  ─→ /opt/tidus/index.html (file_server)
+
+systemd: tidus-sync.timer (Sun + Wed 02:00 UTC) → tidus-sync.service
+         ↓
+         deploy/sync_wrapper.sh
+           1. flock /var/lock/tidus-sync.lock
+           2. stash config/subscribers.yaml (writes from web service)
+           3. git fetch + reset --hard origin/main
+           4. restore stashed subscribers.yaml
+           5. uv run python scripts/weekly_full_sync.py
+           6. commit tidus.db + reports/ + config/models.auto.yaml + config/subscribers.yaml
+           7. git push origin main (via deploy key)
+```
+
+### What lives where
+
+| Path | Purpose |
+|---|---|
+| `/opt/tidus/` | Git checkout of `kensterinvest/tidus` (owned by `tidus` user) |
+| `/opt/tidus/.venv/` | uv-managed venv with frozen deps |
+| `/opt/tidus/.ssh/id_ed25519` | Deploy key with write access on the repo |
+| `/etc/tidus/env` | Secrets (mode 0640, owned `root:tidus`) — RESEND_API_KEY, ANTHROPIC_API_KEY, vendor keys |
+| `/etc/systemd/system/tidus-web.service` | uvicorn on `127.0.0.1:9000` |
+| `/etc/systemd/system/tidus-sync.{service,timer}` | Magazine pipeline runner |
+| `/var/log/tidus/` | Wrapper logs |
+| Caddyfile entry | `ai-router.z-tidus.com` block in `/etc/caddy/Caddyfile` |
+
+### Conventions
+
+- **Web app** = `tidus.web_main:app` — NOT `tidus.main:app`. The slim variant mounts only the subscribe router, has no DB lifespan, no scheduler, no metrics.
+- **Port**: `9000` — slot +0 of the `9000–9010` tidus block per `PORTS.md`. Bind on `127.0.0.1` only.
+- **Rate-limit**: in-process middleware in `web_main.py`, 5 POSTs/min/IP, X-Forwarded-For trusted (Caddy is the only upstream).
+- **No bash-source of `/etc/tidus/env`** — systemd's `EnvironmentFile=` directive parses the file safely; bash-sourcing breaks on values containing `<` or `>` (e.g. `TIDUS_SMTP_FROM`).
+
+### Common operations
+
+```bash
+ssh ionos                                                    # admin shell
+sudo systemctl status tidus-web.service                      # check web
+sudo systemctl status tidus-sync.timer                       # check timer
+sudo systemctl list-timers tidus-sync.timer                  # next fire time
+sudo systemctl start tidus-sync.service                      # fire magazine on demand
+sudo journalctl -u tidus-sync.service -n 100                 # sync logs
+sudo nano /etc/tidus/env && sudo systemctl restart tidus-web # rotate secrets
+```
+
+### First-time setup (idempotent)
+
+```bash
+ssh ionos
+sudo bash /opt/tidus/deploy/install.sh
+```
+
+The installer creates the `tidus` system user, generates a deploy key (pauses for you to paste it into the repo's deploy-keys page), clones the repo, builds the venv, writes a placeholder `/etc/tidus/env`, and installs + starts the systemd units. The Caddy block must be added manually to `/etc/caddy/Caddyfile` from `deploy/Caddyfile.snippet`, then `sudo systemctl reload caddy`.
+
+### Emergency fallback
+
+If the VPS is down or you need an out-of-band magazine fire, trigger the GitHub Actions workflow manually:
+
+```bash
+gh workflow run weekly-sync.yml -R kensterinvest/tidus
+```
+
+The cloud runner does the same pipeline but pushes to `main` directly (no subscriber preservation race because GH Actions doesn't share working-tree state with the web service).

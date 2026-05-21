@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — VPS production deployment (2026-05-21)
+
+Tidus landing page + subscribe form now live at `https://ai-router.z-tidus.com` (z-tidus VPS, IONOS), with the magazine pipeline running on a systemd timer instead of GitHub Actions or laptop Task Scheduler.
+
+- `tidus/web_main.py` — slim FastAPI app that mounts **only** the subscribe router (`POST /api/v1/subscribe` + `GET /subscribe`). The full router / classify / complete API is **not** exposed publicly. Per-IP rate-limit middleware: 5 POSTs/min/IP.
+- `deploy/` — six artifacts:
+  - `tidus-web.service` — systemd unit running uvicorn on `127.0.0.1:9000` (PORTS.md slot +0 for tidus block)
+  - `tidus-sync.service` + `tidus-sync.timer` — magazine pipeline Sun + Wed 02:00 UTC
+  - `sync_wrapper.sh` — runs `scripts/weekly_full_sync.py` with a git-stash dance that preserves subscribers added between sync runs (closes the race where `git reset --hard` would otherwise drop them)
+  - `install.sh` — idempotent one-shot installer
+  - `Caddyfile.snippet` — reverse-proxy block for the subdomain
+- `config/subscribers.yaml` now committed by the workflow (both the GH `workflow_dispatch` fallback and the VPS wrapper). Closes a subscriber-loss race documented in PR #2.
+
+End-to-end verified: a manual `systemctl start tidus-sync.service` ran the full pipeline in 9 seconds and pushed commits `b63d4b3` (magazine table update) + `f0d6829` (DB/reports/auto-catalog/subscribers) to `main` via deploy key.
+
+### Changed — Scheduling moved off cloud + laptop (2026-05-21)
+
+- `.github/workflows/weekly-sync.yml` — `schedule:` block removed; `workflow_dispatch` retained as manual emergency button. Renamed "Pricing Sync (manual / emergency)".
+- Windows Task Scheduler — both `Tidus Weekly Full Sync` and `TidusPricingSync` (in `C:\Users\OWNER\scripts\tidus`) **disabled**. The local Windows script files remain in place but never auto-fire.
+- Single source of truth for cadence: `tidus-sync.timer` on the VPS.
+
 ### Fixed — Catalog shrink-on-rerun (2026-05-20 → 2026-05-21)
 
 Wed 2026-05-20 02:00 UTC sync collapsed the catalog from **188 → 56 models**
