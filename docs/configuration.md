@@ -200,6 +200,22 @@ CACHE_EXACT_TTL_SECONDS=3600
 CACHE_SEMANTIC_TTL_SECONDS=900
 SEMANTIC_CACHE_THRESHOLD=0.95
 
+# Pricing sync — live OpenRouter feed (default ON, no auth required)
+OPENROUTER_ENABLED=true
+OPENROUTER_BASE_URL=https://openrouter.ai
+OPENROUTER_REQUEST_TIMEOUT_SECONDS=15.0
+
+# Pricing sync — auto-promote discovered models into config/models.auto.yaml
+AUTO_PROMOTE_ENABLED=true
+AUTO_PROMOTE_YAML_PATH=config/models.auto.yaml
+
+# Pricing sync — Claude AI verification of anomalous moves + new models
+# Requires ANTHROPIC_API_KEY (above) to be a key with billing credits.
+# Fail-open: if disabled or unreachable, the pipeline accepts all moves.
+AI_VERIFY_ENABLED=true
+AI_VERIFY_THRESHOLD_PCT=50.0
+AI_VERIFY_MODEL=claude-opus-4-7
+
 # Redis backend (optional — defaults to in-memory; roadmap)
 # REDIS_URL=redis://localhost:6379/0
 

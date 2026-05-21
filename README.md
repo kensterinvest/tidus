@@ -151,7 +151,7 @@ See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/
 
 **Catalog composition:**
 - **55 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
-- **130+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog.
+- **160+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog. Each sync re-confirms every entry against the live OpenRouter catalog, so the auto-promoted set self-prunes when vendors retire a model.
 
 **Synced twice weekly** (Sun + Wed 02:00 UTC) via GitHub Actions. Live OpenRouter feed + hardcoded baseline + AI verification, all merged through MAD-based consensus before a new revision activates. See [docs/pricing-sync.md](docs/pricing-sync.md) for the pipeline.
 

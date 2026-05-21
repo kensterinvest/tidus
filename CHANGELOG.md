@@ -7,11 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — Catalog shrink-on-rerun (2026-05-20 → 2026-05-21)
+
+Wed 2026-05-20 02:00 UTC sync collapsed the catalog from **188 → 56 models**
+in one run. Magazine looked "back to 50s" overnight; GitHub Actions all
+showed success because the script exited code 0 with bad inputs.
+
+  **Root cause** — Wiring bug in `scripts/weekly_full_sync.py`. AutoPromoter
+  was receiving `discovery_report.new_this_run + pending_review` only —
+  missing every model already `in_registry`. AutoPromoter rewrites
+  `config/models.auto.yaml` from its `promoted` list each run, so the
+  ~165 entries that were `in_registry` from Sun's promotion never reached
+  the new file, then the pricing pipeline's retirement logic dropped them
+  from the DB on the same cycle.
+
+  **Fix** (`0b879d1`) — `DiscoveryReport` now carries `all_current` with
+  every discovered model regardless of `in_registry` status. AutoPromoter
+  reads `all_current` so it re-confirms the full live OpenRouter set
+  every sync. Regression test `test_runner_exposes_all_current_for_auto_promoter`
+  locks the contract.
+
+  **Restoration** — Manual `workflow_dispatch` on 2026-05-20 22:38 UTC
+  with the fix in place repopulated the catalog: **217 models** (55 hand
+  + 162 auto, with `already vetted: 24` showing the fix is exercising the
+  in_registry path correctly).
+
 ### Added — Pricing sync overhaul (2026-05-16 → 2026-05-17)
 
 Closes the gap that had the magazine functionally frozen for 30 days even though
 the GitHub Actions job kept running green. Catalog grew from 55 hand-curated
-entries → 188 effective (55 hand-curated + 133 AI-vetted auto-promoted) across
+entries → 200+ effective (55 hand-curated + 160+ AI-vetted auto-promoted) across
 15 vendor families.
 
 - **OpenRouterPricingSource** (`tidus/sync/pricing/openrouter_source.py`, commit
