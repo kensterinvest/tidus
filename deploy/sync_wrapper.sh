@@ -16,6 +16,10 @@
 
 set -euo pipefail
 
+# systemd-spawned environments don't source ~/.bashrc / ~/.profile, so make
+# uv resolvable here regardless of how this script was invoked.
+export PATH="/opt/tidus/.local/bin:/usr/local/bin:/usr/bin:/bin"
+
 LOCK_FILE=/var/lock/tidus-sync.lock
 TIDUS_DIR=/opt/tidus
 SUB_FILE_REL=config/subscribers.yaml

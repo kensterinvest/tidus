@@ -9,6 +9,7 @@ User=tidus
 Group=tidus
 WorkingDirectory=/opt/tidus
 EnvironmentFile=-/etc/tidus/env
+Environment=PATH=/opt/tidus/.local/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=/opt/tidus/deploy/sync_wrapper.sh
 TimeoutStartSec=900
 StandardOutput=journal
