@@ -1,0 +1,24 @@
+[Unit]
+Description=Tidus public web (subscribe API + landing)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=tidus
+Group=tidus
+WorkingDirectory=/opt/tidus
+EnvironmentFile=-/etc/tidus/env
+ExecStart=/opt/tidus/.venv/bin/uvicorn tidus.web_main:app --host 127.0.0.1 --port 9000
+Restart=on-failure
+RestartSec=5
+
+# Hardening
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/tidus/config
+
+[Install]
+WantedBy=multi-user.target

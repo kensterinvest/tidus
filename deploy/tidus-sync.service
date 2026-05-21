@@ -1,0 +1,22 @@
+[Unit]
+Description=Tidus pricing-sync + magazine pipeline (Sun + Wed)
+After=network-online.target tidus-web.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=tidus
+Group=tidus
+WorkingDirectory=/opt/tidus
+EnvironmentFile=-/etc/tidus/env
+ExecStart=/opt/tidus/deploy/sync_wrapper.sh
+TimeoutStartSec=900
+StandardOutput=journal
+StandardError=journal
+
+# Hardening (looser than tidus-web because git + uv need broader write access)
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/tidus /var/lock /var/log/tidus
