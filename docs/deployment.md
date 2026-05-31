@@ -229,7 +229,7 @@ systemd: tidus-sync.timer (Sun + Wed 02:00 UTC) → tidus-sync.service
 | `/opt/tidus/` | Git checkout of `kensterinvest/tidus` (owned by `tidus` user) |
 | `/opt/tidus/.venv/` | uv-managed venv with frozen deps |
 | `/opt/tidus/.ssh/id_ed25519` | Deploy key with write access on the repo |
-| `/etc/tidus/env` | Secrets (mode 0640, owned `root:tidus`) — RESEND_API_KEY, ANTHROPIC_API_KEY, vendor keys |
+| `/etc/tidus/env` | Secrets (mode 0640, owned `root:tidus`) — RESEND_API_KEY, ANTHROPIC_API_KEY, TIDUS_TELEGRAM_BOT_TOKEN, TIDUS_TELEGRAM_CHAT_ID, vendor keys |
 | `/etc/systemd/system/tidus-web.service` | uvicorn on `127.0.0.1:9000` |
 | `/etc/systemd/system/tidus-sync.{service,timer}` | Magazine pipeline runner |
 | `/var/log/tidus/` | Wrapper logs |
@@ -253,6 +253,23 @@ sudo systemctl start tidus-sync.service                      # fire magazine on 
 sudo journalctl -u tidus-sync.service -n 100                 # sync logs
 sudo nano /etc/tidus/env && sudo systemctl restart tidus-web # rotate secrets
 ```
+
+### Magazine delivery on this VPS
+
+Direct self-hosted email is **not viable** here: IONOS blocks outbound port 25
+(so a local MTA can't reach recipient mail servers), the IP's rDNS isn't a mail
+FQDN, and a fresh single-IP sender lands in Gmail's spam folder. Options that work:
+
+- **Telegram (recommended)** — outbound 443 is open and reputation-free. Create a
+  bot via @BotFather, then add to `/etc/tidus/env`:
+  ```
+  TIDUS_TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+  TIDUS_TELEGRAM_CHAT_ID=987654321
+  ```
+  The sync reads env at fire time — no restart needed. Verify with
+  `sudo systemctl start tidus-sync.service`. Delivery is additive + fail-open.
+- **Email via relay** — port 587 is open, so `RESEND_API_KEY` or `TIDUS_SMTP_*`
+  pointed at an authenticated smarthost (Gmail SMTP, Brevo, SMTP2GO, …) also works.
 
 ### First-time setup (idempotent)
 

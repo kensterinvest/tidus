@@ -41,9 +41,13 @@ pass so models removed from `models.yaml` are dropped from new revisions.
             config/models.auto.yaml (merged at registry load)
 ```
 
-Sundays and Wednesdays at 02:00 UTC, the GitHub Actions workflow
-[`weekly-sync.yml`](../.github/workflows/weekly-sync.yml) runs `scripts/weekly_full_sync.py`,
-which calls `run_price_sync_cycle()`:
+Sundays and Wednesdays at 02:00 UTC, the production VPS systemd timer
+`tidus-sync.timer` runs `scripts/weekly_full_sync.py`, which calls
+`run_price_sync_cycle()`. (The GitHub Actions workflow
+[`weekly-sync.yml`](../.github/workflows/weekly-sync.yml) is retained as a
+`workflow_dispatch`-only emergency fallback.) Each generated issue is then
+delivered to subscribers — by email (Resend/SMTP) and/or Telegram (see
+[configuration.md](configuration.md#subscribers)):
 
 > The in-process `TidusScheduler` has `pricing_sync.enabled: false` in `config/policies.yaml`
 > since v1.3.0 — the canonical scheduler is the GitHub Actions workflow above.

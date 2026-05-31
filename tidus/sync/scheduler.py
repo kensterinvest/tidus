@@ -253,11 +253,13 @@ class TidusScheduler:
             generator = PricingReportGenerator(self._session_factory)
             report = await generator.generate(revision_id=revision_id)
 
-            # Write report to reports/ directory
+            # Write report to reports/ directory (md + html)
             reports_dir = Path("reports")
             reports_dir.mkdir(exist_ok=True)
             report_path = reports_dir / f"pricing-{report.report_date}.md"
             report_path.write_text(report.markdown, encoding="utf-8")
+            html_path = reports_dir / f"pricing-{report.report_date}.html"
+            html_path.write_text(report.html, encoding="utf-8")
             log.info("pricing_report_written", path=str(report_path))
 
             # Deliver to subscribers
@@ -271,6 +273,12 @@ class TidusScheduler:
                     report_html=report.html,
                 )
                 log.info("pricing_report_delivered", recipients=n)
+
+            # Telegram delivery (additive, env-gated, fail-open)
+            from tidus.reporting.telegram_delivery import TelegramDelivery
+            telegram = TelegramDelivery()
+            if telegram.enabled:
+                telegram.deliver(report=report, html_path=html_path)
         except Exception as exc:
             log.error("pricing_report_failed", error=str(exc))
 

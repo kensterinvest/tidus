@@ -239,6 +239,13 @@ async def main() -> int:
     )
     print(f"       Delivered to {delivered}/{len(subscribers)} subscribers")
 
+    # Telegram delivery (additive, env-gated, fail-open — see telegram_delivery.py)
+    from tidus.reporting.telegram_delivery import TelegramDelivery
+    telegram = TelegramDelivery()
+    if telegram.enabled:
+        ok_tg = telegram.deliver(report=report, html_path=html_path)
+        print(f"       Telegram: {'sent' if ok_tg else 'failed'}")
+
     # ── Step 8: Regenerate index.html + push to GitHub ───────────────────────
     print("[8/8] Updating landing page + pushing to GitHub...")
     updater = LandingPageUpdater()

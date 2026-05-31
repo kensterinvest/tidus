@@ -229,6 +229,10 @@ RESEND_API_KEY=re_...
 # SMTP_PASS=yourpassword
 # SMTP_FROM=reports@yourdomain.com
 
+# ── Telegram magazine delivery (optional, additive) ──────────────────────────
+# TIDUS_TELEGRAM_BOT_TOKEN=123456:ABC-DEF...   # from @BotFather
+# TIDUS_TELEGRAM_CHAT_ID=987654321             # target chat id
+
 # ── Registry & pricing feed (v1.1.0) ─────────────────────────────────────────
 # Optional remote pricing feed URL (disabled by default — no customer data sent)
 # TIDUS_PRICING_FEED_URL=https://pricing.tidus.ai/prices
@@ -267,3 +271,10 @@ subscribers:
 1. Resend API (`RESEND_API_KEY` set) — HTML + plain-text, no SMTP config
 2. SMTP fallback (`SMTP_HOST` set) — plain-text only
 3. Dev fallback (neither set) — report saved to `reports/` directory only
+
+**Telegram delivery (optional, additive):** Set both `TIDUS_TELEGRAM_BOT_TOKEN`
+and `TIDUS_TELEGRAM_CHAT_ID` to also post each issue to a dedicated Telegram
+bot — a concise summary in-chat plus the full HTML report attached. It runs
+*alongside* email (not instead of it), and is fail-open: a missing token simply
+skips, and any Telegram error is logged without breaking the sync. Useful when
+self-hosted email isn't viable (e.g. a VPS with outbound port 25 blocked).
