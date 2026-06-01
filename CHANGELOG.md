@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added — Telegram magazine delivery (2026-05-31)
+
+The pricing-sync magazine can now be delivered to a dedicated Telegram bot, in
+addition to email. Motivated by the VPS reality that direct self-hosted email is
+impractical there (IONOS blocks outbound port 25, rDNS isn't a mail FQDN), while
+the magazine pipeline itself runs fine — it just had no inbox-visible delivery.
+
+- `tidus/reporting/telegram_delivery.py` — new `TelegramDelivery` class +
+  `build_summary()`. Env-gated on `TIDUS_TELEGRAM_BOT_TOKEN` +
+  `TIDUS_TELEGRAM_CHAT_ID`; posts a concise summary (new models + top price moves)
+  via `sendMessage` and attaches the full HTML report via `sendDocument`. Built
+  from the `PricingReport` structured fields, capped at Telegram's 4096-char limit.
+- Wired into `scripts/weekly_full_sync.py` (live VPS path) and
+  `tidus/sync/scheduler.py` — **additive** (runs alongside email) and
+  **fail-open** (a missing token skips quietly; any Telegram error is logged and
+  swallowed so the GitHub push + landing-page update still complete).
+- `tests/unit/test_telegram_delivery.py` — 10 tests (env-gating, summary content
+  + size cap, sendMessage→sendDocument ordering, fail-open on transport error).
+- Docs: `.env.example`, `docs/configuration.md`, `docs/deployment.md`.
+
 ### Added — VPS production deployment (2026-05-21)
 
 Tidus landing page + subscribe form now live at `https://ai-router.z-tidus.com` (z-tidus VPS, IONOS), with the magazine pipeline running on a systemd timer instead of GitHub Actions or laptop Task Scheduler.
