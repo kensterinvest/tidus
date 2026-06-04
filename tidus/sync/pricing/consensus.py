@@ -28,6 +28,11 @@ log = structlog.get_logger(__name__)
 
 _DEFAULT_Z_THRESHOLD = 3.5
 _SINGLE_SOURCE_CONFIDENCE_PENALTY = 0.2
+# MAD screening is inert with exactly two sources (z is always 0.6745). For that
+# regime we fall back to a relative-spread alarm: flag when max/min exceeds this
+# ratio, and dock the winner's confidence so the distrust propagates downstream.
+_DEFAULT_TWO_SOURCE_RATIO_THRESHOLD = 2.0
+_TWO_SOURCE_DISAGREEMENT_PENALTY = 0.3
 
 
 class ConsensusError(Exception):
@@ -42,13 +47,39 @@ class ConsensusResult:
     single_source_models: list[str]        # models with only one source
     rejection_summary: dict[str, list[str]] = field(default_factory=dict)
     # rejection_summary: {model_id: [rejected_source_name, ...]}
+    screening_bypassed: list[str] = field(default_factory=list)
+    # models with exactly two sources, where MAD outlier screening is inert
+    flagged_disagreements: dict[str, float] = field(default_factory=dict)
+    # {model_id: price_ratio} for two-source spreads beyond the ratio threshold
 
 
 class PriceConsensus:
     """Resolves a list of quotes from multiple sources into one quote per model."""
 
-    def __init__(self, outlier_z_threshold: float = _DEFAULT_Z_THRESHOLD) -> None:
+    def __init__(
+        self,
+        outlier_z_threshold: float = _DEFAULT_Z_THRESHOLD,
+        two_source_ratio_threshold: float = _DEFAULT_TWO_SOURCE_RATIO_THRESHOLD,
+    ) -> None:
         self._z_threshold = outlier_z_threshold
+        self._two_source_ratio_threshold = two_source_ratio_threshold
+
+    @staticmethod
+    def _penalise_confidence(q: PriceQuote, penalty: float) -> PriceQuote:
+        """Return a copy of ``q`` with ``source_confidence`` reduced (floored 0)."""
+        return PriceQuote(
+            model_id=q.model_id,
+            input_price=q.input_price,
+            output_price=q.output_price,
+            cache_read_price=q.cache_read_price,
+            cache_write_price=q.cache_write_price,
+            currency=q.currency,
+            effective_date=q.effective_date,
+            retrieved_at=q.retrieved_at,
+            source_name=q.source_name,
+            source_confidence=max(0.0, q.source_confidence - penalty),
+            evidence_url=q.evidence_url,
+        )
 
     def resolve(self, all_quotes: list[PriceQuote]) -> ConsensusResult:
         """Apply MAD outlier detection and return the winning quote per model.
@@ -71,6 +102,8 @@ class PriceConsensus:
         winners: dict[str, PriceQuote] = {}
         single_source_models: list[str] = []
         rejection_summary: dict[str, list[str]] = {}
+        screening_bypassed: list[str] = []
+        flagged_disagreements: dict[str, float] = {}
 
         for model_id, quotes in by_model.items():
             if len(quotes) == 1:
@@ -98,6 +131,24 @@ class PriceConsensus:
             prices = [q.input_price for q in quotes]
             median_price = statistics.median(prices)
             mad = statistics.median([abs(p - median_price) for p in prices])
+
+            # MAD is statistically inert at exactly two sources (z is always
+            # 0.6745, below any sane threshold). Record that screening did not
+            # really run, and fall back to a relative-spread alarm so a gross
+            # 2-source disagreement is not silently accepted.
+            if len(quotes) == 2:
+                screening_bypassed.append(model_id)
+                lo, hi = min(prices), max(prices)
+                ratio = (hi / lo) if lo > 0 else float("inf")
+                if ratio > self._two_source_ratio_threshold:
+                    flagged_disagreements[model_id] = round(ratio, 3)
+                    log.warning(
+                        "consensus_two_source_disagreement",
+                        model_id=model_id,
+                        prices=prices,
+                        ratio=round(ratio, 3),
+                        sources=[q.source_name for q in quotes],
+                    )
 
             non_outliers: list[PriceQuote] = []
             rejected: list[str] = []
@@ -138,6 +189,8 @@ class PriceConsensus:
                 non_outliers,
                 key=lambda q: (q.source_confidence, q.effective_date, q.retrieved_at),
             )
+            if model_id in flagged_disagreements:
+                winner = self._penalise_confidence(winner, _TWO_SOURCE_DISAGREEMENT_PENALTY)
             winners[model_id] = winner
             log.debug(
                 "consensus_winner",
@@ -151,4 +204,6 @@ class PriceConsensus:
             quotes=winners,
             single_source_models=single_source_models,
             rejection_summary=rejection_summary,
+            screening_bypassed=screening_bypassed,
+            flagged_disagreements=flagged_disagreements,
         )

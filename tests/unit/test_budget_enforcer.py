@@ -119,3 +119,60 @@ async def test_status_hard_stopped_when_at_limit(enforcer):
     await enforcer.deduct("team-engineering", None, 10.0)
     status = await enforcer.status("team-engineering")
     assert status.is_hard_stopped is True
+
+
+# ── reserve/deduct lifecycle (warn-only undercount regression) ────────────────
+#
+# reserve() only credits the counter for hard-stop scopes. deduct() must mirror
+# that: a scope that was NOT reserved (warn-only or policy-less) records the FULL
+# actual spend, not (actual - reserved) — otherwise warn-only counters drift
+# negative on every request and warn thresholds never fire.
+
+
+@pytest.mark.asyncio
+async def test_warn_only_deduct_records_actual_not_negative():
+    policy = _policy("warn", BudgetScope.team, "team-warn", limit_usd=200.0, hard_stop=False)
+    enforcer = BudgetEnforcer([policy], SpendCounter())
+
+    # reserve() is a no-op credit for warn-only — returns True, counter untouched.
+    assert await enforcer.reserve("team-warn", None, 0.005) is True
+    assert (await enforcer.status("team-warn")).spent_usd == pytest.approx(0.0)
+
+    # actual < reserved (15% buffer). Must record full actual, NOT -0.0002.
+    await enforcer.deduct("team-warn", None, 0.0048, reserved_usd=0.005)
+    assert (await enforcer.status("team-warn")).spent_usd == pytest.approx(0.0048)
+
+
+@pytest.mark.asyncio
+async def test_warn_only_deduct_accumulates_monotonically():
+    policy = _policy("warn", BudgetScope.team, "team-warn", limit_usd=200.0, hard_stop=False)
+    enforcer = BudgetEnforcer([policy], SpendCounter())
+    for _ in range(3):
+        await enforcer.reserve("team-warn", None, 0.005)
+        await enforcer.deduct("team-warn", None, 0.0048, reserved_usd=0.005)
+    assert (await enforcer.status("team-warn")).spent_usd == pytest.approx(0.0144)
+
+
+@pytest.mark.asyncio
+async def test_hard_stop_reserve_then_deduct_settles_to_actual(enforcer):
+    # reservation is credited up front…
+    assert await enforcer.reserve("team-engineering", None, 0.005) is True
+    assert (await enforcer.status("team-engineering")).spent_usd == pytest.approx(0.005)
+    # …then settled down to the actual cost.
+    await enforcer.deduct("team-engineering", None, 0.0048, reserved_usd=0.005)
+    assert (await enforcer.status("team-engineering")).spent_usd == pytest.approx(0.0048)
+
+
+@pytest.mark.asyncio
+async def test_mixed_scope_warn_team_hardstop_workflow_both_net_to_actual():
+    team_pol = _policy("team", BudgetScope.team, "eng", limit_usd=100.0, hard_stop=False)
+    wf_pol = _policy("wf", BudgetScope.workflow, "wf-batch", limit_usd=50.0, hard_stop=True)
+    enforcer = BudgetEnforcer([team_pol, wf_pol], SpendCounter())
+
+    await enforcer.reserve("eng", "wf-batch", 0.005)
+    # only the hard-stop workflow scope was credited
+    assert (await enforcer.status("eng")).spent_usd == pytest.approx(0.0)
+
+    await enforcer.deduct("eng", "wf-batch", 0.0048, reserved_usd=0.005)
+    assert (await enforcer.status("eng")).spent_usd == pytest.approx(0.0048)             # warn team: full actual
+    assert (await enforcer.status("eng", "wf-batch")).spent_usd == pytest.approx(0.0048)  # hard wf: settled
