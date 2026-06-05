@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed — budget re-route on reservation race (2026-06-06)
+
+`POST /api/v1/complete` previously hard-rejected with **402** when the primary
+model's `reserve()` lost the budget race between the Stage-4 `can_spend` check
+and the reservation — even though a *cheaper* in-budget model could have served
+the request. The adapter-error path already re-ran the selector to recover; the
+budget path did not (asymmetric resilience).
+
+- The primary-reservation-failure path now **re-routes** to a cheaper in-budget
+  model (re-running the full 5-stage selector, preserving privacy/tier/budget/
+  guardrails) instead of returning 402. A genuinely exhausted budget still 402s
+  on the re-routed attempt.
+- Refactor: the duplicated fallback block (re-select → reserve → execute) is
+  extracted into a single `_reroute_after()` helper shared by both the budget-race
+  and adapter-error paths, removing ~60 lines of duplication. All existing error
+  codes and audit events are preserved.
+- Test: `test_budget_reservation_race_reroutes_to_cheaper_model` (integration);
+  full complete-endpoint + error-recovery suites green.
+
 ### Added — Telegram magazine delivery (2026-05-31)
 
 The pricing-sync magazine can now be delivered to a dedicated Telegram bot, in

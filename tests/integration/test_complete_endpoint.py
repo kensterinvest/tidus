@@ -240,6 +240,49 @@ class TestAdapterFallback:
         assert resp.status_code == 200
         assert resp.json()["fallback_from"] is not None
 
+    def test_budget_reservation_race_reroutes_to_cheaper_model(self, client):
+        """M2: when the primary model's reservation loses a budget race
+        (`reserve()` returns False even though Stage-4 `can_spend` passed), the
+        endpoint must re-route to a cheaper in-budget model instead of hard-402.
+        The cheaper alternative may fit the remaining budget the primary didn't.
+        """
+        mock_adapter = MagicMock()
+        mock_adapter.complete = AsyncMock(return_value=_fake_adapter_response())
+        mock_adapter.health_check = AsyncMock(return_value=True)
+        mock_adapter.count_tokens = AsyncMock(return_value=10)
+
+        # Primary reservation loses the race (False); the re-routed model wins.
+        reserve_mock = AsyncMock(side_effect=[False, True])
+
+        with patch("tidus.api.v1.complete.get_adapter", return_value=mock_adapter), \
+             patch("tidus.budget.enforcer.BudgetEnforcer.reserve", reserve_mock):
+            resp = _complete(client, complexity="simple", domain="chat",
+                             estimated_input_tokens=200)
+
+        assert resp.status_code == 200, resp.text
+        assert resp.json()["fallback_from"] is not None
+        assert reserve_mock.await_count == 2  # primary lost, re-routed model won
+
+    def test_budget_truly_exhausted_still_402_after_reroute(self, client):
+        """M2 money invariant: if the re-routed model's reservation ALSO fails
+        (budget genuinely exhausted), the request still returns 402. The
+        hard-stop ceiling is enforced on every attempt, so a team cannot
+        overspend by being re-routed to a cheaper model."""
+        mock_adapter = MagicMock()
+        mock_adapter.complete = AsyncMock(return_value=_fake_adapter_response())
+        mock_adapter.health_check = AsyncMock(return_value=True)
+        mock_adapter.count_tokens = AsyncMock(return_value=10)
+
+        reserve_mock = AsyncMock(side_effect=[False, False])  # primary AND fallback fail
+
+        with patch("tidus.api.v1.complete.get_adapter", return_value=mock_adapter), \
+             patch("tidus.budget.enforcer.BudgetEnforcer.reserve", reserve_mock):
+            resp = _complete(client, complexity="simple", domain="chat",
+                             estimated_input_tokens=200)
+
+        assert resp.status_code == 402, resp.text
+        assert reserve_mock.await_count == 2  # tried primary, then re-routed, both refused
+
     def test_identical_request_hits_cache_on_second_call(self, client):
         """Fix 11: second identical request must serve from ExactCache."""
         mock_adapter = MagicMock()
