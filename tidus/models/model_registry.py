@@ -86,6 +86,15 @@ class ModelSpec(BaseModel):
         description="Ordered fallback model_ids: cheaper → mid → premium → local",
     )
 
+    # Execution routing. INVARIANT: route_id is set IFF this model is served via
+    # the OpenRouter adapter (i.e. its vendor has no native adapter). It is both
+    # the OpenRouter execution id (e.g. "nvidia/nemotron-3-ultra-550b-a55b") AND
+    # the "is-OpenRouter-served" marker the routability flag gates on. None for
+    # natively-served / hand-curated models.
+    route_id: str | None = Field(
+        None, description="OpenRouter execution id; set iff served via OpenRouter adapter"
+    )
+
     last_price_check: date = Field(default_factory=date.today, description="Date of last price sync")
     last_health_check: datetime | None = None
     released_at: date | None = Field(None, description="Official GA release date; used as tie-breaker when scores are equal")

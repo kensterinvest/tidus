@@ -201,3 +201,58 @@ def test_empty_quotes_returns_empty_result():
     result = PriceConsensus().resolve([])
     assert result.quotes == {}
     assert result.single_source_models == []
+
+
+# ── Two-source screening guard ────────────────────────────────────────────────
+#
+# With exactly two distinct prices the Modified Z-Score is always 0.6745, so MAD
+# can never reject — outlier screening is statistically inert. Production runs
+# exactly two sources (hardcoded + OpenRouter), so this is the live regime. The
+# guard makes the inertness visible (`screening_bypassed`) and adds a relative-
+# spread alarm (`flagged_disagreements`) with a confidence penalty.
+
+
+def test_two_sources_marked_screening_bypassed():
+    a = make_quote(input_price=5.0, source_name="a", source_confidence=0.7)
+    b = make_quote(input_price=5.2, source_name="b", source_confidence=0.85)
+    result = PriceConsensus().resolve([a, b])
+    assert "gpt-4o" in result.screening_bypassed
+
+
+def test_two_source_large_disagreement_flagged_and_confidence_penalised():
+    a = make_quote(input_price=5.0, source_name="a", source_confidence=0.7)
+    b = make_quote(input_price=50.0, source_name="b", source_confidence=0.85)  # 10× spread
+    result = PriceConsensus().resolve([a, b])
+    assert result.flagged_disagreements.get("gpt-4o") == pytest.approx(10.0)
+    # winner (higher-confidence b) carries reduced confidence to propagate distrust
+    assert result.quotes["gpt-4o"].source_confidence == pytest.approx(0.55)  # 0.85 − 0.30
+
+
+def test_two_source_small_spread_not_flagged():
+    a = make_quote(input_price=5.0, source_name="a", source_confidence=0.7)
+    b = make_quote(input_price=5.2, source_name="b", source_confidence=0.85)  # 4% spread
+    result = PriceConsensus().resolve([a, b])
+    assert "gpt-4o" not in result.flagged_disagreements
+    assert result.quotes["gpt-4o"].source_confidence == pytest.approx(0.85)  # unpenalised
+
+
+def test_three_sources_not_screening_bypassed_and_outlier_still_rejected():
+    a = make_quote(input_price=5.0, source_name="a", source_confidence=0.7)
+    b = make_quote(input_price=5.1, source_name="b", source_confidence=0.85)
+    outlier = make_quote(input_price=500.0, source_name="bad", source_confidence=0.9)
+    result = PriceConsensus().resolve([a, b, outlier])
+    assert "gpt-4o" not in result.screening_bypassed
+    assert "bad" in result.rejection_summary["gpt-4o"]
+
+
+def test_two_source_ratio_threshold_configurable():
+    a = make_quote(input_price=5.0, source_name="a", source_confidence=0.7)
+    b = make_quote(input_price=7.5, source_name="b", source_confidence=0.85)  # 1.5× spread
+    assert "gpt-4o" not in PriceConsensus().resolve([a, b]).flagged_disagreements
+    assert "gpt-4o" in PriceConsensus(two_source_ratio_threshold=1.2).resolve([a, b]).flagged_disagreements
+
+
+def test_single_source_not_in_screening_bypassed():
+    """Single-source is tracked separately (single_source_models), not here."""
+    result = PriceConsensus().resolve([make_quote()])
+    assert result.screening_bypassed == []

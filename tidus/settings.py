@@ -95,6 +95,14 @@ class Settings(BaseSettings):
     openrouter_enabled: bool = True
     openrouter_base_url: str = "https://openrouter.ai"
     openrouter_request_timeout_seconds: float = 15.0
+    # Execution via the universal OpenRouter adapter (separate from the
+    # keyless pricing/discovery use above — execution is paid, needs a key).
+    openrouter_api_key: str = ""
+    # Routability flag (default OFF): when False, OpenRouter-served models
+    # (ModelSpec.route_id set) stay catalog-visible but are NEVER routing
+    # candidates. Flip in a separate greenlightable PR paired with the M1 fix +
+    # a quality gate. See docs/superpowers/specs/2026-06-06-openrouter-*.
+    openrouter_routing_enabled: bool = False
 
     # ── Auto-promotion of discovered models ─────────────────────────────────
     # When True (default), the weekly sync writes a config/models.auto.yaml

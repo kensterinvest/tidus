@@ -73,6 +73,14 @@ pricing_sync:
   # that cadence, sub-5% moves were noise. With OpenRouter providing live
   # quotes twice a week, real 1-4% vendor adjustments should now register.
   change_threshold: 0.01  # 1%
+  # Circuit-breaker against catalog collapse: if a single sync would retire more
+  # than `max_retirement_pct` of the catalog AND at least `min_retirement_count`
+  # models, abort the cycle and keep the current ACTIVE revision (a loud
+  # `price_sync_bulk_retirement_blocked` error fires for alerting). Guards the
+  # 188→56 collapse where a transient OpenRouter blip emptied models.auto.yaml.
+  # A genuinely large, intentional retirement requires raising these.
+  max_retirement_pct: 0.20    # 20% of the catalog
+  min_retirement_count: 10    # absolute floor — small/dev catalogs never trip
   # If the active revision hasn't changed in this many days AND a live
   # pricing source ran successfully during the current sync, the magazine
   # emits a drift-alarm banner. Catches the "no updates for a month while

@@ -7,6 +7,97 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-06
+
+Bundles the deep-dive correctness fixes (live budget undercount, catalog-collapse
+guard, 2-source consensus visibility), the caller-override PII floor, budget
+reservation-race re-route, the OpenRouter universal execution adapter (shipped
+**dark** behind a default-off flag), and Telegram magazine delivery.
+
+### Fixed — correctness cluster (2026-06-05)
+
+Three correctness fixes surfaced by a deep-dive review, each with regression tests.
+
+- **Budget undercount on warn-only policies.** `deduct()` applied the
+  `actual − reserved` settlement adjustment to *every* scope, but `reserve()`
+  only credits **hard-stop** scopes. Warn-only (and policy-less) counters were
+  therefore decremented on every request (the 15% estimate buffer ⇒
+  estimated > actual ⇒ the counter drifted negative), so warn thresholds never
+  fired. `deduct()` now settles each scope independently — full actual for
+  non-reserved scopes, `actual − reserved` only for hard-stop scopes.
+  (`tidus/budget/enforcer.py`)
+- **Bulk-retirement circuit-breaker.** A transient discovery failure can empty
+  `models.auto.yaml`, which would otherwise retire the entire auto-promoted
+  catalog in one cycle (the 188→56 collapse of 2026-05-20). The price-sync
+  pipeline now aborts a cycle that would retire more than `max_retirement_pct`
+  (default 20%) of the catalog AND at least `min_retirement_count` (default 10)
+  models, keeping the current ACTIVE revision and emitting
+  `price_sync_bulk_retirement_blocked` for alerting. Tunable in
+  `config/policies.yaml`. (`tidus/registry/pipeline.py`)
+  *Note: this **contains** the collapse at the DB-revision layer — the catalog
+  stays intact and self-heals when discovery recovers. It does not stop
+  `AutoPromoter` from having already overwritten `models.auto.yaml` to empty
+  upstream; guarding that empty write is a follow-up.*
+- **Two-source consensus — visibility (not yet prevention).** MAD outlier
+  screening is statistically inert with exactly two sources (the modified
+  z-score is always 0.6745), which is the production regime (hardcoded +
+  OpenRouter). `PriceConsensus` now **surfaces** this: it reports
+  `screening_bypassed` for two-source models and raises a relative-spread alarm
+  (`flagged_disagreements` + a `consensus_two_source_disagreement` log + a
+  winner confidence penalty) when the two prices differ by more than a
+  configurable ratio (default 2×). *This is observability only — the winning
+  price is still chosen by source confidence, so a gross disagreement is logged
+  but not yet overridden. Authority-preferred selection on disagreement is the
+  deferred follow-up (Research item #4).* (`tidus/sync/pricing/consensus.py`)
+
+### Changed — budget re-route on reservation race (2026-06-06)
+
+`POST /api/v1/complete` previously hard-rejected with **402** when the primary
+model's `reserve()` lost the budget race between the Stage-4 `can_spend` check
+and the reservation — even though a *cheaper* in-budget model could have served
+the request. The adapter-error path already re-ran the selector to recover; the
+budget path did not (asymmetric resilience).
+
+- The primary-reservation-failure path now **re-routes** to a cheaper in-budget
+  model (re-running the full 5-stage selector, preserving privacy/tier/budget/
+  guardrails) instead of returning 402. A genuinely exhausted budget still 402s
+  on the re-routed attempt.
+- Refactor: the duplicated fallback block (re-select → reserve → execute) is
+  extracted into a single `_reroute_after()` helper shared by both the budget-race
+  and adapter-error paths, removing ~60 lines of duplication. All existing error
+  codes and audit events are preserved.
+- Test: `test_budget_reservation_race_reroutes_to_cheaper_model` (integration);
+  full complete-endpoint + error-recovery suites green.
+
+### Added — OpenRouter universal execution adapter + gated promotion (2026-06-06, dark)
+
+Infrastructure to make priced models from vetted vendors **without a native
+adapter** (NVIDIA Nemotron, MiniMax, Tencent Hunyuan, Amazon Nova, Baidu Ernie,
+AI21, AllenAI, ByteDance, Arcee) routable via OpenRouter — shipped **dark behind
+a default-off flag** so the larger pool cannot affect selection until the
+routing-quality work lands.
+
+- `tidus/adapters/openrouter_adapter.py` — `OpenRouterAdapter` (sentinel vendor
+  `openrouter`), OpenAI-compatible client at `openrouter.ai/api/v1`. The exec id
+  is `ModelSpec.route_id`.
+- `adapter_factory.resolve_adapter(spec)` — native adapter preferred; OpenRouter
+  fallback when `route_id` is set. (`complete.py` adoption deferred to the
+  activation PR — flag-off never routes a `route_id` model, and PR #10/M2
+  refactors the same dispatch block.)
+- `ModelSpec.route_id` — the OpenRouter exec id; **set iff served via OpenRouter**
+  (doubles as the "is-OpenRouter-served" marker).
+- `AutoPromoter` — split into `_NATIVE_VENDORS` (route_id=None) and an expanded
+  `_OPENROUTER_VENDORS` (route_id set). Existing `:free`/no-price skips unchanged.
+- **Routability flag** `openrouter_routing_enabled` (default **OFF**): the
+  selector's Stage-1 hard constraint rejects `route_id` models
+  (`RejectionReason.openrouter_routing_disabled`) while off — catalog-visible
+  (magazine / `GET /models`) but never routing candidates. Flip is a separate
+  greenlightable PR paired with the M1 fix + a quality gate.
+- Health probe already skips `route_id` models (no native adapter → graceful
+  skip), so no spurious auto-disable.
+- Tests: `test_openrouter_adapter.py` + additions to `test_auto_promote.py` and
+  `test_selector.py`. Settings + `.env.example` documented.
+
 ### Added — Telegram magazine delivery (2026-05-31)
 
 The pricing-sync magazine can now be delivered to a dedicated Telegram bot, in

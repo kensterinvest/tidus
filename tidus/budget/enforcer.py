@@ -185,6 +185,28 @@ class BudgetEnforcer:
             if wf_policy and wf_policy.hard_stop:
                 await self._counter.add(team_id, workflow_id, -amount_usd)
 
+    @staticmethod
+    def _settle_delta(
+        policy: BudgetPolicy | None, amount_usd: float, reserved_usd: float | None
+    ) -> float:
+        """How much to add to a scope's counter at settle time.
+
+        Mirrors :meth:`reserve`, which only credits **hard-stop** scopes. So:
+          - no ``reserved_usd`` (legacy path)          → add the full actual.
+          - reserved AND scope is hard-stop            → settle by the delta
+            ``actual - reserved`` (the reservation was already credited).
+          - reserved BUT scope is warn-only/policy-less → add the full actual,
+            because ``reserve()`` never credited it.
+
+        The old code applied ``actual - reserved`` to *every* scope, which drove
+        warn-only counters negative on every request (reserved was never added).
+        """
+        if reserved_usd is None:
+            return amount_usd
+        if policy is not None and policy.hard_stop:
+            return amount_usd - reserved_usd
+        return amount_usd
+
     async def deduct(
         self,
         team_id: str,
@@ -195,24 +217,18 @@ class BudgetEnforcer:
     ) -> None:
         """Commit actual spend after a successful model call.
 
-        If ``reserved_usd`` is given the counter was already credited with the
-        reservation, so we adjust by the delta ``amount_usd - reserved_usd``.
-        Without ``reserved_usd`` the full ``amount_usd`` is added (legacy
-        path used by tests and paths that did not call :meth:`reserve`).
-
-        Warning thresholds evaluated against the post-adjustment total.
+        Each scope settles independently: hard-stop scopes (which ``reserve``
+        credited) adjust by ``amount_usd - reserved_usd``; warn-only and
+        policy-less scopes add the full ``amount_usd``. Warning thresholds are
+        evaluated against the post-adjustment total.
 
         Example:
             await enforcer.deduct("team-eng", "wf-chat", 0.0048, reserved_usd=0.005)
         """
-        if reserved_usd is None:
-            delta = amount_usd
-        else:
-            delta = amount_usd - reserved_usd
-
-        new_team_total = await self._counter.add(team_id, None, delta)
-
         team_policy = self._team_policy(team_id)
+        team_delta = self._settle_delta(team_policy, amount_usd, reserved_usd)
+        new_team_total = await self._counter.add(team_id, None, team_delta)
+
         if team_policy:
             utilisation = new_team_total / team_policy.limit_usd
             if utilisation >= team_policy.warn_at_pct:
@@ -225,8 +241,9 @@ class BudgetEnforcer:
                 )
 
         if workflow_id:
-            new_wf_total = await self._counter.add(team_id, workflow_id, delta)
             wf_policy = self._workflow_policy(workflow_id)
+            wf_delta = self._settle_delta(wf_policy, amount_usd, reserved_usd)
+            new_wf_total = await self._counter.add(team_id, workflow_id, wf_delta)
             if wf_policy:
                 utilisation = new_wf_total / wf_policy.limit_usd
                 if utilisation >= wf_policy.warn_at_pct:

@@ -113,6 +113,12 @@ class RegistryPipeline:
         from tidus.utils.yaml_loader import load_yaml
         raw = load_yaml(policies_path)
         threshold = raw.get("pricing_sync", {}).get("change_threshold", 0.05)
+        # Bulk-retirement circuit-breaker: abort if a single cycle would retire
+        # more than `max_retirement_pct` of the catalog AND at least
+        # `min_retirement_count` models (the absolute floor keeps tiny/dev
+        # catalogs and legitimate small cleanups from tripping it).
+        max_retirement_pct = raw.get("pricing_sync", {}).get("max_retirement_pct", 0.20)
+        min_retirement_count = raw.get("pricing_sync", {}).get("min_retirement_count", 10)
         canary_cfg = raw.get("canary", {})
         # Allow TIDUS_CANARY_SAMPLE_SIZE=0 in dev to skip Tier 3 without editing policies.yaml
         env_sample = os.environ.get("TIDUS_CANARY_SAMPLE_SIZE")
@@ -183,6 +189,28 @@ class RegistryPipeline:
             yaml_registry = ModelRegistry.load(get_settings().models_config_path)
             yaml_by_id = {s.model_id: s for s in yaml_registry.list_all()}
             retired_ids = set(current_by_id.keys()) - set(yaml_by_id.keys())
+
+            # ── Circuit-breaker: refuse a mass retirement ─────────────────────
+            # A transient discovery failure can empty models.auto.yaml, which
+            # would otherwise retire the entire auto-promoted catalog in one
+            # cycle (the 188→56 collapse). Abort instead, keeping the current
+            # ACTIVE revision intact, and surface a loud error for alerting.
+            total_models = len(current_by_id)
+            if (
+                len(retired_ids) >= min_retirement_count
+                and total_models > 0
+                and len(retired_ids) / total_models > max_retirement_pct
+            ):
+                log.error(
+                    "price_sync_bulk_retirement_blocked",
+                    retired_count=len(retired_ids),
+                    total_models=total_models,
+                    retired_pct=round(len(retired_ids) / total_models * 100, 1),
+                    max_retirement_pct=max_retirement_pct,
+                    min_retirement_count=min_retirement_count,
+                    sample=sorted(retired_ids)[:20],
+                )
+                return None
 
             new_specs: dict[str, ModelSpec] = dict(current_by_id)  # start from current
             changes: list[dict] = []

@@ -6,6 +6,8 @@ the T5 paths per plan.md shipping plan (Stage A scope B).
 """
 from __future__ import annotations
 
+import pytest
+
 from tidus.classification import TaskClassifier
 
 
@@ -124,6 +126,39 @@ class TestAsymmetricSafetyMerge:
         r = clf.classify(
             "totally benign prose",
             caller_override={"privacy": "confidential"},
+        )
+        assert r.privacy == "confidential"
+
+    def test_complete_override_with_ssn_still_forced_confidential(self):
+        """A COMPLETE caller override must not be able to label PII-bearing text
+        public — the high-precision PII floor forces confidential while the
+        caller's domain/complexity are still honored (asymmetric safety)."""
+        clf = TaskClassifier()
+        r = clf.classify(
+            "here's my SSN 123-45-6789",
+            caller_override={"domain": "chat", "complexity": "simple", "privacy": "public"},
+        )
+        assert r.privacy == "confidential"
+        assert r.domain == "chat"
+        assert r.complexity == "simple"
+
+    def test_complete_override_benign_text_honors_caller_public(self):
+        """The PII floor must not over-fire — benign text keeps the caller's label."""
+        clf = TaskClassifier()
+        r = clf.classify(
+            "what's the weather today",
+            caller_override={"domain": "chat", "complexity": "simple", "privacy": "public"},
+        )
+        assert r.privacy == "public"
+        assert r.classification_tier == "caller_override"
+
+    @pytest.mark.asyncio
+    async def test_complete_override_with_ssn_async_forced_confidential(self):
+        """The async cascade shares the override path — same guarantee."""
+        clf = TaskClassifier()
+        r = await clf.classify_async(
+            "my SSN is 123-45-6789",
+            caller_override={"domain": "chat", "complexity": "simple", "privacy": "public"},
         )
         assert r.privacy == "confidential"
 

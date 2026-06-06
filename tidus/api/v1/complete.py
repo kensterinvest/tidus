@@ -311,51 +311,24 @@ async def complete(
     # Atomic reservation — prevents concurrent requests from collectively
     # overrunning the hard-stop limit between Stage 4 check and deduct().
     estimated_cost = decision.estimated_cost_usd or 0.0
-    if estimated_cost > 0 and not await enforcer.reserve(
-        effective_team_id, req.workflow_id, estimated_cost,
-    ):
-        log.warning(
-            "budget_reservation_failed",
-            task_id=task.task_id,
-            team_id=effective_team_id,
-            workflow_id=req.workflow_id,
-            estimated_cost=estimated_cost,
-        )
-        await _audit_error(
-            402, "budget_reservation_failed",
-            chosen_model_id=decision.chosen_model_id,
-            estimated_cost=estimated_cost,
-        )
-        raise HTTPException(
-            status_code=402,
-            detail="Budget would be exceeded by concurrent requests — try again later.",
-        )
+    primary_model_id = decision.chosen_model_id
 
-    try:
-        response = await adapter.complete(decision.chosen_model_id, task)
-    except Exception as exc:
-        if estimated_cost > 0:
-            await enforcer.refund(effective_team_id, req.workflow_id, estimated_cost)
-        log.error(
-            "adapter_error",
-            task_id=task.task_id,
-            model_id=decision.chosen_model_id,
-            vendor=spec.vendor,
-            error=str(exc),
-        )
+    async def _reroute_after(failed_model_id: str):
+        """Re-run the full 5-stage selector excluding ``failed_model_id``, then
+        reserve + execute the alternative. Shared by BOTH a lost budget
+        reservation race and an adapter error — preserves privacy/tier/budget/
+        guardrails on the alternative (vs the old ``spec.fallbacks[0]`` shortcut).
 
-        # Re-run the full 5-stage selector excluding the failed model. This
-        # preserves privacy routing, tier ceilings, budget, and guardrails on
-        # the fallback — unlike the old code which short-circuited to
-        # `spec.fallbacks[0]` and skipped every stage.
-        primary_model_id = decision.chosen_model_id
+        Returns ``(response, spec, decision, estimated_cost)`` for the model that
+        answered. Raises HTTPException on unrecoverable failure (single hop).
+        """
         try:
-            decision = await selector.select(
-                task, exclude_model_ids=frozenset({primary_model_id}),
+            fb_decision = await selector.select(
+                task, exclude_model_ids=frozenset({failed_model_id}),
             )
         except ModelSelectionError:
             await _audit_error(
-                502, "no_eligible_fallback", primary_model_id=primary_model_id,
+                502, "no_eligible_fallback", primary_model_id=failed_model_id,
             )
             raise HTTPException(
                 status_code=502,
@@ -363,37 +336,36 @@ async def complete(
                        "Check server logs for details.",
             )
 
-        spec = registry.get(decision.chosen_model_id)
-        if spec is None:
+        fb_spec = registry.get(fb_decision.chosen_model_id)
+        if fb_spec is None:
             await _audit_error(
                 500, "fallback_model_missing_from_registry",
-                fallback_model_id=decision.chosen_model_id,
+                fallback_model_id=fb_decision.chosen_model_id,
             )
             raise HTTPException(
                 status_code=500,
                 detail="Fallback model disappeared from registry mid-request",
             )
         try:
-            fallback_adapter = get_adapter(spec.vendor)
+            fb_adapter = get_adapter(fb_spec.vendor)
         except KeyError:
             await _audit_error(
                 502, "no_adapter_for_fallback_vendor",
-                vendor=spec.vendor, fallback_model_id=decision.chosen_model_id,
+                vendor=fb_spec.vendor, fallback_model_id=fb_decision.chosen_model_id,
             )
             raise HTTPException(
                 status_code=502,
-                detail=f"Fallback vendor '{spec.vendor}' has no adapter installed.",
+                detail=f"Fallback vendor '{fb_spec.vendor}' has no adapter installed.",
             )
 
-        # Reservation for the fallback cost (new estimated)
-        estimated_cost = decision.estimated_cost_usd or 0.0
-        if estimated_cost > 0 and not await enforcer.reserve(
-            effective_team_id, req.workflow_id, estimated_cost,
+        fb_estimated = fb_decision.estimated_cost_usd or 0.0
+        if fb_estimated > 0 and not await enforcer.reserve(
+            effective_team_id, req.workflow_id, fb_estimated,
         ):
             await _audit_error(
                 402, "fallback_budget_reservation_failed",
-                fallback_model_id=decision.chosen_model_id,
-                estimated_cost=estimated_cost,
+                fallback_model_id=fb_decision.chosen_model_id,
+                estimated_cost=fb_estimated,
             )
             raise HTTPException(
                 status_code=402,
@@ -401,20 +373,20 @@ async def complete(
             )
 
         try:
-            response = await fallback_adapter.complete(decision.chosen_model_id, task)
-        except Exception as fallback_exc:
-            if estimated_cost > 0:
-                await enforcer.refund(effective_team_id, req.workflow_id, estimated_cost)
+            fb_response = await fb_adapter.complete(fb_decision.chosen_model_id, task)
+        except Exception as fb_exc:
+            if fb_estimated > 0:
+                await enforcer.refund(effective_team_id, req.workflow_id, fb_estimated)
             log.error(
                 "fallback_also_failed",
-                primary=primary_model_id,
-                fallback=decision.chosen_model_id,
-                error=str(fallback_exc),
+                primary=failed_model_id,
+                fallback=fb_decision.chosen_model_id,
+                error=str(fb_exc),
             )
             await _audit_error(
                 502, "fallback_also_failed",
-                primary_model_id=primary_model_id,
-                fallback_model_id=decision.chosen_model_id,
+                primary_model_id=failed_model_id,
+                fallback_model_id=fb_decision.chosen_model_id,
             )
             raise HTTPException(
                 status_code=502,
@@ -422,13 +394,43 @@ async def complete(
                        "Check server logs for details.",
             )
 
-        decision = decision.model_copy(update={"fallback_from": primary_model_id})
+        fb_decision = fb_decision.model_copy(update={"fallback_from": failed_model_id})
         log.info(
             "fallback_used",
             task_id=task.task_id,
-            primary=primary_model_id,
-            fallback=decision.chosen_model_id,
+            primary=failed_model_id,
+            fallback=fb_decision.chosen_model_id,
         )
+        return fb_response, fb_spec, fb_decision, fb_estimated
+
+    if estimated_cost > 0 and not await enforcer.reserve(
+        effective_team_id, req.workflow_id, estimated_cost,
+    ):
+        # Lost the budget race between Stage-4 can_spend and reserve. Instead of
+        # a hard 402, re-route to a cheaper in-budget model — it may fit the
+        # remaining budget the primary did not. (Was: immediate 402.)
+        log.warning(
+            "budget_reservation_failed",
+            task_id=task.task_id,
+            team_id=effective_team_id,
+            workflow_id=req.workflow_id,
+            estimated_cost=estimated_cost,
+        )
+        response, spec, decision, estimated_cost = await _reroute_after(primary_model_id)
+    else:
+        try:
+            response = await adapter.complete(decision.chosen_model_id, task)
+        except Exception as exc:
+            if estimated_cost > 0:
+                await enforcer.refund(effective_team_id, req.workflow_id, estimated_cost)
+            log.error(
+                "adapter_error",
+                task_id=task.task_id,
+                model_id=decision.chosen_model_id,
+                vendor=spec.vendor,
+                error=str(exc),
+            )
+            response, spec, decision, estimated_cost = await _reroute_after(primary_model_id)
 
     # Deduct actual cost from budget — adjusts the prior reservation by the
     # difference (actual - estimated) so the counter ends at actual cost.
