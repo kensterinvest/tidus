@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed — correctness cluster (2026-06-05)
+
+Three correctness fixes surfaced by a deep-dive review, each with regression tests.
+
+- **Budget undercount on warn-only policies.** `deduct()` applied the
+  `actual − reserved` settlement adjustment to *every* scope, but `reserve()`
+  only credits **hard-stop** scopes. Warn-only (and policy-less) counters were
+  therefore decremented on every request (the 15% estimate buffer ⇒
+  estimated > actual ⇒ the counter drifted negative), so warn thresholds never
+  fired. `deduct()` now settles each scope independently — full actual for
+  non-reserved scopes, `actual − reserved` only for hard-stop scopes.
+  (`tidus/budget/enforcer.py`)
+- **Bulk-retirement circuit-breaker.** A transient discovery failure can empty
+  `models.auto.yaml`, which would otherwise retire the entire auto-promoted
+  catalog in one cycle (the 188→56 collapse of 2026-05-20). The price-sync
+  pipeline now aborts a cycle that would retire more than `max_retirement_pct`
+  (default 20%) of the catalog AND at least `min_retirement_count` (default 10)
+  models, keeping the current ACTIVE revision and emitting
+  `price_sync_bulk_retirement_blocked` for alerting. Tunable in
+  `config/policies.yaml`. (`tidus/registry/pipeline.py`)
+  *Note: this **contains** the collapse at the DB-revision layer — the catalog
+  stays intact and self-heals when discovery recovers. It does not stop
+  `AutoPromoter` from having already overwritten `models.auto.yaml` to empty
+  upstream; guarding that empty write is a follow-up.*
+- **Two-source consensus — visibility (not yet prevention).** MAD outlier
+  screening is statistically inert with exactly two sources (the modified
+  z-score is always 0.6745), which is the production regime (hardcoded +
+  OpenRouter). `PriceConsensus` now **surfaces** this: it reports
+  `screening_bypassed` for two-source models and raises a relative-spread alarm
+  (`flagged_disagreements` + a `consensus_two_source_disagreement` log + a
+  winner confidence penalty) when the two prices differ by more than a
+  configurable ratio (default 2×). *This is observability only — the winning
+  price is still chosen by source confidence, so a gross disagreement is logged
+  but not yet overridden. Authority-preferred selection on disagreement is the
+  deferred follow-up (Research item #4).* (`tidus/sync/pricing/consensus.py`)
+
 ### Added — Telegram magazine delivery (2026-05-31)
 
 The pricing-sync magazine can now be delivered to a dedicated Telegram bot, in

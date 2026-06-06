@@ -223,6 +223,47 @@ async def test_pipeline_retires_models_removed_from_yaml(sf):
 
 
 @pytest.mark.asyncio
+async def test_pipeline_blocks_bulk_retirement(sf):
+    """Circuit-breaker: a mass retirement (e.g. an OpenRouter blip wiping
+    models.auto.yaml) must abort the cycle and keep the current ACTIVE revision —
+    not silently retire the whole catalog (the 188→56 collapse failure mode).
+    """
+    revision_id = f"rev-{uuid.uuid4().hex[:8]}"
+    now = datetime.now(UTC)
+    async with sf() as session:
+        session.add(ModelCatalogRevisionORM(
+            revision_id=revision_id, source="yaml_seed",
+            signature_hash="abc", status="active", activated_at=now,
+        ))
+        # 15 ghost models, none in models.yaml → 100% would-be retirement,
+        # comfortably above both the 20% fraction and the 10-model floor.
+        for i in range(15):
+            session.add(ModelCatalogEntryORM(
+                id=str(uuid.uuid4()), revision_id=revision_id,
+                model_id=f"ghost-model-{i}",
+                spec_json=_spec_dict(f"ghost-model-{i}", 1.0), schema_version=1,
+            ))
+        await session.commit()
+
+    source = _SimpleSource([_make_quote("ghost-model-0", input_price=1.0)])
+
+    # Canary patched to pass so that WITHOUT the breaker the cycle would succeed —
+    # i.e. the test fails for the right reason (no breaker), not a canary error.
+    with patch("tidus.registry.validators.CanaryProbe.run", new_callable=AsyncMock) as mock_canary:
+        mock_canary.return_value = (True, [])
+        result = await RegistryPipeline(sf).run_price_sync_cycle([source], _POLICIES_PATH)
+
+    assert result is None  # circuit-breaker aborted the cycle
+
+    # Seed revision untouched and still the only / active one
+    async with sf() as session:
+        revisions = (await session.execute(select(ModelCatalogRevisionORM))).scalars().all()
+    assert len(revisions) == 1
+    assert revisions[0].revision_id == revision_id
+    assert revisions[0].status == "active"
+
+
+@pytest.mark.asyncio
 async def test_pipeline_returns_none_when_no_active_revision(sf):
     """Without an active revision in DB, the pipeline cannot compute a diff."""
     source = _SimpleSource([_make_quote(input_price=5.0)])
