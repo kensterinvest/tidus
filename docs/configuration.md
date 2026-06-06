@@ -233,6 +233,15 @@ RESEND_API_KEY=re_...
 # TIDUS_TELEGRAM_BOT_TOKEN=123456:ABC-DEF...   # from @BotFather
 # TIDUS_TELEGRAM_CHAT_ID=987654321             # target chat id
 
+# ── OpenRouter universal execution adapter (optional) ────────────────────────
+# Execution key for models from vendors without a native adapter (pricing +
+# discovery use OpenRouter's keyless public endpoint — this is execution-only).
+# OPENROUTER_API_KEY=sk-or-...
+# Routability flag (default OFF): OpenRouter-served models stay catalog-visible
+# but are NOT routing candidates until flipped (do so only with the routing-
+# quality work in place).
+# OPENROUTER_ROUTING_ENABLED=false
+
 # ── Registry & pricing feed (v1.1.0) ─────────────────────────────────────────
 # Optional remote pricing feed URL (disabled by default — no customer data sent)
 # TIDUS_PRICING_FEED_URL=https://pricing.tidus.ai/prices
