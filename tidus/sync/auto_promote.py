@@ -57,13 +57,25 @@ from tidus.sync.discovery.base import DiscoveredModel
 log = structlog.get_logger(__name__)
 
 
-# Vendors we have adapters for. Promotion to a vendor outside this set
-# would create a routable entry that no adapter can serve — silently
-# 500-ing in production. Keep this list aligned with tidus/adapters/.
-_KNOWN_VENDORS: frozenset[str] = frozenset({
+# Vendors with a NATIVE execution adapter in tidus/adapters/. Served directly
+# (no OpenRouter markup); route_id stays None.
+_NATIVE_VENDORS: frozenset[str] = frozenset({
     "openai", "anthropic", "google", "mistral", "deepseek", "xai",
     "moonshot", "cohere", "qwen", "alibaba", "meta",
 })
+
+# Expanded, vetted vendors WITHOUT a native adapter — served via the universal
+# OpenRouter execution adapter. These get route_id set (the exec id + the
+# "is-OpenRouter-served" marker the openrouter_routing_enabled flag gates on).
+# Their routing is OFF by default until that flag is flipped.
+_OPENROUTER_VENDORS: frozenset[str] = frozenset({
+    "nvidia", "minimax", "tencent", "amazon", "baidu",
+    "ai21", "allenai", "bytedance", "bytedance-seed", "arcee-ai",
+})
+
+# Vendors we promote at all (native OR OpenRouter-served). A vendor outside this
+# set is left in the magazine's Pending-Review backlog, non-routable.
+_KNOWN_VENDORS: frozenset[str] = _NATIVE_VENDORS | _OPENROUTER_VENDORS
 
 # Tokenizer guess by vendor — best-effort. Wrong guess just means worse
 # token-count estimates; routing still works.
@@ -157,10 +169,16 @@ def _build_spec(model: DiscoveredModel, prices: tuple[float, float, float, float
     tokenizer = _TOKENIZER_BY_VENDOR.get(model.vendor, "tiktoken_cl100k")
     display = f"[auto-promoted] {model.display_name or model.model_id}"
 
+    # INVARIANT: route_id is set IFF the vendor has no native adapter (served via
+    # OpenRouter). It is both the OpenRouter execution id and the marker the
+    # routability flag gates on. Native vendors keep route_id=None.
+    route_id = model.vendor_id if model.vendor in _OPENROUTER_VENDORS else None
+
     return ModelSpec.model_validate({
         "model_id":         model.model_id,
         "display_name":     display,
         "vendor":           model.vendor,
+        "route_id":         route_id,
         "tier":             3,                       # economy default
         "max_context":      context_length,
         "input_price":      input_p,

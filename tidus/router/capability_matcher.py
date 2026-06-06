@@ -47,8 +47,20 @@ class CapabilityMatcher:
     observability.
     """
 
-    def __init__(self, guardrails: GuardrailPolicy) -> None:
+    def __init__(
+        self,
+        guardrails: GuardrailPolicy,
+        *,
+        openrouter_routing_enabled: bool | None = None,
+    ) -> None:
         self._guardrails = guardrails
+        # Routability flag for OpenRouter-served models (ModelSpec.route_id set).
+        # Default-off: such models are catalog-visible but NOT routing candidates
+        # until explicitly enabled. None → read the global setting.
+        if openrouter_routing_enabled is None:
+            from tidus.settings import get_settings
+            openrouter_routing_enabled = get_settings().openrouter_routing_enabled
+        self._openrouter_routing_enabled = openrouter_routing_enabled
 
     # ── Public API ────────────────────────────────────────────────────────────
 
@@ -99,6 +111,13 @@ class CapabilityMatcher:
         # penalty in ModelSelector._score_and_pick() instead.
         if not spec.enabled:
             return RejectionReason.model_disabled
+
+        # OpenRouter-served models (route_id set) are surfaced in the catalog but
+        # are NOT routing candidates unless routing is explicitly enabled. This
+        # separates "in the catalog" from "in the selection pool" so a large pool
+        # of cheap models can't be routed to before the quality work lands.
+        if getattr(spec, "route_id", None) and not self._openrouter_routing_enabled:
+            return RejectionReason.openrouter_routing_disabled
 
         # Context window must fit the estimated input tokens
         if task.estimated_input_tokens > spec.max_context:

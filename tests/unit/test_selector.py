@@ -117,6 +117,33 @@ def _build_selector(
     return ModelSelector(registry, enforcer, matcher, engine)
 
 
+# ── OpenRouter routability flag (catalog-visible but not a candidate) ─────────
+
+def _or_spec(model_id="nemotron", route_id="nvidia/nemotron"):
+    return _make_spec(model_id, tier=3, input_price=0.001, output_price=0.002).model_copy(
+        update={"route_id": route_id}
+    )
+
+
+def test_openrouter_model_rejected_when_routing_disabled():
+    matcher = CapabilityMatcher(GuardrailPolicy(), openrouter_routing_enabled=False)
+    eligible, rejected = matcher.filter([_or_spec(), _make_spec("gpt-4o", 2, 0.005, 0.015)], _make_task())
+    assert [s.model_id for s in eligible] == ["gpt-4o"]
+    assert any(r.rejection_reason == RejectionReason.openrouter_routing_disabled for r in rejected)
+
+
+def test_openrouter_model_admitted_when_routing_enabled():
+    matcher = CapabilityMatcher(GuardrailPolicy(), openrouter_routing_enabled=True)
+    eligible, _ = matcher.filter([_or_spec()], _make_task())
+    assert [s.model_id for s in eligible] == ["nemotron"]
+
+
+def test_native_model_unaffected_by_routing_flag():
+    matcher = CapabilityMatcher(GuardrailPolicy(), openrouter_routing_enabled=False)
+    eligible, _ = matcher.filter([_make_spec("gpt-4o", 2, 0.005, 0.015)], _make_task())  # route_id None
+    assert [s.model_id for s in eligible] == ["gpt-4o"]
+
+
 # ── Stage 1: Hard constraints ─────────────────────────────────────────────────
 
 @pytest.mark.asyncio

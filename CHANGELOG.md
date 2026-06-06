@@ -62,6 +62,35 @@ budget path did not (asymmetric resilience).
 - Test: `test_budget_reservation_race_reroutes_to_cheaper_model` (integration);
   full complete-endpoint + error-recovery suites green.
 
+### Added — OpenRouter universal execution adapter + gated promotion (2026-06-06, dark)
+
+Infrastructure to make priced models from vetted vendors **without a native
+adapter** (NVIDIA Nemotron, MiniMax, Tencent Hunyuan, Amazon Nova, Baidu Ernie,
+AI21, AllenAI, ByteDance, Arcee) routable via OpenRouter — shipped **dark behind
+a default-off flag** so the larger pool cannot affect selection until the
+routing-quality work lands.
+
+- `tidus/adapters/openrouter_adapter.py` — `OpenRouterAdapter` (sentinel vendor
+  `openrouter`), OpenAI-compatible client at `openrouter.ai/api/v1`. The exec id
+  is `ModelSpec.route_id`.
+- `adapter_factory.resolve_adapter(spec)` — native adapter preferred; OpenRouter
+  fallback when `route_id` is set. (`complete.py` adoption deferred to the
+  activation PR — flag-off never routes a `route_id` model, and PR #10/M2
+  refactors the same dispatch block.)
+- `ModelSpec.route_id` — the OpenRouter exec id; **set iff served via OpenRouter**
+  (doubles as the "is-OpenRouter-served" marker).
+- `AutoPromoter` — split into `_NATIVE_VENDORS` (route_id=None) and an expanded
+  `_OPENROUTER_VENDORS` (route_id set). Existing `:free`/no-price skips unchanged.
+- **Routability flag** `openrouter_routing_enabled` (default **OFF**): the
+  selector's Stage-1 hard constraint rejects `route_id` models
+  (`RejectionReason.openrouter_routing_disabled`) while off — catalog-visible
+  (magazine / `GET /models`) but never routing candidates. Flip is a separate
+  greenlightable PR paired with the M1 fix + a quality gate.
+- Health probe already skips `route_id` models (no native adapter → graceful
+  skip), so no spurious auto-disable.
+- Tests: `test_openrouter_adapter.py` + additions to `test_auto_promote.py` and
+  `test_selector.py`. Settings + `.env.example` documented.
+
 ### Added — Telegram magazine delivery (2026-05-31)
 
 The pricing-sync magazine can now be delivered to a dedicated Telegram bot, in

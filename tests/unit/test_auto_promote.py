@@ -44,6 +44,53 @@ def _disc(
     )
 
 
+# ── OpenRouter-served vendors (route_id) ──────────────────────────────────────
+
+class TestOpenRouterPromotion:
+    async def test_openrouter_vendor_promoted_with_route_id(self, tmp_path):
+        """A priced model from an expanded (non-native) vendor now promotes and
+        carries route_id = its OpenRouter id (the exec-id + 'is-OpenRouter-served'
+        marker the routability flag gates on)."""
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        result = await promoter.run(
+            discovered=[_disc(
+                model_id="nemotron-3-ultra-550b-a55b", vendor="nvidia",
+                vendor_id="nvidia/nemotron-3-ultra-550b-a55b",
+            )],
+            hand_curated_ids=set(),
+        )
+        assert len(result.promoted) == 1
+        spec = result.promoted[0]
+        assert spec.vendor == "nvidia"
+        assert spec.route_id == "nvidia/nemotron-3-ultra-550b-a55b"
+        # route_id must survive the write→reload cycle (else activation would
+        # route to route_id=None → native path → 501).
+        written = yaml.safe_load((tmp_path / "models.auto.yaml").read_text(encoding="utf-8"))
+        entry = next(m for m in written["models"] if m["model_id"] == "nemotron-3-ultra-550b-a55b")
+        assert entry["route_id"] == "nvidia/nemotron-3-ultra-550b-a55b"
+        from tidus.models.model_registry import ModelSpec
+        assert ModelSpec.model_validate(entry).route_id == "nvidia/nemotron-3-ultra-550b-a55b"
+
+    async def test_native_vendor_promoted_without_route_id(self, tmp_path):
+        """Native-adapter vendors keep route_id=None (served directly, not via OR)."""
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        result = await promoter.run(
+            discovered=[_disc(model_id="gemini-3.5-pro", vendor="google")],
+            hand_curated_ids=set(),
+        )
+        assert result.promoted[0].route_id is None
+
+    async def test_truly_unknown_vendor_still_skipped(self, tmp_path):
+        """A vendor in neither native nor expanded set is still filtered out."""
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        result = await promoter.run(
+            discovered=[_disc(model_id="weird-1", vendor="acme-labs")],
+            hand_curated_ids=set(),
+        )
+        assert result.promoted == []
+        assert result.skipped_unknown_vendor == 1
+
+
 # ── Promotion rules ───────────────────────────────────────────────────────────
 
 class TestPromotionFilters:
