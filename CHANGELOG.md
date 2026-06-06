@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-06-06
+
+Bundles the deep-dive correctness fixes (live budget undercount, catalog-collapse
+guard, 2-source consensus visibility), the caller-override PII floor, budget
+reservation-race re-route, the OpenRouter universal execution adapter (shipped
+**dark** behind a default-off flag), and Telegram magazine delivery.
+
 ### Fixed — correctness cluster (2026-06-05)
 
 Three correctness fixes surfaced by a deep-dive review, each with regression tests.
