@@ -342,20 +342,55 @@ class TaskClassifier:
     def _is_complete_override(override: dict | None) -> bool:
         return bool(override) and all(k in override for k in _EXPECTED_OVERRIDE_KEYS)
 
-    @staticmethod
     def _from_override(
-        text: str, override: dict, include_debug: bool,
+        self, text: str, override: dict, include_debug: bool,
     ) -> ClassificationResult:
+        # Domain & complexity are taken verbatim from the caller. Privacy is
+        # NOT blindly trusted: asymmetric safety means a caller may OVER-classify
+        # but never UNDER-classify. Even on a complete override we run the
+        # high-precision PII detectors (T1 confidential regex + Presidio
+        # high-trust) and force `confidential` if either fires — so a caller
+        # cannot label PII-bearing text public/internal and route an SSN or
+        # credential to a non-local model.
+        caller_priv: Privacy = override["privacy"]
+        privacy, privacy_conf = caller_priv, 1.0
+        pii_floor_fired = False
+        if caller_priv != "confidential":
+            floor_priv, floor_conf = self._pii_confidential_floor(text)
+            if floor_priv == "confidential":
+                privacy, privacy_conf, pii_floor_fired = "confidential", floor_conf, True
+
         tokens = override.get("estimated_input_tokens") or heuristics.estimate_tokens(text)
+        debug = None
+        if include_debug:
+            debug = {"caller_override_applied": True, "pii_floor_fired": pii_floor_fired}
         return ClassificationResult(
             domain=override["domain"],
             complexity=override["complexity"],
-            privacy=override["privacy"],
+            privacy=privacy,
             estimated_input_tokens=tokens,
             classification_tier="caller_override",
-            confidence={"domain": 1.0, "complexity": 1.0, "privacy": 1.0},
-            debug={"caller_override_applied": True} if include_debug else None,
+            confidence={"domain": 1.0, "complexity": 1.0, "privacy": privacy_conf},
+            debug=debug,
         )
+
+    def _pii_confidential_floor(self, text: str) -> tuple[Privacy, float]:
+        """High-precision PII floor for the caller-override path.
+
+        Runs only deterministic / high-trust detectors (never the noisier
+        PERSON E1/E2 path), so it adds confidential protection against a caller
+        under-classifying without the false-positive cost of the full merge.
+        Returns ('confidential', conf) when a high-trust signal fires, else
+        ('internal', 0.0) — i.e. no floor raised.
+        """
+        signals = heuristics.run_tier1(text, keyword_hits=[])
+        if heuristics.any_confidential_regex(signals):
+            return "confidential", _CONF_T1_REGEX
+        if self._presidio and self._presidio.loaded:
+            t2b = self._presidio.analyze(text)
+            if presidio_wrapper.has_high_trust_hit(t2b):
+                return "confidential", _CONF_T2B_HIGH_TRUST
+        return "internal", 0.0
 
     # ── T1 inference ──────────────────────────────────────────────────
 
