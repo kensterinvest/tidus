@@ -11,6 +11,8 @@ Example:
 
 from __future__ import annotations
 
+import structlog
+
 from tidus.audit.logger import AuditLogger
 from tidus.budget.enforcer import BudgetEnforcer
 from tidus.budget.policies import load_budget_policies
@@ -29,6 +31,8 @@ from tidus.router.capability_matcher import CapabilityMatcher
 from tidus.router.selector import ModelSelector
 from tidus.settings import get_settings
 from tidus.utils.yaml_loader import load_yaml
+
+log = structlog.get_logger(__name__)
 
 # ── Module-level singletons ───────────────────────────────────────────────────
 
@@ -85,6 +89,16 @@ async def build_singletons() -> None:
     budgets = load_budget_policies(settings.budgets_config_path)
     counter = _build_spend_counter(settings)
     _enforcer = BudgetEnforcer(budgets, counter)
+
+    # BUDGET-1: the in-memory counter starts empty on every process start, which
+    # silently resets in-period spend (and any hard-stop) on a restart/redeploy/OOM.
+    # Replay the current period's spend from the cost ledger so enforcement survives
+    # a bounce. The Redis backend persists independently, so it must NOT be replayed.
+    if isinstance(counter, SpendCounter):
+        try:
+            await _enforcer.warm_start(sf)
+        except Exception as exc:  # non-fatal: never block startup on a ledger read
+            log.error("budget_warm_start_failed", error=str(exc))
 
     matcher = CapabilityMatcher(_guardrail_policy)
     engine = CostEngine(buffer_pct=buffer_pct)
