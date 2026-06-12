@@ -135,6 +135,7 @@ async def terminate_session(
 async def advance_session(
     body: AdvanceRequest,
     guard: Annotated[AgentGuard, Depends(get_agent_guard)],
+    store: Annotated[SessionStore, Depends(get_session_store)],
     _auth: Annotated[TokenPayload, Depends(require_role(
         Role.developer, Role.team_manager, Role.admin, Role.service_account,
     ))],
@@ -144,5 +145,15 @@ async def advance_session(
     Returns `{"allowed": true}` or `{"allowed": false, "reason": "..."}`.
     Use this before each step in a multi-step agent loop.
     """
+    # Team ownership — mirror get/terminate so a caller cannot advance (and exhaust)
+    # another team's session. 404 (not 403) to avoid leaking session existence.
+    session = await store.get(body.session_id)
+    if (
+        session is not None
+        and session.team_id
+        and session.team_id != _auth.team_id
+        and not _can_cross_team(_auth)
+    ):
+        raise HTTPException(status_code=404, detail=f"Session '{body.session_id}' not found")
     result = await guard.check_and_advance(body.session_id, body.input_tokens)
     return {"allowed": result.allowed, "reason": result.reason}

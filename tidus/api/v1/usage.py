@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from typing import Annotated
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from tidus.api.deps import get_enforcer
@@ -54,8 +54,16 @@ async def usage_summary(
     policies = enforcer.list_policies()
     team_ids = {p.scope_id for p in policies}
 
-    if team_id is not None:
-        team_ids = {team_id} & team_ids
+    # Tenant isolation: non-privileged callers are scoped to their own team.
+    if _auth.role not in (Role.admin, Role.team_manager):
+        if team_id is not None and team_id != _auth.team_id:
+            raise HTTPException(
+                status_code=403,
+                detail="Access denied: you may only view your own team's usage.",
+            )
+        team_ids = team_ids & {_auth.team_id}
+    elif team_id is not None:
+        team_ids = team_ids & {team_id}
 
     results: list[UsageSummary] = []
     for tid in sorted(team_ids):
