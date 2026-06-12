@@ -17,12 +17,34 @@ Example:
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
+
 import structlog
 
 from tidus.cost.counter import SpendCounter
 from tidus.models.budget import BudgetPeriod, BudgetPolicy, BudgetScope, BudgetStatus
 
 log = structlog.get_logger(__name__)
+
+
+def period_start(period: BudgetPeriod, now: datetime) -> datetime:
+    """Return the UTC start instant of the current *period* containing *now*.
+
+    Matches the reset semantics in :meth:`BudgetEnforcer.reset_period`: the
+    counter holds spend accumulated since this instant. Used by warm_start to
+    bound the ledger replay to the live period.
+    """
+    now = now.astimezone(UTC)
+    midnight = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    if period == BudgetPeriod.daily:
+        return midnight
+    if period == BudgetPeriod.weekly:
+        return midnight - timedelta(days=now.weekday())  # Monday 00:00 UTC
+    if period == BudgetPeriod.monthly:
+        return midnight.replace(day=1)
+    if period == BudgetPeriod.rolling_30d:
+        return now - timedelta(days=30)
+    raise ValueError(f"unknown budget period: {period!r}")
 
 
 class BudgetEnforcer:
@@ -45,6 +67,45 @@ class BudgetEnforcer:
     def add_policy(self, policy: BudgetPolicy) -> None:
         """Add a new budget policy (takes effect immediately)."""
         self._policies.append(policy)
+
+    async def warm_start(self, session_factory, *, now: datetime | None = None) -> int:
+        """Seed the spend counter from the persisted cost ledger (BUDGET-1).
+
+        The in-memory SpendCounter starts empty on every process start. Without
+        this replay, a team that exhausted its budget is silently reset to $0 on
+        any restart / redeploy / OOM, defeating the hard-stop with no attacker
+        action. For each policy we sum ledger spend since the start of that
+        policy's current period and add it to the counter.
+
+        Only relevant for the in-memory backend — the Redis counter already
+        persists across restarts, so callers must NOT warm-start it (that would
+        double-count). Safe to run once at startup before serving traffic.
+
+        Returns the number of counter keys seeded.
+        """
+        from tidus.db.repositories.cost_repo import CostRepository
+
+        if now is None:
+            now = datetime.now(UTC)
+        seeded = 0
+        async with session_factory() as session:
+            repo = CostRepository(session)
+            for policy in self._policies:
+                since = period_start(policy.period, now)
+                if policy.scope == BudgetScope.team:
+                    spent = await repo.team_spend_since(policy.scope_id, since)
+                    if spent:
+                        await self._counter.add(policy.scope_id, None, spent)
+                        seeded += 1
+                else:  # workflow scope — seed every team that used the workflow
+                    for team_id, spent in await repo.workflow_spend_since(
+                        policy.scope_id, since
+                    ):
+                        if spent:
+                            await self._counter.add(team_id, policy.scope_id, spent)
+                            seeded += 1
+        log.info("budget_warm_start_complete", seeded=seeded, policies=len(self._policies))
+        return seeded
 
     # ── Policy lookup helpers ─────────────────────────────────────────────────
 

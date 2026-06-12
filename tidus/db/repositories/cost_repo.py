@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from sqlalchemy import select
+from datetime import datetime
+
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tidus.db.engine import CostRecordORM
@@ -44,6 +46,39 @@ class CostRepository:
         )
         rows = result.scalars().all()
         return [_to_model(r) for r in rows]
+
+    async def team_spend_since(self, team_id: str, since: datetime) -> float:
+        """Total cost_usd for a team across all workflows since ``since`` (inclusive).
+
+        Used by BudgetEnforcer.warm_start to seed the (team_id, None) counter so
+        hard-stop enforcement survives a process restart.
+        """
+        result = await self._session.execute(
+            select(func.coalesce(func.sum(CostRecordORM.cost_usd), 0.0))
+            .where(CostRecordORM.team_id == team_id)
+            .where(CostRecordORM.timestamp >= since)
+        )
+        return float(result.scalar_one())
+
+    async def workflow_spend_since(
+        self, workflow_id: str, since: datetime
+    ) -> list[tuple[str, float]]:
+        """Cost_usd grouped by team for a workflow since ``since`` (inclusive).
+
+        Returns (team_id, total) pairs so warm_start can seed each
+        (team_id, workflow_id) counter — mirroring how reset_workflow zeroes
+        every team's counter for the workflow at a period boundary.
+        """
+        result = await self._session.execute(
+            select(
+                CostRecordORM.team_id,
+                func.coalesce(func.sum(CostRecordORM.cost_usd), 0.0),
+            )
+            .where(CostRecordORM.workflow_id == workflow_id)
+            .where(CostRecordORM.timestamp >= since)
+            .group_by(CostRecordORM.team_id)
+        )
+        return [(row[0], float(row[1])) for row in result.all()]
 
 
 def _to_model(orm: CostRecordORM) -> CostRecord:
