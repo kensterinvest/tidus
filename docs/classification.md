@@ -58,7 +58,7 @@ See the **Technical Specification** section at the bottom of the [Tidus landing 
 ## Configuration
 
 See `config/policies.yaml` for:
-- `privacy_enforcement` — `strict` (default) or `disabled`
+- `privacy_enforcement` — `strict` (default) or `disabled` — ⚠️ **not yet implemented**: the current build hardcodes `strict` (confidential → local-only); the `disabled` opt-out is roadmap and the key is not read from `policies.yaml` yet
 - `classification.presidio_rule` — `E1` (default, 89.2% recall, 49% flag rate) or `E2` (83.1% recall, 19% flag rate)
 
 See `plan.md` for the full shipping sequence (Stages A through D) and the four-lever accuracy improvement roadmap.
@@ -104,6 +104,6 @@ IRR report: `tests/classification/irr/irr_report.md`.
 
 **Will it reach 95% at deployment?** The 95–97% number is a *target conditional on enterprise-traffic accumulation*, not a contractual SLA. Three of the four self-improvement levers (disagreement-capture active learning, encoder upgrades at-scale, and per-tenant fine-tuning) only activate once customer deployments are supplying telemetry and per-tenant labeled requests; the rate at which the trajectory plays out therefore depends on adoption volume. To avoid being adoption-blocked, a parallel research programme runs continuously and independently of customer traffic — uncertainty-sampling re-labeling on the remaining WildChat pool, corpus diversification (Enron, Reddit privacy disclosures, ShareGPT work-tasks), rubric re-engineering at the internal/confidential boundary, and cheap encoder ensembling — narrowing the gap that the four customer-conditional levers must subsequently close. See §9 of the Technical Specification.
 
-**Does the classifier ever send my prompt outside my deployment?** No — not when `privacy_enforcement=strict` (the default). The classifier runs entirely in-process or on localhost. Under `privacy_enforcement=disabled` (opt-in), the classifier still runs locally; what changes is only whether a `confidential` classification *forces* local-only routing of the underlying request. See §5.
+**Does the classifier ever send my prompt outside my deployment?** No — not when `privacy_enforcement=strict` (the default). The classifier runs entirely in-process or on localhost. Under `privacy_enforcement=disabled` (opt-in), the classifier still runs locally; what changes is only whether a `confidential` classification *forces* local-only routing of the underlying request. See §5. ⚠️ *Note: `disabled` is not yet wired — the current build always behaves as `strict`, so confidential is always forced local-only.*
 
 **What if I can't reach 95%?** The ceiling is approximately 97–98%, set by rubric ambiguity rather than model capability. Beyond that, improving accuracy means refining the rubric (clarifying the internal/confidential boundary with better borderline examples) rather than improving the model.
