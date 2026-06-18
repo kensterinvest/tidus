@@ -114,9 +114,9 @@ def create_app() -> FastAPI:
         description=(
             "Vendor-agnostic, cost-aware AI model router and governance system. "
             "Routes every AI request to the cheapest capable model, enforces budgets, "
-            "and prevents runaway multi-agent loops."
+            "and limits agent depth and per-step token usage."
         ),
-        version="1.2.0",
+        version="1.4.0",
         contact={"name": "Kenny Wong", "email": "lapkei01@gmail.com"},
         license_info={"name": "Apache 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0"},
         lifespan=lifespan,
