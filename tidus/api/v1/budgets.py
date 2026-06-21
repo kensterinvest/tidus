@@ -50,7 +50,11 @@ async def list_budgets(
         Role.read_only, Role.developer, Role.team_manager, Role.admin,
     ))],
 ) -> list[BudgetPolicy]:
-    return enforcer.list_policies()
+    policies = enforcer.list_policies()
+    # Tenant isolation: non-privileged callers see only their own team's policies.
+    if _auth.role not in (Role.admin, Role.team_manager):
+        policies = [p for p in policies if p.scope_id == _auth.team_id]
+    return policies
 
 
 @router.post(
