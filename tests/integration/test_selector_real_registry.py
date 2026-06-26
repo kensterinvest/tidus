@@ -328,3 +328,42 @@ async def test_selected_model_supports_requested_domain(selector, registry):
             assert domain.value in cap_values, (
                 f"Selected model {decision.chosen_model_id} doesn't support {domain}"
             )
+
+
+# ── 2026-06-27 staleness fix: hard tasks route to current flagships ────────────
+
+_FLAGSHIPS_2026 = {
+    "gpt-5.5", "gpt-5.5-pro", "gpt-5.1-codex-max", "claude-opus-4.8",
+    "claude-fable-5", "grok-4.3", "deepseek-v4-pro", "qwen3.7-max",
+}
+
+
+@pytest.mark.asyncio
+async def test_critical_code_routes_to_2026_flagship(selector, registry):
+    """A critical+code task must select a current (2026) flagship, not the
+    April-vintage set — the staleness fix this PR ships."""
+    with patch("tidus.cost.engine.count_tokens", new=AsyncMock(return_value=200)):
+        decision = await selector.select(_task(
+            complexity=Complexity.critical, domain=Domain.code,
+        ))
+    model = registry.get(decision.chosen_model_id)
+    assert model.tier == ModelTier.premium
+    assert decision.chosen_model_id in _FLAGSHIPS_2026, (
+        f"critical+code chose {decision.chosen_model_id}, expected a 2026 flagship"
+    )
+
+
+@pytest.mark.asyncio
+async def test_complex_code_routes_to_current_model(selector, registry):
+    """A complex+code task is eligible for tier<=2 current models (e.g.
+    grok-4.3, deepseek-v4-pro, gpt-5.1-codex-max)."""
+    with patch("tidus.cost.engine.count_tokens", new=AsyncMock(return_value=200)):
+        decision = await selector.select(_task(
+            complexity=Complexity.complex, domain=Domain.code,
+        ))
+    model = registry.get(decision.chosen_model_id)
+    assert int(model.tier) <= 2
+    # Cheapest-capable should land on a 2026-era model, not an April flagship.
+    assert decision.chosen_model_id in (
+        _FLAGSHIPS_2026 | {"gemini-3.5-flash", "deepseek-v4-flash", "mistral-medium-3-5", "kimi-k2.6"}
+    ), f"complex+code chose {decision.chosen_model_id}"

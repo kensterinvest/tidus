@@ -426,3 +426,48 @@ class TestModelRegistryMerge:
         registry = ModelRegistry.load(primary, auto_path=None)
         ids = {s.model_id for s in registry.list_all()}
         assert ids == {"vetted"}
+
+
+# ── 2026-06-27 refresh: Zhipu/GLM vendor + capability inference ────────────────
+
+class TestZhipuVendorPromotion:
+    async def test_zhipu_glm_promoted_with_route_id(self, tmp_path):
+        """GLM (vendor=zhipu) is OpenRouter-served: promotes with route_id set so
+        it is catalog-visible but gated behind openrouter_routing_enabled."""
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        result = await promoter.run(
+            discovered=[_disc(model_id="glm-5", vendor="zhipu", vendor_id="z-ai/glm-5")],
+            hand_curated_ids=set(),
+        )
+        assert len(result.promoted) == 1
+        spec = result.promoted[0]
+        assert spec.vendor == "zhipu"
+        assert spec.route_id == "z-ai/glm-5"
+
+
+class TestCapabilityInference:
+    async def test_multimodal_capability_inferred_from_modality(self, tmp_path):
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        disc = _disc(model_id="glm-5v", vendor="zhipu", vendor_id="z-ai/glm-5v")
+        disc.raw_metadata["input_modalities"] = ["text", "image"]
+        result = await promoter.run(discovered=[disc], hand_curated_ids=set())
+        caps = [c.value for c in result.promoted[0].capabilities]
+        assert "multimodal" in caps
+        assert "chat" in caps
+
+    async def test_long_context_capability_inferred_from_window(self, tmp_path):
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        disc = _disc(model_id="glm-5.2", vendor="zhipu", vendor_id="z-ai/glm-5.2",
+                     context_length=1048576)
+        result = await promoter.run(discovered=[disc], hand_curated_ids=set())
+        caps = [c.value for c in result.promoted[0].capabilities]
+        assert "long_context" in caps
+
+    async def test_text_only_small_context_stays_chat_only(self, tmp_path):
+        promoter = AutoPromoter(auto_yaml_path=tmp_path / "models.auto.yaml")
+        disc = _disc(model_id="glm-4.5-air", vendor="zhipu", vendor_id="z-ai/glm-4.5-air",
+                     context_length=131072)
+        disc.raw_metadata["input_modalities"] = ["text"]
+        result = await promoter.run(discovered=[disc], hand_curated_ids=set())
+        caps = [c.value for c in result.promoted[0].capabilities]
+        assert caps == ["chat"]

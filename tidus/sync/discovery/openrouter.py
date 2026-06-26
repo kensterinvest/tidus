@@ -48,6 +48,7 @@ _VENDOR_PREFIX_MAP: dict[str, str] = {
     "perplexity":  "perplexity",
     "meta-llama":  "meta",
     "alibaba":     "alibaba",
+    "z-ai":        "zhipu",
 }
 
 

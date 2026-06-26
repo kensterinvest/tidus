@@ -21,10 +21,14 @@ Guardrails (aggressive promotion, but bounded):
   * Models matching obvious junk patterns (`:free`, `:beta`, `:nightly`,
     `-preview`, `-experimental`, `-test`) are skipped. Pre-GA gates
     promotion behind an explicit yaml edit.
-  * Defaults are deliberately conservative: tier=3 (economy), capabilities
-    [chat] only, max_complexity=moderate, no fallbacks, enabled=true.
-    These don't preempt premium routing for high-stakes traffic but do
-    make the model selectable for simple/moderate tasks.
+  * Defaults are deliberately conservative: tier=3 (economy),
+    max_complexity=moderate, no fallbacks, enabled=true. Capabilities start
+    at [chat] and are enriched with metadata-derived facts only — multimodal
+    (non-text input modality) and long_context (>=200K window). Quality
+    capabilities (code/reasoning/agents) and high tiers stay reserved for
+    hand-curated models.yaml. These defaults don't preempt premium routing
+    for high-stakes traffic but do make the model selectable for
+    simple/moderate tasks.
 
 Kill-switch:
   Setting `auto_promote_enabled=False` turns the whole pass into a no-op
@@ -71,6 +75,7 @@ _NATIVE_VENDORS: frozenset[str] = frozenset({
 _OPENROUTER_VENDORS: frozenset[str] = frozenset({
     "nvidia", "minimax", "tencent", "amazon", "baidu",
     "ai21", "allenai", "bytedance", "bytedance-seed", "arcee-ai",
+    "zhipu",
 })
 
 # Vendors we promote at all (native OR OpenRouter-served). A vendor outside this
@@ -91,7 +96,37 @@ _TOKENIZER_BY_VENDOR: dict[str, str] = {
     "qwen":      "tiktoken_cl100k",
     "alibaba":   "tiktoken_cl100k",
     "meta":      "tiktoken_cl100k",
+    "zhipu":     "tiktoken_cl100k",
 }
+
+# Modality strings OpenRouter reports in architecture.input_modalities that imply
+# the model accepts more than text. Used to enrich an auto-promoted model's
+# capability list beyond the bare ["chat"] default — factual, metadata-derived,
+# and therefore safe to auto-claim (unlike code/reasoning, which require a human
+# capability judgement and remain reserved for hand-curated models.yaml entries).
+_MULTIMODAL_INPUT_MODALITIES: frozenset[str] = frozenset({"image", "audio", "video"})
+
+# Context length at/above which we add the long_context capability. 200K is the
+# point where long-document workloads become viable across the 2026 lineup.
+_LONG_CONTEXT_THRESHOLD = 200_000
+
+
+def _infer_capabilities(raw_meta: dict, context_length: int) -> list[str]:
+    """Derive a capability list from OpenRouter metadata.
+
+    Always includes ``chat``. Adds ``multimodal`` when the model declares a
+    non-text input modality, and ``long_context`` when its window meets the
+    threshold. Deliberately conservative: code / reasoning / agents are quality
+    judgements that the auto-promoter cannot make safely from metadata, so they
+    stay reserved for hand-curated entries.
+    """
+    caps = ["chat"]
+    modalities = raw_meta.get("input_modalities") or []
+    if any(m in _MULTIMODAL_INPUT_MODALITIES for m in modalities):
+        caps.append("multimodal")
+    if context_length >= _LONG_CONTEXT_THRESHOLD:
+        caps.append("long_context")
+    return caps
 
 # Patterns that mark a model as pre-GA / variant / not-yet-stable. We
 # trust the magazine's pending-review surface for these and require a
@@ -187,7 +222,7 @@ def _build_spec(model: DiscoveredModel, prices: tuple[float, float, float, float
         "cache_write_price": cache_w,
         "tokenizer":        tokenizer,
         "latency_p50_ms":   1500,                    # placeholder; health probe will refine
-        "capabilities":     ["chat"],
+        "capabilities":     _infer_capabilities(raw_meta, context_length),
         "min_complexity":   "simple",
         "max_complexity":   "moderate",              # never auto-claims critical
         "is_local":         False,

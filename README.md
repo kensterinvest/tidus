@@ -147,11 +147,11 @@ Response:
 
 See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/v1/complete` (route + execute).
 
-## Supported Models — 200+ models across 15 vendors
+## Supported Models — 240+ models across 16 vendors
 
 **Catalog composition:**
-- **55 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
-- **160+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog. Each sync re-confirms every entry against the live OpenRouter catalog, so the auto-promoted set self-prunes when vendors retire a model.
+- **67 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
+- **170+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog. Each sync re-confirms every entry against the live OpenRouter catalog, so the auto-promoted set self-prunes when vendors retire a model. Auto-promoted entries are conservative (tier-3, capabilities derived from metadata) — they become selectable for simple/moderate tasks; high-tier routing is reserved for hand-curated entries.
 
 **Synced twice weekly** (Sun + Wed 02:00 UTC) via a systemd timer on the production VPS (`tidus-sync.timer`; the GitHub Actions workflow is retained as a `workflow_dispatch` emergency fallback). Live OpenRouter feed + hardcoded baseline + AI verification, all merged through MAD-based consensus before a new revision activates. Each issue is delivered by email and/or Telegram. See [docs/pricing-sync.md](docs/pricing-sync.md) for the pipeline.
 
@@ -159,20 +159,21 @@ See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/
 
 | Family | Models | Tier | Adapter |
 |--------|--------|------|---------|
-| OpenAI GPT | o3, o4-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini, gpt-oss-120b | 1–3 | ✅ Live |
-| OpenAI Codex | gpt-5-codex, codex-mini-latest | 1, 3 | ✅ Live |
-| Anthropic Claude | Opus 4.6, Sonnet 4.6, Haiku 4.5 | 1–3 | ✅ Live |
-| Google Gemini | 3.1 Pro, 3.1 Flash, 2.5 Pro, 2.5 Flash, 2.0 Flash | 1–3 | ✅ Live |
-| Mistral | Large 3, Medium, Small, Nemo, Codestral, Devstral, Devstral Small | 2–3 | ✅ Live |
-| DeepSeek | R1, V3, V4 | 1–2 | ✅ Live |
-| xAI | Grok 3, Grok 3 Fast | 1 | ✅ Live |
-| Kimi | K2.5 | 2 | ✅ Live |
+| OpenAI GPT | GPT-5.5, GPT-5.5 Pro, o3, o4-mini, gpt-4.1, gpt-4.1-mini, gpt-4.1-nano, gpt-4o, gpt-4o-mini, gpt-oss-120b | 1–3 | ✅ Live |
+| OpenAI Codex | gpt-5.1-codex-max, gpt-5-codex, codex-mini-latest | 1–3 | ✅ Live |
+| Anthropic Claude | Opus 4.8, Fable 5, Opus 4.7, Opus 4.6, Sonnet 4.6, Haiku 4.5 | 1–3 | ✅ Live |
+| Google Gemini | 3.5 Flash, 3.1 Pro, 3.1 Flash, 2.5 Pro, 2.5 Flash, 2.0 Flash | 1–3 | ✅ Live |
+| Mistral | Medium 3.5, Large 3, Medium, Small, Nemo, Codestral, Devstral, Devstral Small | 2–3 | ✅ Live |
+| DeepSeek | V4 Pro, V4 Flash, R1, V3, V4 | 1–3 | ✅ Live |
+| xAI | Grok 4.3, Grok 4, Grok 3, Grok 3 Fast | 1 | ✅ Live |
+| Kimi | K2.6, K2.5 | 2 | ✅ Live |
 | Local (Ollama) | Llama 4 Maverick, Llama 4 Scout, Mistral Small, Phi-4, Gemma 3, DeepSeek Coder V2, Qwen 2.5, Qwen 2.5 Coder, Falcon 11B | 4 | ✅ Live |
 | Cohere | Command R, Command R+ | 2–3 | 🔧 In progress |
 | Groq | Llama 4 Maverick, DeepSeek R1 | 3–1 | 🔧 In progress |
-| Qwen / Alibaba | Qwen Max, Qwen Plus, Qwen Flash | 1–3 | 🔧 In progress |
+| Qwen / Alibaba | Qwen3.7 Max, Qwen Max, Qwen Plus, Qwen Flash | 1–3 | 🔧 In progress |
 | Perplexity | Sonar Pro, Sonar | 1–3 | 🔧 In progress |
 | Together AI | Llama 4 Maverick | 3 | 🔧 In progress |
+| Zhipu / GLM | GLM-5.2, GLM-5.1, GLM-5, GLM-4.7 (catalog-visible, OpenRouter-served, routing dark) | 3 | 🌙 Dark |
 
 ## Free and Open Source — for Every Organisation
 
