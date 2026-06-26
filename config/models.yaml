@@ -1406,6 +1406,9 @@ models:
   last_price_check: '2026-06-27'
   last_health_check: null
   released_at: '2026-05-01'
+# NOTE: claude-fable-5 capabilities/tier are PROVISIONAL — price is grounded
+# (live OpenRouter + magazine) but its positioning is not vendor-confirmed.
+# Cost weighting keeps it from winning much; re-verify before relying on it.
 - model_id: claude-fable-5
   vendor: anthropic
   tier: 1
