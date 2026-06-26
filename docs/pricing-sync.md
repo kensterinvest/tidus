@@ -11,7 +11,7 @@ pass so models removed from `models.yaml` are dropped from new revisions.
 ┌──────────────────┐   ┌─────────────────────────────┐   ┌──────────────────────────────┐
 │  HardcodedSource │   │  OpenRouterPricingSource     │   │  TidusPricingFeedSource       │
 │  confidence=0.70 │   │  confidence=0.75             │   │  confidence=0.85 (optional)   │
-│  55 hand-curated │   │  live; ~200 models           │   │  TIDUS_PRICING_FEED_URL        │
+│  67 hand-curated │   │  live; ~240 models           │   │  TIDUS_PRICING_FEED_URL        │
 └────────┬─────────┘   └──────────────┬──────────────┘   └───────────────┬───────────────┘
          │ PriceQuote[]               │ PriceQuote[]                     │ PriceQuote[]
          └────────────────────────┬───┴──────────────────────────────────┘

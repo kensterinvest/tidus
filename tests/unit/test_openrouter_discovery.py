@@ -32,6 +32,7 @@ class TestVendorFromOrId:
         assert _vendor_from_or_id("google/gemini-2.5-pro") == "google"
         assert _vendor_from_or_id("mistralai/mistral-large") == "mistral"
         assert _vendor_from_or_id("x-ai/grok-4") == "xai"
+        assert _vendor_from_or_id("z-ai/glm-5") == "zhipu"
 
     def test_unknown_prefix_passthrough(self):
         assert _vendor_from_or_id("brand-new-vendor/foo") == "brand-new-vendor"

@@ -1302,3 +1302,298 @@ models:
   - phi-4-ollama
   last_price_check: '2026-04-17'
   last_health_check: null
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2026-06-27 flagship refresh — current top-tier models promoted from
+# auto-discovery to hand-curated with correct tier / capabilities so they are
+# eligible for complex/critical routing (auto-promoted entries are capped at
+# tier-3 / chat / moderate and were structurally locked out of hard tasks).
+# Prices USD per 1K tokens (= magazine $/1M ÷ 1000), cross-checked against live
+# OpenRouter pricing 2026-06-27 and official vendor pages where available.
+# ─────────────────────────────────────────────────────────────────────────────
+- model_id: gpt-5.5
+  vendor: openai
+  tier: 1
+  max_context: 1050000
+  input_price: 0.005
+  output_price: 0.03
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 1400
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-4.1
+  - claude-opus-4.8
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-15'
+- model_id: gpt-5.5-pro
+  vendor: openai
+  tier: 1
+  max_context: 1050000
+  input_price: 0.03
+  output_price: 0.18
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 3200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-5.5
+  - claude-opus-4.8
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-15'
+- model_id: gpt-5.1-codex-max
+  vendor: openai
+  tier: 2
+  max_context: 400000
+  input_price: 0.00125
+  output_price: 0.01
+  tokenizer: tiktoken_o200k
+  latency_p50_ms: 1600
+  capabilities:
+  - chat
+  - code
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gpt-5-codex
+  - gpt-4.1
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-04-10'
+- model_id: claude-opus-4.8
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.005
+  output_price: 0.025
+  tokenizer: anthropic
+  latency_p50_ms: 2000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-4-7
+  - claude-sonnet-4-6
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-01'
+- model_id: claude-fable-5
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.01
+  output_price: 0.05
+  tokenizer: anthropic
+  latency_p50_ms: 2200
+  capabilities:
+  - chat
+  - reasoning
+  - creative
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-4.8
+  - claude-opus-4-7
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-01'
+- model_id: gemini-3.5-flash
+  vendor: google
+  tier: 2
+  max_context: 1048000
+  input_price: 0.0015
+  output_price: 0.009
+  tokenizer: google
+  latency_p50_ms: 900
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-3.1-flash
+  - gemini-2.5-flash
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-20'
+- model_id: grok-4.3
+  vendor: xai
+  tier: 1
+  max_context: 1000000
+  input_price: 0.00125
+  output_price: 0.0025
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-4
+  - grok-3
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-04-30'
+- model_id: deepseek-v4-pro
+  vendor: deepseek
+  tier: 2
+  max_context: 1048000
+  input_price: 0.000435
+  output_price: 0.00087
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 2200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - deepseek-v4
+  - deepseek-r1
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-04-24'
+- model_id: deepseek-v4-flash
+  vendor: deepseek
+  tier: 3
+  max_context: 1048000
+  input_price: 0.00009
+  output_price: 0.00018
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - deepseek-v4
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-04-24'
+- model_id: mistral-medium-3-5
+  vendor: mistral
+  tier: 2
+  max_context: 262000
+  input_price: 0.0015
+  output_price: 0.0075
+  tokenizer: sentencepiece
+  latency_p50_ms: 1300
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  - multimodal
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-large-3
+  - mistral-medium
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-04-15'
+- model_id: kimi-k2.6
+  vendor: moonshot
+  tier: 2
+  max_context: 262000
+  input_price: 0.00066
+  output_price: 0.00341
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1700
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - kimi-k2.5
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-10'
+- model_id: qwen3.7-max
+  vendor: qwen
+  tier: 2
+  max_context: 1000000
+  input_price: 0.00125
+  output_price: 0.00375
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1900
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - qwen-max
+  - qwen-plus
+  last_price_check: '2026-06-27'
+  last_health_check: null
+  released_at: '2026-05-05'

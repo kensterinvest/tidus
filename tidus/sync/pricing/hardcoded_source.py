@@ -80,6 +80,22 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
 
     # ── Together AI (hosted inference) ───────────────────────────────────────
     "together-llama4-maverick":  {"input": 0.00027,   "output": 0.00085},  # $0.27/$0.85 per 1M
+
+    # ── 2026-06-27 flagship refresh ──────────────────────────────────────────
+    # Current top-tier models. Prices cross-checked vs live OpenRouter +
+    # official vendor pages 2026-06-27. $/1K (= $/1M ÷ 1000).
+    "gpt-5.5":                   {"input": 0.005,     "output": 0.03},     # $5/$30 per 1M
+    "gpt-5.5-pro":               {"input": 0.03,      "output": 0.18},     # $30/$180 per 1M
+    "gpt-5.1-codex-max":         {"input": 0.00125,   "output": 0.01},     # $1.25/$10 per 1M
+    "claude-opus-4.8":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M
+    "claude-fable-5":            {"input": 0.01,      "output": 0.05},     # $10/$50 per 1M
+    "gemini-3.5-flash":          {"input": 0.0015,    "output": 0.009},    # $1.50/$9 per 1M
+    "grok-4.3":                  {"input": 0.00125,   "output": 0.0025},   # $1.25/$2.50 per 1M
+    "deepseek-v4-pro":           {"input": 0.000435,  "output": 0.00087},  # $0.435/$0.87 per 1M
+    "deepseek-v4-flash":         {"input": 0.00009,   "output": 0.00018},  # $0.09/$0.18 per 1M
+    "mistral-medium-3-5":        {"input": 0.0015,    "output": 0.0075},   # $1.50/$7.50 per 1M (OpenRouter: mistralai/mistral-medium-3.5)
+    "kimi-k2.6":                 {"input": 0.00066,   "output": 0.00341},  # $0.66/$3.41 per 1M
+    "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
 _EFFECTIVE_DATE = date(2026, 4, 17)
