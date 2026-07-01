@@ -29,7 +29,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: ai21/jamba-large-1.7
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -54,7 +54,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: allenai/olmo-3-32b-think
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -81,7 +81,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: amazon/nova-2-lite-v1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -108,7 +108,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: amazon/nova-lite-v1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -133,7 +133,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: amazon/nova-micro-v1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -160,7 +160,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: amazon/nova-premier-v1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -187,7 +187,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: amazon/nova-pro-v1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -214,7 +214,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -241,7 +241,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -268,7 +268,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -295,34 +295,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: claude-opus-4.6-fast
-  display_name: '[auto-promoted] Anthropic: Claude Opus 4.6 (Fast)'
-  vendor: anthropic
-  tier: 3
-  max_context: 1000000
-  input_price: 0.030000000000000002
-  output_price: 0.15
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: anthropic
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - multimodal
-  - long_context
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -349,7 +322,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -376,7 +349,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -403,7 +376,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -430,7 +403,34 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
+  last_health_check: null
+  released_at: null
+  retired_at: null
+  retirement_reason: null
+- model_id: claude-sonnet-5
+  display_name: '[auto-promoted] Anthropic: Claude Sonnet 5'
+  vendor: anthropic
+  tier: 3
+  max_context: 1000000
+  input_price: 0.002
+  output_price: 0.01
+  cache_read_price: 0.0
+  cache_write_price: 0.0
+  tokenizer: anthropic
+  latency_p50_ms: 1500
+  capabilities:
+  - chat
+  - multimodal
+  - long_context
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks: []
+  route_id: null
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -455,7 +455,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: arcee-ai/coder-large
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -481,7 +481,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: arcee-ai/trinity-large-thinking
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -506,7 +506,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: arcee-ai/trinity-mini
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -531,7 +531,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: arcee-ai/virtuoso-large
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -557,7 +557,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: baidu/ernie-4.5-vl-424b-a47b
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -583,7 +583,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: bytedance/ui-tars-1.5-7b
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -610,7 +610,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: bytedance-seed/seed-1.6
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -637,7 +637,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: bytedance-seed/seed-1.6-flash
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -664,7 +664,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: bytedance-seed/seed-2.0-lite
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -691,7 +691,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: bytedance-seed/seed-2.0-mini
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -717,7 +717,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -742,7 +742,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -767,7 +767,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -792,7 +792,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -817,7 +817,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -842,7 +842,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -867,7 +867,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -892,7 +892,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -917,7 +917,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -942,7 +942,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -967,7 +967,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -993,7 +993,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1020,7 +1020,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1046,7 +1046,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1072,7 +1072,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1099,7 +1099,34 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
+  last_health_check: null
+  released_at: null
+  retired_at: null
+  retirement_reason: null
+- model_id: gemini-3.1-flash-lite-image
+  display_name: '[auto-promoted] Google: Nano Banana 2 Lite (Gemini 3.1 Flash Lite
+    Image)'
+  vendor: google
+  tier: 3
+  max_context: 65536
+  input_price: 0.00025
+  output_price: 0.0015
+  cache_read_price: 0.0
+  cache_write_price: 0.0
+  tokenizer: google
+  latency_p50_ms: 1500
+  capabilities:
+  - chat
+  - multimodal
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks: []
+  route_id: null
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1124,7 +1151,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1150,7 +1177,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1176,7 +1203,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1202,7 +1229,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1227,7 +1254,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1252,7 +1279,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1277,7 +1304,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1302,7 +1329,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1328,7 +1355,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1353,7 +1380,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1380,7 +1407,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1407,7 +1434,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1433,7 +1460,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1460,7 +1487,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-01
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1486,7 +1513,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1512,7 +1539,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m2
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1537,7 +1564,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m2-her
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1563,7 +1590,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m2.1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1589,7 +1616,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m2.5
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1615,7 +1642,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m2.7
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1642,7 +1669,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: minimax/minimax-m3
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1668,7 +1695,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1694,7 +1721,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1721,7 +1748,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1747,7 +1774,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1774,7 +1801,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1799,7 +1826,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1826,7 +1853,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1852,7 +1879,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1878,7 +1905,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1903,7 +1930,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1928,7 +1955,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1955,7 +1982,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1981,7 +2008,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2007,7 +2034,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2032,7 +2059,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2058,7 +2085,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2083,7 +2110,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2109,7 +2136,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2135,7 +2162,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2162,7 +2189,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2187,7 +2214,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: nvidia/llama-3.3-nemotron-super-49b-v1.5
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2212,7 +2239,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2237,7 +2264,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2262,7 +2289,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2287,7 +2314,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2312,7 +2339,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2338,7 +2365,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2364,7 +2391,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2390,7 +2417,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2416,7 +2443,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2442,7 +2469,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2469,7 +2496,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2495,7 +2522,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2522,7 +2549,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2549,7 +2576,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2576,7 +2603,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2603,7 +2630,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2630,7 +2657,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2657,7 +2684,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2683,7 +2710,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2710,7 +2737,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2737,7 +2764,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2764,7 +2791,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2790,7 +2817,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2817,7 +2844,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2844,7 +2871,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2870,7 +2897,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2897,7 +2924,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2924,7 +2951,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2951,7 +2978,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2978,7 +3005,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3005,7 +3032,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3032,7 +3059,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3058,7 +3085,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3084,7 +3111,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3111,7 +3138,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3136,7 +3163,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3163,7 +3190,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3190,7 +3217,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3217,7 +3244,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3243,7 +3270,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3269,7 +3296,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3296,7 +3323,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3323,7 +3350,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3350,7 +3377,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3375,7 +3402,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3400,7 +3427,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3425,7 +3452,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3451,7 +3478,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3477,7 +3504,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3502,7 +3529,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3527,7 +3554,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3553,7 +3580,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3563,8 +3590,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 9.999999999999999e-05
-  output_price: 9.999999999999999e-05
+  input_price: 0.0001495
+  output_price: 0.001495
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -3579,7 +3606,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3604,7 +3631,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3629,7 +3656,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3654,7 +3681,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3679,7 +3706,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3704,7 +3731,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3729,7 +3756,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3755,7 +3782,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3781,7 +3808,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3807,7 +3834,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3833,7 +3860,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3859,7 +3886,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3885,7 +3912,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3912,7 +3939,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3938,7 +3965,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3965,7 +3992,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3991,7 +4018,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4018,7 +4045,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4045,7 +4072,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4072,7 +4099,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4099,7 +4126,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4126,7 +4153,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4153,7 +4180,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4180,7 +4207,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4207,7 +4234,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4234,7 +4261,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4261,7 +4288,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4288,7 +4315,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4298,8 +4325,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.0002596
-  output_price: 0.002385
+  input_price: 0.00028500000000000004
+  output_price: 0.0024
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -4315,7 +4342,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4342,7 +4369,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4369,7 +4396,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4396,7 +4423,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4423,7 +4450,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4448,7 +4475,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: tencent/hunyuan-a13b-instruct
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4475,7 +4502,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4502,7 +4529,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4529,7 +4556,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: null
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4554,7 +4581,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.5
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4579,7 +4606,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.5-air
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4605,7 +4632,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.5v
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4631,7 +4658,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.6
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4657,7 +4684,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.6v
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4683,7 +4710,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.7
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4709,7 +4736,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-4.7-flash
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4735,7 +4762,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-5
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4761,7 +4788,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-5-turbo
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4771,8 +4798,8 @@ models:
   vendor: zhipu
   tier: 3
   max_context: 202752
-  input_price: 0.00098
-  output_price: 0.0030800000000000003
+  input_price: 0.000975
+  output_price: 0.0043
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -4787,7 +4814,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-5.1
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4797,7 +4824,7 @@ models:
   vendor: zhipu
   tier: 3
   max_context: 1048576
-  input_price: 0.00095
+  input_price: 0.0009299999999999999
   output_price: 0.003
   cache_read_price: 0.0
   cache_write_price: 0.0
@@ -4813,7 +4840,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-5.2
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4840,7 +4867,7 @@ models:
   deprecated: false
   fallbacks: []
   route_id: z-ai/glm-5v-turbo
-  last_price_check: '2026-06-28'
+  last_price_check: '2026-07-01'
   last_health_check: null
   released_at: null
   retired_at: null
