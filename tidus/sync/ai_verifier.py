@@ -1,15 +1,21 @@
 """AI verifiers — Claude as a second-opinion gate for the pricing pipeline.
 
-Two verifiers, both fail-open, both prompt-cached, both calling
-`claude-opus-4-7` once per sync (batched):
+Three verifiers, all fail-open, all prompt-cached:
 
-  ClaudeAnomalyVerifier   — guards price MOVES with |delta| ≥ threshold.
-                            Wired into RegistryPipeline between consensus
-                            and revision activation.
-  ClaudeDiscoveryVerifier — guards newly DISCOVERED models before they
-                            enter config/models.auto.yaml. Wired into
-                            AutoPromoter between rule-based filtering and
-                            YAML write.
+  ClaudeAnomalyVerifier    — guards price MOVES with |delta| ≥ threshold.
+                             Wired into RegistryPipeline between consensus
+                             and revision activation. Calls `claude-opus-4-7`
+                             once per sync (batched), from training knowledge.
+  ClaudeDiscoveryVerifier  — guards newly DISCOVERED models before they
+                             enter config/models.auto.yaml. Wired into
+                             AutoPromoter between rule-based filtering and
+                             YAML write. Also from training knowledge.
+  ClaudeMarketPriceVerifier — an INDEPENDENT second opinion on the models
+                             ClaudeDiscoveryVerifier already approved: a
+                             separate Claude call with web_search that
+                             cross-checks each claimed price against the
+                             vendor's own pricing page, so the discoverer
+                             never approves its own find.
 
 — ClaudeAnomalyVerifier —
 
@@ -531,3 +537,141 @@ class ClaudeDiscoveryVerifier:
                 accepted.append(c)
 
         return DiscoveryVerificationResult(accepted=accepted, rejected=rejected)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ClaudeMarketPriceVerifier — independent second opinion on discovered prices
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# ClaudeDiscoveryVerifier (above) checks plausibility from Claude's training
+# knowledge — it never looks anything up. This verifier is deliberately a
+# SEPARATE Claude call with web_search: it price-checks each candidate the
+# discoverer approved against the vendor's own pricing page, so the process
+# that found the model is never the same process that approves its price.
+
+_MARKET_VERIFY_SYSTEM = (
+    "You independently price-check candidate LLM models another process claims "
+    "were just discovered. For each, use web search to find the vendor's own "
+    "pricing page and decide accept (claimed price matches the vendor page "
+    "within ~10%) or reject. Output strict JSON matching the schema."
+)
+
+
+@dataclass
+class MarketCandidate:
+    """A discovered model + claimed price awaiting an independent check."""
+
+    model_id: str
+    vendor: str
+    input_price_per_1k: float
+    output_price_per_1k: float
+    sources: list[str] = field(default_factory=list)
+
+
+@dataclass
+class MarketVerificationResult:
+    accepted: list[MarketCandidate] = field(default_factory=list)
+    rejected: list[tuple[MarketCandidate, str]] = field(default_factory=list)
+    skipped: bool = False
+    skipped_reason: str = ""
+
+
+class ClaudeMarketPriceVerifier:
+    """Independent web-search price cross-check for Claude-discovered models.
+
+    Takes an injected async client from the Task-2 factory (never constructs
+    its own — the discoverer's client and this verifier's client must be able
+    to differ, and tidus/sync forbids keyless clients outright). Fail-open on
+    a missing client, an API error, or a parse failure: all candidates pass
+    through untouched.
+    """
+
+    def __init__(self, *, client, ledger, model: str) -> None:
+        self._client, self._ledger, self._model = client, ledger, model
+
+    @property
+    def is_available(self) -> bool:
+        return self._client is not None
+
+    async def verify(self, candidates: list[MarketCandidate]) -> MarketVerificationResult:
+        if self._client is None:
+            return MarketVerificationResult(
+                accepted=list(candidates), skipped=True, skipped_reason="no_sync_client"
+            )
+        if not candidates:
+            return MarketVerificationResult()
+
+        rows = [
+            {
+                "model_id": c.model_id,
+                "vendor": c.vendor,
+                "claimed_input_usd_per_1m": round(c.input_price_per_1k * 1000, 4),
+                "claimed_output_usd_per_1m": round(c.output_price_per_1k * 1000, 4),
+                "sources": c.sources,
+            }
+            for c in candidates
+        ]
+        schema = {
+            "type": "object",
+            "properties": {
+                "verdicts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "model_id": {"type": "string"},
+                            "decision": {"type": "string", "enum": ["accept", "reject"]},
+                            "reasoning": {"type": "string"},
+                        },
+                        "required": ["model_id", "decision", "reasoning"],
+                        "additionalProperties": False,
+                    },
+                }
+            },
+            "required": ["verdicts"],
+            "additionalProperties": False,
+        }
+
+        try:
+            resp = await self._client.messages.create(
+                model=self._model,
+                max_tokens=4096,
+                system=[
+                    {
+                        "type": "text",
+                        "text": _MARKET_VERIFY_SYSTEM,
+                        "cache_control": {"type": "ephemeral"},
+                    }
+                ],
+                tools=[{"type": "web_search_20260209", "name": "web_search"}],
+                output_config={"format": {"type": "json_schema", "schema": schema}},
+                messages=[
+                    {"role": "user", "content": "Price-check each:\n" + json.dumps(rows, indent=2)}
+                ],
+            )
+        except Exception as exc:
+            log.warning("claude_market_verify_failed", error=str(exc))
+            return MarketVerificationResult(
+                accepted=list(candidates), skipped=True, skipped_reason=f"api_error: {exc}"
+            )
+
+        searches = sum(1 for b in resp.content if getattr(b, "type", "") == "server_tool_use")
+        self._ledger.record("verify", getattr(resp, "usage", None), web_searches=searches)
+
+        text = next((b.text for b in resp.content if getattr(b, "type", "") == "text"), "")
+        try:
+            by_id = {v["model_id"]: v for v in json.loads(text).get("verdicts", [])}
+        except (json.JSONDecodeError, KeyError, TypeError):
+            return MarketVerificationResult(
+                accepted=list(candidates), skipped=True, skipped_reason="parse_failed"
+            )
+
+        accepted: list[MarketCandidate] = []
+        rejected: list[tuple[MarketCandidate, str]] = []
+        for c in candidates:
+            v = by_id.get(c.model_id)
+            if v is None or v.get("decision") == "accept":
+                accepted.append(c)
+            else:
+                rejected.append((c, v.get("reasoning", "")))
+        return MarketVerificationResult(accepted=accepted, rejected=rejected)
