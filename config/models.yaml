@@ -1406,9 +1406,11 @@ models:
   last_price_check: '2026-06-27'
   last_health_check: null
   released_at: '2026-05-01'
-# NOTE: claude-fable-5 capabilities/tier are PROVISIONAL — price is grounded
-# (live OpenRouter + magazine) but its positioning is not vendor-confirmed.
-# Cost weighting keeps it from winning much; re-verify before relying on it.
+# claude-fable-5 — VERIFIED 2026-07-06 against the Anthropic model catalog
+# (claude-api skill). Anthropic's most capable widely-released model, positioned
+# ABOVE the Opus tier; $10/$50 per 1M (0.01/0.05 per 1K), 1M context. Price + tier
+# + context vendor-confirmed. Added `code` (top coding/agentic model). Kept
+# min_complexity=complex so cost weighting keeps it off cheaper moderate traffic.
 - model_id: claude-fable-5
   vendor: anthropic
   tier: 1
@@ -1419,6 +1421,7 @@ models:
   latency_p50_ms: 2200
   capabilities:
   - chat
+  - code
   - reasoning
   - creative
   - agents
@@ -1430,7 +1433,7 @@ models:
   fallbacks:
   - claude-opus-4.8
   - claude-opus-4-7
-  last_price_check: '2026-06-27'
+  last_price_check: '2026-07-06'
   last_health_check: null
   released_at: '2026-05-01'
 - model_id: gemini-3.5-flash
