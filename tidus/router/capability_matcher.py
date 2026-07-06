@@ -52,6 +52,7 @@ class CapabilityMatcher:
         guardrails: GuardrailPolicy,
         *,
         openrouter_routing_enabled: bool | None = None,
+        claude_discovery_routing_enabled: bool | None = None,
     ) -> None:
         self._guardrails = guardrails
         # Routability flag for OpenRouter-served models (ModelSpec.route_id set).
@@ -61,6 +62,15 @@ class CapabilityMatcher:
             from tidus.settings import get_settings
             openrouter_routing_enabled = get_settings().openrouter_routing_enabled
         self._openrouter_routing_enabled = openrouter_routing_enabled
+
+        # Routability flag for Claude-discovered models (ModelSpec.route_source
+        # == "claude_market"). Default-off: such models are catalog-visible but
+        # NOT routing candidates until explicitly enabled. None → read the
+        # global setting.
+        if claude_discovery_routing_enabled is None:
+            from tidus.settings import get_settings
+            claude_discovery_routing_enabled = get_settings().claude_discovery_routing_enabled
+        self._claude_discovery_routing_enabled = claude_discovery_routing_enabled
 
     # ── Public API ────────────────────────────────────────────────────────────
 
@@ -118,6 +128,12 @@ class CapabilityMatcher:
         # of cheap models can't be routed to before the quality work lands.
         if getattr(spec, "route_id", None) and not self._openrouter_routing_enabled:
             return RejectionReason.openrouter_routing_disabled
+
+        # Claude-discovered models (route_source="claude_market") are surfaced in
+        # the catalog but are NOT routing candidates unless routing is explicitly
+        # enabled. Mirrors the OpenRouter dark-gate above.
+        if getattr(spec, "route_source", None) == "claude_market" and not self._claude_discovery_routing_enabled:
+            return RejectionReason.claude_discovery_routing_disabled
 
         # Context window must fit the estimated input tokens
         if task.estimated_input_tokens > spec.max_context:
