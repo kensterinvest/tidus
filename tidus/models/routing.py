@@ -13,6 +13,7 @@ class RejectionReason(str, Enum):
     privacy_violation = "privacy_violation"           # confidential task routed to cloud model
     complexity_mismatch = "complexity_mismatch"       # task complexity outside model's designed range
     openrouter_routing_disabled = "openrouter_routing_disabled"  # OpenRouter-served (route_id) model, routing flag off
+    claude_discovery_routing_disabled = "claude_discovery_routing_disabled"  # Claude-discovered (route_source) model, routing flag off
 
     # Stage 2 — guardrails
     agent_depth_exceeded = "agent_depth_exceeded"

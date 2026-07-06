@@ -48,12 +48,19 @@ async def main() -> int:
     )
     from tidus.registry.pipeline import RegistryPipeline
     from tidus.reporting.landing_updater import LandingPageUpdater
+    from tidus.reporting.market_intelligence import (
+        enrich_report_in_place,
+        render_cost_footer,
+        render_market_intelligence,
+    )
     from tidus.reporting.pricing_report import PricingReportGenerator
     from tidus.reporting.subscribers import ReportDelivery, load_subscribers
     from tidus.settings import get_settings
-    from tidus.sync.ai_verifier import ClaudeDiscoveryVerifier
+    from tidus.sync.ai_verifier import ClaudeDiscoveryVerifier, ClaudeMarketPriceVerifier
+    from tidus.sync.anthropic_client import SyncTokenLedger, build_sync_anthropic_client
     from tidus.sync.auto_promote import AutoPromoter
     from tidus.sync.discovery import DiscoveryRunner, build_discovery_sources
+    from tidus.sync.discovery.claude_market import ClaudeMarketDiscoverySource
     from tidus.sync.pricing.base import PricingSource
     from tidus.sync.pricing.hardcoded_source import HardcodedSource
     from tidus.sync.pricing.openrouter_source import OpenRouterPricingSource
@@ -61,6 +68,8 @@ async def main() -> int:
 
     print(f"[weekly_full_sync] {date.today()}")
     settings = get_settings()
+    ledger = SyncTokenLedger()
+    sync_client = build_sync_anthropic_client()  # None when TIDUS_SYNC_ANTHROPIC_KEY unset
 
     # ── Step 0: DB setup ──────────────────────────────────────────────────────
     await create_tables()
@@ -73,6 +82,11 @@ async def main() -> int:
     if settings.discovery_enabled:
         print("[1/8] Running vendor model discovery...")
         sources = build_discovery_sources(settings)
+        sources.append(ClaudeMarketDiscoverySource(
+            client=sync_client, ledger=ledger,
+            model=settings.claude_market_model,
+            last_sync_date="recent weeks",
+        ))
         if not sources:
             print("       No discovery sources available — skipped.")
         else:
@@ -111,10 +125,14 @@ async def main() -> int:
                 api_key=settings.anthropic_api_key,
                 model=settings.ai_verify_model,
             )
+        market_verifier = ClaudeMarketPriceVerifier(
+            client=sync_client, ledger=ledger, model=settings.claude_market_model,
+        )
         promoter = AutoPromoter(
             auto_yaml_path=settings.auto_promote_yaml_path,
             enabled=True,
             ai_verifier=ai_verifier,
+            market_verifier=market_verifier,
         )
         # MUST pass discovery_report.all_current (NOT new_this_run + pending_review).
         # The bucketed lists hide models that are already in_registry, but those
@@ -221,10 +239,23 @@ async def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     md_path = output_dir / f"pricing-{report.report_date}.md"
     html_path = output_dir / f"pricing-{report.report_date}.html"
+
+    discoveries = [
+        m for m in discovery_report.all_current if m.raw_metadata.get("claude_sourced")
+    ] if discovery_report is not None else []
+    market_md = ""
+    if not ledger.over_budget(settings.claude_sync_budget_usd):
+        market_md = await render_market_intelligence(
+            client=sync_client, ledger=ledger, model=settings.claude_market_model,
+            discoveries=discoveries, price_moves=[],
+        )
+    footer_md = render_cost_footer(ledger)
+    enrich_report_in_place(report, market_md, footer_md)
     md_path.write_text(report.markdown, encoding="utf-8")
     html_path.write_text(report.html, encoding="utf-8")
     print(f"       {md_path}")
     print(f"       {html_path}")
+    print("       AI cost this run:", ledger.summary())
 
     # ── Step 7: Deliver to subscribers ───────────────────────────────────────
     print("[7/8] Delivering report to subscribers...")

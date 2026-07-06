@@ -104,6 +104,11 @@ class Settings(BaseSettings):
     # a quality gate. See docs/superpowers/specs/2026-06-06-openrouter-*.
     openrouter_routing_enabled: bool = False
 
+    # When False (default), models promoted from Claude web-search discovery
+    # (route_source="claude_market") stay catalog-visible but non-routable.
+    # Flip in a separate greenlight once dark discoveries have been reviewed.
+    claude_discovery_routing_enabled: bool = False
+
     # ── Auto-promotion of discovered models ─────────────────────────────────
     # When True (default), the weekly sync writes a config/models.auto.yaml
     # containing every OpenRouter-discovered model that has live pricing and
@@ -126,6 +131,14 @@ class Settings(BaseSettings):
     ai_verify_enabled: bool = True
     ai_verify_threshold_pct: float = 50.0
     ai_verify_model: str = "claude-opus-4-7"
+
+    # ── Claude market-intelligence sync (dedicated key + cost ceiling) ──────
+    # Dedicated, sync-only Anthropic key. Deliberately NOT named ANTHROPIC_API_KEY
+    # so the SDK / Claude Code cannot inherit it. Injected via the tidus-sync
+    # systemd EnvironmentFile only.
+    tidus_sync_anthropic_key: str = ""
+    claude_market_model: str = "claude-sonnet-5"
+    claude_sync_budget_usd: float = 2.00
 
     # ── Vendor model discovery ──────────────────────────────────────────────
     # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new

@@ -95,6 +95,15 @@ class ModelSpec(BaseModel):
         None, description="OpenRouter execution id; set iff served via OpenRouter adapter"
     )
 
+    route_source: str | None = Field(
+        None,
+        description=(
+            "Provenance marker for models promoted from a non-consensus source "
+            "(e.g. 'claude_market' for Claude web-search discovery). Gated dark "
+            "at Stage-1 until the matching routing flag is enabled."
+        ),
+    )
+
     last_price_check: date = Field(default_factory=date.today, description="Date of last price sync")
     last_health_check: datetime | None = None
     released_at: date | None = Field(None, description="Official GA release date; used as tie-breaker when scores are equal")

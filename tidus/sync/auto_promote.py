@@ -54,7 +54,9 @@ import yaml
 from tidus.models.model_registry import ModelSpec
 from tidus.sync.ai_verifier import (
     ClaudeDiscoveryVerifier,
+    ClaudeMarketPriceVerifier,
     DiscoveryCandidate,
+    MarketCandidate,
 )
 from tidus.sync.discovery.base import DiscoveredModel
 
@@ -233,6 +235,33 @@ def _build_spec(model: DiscoveredModel, prices: tuple[float, float, float, float
     })
 
 
+def _build_market_spec(model: DiscoveredModel) -> ModelSpec:
+    """Build the ModelSpec for a Claude-web-search-discovered model.
+
+    Unlike `_build_spec`, pricing comes from the discoverer's own metadata
+    (not OpenRouter) and route_source is stamped "claude_market" — the dark
+    marker CapabilityMatcher's gate rejects until
+    claude_discovery_routing_enabled flips. route_id stays None: these
+    models aren't OpenRouter-served.
+    """
+    meta = model.raw_metadata or {}
+    return ModelSpec.model_validate({
+        "model_id":         model.model_id,
+        "display_name":     model.display_name or model.model_id,
+        "vendor":           model.vendor,
+        "tier":             3,                       # economy default, same as OpenRouter path
+        "max_context":      int(meta.get("context_length", 128000)),
+        "input_price":      float(meta["price_in_per_1k"]),
+        "output_price":     float(meta["price_out_per_1k"]),
+        "tokenizer":        _TOKENIZER_BY_VENDOR.get(model.vendor, "tiktoken_cl100k"),
+        "capabilities":     ["chat"],
+        "min_complexity":   "simple",
+        "max_complexity":   "moderate",
+        "route_source":     "claude_market",         # DARK until claude_discovery_routing_enabled
+        "last_price_check": date.today().isoformat(),
+    })
+
+
 class AutoPromoter:
     """Promotes priced, vendor-known discovered models into models.auto.yaml.
 
@@ -248,10 +277,12 @@ class AutoPromoter:
         auto_yaml_path: str | Path = "config/models.auto.yaml",
         enabled: bool = True,
         ai_verifier: ClaudeDiscoveryVerifier | None = None,
+        market_verifier: ClaudeMarketPriceVerifier | None = None,
     ) -> None:
         self._path = Path(auto_yaml_path)
         self._enabled = enabled
         self._ai_verifier = ai_verifier
+        self._market_verifier = market_verifier
 
     async def run(
         self,
@@ -287,7 +318,16 @@ class AutoPromoter:
         # verifier branch below reads it a second time.
         discovered = list(discovered)
 
-        for model in discovered:
+        # Claude-web-search-discovered candidates take a separate path: they
+        # carry their own claimed pricing (raw_metadata["price_in_per_1k"] /
+        # "price_out_per_1k"), not OpenRouter's "pricing" dict, and are
+        # independently price-checked by ClaudeMarketPriceVerifier rather
+        # than the rule-based filters below. The rest of `discovered` flows
+        # through the existing OpenRouter promotion path unchanged.
+        claude_models = [m for m in discovered if (m.raw_metadata or {}).get("claude_sourced")]
+        openrouter_models = [m for m in discovered if not (m.raw_metadata or {}).get("claude_sourced")]
+
+        for model in openrouter_models:
             canonical = model.model_id
             if not canonical or canonical in seen_canonicals:
                 continue
@@ -361,6 +401,47 @@ class AutoPromoter:
                 rejected_ids = {r.candidate.model_id for r in verdict.rejected}
                 promoted = [s for s in promoted if s.model_id not in rejected_ids]
                 ai_rejected_count = len(verdict.rejected)
+
+        # Claude-market pass — independent web-search price cross-check
+        # (Task 5's ClaudeMarketPriceVerifier) instead of the rule-based
+        # filters above. Fail-open when no verifier is wired: accept-through,
+        # same posture as the OpenRouter path when ai_verifier is absent.
+        if claude_models:
+            claude_by_id = {m.model_id: m for m in claude_models}
+            market_candidates = [
+                MarketCandidate(
+                    model_id=m.model_id,
+                    vendor=m.vendor,
+                    input_price_per_1k=float(m.raw_metadata["price_in_per_1k"]),
+                    output_price_per_1k=float(m.raw_metadata["price_out_per_1k"]),
+                    sources=m.raw_metadata.get("sources", []),
+                )
+                for m in claude_models
+            ]
+            if self._market_verifier and self._market_verifier.is_available:
+                market_verdict = await self._market_verifier.verify(market_candidates)
+                accepted_ids = {c.model_id for c in market_verdict.accepted}
+                log.info(
+                    "auto_promote_market_verify_complete",
+                    candidates=len(market_candidates),
+                    accepted=len(market_verdict.accepted),
+                    rejected=len(market_verdict.rejected),
+                    skipped=market_verdict.skipped,
+                )
+                ai_rejected_count += len(market_verdict.rejected)
+            else:
+                accepted_ids = {c.model_id for c in market_candidates}
+
+            for model_id in accepted_ids:
+                model = claude_by_id[model_id]
+                try:
+                    promoted.append(_build_market_spec(model))
+                except Exception as exc:
+                    log.warning(
+                        "auto_promote_market_spec_build_failed",
+                        model_id=model_id,
+                        error=str(exc),
+                    )
 
         self._write_file(promoted)
         return AutoPromoteResult(
