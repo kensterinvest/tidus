@@ -84,7 +84,8 @@ likely a parser bug / marketplace anomaly. Use your knowledge of public vendor \
 pricing pages and historical price moves. Be lenient with documented vendor \
 discounts and tier-restructures; be strict with implausible numbers (e.g. \
 flagship models suddenly priced at $0.01/1M, or a 99% drop on a model the \
-vendor has never discounted).
+vendor has never discounted). Prefer verifying against the vendor's live \
+pricing page via web search over memory.
 
 Output strict JSON only, matching the schema. No prose, no markdown."""
 
@@ -163,11 +164,16 @@ class ClaudeAnomalyVerifier:
         model: str = _DEFAULT_MODEL,
         max_tokens: int = _DEFAULT_MAX_TOKENS,
         enabled: bool = True,
+        ledger=None,
+        use_web_search: bool = True,
     ) -> None:
         self._api_key = api_key
         self._model = model
         self._max_tokens = max_tokens
         self._enabled = enabled and bool(api_key)
+        self._ledger = ledger
+        self._use_web_search = use_web_search
+        self._client_override = None
 
     @property
     def is_available(self) -> bool:
@@ -198,8 +204,8 @@ class ClaudeAnomalyVerifier:
         schema = self._response_schema()
 
         try:
-            client = AsyncAnthropic(api_key=self._api_key)
-            response = await client.messages.create(
+            client = self._client_override or AsyncAnthropic(api_key=self._api_key)
+            create_kwargs = dict(
                 model=self._model,
                 max_tokens=self._max_tokens,
                 system=[
@@ -212,6 +218,9 @@ class ClaudeAnomalyVerifier:
                 output_config={"format": {"type": "json_schema", "schema": schema}},
                 messages=[{"role": "user", "content": prompt}],
             )
+            if self._use_web_search:
+                create_kwargs["tools"] = [{"type": "web_search_20260209", "name": "web_search"}]
+            response = await client.messages.create(**create_kwargs)
         except Exception as exc:
             log.warning("ai_verify_api_failed", error=str(exc))
             return VerificationResult(
@@ -219,6 +228,12 @@ class ClaudeAnomalyVerifier:
                 skipped=True,
                 skipped_reason=f"api_error: {exc}",
             )
+
+        if self._ledger is not None:
+            searches = sum(
+                1 for b in response.content if getattr(b, "type", "") == "server_tool_use"
+            )
+            self._ledger.record("anomaly", getattr(response, "usage", None), web_searches=searches)
 
         text = next(
             (b.text for b in response.content if getattr(b, "type", "") == "text"),
