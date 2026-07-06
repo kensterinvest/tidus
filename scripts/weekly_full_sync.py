@@ -48,7 +48,11 @@ async def main() -> int:
     )
     from tidus.registry.pipeline import RegistryPipeline
     from tidus.reporting.landing_updater import LandingPageUpdater
-    from tidus.reporting.market_intelligence import render_cost_footer, render_market_intelligence
+    from tidus.reporting.market_intelligence import (
+        enrich_report_in_place,
+        render_cost_footer,
+        render_market_intelligence,
+    )
     from tidus.reporting.pricing_report import PricingReportGenerator
     from tidus.reporting.subscribers import ReportDelivery, load_subscribers
     from tidus.settings import get_settings
@@ -245,8 +249,9 @@ async def main() -> int:
             client=sync_client, ledger=ledger, model=settings.claude_market_model,
             discoveries=discoveries, price_moves=[],
         )
-    report_markdown = report.markdown + market_md + render_cost_footer(ledger)
-    md_path.write_text(report_markdown, encoding="utf-8")
+    footer_md = render_cost_footer(ledger)
+    enrich_report_in_place(report, market_md, footer_md)
+    md_path.write_text(report.markdown, encoding="utf-8")
     html_path.write_text(report.html, encoding="utf-8")
     print(f"       {md_path}")
     print(f"       {html_path}")

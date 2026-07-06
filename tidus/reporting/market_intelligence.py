@@ -7,7 +7,9 @@ client — the client is always injected by the caller (see Task 9 wiring).
 """
 from __future__ import annotations
 
+import html as html_module
 import json
+import re
 
 import structlog
 
@@ -76,3 +78,90 @@ async def render_market_intelligence(*, client, ledger, model, discoveries, pric
     ledger.record("magazine", getattr(resp, "usage", None))
     text = next((b.text for b in resp.content if getattr(b, "type", "") == "text"), "")
     return header + (text or "_Market narrative unavailable this cycle._\n")
+
+
+_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+_BOLD_RE = re.compile(r"\*\*([^*]+)\*\*")
+
+
+def _inline_html(text: str) -> str:
+    """Escape then apply the narrow set of inline markdown we render."""
+    escaped = html_module.escape(text)
+    escaped = _LINK_RE.sub(r'<a href="\2">\1</a>', escaped)
+    escaped = _BOLD_RE.sub(r"<strong>\1</strong>", escaped)
+    return escaped
+
+
+def render_section_html(section_markdown: str) -> str:
+    """Convert the narrow markdown subset the narrative uses into an HTML fragment.
+
+    Handles: ## / ### headings, "- " bullets (grouped into <ul>), [text](url)
+    links, **bold**, and blank-line-separated paragraphs. Everything else is
+    HTML-escaped first, so no raw markup from the source can leak through.
+    """
+    if not section_markdown.strip():
+        return ""
+
+    lines = section_markdown.splitlines()
+    out: list[str] = []
+    list_open = False
+
+    def close_list():
+        nonlocal list_open
+        if list_open:
+            out.append("</ul>")
+            list_open = False
+
+    paragraph: list[str] = []
+
+    def flush_paragraph():
+        if paragraph:
+            out.append("<p>" + " ".join(_inline_html(p) for p in paragraph) + "</p>")
+            paragraph.clear()
+
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            flush_paragraph()
+            close_list()
+            continue
+        if stripped.startswith("### "):
+            flush_paragraph()
+            close_list()
+            out.append(f"<h3>{_inline_html(stripped[4:])}</h3>")
+        elif stripped.startswith("## "):
+            flush_paragraph()
+            close_list()
+            out.append(f"<h2>{_inline_html(stripped[3:])}</h2>")
+        elif stripped.startswith("- "):
+            flush_paragraph()
+            if not list_open:
+                out.append("<ul>")
+                list_open = True
+            out.append(f"<li>{_inline_html(stripped[2:])}</li>")
+        else:
+            close_list()
+            paragraph.append(stripped)
+
+    flush_paragraph()
+    close_list()
+    return "\n".join(out)
+
+
+def enrich_report_in_place(report, section_markdown: str, footer_markdown: str) -> None:
+    """Append the market section + cost footer to both report.markdown and report.html.
+
+    Mutates `report` so every downstream consumer (file write, email/Telegram
+    delivery) sees the enriched content, rather than only the local variable
+    the caller happens to write to disk.
+    """
+    report.markdown = report.markdown + section_markdown + footer_markdown
+
+    fragment = render_section_html(section_markdown) + render_section_html(footer_markdown)
+    if not fragment:
+        return
+    existing_html = report.html or ""
+    if "</body>" in existing_html:
+        report.html = existing_html.replace("</body>", fragment + "</body>", 1)
+    else:
+        report.html = existing_html + fragment
