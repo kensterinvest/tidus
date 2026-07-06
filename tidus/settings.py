@@ -132,6 +132,14 @@ class Settings(BaseSettings):
     ai_verify_threshold_pct: float = 50.0
     ai_verify_model: str = "claude-opus-4-7"
 
+    # ── Claude market-intelligence sync (dedicated key + cost ceiling) ──────
+    # Dedicated, sync-only Anthropic key. Deliberately NOT named ANTHROPIC_API_KEY
+    # so the SDK / Claude Code cannot inherit it. Injected via the tidus-sync
+    # systemd EnvironmentFile only.
+    tidus_sync_anthropic_key: str = ""
+    claude_market_model: str = "claude-sonnet-5"
+    claude_sync_budget_usd: float = 2.00
+
     # ── Vendor model discovery ──────────────────────────────────────────────
     # Auto-discovery polls each vendor's `/v1/models` endpoint to detect new
     # models. Discoveries are SURFACE-only (report + JSON sidecar) — never
