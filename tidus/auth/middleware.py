@@ -30,6 +30,11 @@ log = structlog.get_logger(__name__)
 # Optional — HTTPBearer does not auto-error so we can handle missing tokens ourselves
 _bearer = HTTPBearer(auto_error=False)
 
+# Environments where running without OIDC (dev-mode static admin) is permitted.
+# Any OTHER value — production, staging, a typo, empty — fails closed rather than
+# silently granting unauthenticated admin (AUTH-2).
+_DEV_ENVIRONMENTS = frozenset({"development", "dev", "local", "test"})
+
 
 # ── Validated token payload ───────────────────────────────────────────────────
 
@@ -100,16 +105,22 @@ async def get_current_user(
     """
     # ── Dev / no-OIDC fallback ────────────────────────────────────────────────
     if not settings.oidc_issuer_url:
-        if settings.environment == "production":
+        # Fail closed unless ENVIRONMENT is an explicit development value. An
+        # exact "== production" check let staging / test / typo'd values silently
+        # grant unauthenticated admin (AUTH-2).
+        if settings.environment not in _DEV_ENVIRONMENTS:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=(
-                    "OIDC_ISSUER_URL is not configured but ENVIRONMENT=production. "
-                    "Set OIDC_ISSUER_URL or switch to ENVIRONMENT=development."
+                    "OIDC_ISSUER_URL is not configured and ENVIRONMENT="
+                    f"{settings.environment!r} is not a recognised development "
+                    "environment. Configure OIDC_ISSUER_URL, or set ENVIRONMENT to "
+                    "one of: development, dev, local, test."
                 ),
             )
         log.warning(
             "auth_dev_mode_active",
+            environment=settings.environment,
             team_id=settings.oidc_dev_team_id,
             role=settings.oidc_dev_role,
             warning="All requests granted admin access — do not use in production",
@@ -117,6 +128,11 @@ async def get_current_user(
         # Dev mode: tenant header still allowed so local testing can exercise
         # multi-tenant log paths without OIDC.
         dev_tenant = request.headers.get(settings.tenant_header_name) or settings.oidc_dev_team_id
+        # ISO-9 / ISO-8: expose identity to the metering middleware (read after the
+        # handler runs). sub="dev" is intentionally ignored by resolve_caller_id
+        # for uniqueness counting.
+        request.state.auth_sub = "dev"
+        request.state.auth_team_id = settings.oidc_dev_team_id
         return TokenPayload(
             sub="dev",
             team_id=settings.oidc_dev_team_id,
@@ -185,6 +201,12 @@ async def get_current_user(
     tenant_id = claims.get(settings.oidc_tenant_claim)
 
     log.debug("auth_ok", sub=sub, team_id=team_id, role=role, tenant_id=tenant_id)
+    # ISO-9 / ISO-8: expose the authenticated identity to the metering middleware
+    # (it reads request.state after the handler runs). This activates the
+    # resolve_caller_id Fix-12 path so a spoofed X-Titus-User-Id header is ignored,
+    # and gives metering events a real team_id instead of None.
+    request.state.auth_sub = sub
+    request.state.auth_team_id = team_id
     return TokenPayload(
         sub=sub,
         team_id=team_id,

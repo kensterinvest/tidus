@@ -49,8 +49,10 @@ class MeteringMiddleware(BaseHTTPMiddleware):
         if not any(path.startswith(p) for p in _METERED_PREFIXES):
             return response
 
-        # Skip 5xx infra failures — only count meaningful routing attempts
-        if response.status_code >= 500:
+        # Skip 4xx/5xx — only count successful routing attempts. Metering a 4xx
+        # let unauthenticated/failed requests (e.g. a 401 carrying a spoofed
+        # X-Titus-User-Id header) inflate the unique-user count (ISO-9).
+        if response.status_code >= 400:
             return response
 
         user_id_header = request.headers.get("x-titus-user-id")
