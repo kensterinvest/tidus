@@ -32,6 +32,11 @@ from tidus.models.registry_models import (
 
 log = structlog.get_logger(__name__)
 
+# Override types whose effect is catalog-wide regardless of model_id: they apply
+# to every model / freeze the whole registry, so they are admin-only (a single
+# global EffectiveRegistry means a "team"-scoped one still hits every tenant).
+_CATALOG_WIDE_OVERRIDE_TYPES = frozenset({"emergency_freeze_revision", "pin_provider"})
+
 
 class OverrideManager:
     """Create, list, and deactivate model overrides with RBAC enforcement."""
@@ -72,6 +77,27 @@ class OverrideManager:
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
                     detail="team_manager may only create team-scoped overrides; global scope requires admin",
+                )
+
+        # Catalog-wide blast radius (OVR-2 / OVR-3 / ISO-11): the EffectiveRegistry
+        # is a single global view, so an override that is not pinned to a specific
+        # model (model_id=None → wildcard) or that is a catalog-wide control type
+        # affects routing for EVERY tenant. Restrict those to admin so a non-admin
+        # cannot disable / reprice / freeze routing system-wide. NOTE: a *model-
+        # specific* team-scoped override still applies globally today (the registry
+        # has no per-team view) — that residual isolation gap needs the per-team
+        # registry redesign and is tracked separately; this gate closes the
+        # catastrophic total-outage vectors.
+        if actor_role != Role.admin:
+            if request.override_type in _CATALOG_WIDE_OVERRIDE_TYPES:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail=f"override_type {request.override_type!r} has system-wide effect and is admin-only",
+                )
+            if request.model_id is None:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="a wildcard override (model_id=None) affects every model and is admin-only",
                 )
 
         # Payload validation per type
