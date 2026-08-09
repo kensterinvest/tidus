@@ -22,7 +22,7 @@ from datetime import UTC, datetime
 from typing import Annotated
 
 import structlog
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 
 from tidus.api.deps import get_registry
@@ -160,9 +160,15 @@ async def monthly_savings_report(
     report_year = year if year is not None else now.year
     report_month = month if month is not None else now.month
 
-    # Non-admin callers can only see their own team
+    # Tenant isolation: non-privileged callers are restricted to their own team —
+    # both the "all" aggregate and any explicit cross-team team_id are denied.
     effective_team = team_id
-    if _auth.role not in (Role.admin, Role.team_manager) and team_id.lower() == "all":
+    if _auth.role not in (Role.admin, Role.team_manager):
+        if team_id.lower() != "all" and team_id != _auth.team_id:
+            raise HTTPException(
+                status_code=403,
+                detail="Access denied: you may only view your own team's report.",
+            )
         effective_team = _auth.team_id
 
     records = await _fetch_records(report_year, report_month, effective_team)
