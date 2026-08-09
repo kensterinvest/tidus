@@ -853,12 +853,10 @@ footer{background:#0a0f1e;padding:48px}
         <div class="pillar-num">Pillar 4</div>
         <div class="pillar-icon">🛡️</div>
         <div class="pillar-title">Agent Autonomy Limits</div>
-        <div class="pillar-desc">Agentic workflows compound costs exponentially if unchecked. Tidus enforces hard limits at every level — all configurable in <code>policies.yaml</code> and enforced before any API call is made: <strong>max_agent_depth</strong> (default 5) prevents infinite recursion loops; <strong>max_tokens_per_step</strong> (default 8,000) caps per-step cost uniformly across all models; <strong>max_retries_per_task</strong> (default 3) stops retry storms from multiplying costs; <strong>max_parallel_sessions_per_team</strong> (default 10) prevents concurrency explosions. Each violated guardrail produces a named rejection reason in the API response — no silent failures.</div>
+        <div class="pillar-desc">Agentic workflows compound costs exponentially if unchecked. Tidus enforces hard limits configured in <code>policies.yaml</code> before any API call is made: <strong>max_agent_depth</strong> (default 5) caps agent recursion depth, and <strong>max_tokens_per_step</strong> (default 8,000) caps per-step cost uniformly across all models. Each enforced guardrail produces a named rejection reason in the API response — no silent failures. <em>(<strong>max_retries_per_task</strong> and <strong>max_parallel_sessions_per_team</strong> are defined in <code>policies.yaml</code> and on the roadmap, but are not yet enforced; there is no loop-detection beyond the depth cap.)</em></div>
         <div class="tags">
           <span class="tag">Depth limits</span>
           <span class="tag">Token caps</span>
-          <span class="tag">Retry limits</span>
-          <span class="tag">Concurrency limits</span>
           <span class="tag">Pre-execution enforcement</span>
         </div>
       </div>
@@ -2188,6 +2186,7 @@ for the request</pre>
       <p style="margin:0;font-size:14px"><strong>Emit:</strong> <span style="color:#dc2626;font-weight:700">confidential</span>. Even though T2a said "internal" (correctly identifying the code task), T1's regex hit and T2b's SSN detection each independently trigger the OR-rule. Majority voting would have produced "internal" (2 votes internal vs 2 votes confidential — ambiguous) and leaked the prompt to external models. The OR-rule guarantees any signal wins.</p>
     </div>
 
+    <div style="margin:18px 0;padding:14px 18px;background:#fef9c3;border-left:4px solid #d97706;border-radius:6px;font-size:14px;color:#713f12"><strong>⚠️ Implementation status:</strong> the <code>privacy_enforcement</code> configuration described below is a design specification. The current build hardcodes <code>strict</code> behaviour — a <code>confidential</code> classification always forces local-only routing — and the per-tenant <code>disabled</code> opt-out is not yet wired (the key is not read from <code>policies.yaml</code>). Treat <code>disabled</code> as roadmap, not shipped.</div>
     <p><strong>Per-tenant privacy enforcement modes.</strong> The effect of the <code>confidential</code> emit on downstream routing is configurable per tenant via a two-valued enumeration, <code>privacy_enforcement</code>:</p>
     <ul style="line-height:1.7">
       <li><strong><code>strict</code> (default, opt-out required).</strong> A <code>confidential</code> classification forces local-only model selection at Stage 1 of the downstream routing algorithm. Candidate models whose inference endpoint resides outside the deployment boundary are removed from the eligible set. No raw-prompt retention. Intended for healthcare, finance, defense, and other regulated verticals.</li>

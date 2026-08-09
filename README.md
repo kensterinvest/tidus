@@ -2,7 +2,7 @@
 
 > **The AI system that governs all AIs.**
 
-Tidus is a vendor-agnostic, enterprise-grade, cost-aware AI model router and governance system. Every AI request in your organisation passes through Tidus before reaching any model or AI service. Tidus selects the **cheapest model capable of doing the job**, enforces team and workflow budgets, prevents runaway multi-agent loops, and gives you full visibility into your AI spend.
+Tidus is a vendor-agnostic, enterprise-grade, cost-aware AI model router and governance system. Every AI request in your organisation passes through Tidus before reaching any model or AI service. Tidus selects the **cheapest model capable of doing the job**, enforces team and workflow budgets, limits agent depth and per-step token usage, and gives you full visibility into your AI spend.
 
 ```
 ┌───────────────────────────────────────────────────────────────┐
@@ -28,8 +28,8 @@ Most AI systems default every request to the most powerful (most expensive) mode
 |--------|-------------|--------|
 | **1. Tiered Model Strategy** | Routes to the cheapest capable tier — local models for filtering/routing, mid-tier for summarisation/extraction, premium only for reasoning/compliance | ✅ Live |
 | **2. Router Agent Intelligence** | Decides model, local vs. cloud, multi-agent need, and budget feasibility before any compute runs | ✅ Live |
-| **3. Response Caching** | Exact-match and semantic caching — identical or near-identical queries pay once; 30–50% additional reduction | ✅ Live (Phase 4) |
-| **4. Agent Autonomy Limits** | Max depth, agents, tokens-per-step, retries, and reflection loops — prevents runaway compute | ✅ Live (depth, tokens, retries) |
+| **3. Response Caching** | Exact-match caching — identical queries pay once; 30–50% additional reduction (semantic caching is scaffolded but not yet wired into the request path) | ✅ Live (exact-match) |
+| **4. Agent Autonomy Limits** | Enforced pre-execution: max agent depth and max tokens-per-step. (`max_retries_per_task` and `max_parallel_sessions_per_team` are defined in policy but not yet enforced; there is no loop-detection beyond the depth cap) | ✅ Live (depth, tokens) |
 | **5. Vendor-Agnostic Architecture** | Pluggable adapters + MCP server — swap vendors without rewriting your system | ✅ Live (8 adapters + MCP) |
 
 ### Cost Impact — 500 users × 200 requests/day

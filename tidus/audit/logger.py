@@ -2,7 +2,12 @@
 
 Design principles:
 - **Non-fatal**: logging failures never raise — the routing pipeline must not
-  be blocked by an audit backend issue.
+  be blocked by an audit backend issue. NOTE: a write failure is currently
+  logged at WARNING only — it is not yet surfaced as a Prometheus counter or
+  alert, so silent audit-trail loss during a DB degradation is not observable.
+  Wiring a ``tidus_audit_log_failures_total`` counter + alert rule is a tracked
+  hardening follow-up; until then the SOC 2 / ISO 27001 / HIPAA framing above
+  should not be relied on for guaranteed audit completeness.
 - **Actor identity from JWT**: ``actor_team_id``, ``actor_role``, and
   ``actor_sub`` come directly from the :class:`~tidus.auth.middleware.TokenPayload`
   produced by Phase 8's OIDC middleware.
