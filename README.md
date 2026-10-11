@@ -147,10 +147,10 @@ Response:
 
 See [docs/quickstart.md](docs/quickstart.md) for the full guide including `/api/v1/complete` (route + execute).
 
-## Supported Models — 240+ models across 16 vendors
+## Supported Models — 250+ models across 16 vendors
 
 **Catalog composition:**
-- **67 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
+- **75 hand-curated, vendor-verified** entries — the routing-critical baseline, prices manually confirmed against official vendor pricing pages.
 - **170+ auto-promoted** entries — newly discovered models from OpenRouter that pass the rule-based filters (known vendor, both prices > 0, not a pre-GA variant) plus the AI verification gate (Claude confirms the model exists and the price is plausible) before entering the routing catalog. Each sync re-confirms every entry against the live OpenRouter catalog, so the auto-promoted set self-prunes when vendors retire a model. Auto-promoted entries are conservative (tier-3, capabilities derived from metadata) — they become selectable for simple/moderate tasks; high-tier routing is reserved for hand-curated entries.
 
 **Synced twice weekly** (Sun + Wed 02:00 UTC) via a systemd timer on the production VPS (`tidus-sync.timer`; the GitHub Actions workflow is retained as a `workflow_dispatch` emergency fallback). Live OpenRouter feed + hardcoded baseline + AI verification, all merged through MAD-based consensus before a new revision activates. Each issue is delivered by email and/or Telegram. See [docs/pricing-sync.md](docs/pricing-sync.md) for the pipeline.

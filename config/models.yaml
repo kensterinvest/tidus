@@ -1603,3 +1603,206 @@ models:
   last_price_check: '2026-06-27'
   last_health_check: null
   released_at: '2026-05-05'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2026-10-11 Anthropic generation 5 refresh — current + legacy models confirmed
+# against official Anthropic pricing page 2026-10-11.
+# Prices USD per 1K tokens (= $/1M ÷ 1000).
+# ─────────────────────────────────────────────────────────────────────────────
+- model_id: claude-fable-5-1
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.01
+  output_price: 0.05
+  tokenizer: anthropic
+  latency_p50_ms: 2200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - creative
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-fable-5
+  - claude-opus-5-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-09-01'
+- model_id: claude-opus-5-5
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.004
+  output_price: 0.02
+  tokenizer: anthropic
+  latency_p50_ms: 2500
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-5
+  - claude-sonnet-5-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-09-01'
+- model_id: claude-sonnet-5-5
+  vendor: anthropic
+  tier: 2
+  max_context: 1000000
+  input_price: 0.002
+  output_price: 0.01
+  tokenizer: anthropic
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  - agents
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-sonnet-5
+  - claude-haiku-5-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-09-01'
+- model_id: claude-haiku-5-5
+  vendor: anthropic
+  tier: 3
+  max_context: 200000
+  input_price: 0.0001
+  output_price: 0.0005
+  tokenizer: anthropic
+  latency_p50_ms: 250
+  capabilities:
+  - chat
+  - extraction
+  - classification
+  - summarization
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-haiku-4-5
+  - gpt-4o-mini
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-09-01'
+- model_id: claude-opus-5
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.005
+  output_price: 0.025
+  tokenizer: anthropic
+  latency_p50_ms: 3000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-5-5
+  - claude-sonnet-5-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-06-01'
+- model_id: claude-sonnet-5
+  vendor: anthropic
+  tier: 2
+  max_context: 1000000
+  input_price: 0.002
+  output_price: 0.01
+  tokenizer: anthropic
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-sonnet-5-5
+  - claude-haiku-5-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2026-06-01'
+- model_id: claude-opus-4-5
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.005
+  output_price: 0.025
+  tokenizer: anthropic
+  latency_p50_ms: 3200
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-opus-4-6
+  - claude-sonnet-4-6
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2025-03-01'
+- model_id: claude-sonnet-4-5
+  vendor: anthropic
+  tier: 2
+  max_context: 1000000
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: anthropic
+  latency_p50_ms: 1100
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - extraction
+  - summarization
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-sonnet-4-6
+  - claude-haiku-4-5
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: '2025-03-01'

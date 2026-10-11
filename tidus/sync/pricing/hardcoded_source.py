@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-04-17. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-10-11. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
@@ -29,8 +29,16 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     # ── Anthropic ────────────────────────────────────────────────────────────
     "claude-opus-4-7":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (new Apr-17)
     "claude-opus-4-6":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (updated Apr-17)
+    "claude-opus-4-5":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (legacy)
     "claude-sonnet-4-6":         {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M
+    "claude-sonnet-4-5":         {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M (legacy)
     "claude-haiku-4-5":          {"input": 0.001,     "output": 0.005},    # $1/$5 per 1M (updated Apr-17)
+    "claude-opus-5":             {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (legacy)
+    "claude-sonnet-5":           {"input": 0.002,     "output": 0.01},     # $2/$10 per 1M (legacy)
+    "claude-fable-5-1":          {"input": 0.01,      "output": 0.05},     # $10/$50 per 1M (new Oct-11)
+    "claude-opus-5-5":           {"input": 0.004,     "output": 0.02},     # $4/$20 per 1M (new Oct-11)
+    "claude-sonnet-5-5":         {"input": 0.002,     "output": 0.01},     # $2/$10 per 1M (new Oct-11)
+    "claude-haiku-5-5":          {"input": 0.0001,    "output": 0.0005},   # $0.10/$0.50 per 1M (new Oct-11)
 
     # ── Google ────────────────────────────────────────────────────────────────
     "gemini-3.1-pro":            {"input": 0.002,     "output": 0.012},    # $2/$12 per 1M
@@ -98,7 +106,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 4, 17)
+_EFFECTIVE_DATE = date(2026, 10, 11)
 _CONFIDENCE = 0.7
 
 
