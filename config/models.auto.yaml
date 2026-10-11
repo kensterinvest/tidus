@@ -31,7 +31,7 @@ models:
   fallbacks: []
   route_id: amazon/nova-2-lite-v1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -59,7 +59,7 @@ models:
   fallbacks: []
   route_id: amazon/nova-lite-v1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -85,7 +85,7 @@ models:
   fallbacks: []
   route_id: amazon/nova-micro-v1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -113,7 +113,7 @@ models:
   fallbacks: []
   route_id: amazon/nova-premier-v1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -141,7 +141,7 @@ models:
   fallbacks: []
   route_id: amazon/nova-pro-v1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -169,7 +169,35 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
+  last_health_check: null
+  released_at: null
+  retired_at: null
+  retirement_reason: null
+- model_id: claude-haiku-5.5
+  display_name: '[auto-promoted] Anthropic: Claude Haiku 5.5'
+  vendor: anthropic
+  tier: 3
+  max_context: 1000000
+  input_price: 9.999999999999999e-05
+  output_price: 0.0005
+  cache_read_price: 0.0
+  cache_write_price: 0.0
+  tokenizer: anthropic
+  latency_p50_ms: 1500
+  capabilities:
+  - chat
+  - multimodal
+  - long_context
+  min_complexity: simple
+  max_complexity: moderate
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks: []
+  route_id: null
+  route_source: null
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -197,7 +225,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -225,7 +253,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -253,7 +281,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -281,7 +309,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -309,7 +337,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -337,7 +365,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -365,7 +393,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -393,7 +421,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -420,34 +448,7 @@ models:
   fallbacks: []
   route_id: arcee-ai/trinity-large-thinking
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: ernie-4.5-vl-424b-a47b
-  display_name: '[auto-promoted] Baidu: ERNIE 4.5 VL 424B A47B '
-  vendor: baidu
-  tier: 3
-  max_context: 123000
-  input_price: 0.00042
-  output_price: 0.00125
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - multimodal
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: baidu/ernie-4.5-vl-424b-a47b
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -474,7 +475,7 @@ models:
   fallbacks: []
   route_id: bytedance/ui-tars-1.5-7b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -502,7 +503,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-1.6
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -530,7 +531,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-1.6-flash
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -558,7 +559,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-2-1-turbo
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -586,7 +587,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-2.0-code
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -614,7 +615,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-2.0-lite
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -642,7 +643,7 @@ models:
   fallbacks: []
   route_id: bytedance-seed/seed-2.0-mini
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -669,7 +670,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -696,7 +697,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -722,7 +723,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -748,7 +749,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -774,7 +775,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -800,7 +801,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -826,7 +827,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -852,7 +853,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -878,7 +879,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -888,8 +889,8 @@ models:
   vendor: deepseek
   tier: 3
   max_context: 163840
-  input_price: 0.00028000000000000003
-  output_price: 0.00042
+  input_price: 0.00025899999999999995
+  output_price: 0.0007999999999999999
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -904,7 +905,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -930,7 +931,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -940,7 +941,7 @@ models:
   vendor: deepseek
   tier: 3
   max_context: 1048576
-  input_price: 1.8e-05
+  input_price: 1.07e-05
   output_price: 0.00128
   cache_read_price: 0.0
   cache_write_price: 0.0
@@ -957,7 +958,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -985,7 +986,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -995,8 +996,8 @@ models:
   vendor: deepseek
   tier: 3
   max_context: 1048576
-  input_price: 0.00132
-  output_price: 0.00396
+  input_price: 0.00066
+  output_price: 0.00198
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -1012,7 +1013,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1022,8 +1023,8 @@ models:
   vendor: deepseek
   tier: 3
   max_context: 1048576
-  input_price: 4.4e-05
-  output_price: 0.0003
+  input_price: 0.0003
+  output_price: 0.0012
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -1040,7 +1041,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1067,7 +1068,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1095,7 +1096,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1122,7 +1123,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1149,7 +1150,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1177,7 +1178,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1205,7 +1206,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1233,7 +1234,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1261,7 +1262,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1289,7 +1290,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1317,7 +1318,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1344,7 +1345,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1370,7 +1371,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1397,7 +1398,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1424,7 +1425,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1451,7 +1452,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1461,8 +1462,8 @@ models:
   vendor: google
   tier: 3
   max_context: 262144
-  input_price: 7.65e-05
-  output_price: 0.000255
+  input_price: 6.75e-05
+  output_price: 0.000225
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: google
@@ -1479,7 +1480,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1507,7 +1508,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1533,7 +1534,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1559,7 +1560,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1585,7 +1586,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1611,7 +1612,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1637,7 +1638,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1665,7 +1666,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1693,7 +1694,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1720,7 +1721,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1747,7 +1748,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1775,7 +1776,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1803,7 +1804,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1831,7 +1832,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1859,7 +1860,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1887,7 +1888,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1915,7 +1916,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-01
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1942,7 +1943,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1969,7 +1970,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m2
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -1995,7 +1996,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m2-her
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2022,7 +2023,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m2.1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2049,7 +2050,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m2.5
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2076,7 +2077,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m2.7
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2104,7 +2105,7 @@ models:
   fallbacks: []
   route_id: minimax/minimax-m3
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2131,7 +2132,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2158,7 +2159,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2186,7 +2187,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2213,7 +2214,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2241,7 +2242,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2267,7 +2268,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2295,7 +2296,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2304,7 +2305,7 @@ models:
   display_name: '[auto-promoted] Mistral: Mistral Large 4'
   vendor: mistral
   tier: 3
-  max_context: 524288
+  max_context: 1048576
   input_price: 0.0006799999999999999
   output_price: 0.00209
   cache_read_price: 0.0
@@ -2323,7 +2324,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2350,7 +2351,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2377,7 +2378,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2403,7 +2404,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2429,7 +2430,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2457,7 +2458,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2484,7 +2485,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2512,7 +2513,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2538,7 +2539,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2565,7 +2566,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2591,7 +2592,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2618,7 +2619,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2645,7 +2646,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2673,7 +2674,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2683,7 +2684,7 @@ models:
   vendor: moonshot
   tier: 3
   max_context: 1048576
-  input_price: 0.00069
+  input_price: 0.0007999999999999999
   output_price: 0.015000000000000001
   cache_read_price: 0.0
   cache_write_price: 0.0
@@ -2701,7 +2702,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2711,8 +2712,8 @@ models:
   vendor: nvidia
   tier: 3
   max_context: 262144
-  input_price: 4.9999999999999996e-05
-  output_price: 0.00019999999999999998
+  input_price: 5.9999999999999995e-05
+  output_price: 0.00023999999999999998
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -2728,7 +2729,7 @@ models:
   fallbacks: []
   route_id: nvidia/nemotron-3-nano-30b-a3b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2755,7 +2756,7 @@ models:
   fallbacks: []
   route_id: nvidia/nemotron-3-super-120b-a12b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2782,7 +2783,7 @@ models:
   fallbacks: []
   route_id: nvidia/nemotron-3-ultra-550b-a55b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2809,7 +2810,7 @@ models:
   fallbacks: []
   route_id: nvidia/nemotron-3.5-content-safety
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2819,8 +2820,8 @@ models:
   vendor: nvidia
   tier: 3
   max_context: 262144
-  input_price: 5.9999999999999995e-05
-  output_price: 0.00016
+  input_price: 7.000000000000001e-05
+  output_price: 0.00019999999999999998
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -2836,7 +2837,7 @@ models:
   fallbacks: []
   route_id: nvidia/nemotron-3.5-lightning
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2862,7 +2863,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2888,7 +2889,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2914,7 +2915,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2940,7 +2941,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2966,7 +2967,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -2993,7 +2994,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3020,7 +3021,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3047,7 +3048,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3074,7 +3075,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3101,7 +3102,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3129,7 +3130,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3157,7 +3158,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3185,7 +3186,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3213,7 +3214,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3241,7 +3242,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3269,7 +3270,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3297,7 +3298,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3325,7 +3326,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3353,7 +3354,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3381,7 +3382,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3408,7 +3409,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3436,7 +3437,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3464,7 +3465,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3492,7 +3493,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3520,7 +3521,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3548,7 +3549,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3576,7 +3577,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3604,7 +3605,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3632,7 +3633,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3660,7 +3661,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3688,7 +3689,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3716,7 +3717,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3744,7 +3745,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3772,7 +3773,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3800,7 +3801,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3828,7 +3829,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3856,7 +3857,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3884,7 +3885,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3912,7 +3913,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3940,7 +3941,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3968,7 +3969,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -3996,7 +3997,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4024,7 +4025,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4051,7 +4052,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4078,7 +4079,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4106,7 +4107,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4132,7 +4133,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4158,7 +4159,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4186,7 +4187,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4214,7 +4215,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4241,7 +4242,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4268,7 +4269,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4296,7 +4297,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4324,7 +4325,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4350,7 +4351,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4376,7 +4377,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4402,34 +4403,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen-plus-2025-07-28
-  display_name: '[auto-promoted] Qwen: Qwen Plus 0728'
-  vendor: qwen
-  tier: 3
-  max_context: 1000000
-  input_price: 0.00026
-  output_price: 0.0007800000000000001
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - long_context
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4456,7 +4430,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4465,9 +4439,9 @@ models:
   display_name: '[auto-promoted] Qwen: Qwen3 14B'
   vendor: qwen
   tier: 3
-  max_context: 131072
-  input_price: 0.00011999999999999999
-  output_price: 0.00023999999999999998
+  max_context: 40960
+  input_price: 9.999999999999999e-05
+  output_price: 0.00022
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -4482,33 +4456,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-235b-a22b
-  display_name: '[auto-promoted] Qwen: Qwen3 235B A22B'
-  vendor: qwen
-  tier: 3
-  max_context: 131072
-  input_price: 0.000455
-  output_price: 0.00182
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4535,7 +4483,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4544,9 +4492,9 @@ models:
   display_name: '[auto-promoted] Qwen: Qwen3 235B A22B Thinking 2507'
   vendor: qwen
   tier: 3
-  max_context: 131072
-  input_price: 0.00023
-  output_price: 0.0023
+  max_context: 128000
+  input_price: 0.00045
+  output_price: 0.0035
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -4561,7 +4509,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4570,7 +4518,7 @@ models:
   display_name: '[auto-promoted] Qwen: Qwen3 30B A3B'
   vendor: qwen
   tier: 3
-  max_context: 131072
+  max_context: 40960
   input_price: 0.00011999999999999999
   output_price: 0.0005
   cache_read_price: 0.0
@@ -4587,7 +4535,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4597,8 +4545,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 4.815e-05
-  output_price: 0.00019305
+  input_price: 9.999999999999999e-05
+  output_price: 0.0003
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -4614,33 +4562,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-30b-a3b-thinking-2507
-  display_name: '[auto-promoted] Qwen: Qwen3 30B A3B Thinking 2507'
-  vendor: qwen
-  tier: 3
-  max_context: 81920
-  input_price: 0.00019999999999999998
-  output_price: 0.0024
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4666,33 +4588,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-8b
-  display_name: '[auto-promoted] Qwen: Qwen3 8B'
-  vendor: qwen
-  tier: 3
-  max_context: 131072
-  input_price: 0.000117
-  output_price: 0.000455
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4719,7 +4615,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4746,7 +4642,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4773,7 +4669,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4800,88 +4696,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-coder-plus
-  display_name: '[auto-promoted] Qwen: Qwen3 Coder Plus'
-  vendor: qwen
-  tier: 3
-  max_context: 1000000
-  input_price: 0.00065
-  output_price: 0.00325
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - long_context
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-max
-  display_name: '[auto-promoted] Qwen: Qwen3 Max'
-  vendor: qwen
-  tier: 3
-  max_context: 262144
-  input_price: 0.0007800000000000001
-  output_price: 0.0039
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - long_context
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-max-thinking
-  display_name: '[auto-promoted] Qwen: Qwen3 Max Thinking'
-  vendor: qwen
-  tier: 3
-  max_context: 262144
-  input_price: 0.0007800000000000001
-  output_price: 0.0039
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - long_context
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4908,7 +4723,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4935,7 +4750,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -4963,34 +4778,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-vl-235b-a22b-thinking
-  display_name: '[auto-promoted] Qwen: Qwen3 VL 235B A22B Thinking'
-  vendor: qwen
-  tier: 3
-  max_context: 131072
-  input_price: 0.00039999999999999996
-  output_price: 0.004
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - multimodal
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5018,7 +4806,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5028,8 +4816,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.00019999999999999998
-  output_price: 0.0024
+  input_price: 0.00029
+  output_price: 0.001
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5046,34 +4834,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-vl-32b-instruct
-  display_name: '[auto-promoted] Qwen: Qwen3 VL 32B Instruct'
-  vendor: qwen
-  tier: 3
-  max_context: 131072
-  input_price: 0.00010400000000000001
-  output_price: 0.00041600000000000003
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - multimodal
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5083,8 +4844,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.000117
-  output_price: 0.000455
+  input_price: 0.00025
+  output_price: 0.00075
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5101,34 +4862,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
-  last_health_check: null
-  released_at: null
-  retired_at: null
-  retirement_reason: null
-- model_id: qwen3-vl-8b-thinking
-  display_name: '[auto-promoted] Qwen: Qwen3 VL 8B Thinking'
-  vendor: qwen
-  tier: 3
-  max_context: 131072
-  input_price: 0.00017999999999999998
-  output_price: 0.0021
-  cache_read_price: 0.0
-  cache_write_price: 0.0
-  tokenizer: tiktoken_cl100k
-  latency_p50_ms: 1500
-  capabilities:
-  - chat
-  - multimodal
-  min_complexity: simple
-  max_complexity: moderate
-  is_local: false
-  enabled: true
-  deprecated: false
-  fallbacks: []
-  route_id: null
-  route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5156,7 +4890,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5166,8 +4900,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.00019500000000000002
-  output_price: 0.0015600000000000002
+  input_price: 0.00026
+  output_price: 0.0026
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5184,7 +4918,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5194,8 +4928,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.00015
-  output_price: 0.001
+  input_price: 8.0e-05
+  output_price: 0.00075
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5212,7 +4946,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5222,8 +4956,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.00045
-  output_price: 0.003
+  input_price: 0.00055
+  output_price: 0.0035
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5240,7 +4974,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5268,7 +5002,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5296,7 +5030,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5324,7 +5058,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5352,7 +5086,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5362,8 +5096,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.0003
-  output_price: 0.002
+  input_price: 0.00032
+  output_price: 0.0031999999999999997
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5380,7 +5114,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5390,8 +5124,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 262144
-  input_price: 0.00015
-  output_price: 0.001
+  input_price: 9.999999999999999e-05
+  output_price: 0.00095
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5408,7 +5142,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5436,7 +5170,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5464,7 +5198,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5492,7 +5226,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5520,7 +5254,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5547,7 +5281,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5557,8 +5291,8 @@ models:
   vendor: qwen
   tier: 3
   max_context: 1000000
-  input_price: 0.00042500000000000003
-  output_price: 0.00255
+  input_price: 4.0e-05
+  output_price: 0.0023
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -5575,7 +5309,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5603,7 +5337,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5631,7 +5365,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5659,7 +5393,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5687,7 +5421,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5713,7 +5447,7 @@ models:
   fallbacks: []
   route_id: tencent/hunyuan-a13b-instruct
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5739,7 +5473,7 @@ models:
   fallbacks: []
   route_id: tencent/hy-mt2-1.8b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5765,7 +5499,7 @@ models:
   fallbacks: []
   route_id: tencent/hy-mt2-30b-a3b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5791,7 +5525,7 @@ models:
   fallbacks: []
   route_id: tencent/hy-mt2-7b
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5818,7 +5552,7 @@ models:
   fallbacks: []
   route_id: tencent/hy3
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5846,7 +5580,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5874,7 +5608,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5902,7 +5636,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5930,7 +5664,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5958,7 +5692,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -5986,7 +5720,7 @@ models:
   fallbacks: []
   route_id: null
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6012,7 +5746,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.5
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6038,7 +5772,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.5-air
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6065,7 +5799,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.5v
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6075,8 +5809,8 @@ models:
   vendor: zhipu
   tier: 3
   max_context: 204800
-  input_price: 0.00043
-  output_price: 0.00175
+  input_price: 0.0005
+  output_price: 0.002
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -6092,7 +5826,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.6
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6119,7 +5853,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.6v
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6146,7 +5880,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.7
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6173,7 +5907,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-4.7-flash
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6200,7 +5934,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6227,7 +5961,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5-turbo
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6254,7 +5988,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.1
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6264,8 +5998,8 @@ models:
   vendor: zhipu
   tier: 3
   max_context: 1048576
-  input_price: 0.000152
-  output_price: 0.012
+  input_price: 5.9999999999999995e-05
+  output_price: 0.007
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -6281,7 +6015,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.2
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6291,8 +6025,8 @@ models:
   vendor: zhipu
   tier: 3
   max_context: 1048576
-  input_price: 7.000000000000001e-05
-  output_price: 0.007
+  input_price: 3.9e-05
+  output_price: 0.0048
   cache_read_price: 0.0
   cache_write_price: 0.0
   tokenizer: tiktoken_cl100k
@@ -6308,7 +6042,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.3
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6336,7 +6070,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.3-flash
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6364,7 +6098,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.3-flashx
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6391,7 +6125,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5.3-prime
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
@@ -6419,7 +6153,7 @@ models:
   fallbacks: []
   route_id: z-ai/glm-5v-turbo
   route_source: null
-  last_price_check: '2026-10-07'
+  last_price_check: '2026-10-11'
   last_health_check: null
   released_at: null
   retired_at: null
