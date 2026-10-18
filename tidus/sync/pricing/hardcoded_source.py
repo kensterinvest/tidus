@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-10-11. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-10-18. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
@@ -48,7 +48,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "gemini-2.0-flash":          {"input": 0.0001,    "output": 0.0004},   # $0.10/$0.40 per 1M
 
     # ── Mistral ───────────────────────────────────────────────────────────────
-    "mistral-large-3":           {"input": 0.002,     "output": 0.006},    # $2/$6 per 1M
+    "mistral-large-3":           {"input": 0.0005,    "output": 0.0015},   # $0.50/$1.50 per 1M (675B Dec-25 price cut)
     "mistral-medium":            {"input": 0.0004,    "output": 0.002},    # $0.40/$2 per 1M
     "mistral-small":             {"input": 0.0001,    "output": 0.0003},   # $0.10/$0.30 per 1M
     "mistral-nemo":              {"input": 0.00015,   "output": 0.00015},  # $0.15/$0.15 per 1M
@@ -63,6 +63,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
 
     # ── xAI ──────────────────────────────────────────────────────────────────
     "grok-4":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M (released Jul-2025)
+    "grok-4.5":                  {"input": 0.002,     "output": 0.006},    # $2/$6 per 1M (new Jul-2026)
     "grok-3":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M
     "grok-3-fast":               {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M
 
@@ -106,7 +107,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 10, 11)
+_EFFECTIVE_DATE = date(2026, 10, 18)
 _CONFIDENCE = 0.7
 
 

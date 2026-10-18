@@ -11,7 +11,7 @@ pass so models removed from `models.yaml` are dropped from new revisions.
 ┌──────────────────┐   ┌─────────────────────────────┐   ┌──────────────────────────────┐
 │  HardcodedSource │   │  OpenRouterPricingSource     │   │  TidusPricingFeedSource       │
 │  confidence=0.70 │   │  confidence=0.75             │   │  confidence=0.85 (optional)   │
-│  63 models        │   │  live; ~250 models           │   │  TIDUS_PRICING_FEED_URL        │
+│  64 models        │   │  live; ~250 models           │   │  TIDUS_PRICING_FEED_URL        │
 └────────┬─────────┘   └──────────────┬──────────────┘   └───────────────┬───────────────┘
          │ PriceQuote[]               │ PriceQuote[]                     │ PriceQuote[]
          └────────────────────────┬───┴──────────────────────────────────┘
@@ -69,7 +69,7 @@ delivered to subscribers — by email (Resend/SMTP) and/or Telegram (see
 
 ### HardcodedSource (`confidence=0.70`)
 
-Built-in price table in `tidus/sync/pricing/hardcoded_source.py`. Covers the 63 hand-curated
+Built-in price table in `tidus/sync/pricing/hardcoded_source.py`. Covers the 64 hand-curated
 routing-critical models — Anthropic, OpenAI, Google, Mistral, DeepSeek, xAI, Moonshot,
 Cohere, Qwen, Groq, Together AI, Perplexity. Always available; manually verified against
 official vendor pricing pages. This is the ground-truth fallback when external sources fail.

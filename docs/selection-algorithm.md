@@ -13,7 +13,7 @@ cannot or should not handle the task. The model that survives all five stages wi
 composite score is selected.
 
 ```
-All 250+ models in registry (75 hand-curated + 170+ auto-promoted, refreshed every Sun + Wed)
+All 250+ models in registry (76 hand-curated + 170+ auto-promoted, refreshed every Sun + Wed)
         │
    ┌────▼──────────────────────────────────┐
    │  Stage 1 — Hard Constraints           │  binary pass/fail per model

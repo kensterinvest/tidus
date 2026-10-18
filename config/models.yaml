@@ -494,9 +494,9 @@ models:
 - model_id: mistral-large-3
   vendor: mistral
   tier: 2
-  max_context: 128000
-  input_price: 0.002
-  output_price: 0.006
+  max_context: 262000
+  input_price: 0.0005
+  output_price: 0.0015
   tokenizer: sentencepiece
   latency_p50_ms: 900
   capabilities:
@@ -514,7 +514,7 @@ models:
   - mistral-small
   - gpt-4o-mini
   - mistral-small-ollama
-  last_price_check: '2026-04-17'
+  last_price_check: '2026-10-18'
   last_health_check: null
 - model_id: mistral-medium
   vendor: mistral
@@ -747,6 +747,30 @@ models:
   - gpt-4.1
   released_at: '2025-07-01'
   last_price_check: '2026-04-17'
+  last_health_check: null
+- model_id: grok-4.5
+  vendor: xai
+  tier: 2
+  max_context: 131072
+  input_price: 0.002
+  output_price: 0.006
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-4
+  - grok-3
+  released_at: '2026-07-08'
+  last_price_check: '2026-10-18'
   last_health_check: null
 - model_id: grok-3
   vendor: xai
