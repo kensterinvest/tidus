@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-10-18. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-10-25. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
@@ -107,7 +107,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 10, 18)
+_EFFECTIVE_DATE = date(2026, 10, 25)
 _CONFIDENCE = 0.7
 
 
