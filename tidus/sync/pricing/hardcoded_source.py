@@ -10,13 +10,13 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-10-25. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-11-01. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
     # ── OpenAI ───────────────────────────────────────────────────────────────
     "o3":                        {"input": 0.002,     "output": 0.008},    # $2/$8 per 1M (updated Apr-17)
-    "o4-mini":                   {"input": 0.0011,    "output": 0.0044},   # $1.10/$4.40 per 1M
+    "o4-mini":                   {"input": 0.00055,   "output": 0.0022},   # $0.55/$2.20 per 1M (50% cut Nov-01)
     "gpt-4.1":                   {"input": 0.002,     "output": 0.008},    # $2/$8 per 1M
     "gpt-4.1-mini":              {"input": 0.0004,    "output": 0.0016},   # $0.40/$1.60 per 1M
     "gpt-4.1-nano":              {"input": 0.0001,    "output": 0.0004},   # $0.10/$0.40 per 1M
@@ -107,7 +107,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 10, 25)
+_EFFECTIVE_DATE = date(2026, 11, 1)
 _CONFIDENCE = 0.7
 
 

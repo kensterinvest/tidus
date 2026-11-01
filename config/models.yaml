@@ -27,8 +27,8 @@ models:
   vendor: openai
   tier: 2
   max_context: 200000
-  input_price: 0.0011
-  output_price: 0.0044
+  input_price: 0.00055
+  output_price: 0.0022
   tokenizer: tiktoken_o200k
   latency_p50_ms: 1200
   capabilities:
@@ -45,7 +45,7 @@ models:
   - gpt-4.1
   - claude-sonnet-4-6
   - llama4-maverick-ollama
-  last_price_check: '2026-04-17'
+  last_price_check: '2026-11-01'
   last_health_check: null
 - model_id: gpt-4.1
   vendor: openai
