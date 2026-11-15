@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-11-01. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-11-15. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
@@ -27,6 +27,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "codex-mini-latest":         {"input": 0.00075,   "output": 0.003},    # $0.75/$3 per 1M
 
     # ── Anthropic ────────────────────────────────────────────────────────────
+    "claude-fable-5-2":          {"input": 0.008,     "output": 0.04},     # $8/$40 per 1M (new Nov-09, 20% cut from 5.1)
     "claude-opus-4-7":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (new Apr-17)
     "claude-opus-4-6":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (updated Apr-17)
     "claude-opus-4-5":           {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M (legacy)
@@ -41,6 +42,8 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "claude-haiku-5-5":          {"input": 0.0001,    "output": 0.0005},   # $0.10/$0.50 per 1M (new Oct-11)
 
     # ── Google ────────────────────────────────────────────────────────────────
+    "gemini-4-argon":            {"input": 0.002,     "output": 0.01},     # $2/$10 per 1M (new Oct-15, promo rate through Nov-30)
+    "gemini-3.6-flash":          {"input": 0.0015,    "output": 0.0075},   # $1.50/$7.50 per 1M (new Jul-2026)
     "gemini-3.1-pro":            {"input": 0.002,     "output": 0.012},    # $2/$12 per 1M
     "gemini-3.1-flash":          {"input": 0.001,     "output": 0.004},    # $1/$4 per 1M
     "gemini-2.5-pro":            {"input": 0.00125,   "output": 0.01},     # $1.25/$10 per 1M
@@ -48,6 +51,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "gemini-2.0-flash":          {"input": 0.0001,    "output": 0.0004},   # $0.10/$0.40 per 1M
 
     # ── Mistral ───────────────────────────────────────────────────────────────
+    "mistral-large-4":           {"input": 0.00136,   "output": 0.00418},  # $1.36/$4.18 per 1M (new Oct-06)
     "mistral-large-3":           {"input": 0.0005,    "output": 0.0015},   # $0.50/$1.50 per 1M (675B Dec-25 price cut)
     "mistral-medium":            {"input": 0.0004,    "output": 0.002},    # $0.40/$2 per 1M
     "mistral-small":             {"input": 0.0001,    "output": 0.0003},   # $0.10/$0.30 per 1M
@@ -107,7 +111,7 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 11, 1)
+_EFFECTIVE_DATE = date(2026, 11, 15)
 _CONFIDENCE = 0.7
 
 

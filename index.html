@@ -737,7 +737,7 @@ footer{background:#0a0f1e;padding:48px}
       <div class="hero-logo">tidus<span class="dot">.</span></div>
       <div class="hero-tagline-txt">Enterprise AI Cost Router &nbsp;·&nbsp; Self-Hosted &nbsp;·&nbsp; Open Source</div>
     </div>
-    <div class="hero-badge">Now tracking 76 models across 15 vendors · Live OpenRouter sync + AI verification · Sun + Wed</div>
+    <div class="hero-badge">Now tracking 80 models across 15 vendors · Live OpenRouter sync + AI verification · Sun + Wed</div>
     <h1 class="hero-title">Route every request<br>to its <span class="accent">optimal model.</span></h1>
     <p class="hero-sub"><strong style="color:rgba(255,255,255,.92)">Free and open-source for every organisation — any size, any industry.</strong> Tidus selects the cheapest capable model for every AI request, automatically. 5-stage intelligence. 70% cost savings. Fully self-hosted. Every dollar saved stays with you.</p>
     <div class="hero-actions">
@@ -745,7 +745,7 @@ footer{background:#0a0f1e;padding:48px}
       <a href="#about" class="btn-hero secondary">Learn More ↓</a>
     </div>
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-val">76</div><div class="stat-lbl">Models Tracked</div></div>
+      <div class="stat-card"><div class="stat-val">80</div><div class="stat-lbl">Models Tracked</div></div>
       <div class="stat-card"><div class="stat-val">15</div><div class="stat-lbl">AI Vendors</div></div>
       <div class="stat-card"><div class="stat-val">70%</div><div class="stat-lbl">Cost Weight in Routing</div></div>
       <div class="stat-card"><div class="stat-val">5</div><div class="stat-lbl">Cost-Control Pillars</div></div>
@@ -1084,11 +1084,11 @@ response = client.chat.completions.create(
 <section class="sources" id="sources">
   <div class="section-inner">
     <p class="section-tag">Model Discovery &amp; Pricing Sources</p>
-    <h2 class="section-title">76 curated models — not the entire market. Here's why.</h2>
-    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 76 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
+    <h2 class="section-title">80 curated models — not the entire market. Here's why.</h2>
+    <p class="section-sub" style="max-width:none">There are hundreds of AI models published across Hugging Face, vendor APIs, and inference platforms. Most are research checkpoints, experimental fine-tunes, or deprecated variants with no stable public pricing. Tidus tracks 80 commercially stable, enterprise-accessible models — the ones that actually matter for production routing. The curation is deliberate, and the pricing data comes from two independent sources that cross-check each other every Sunday.</p>
 
     <div class="why-box">
-      <p><strong>Why 76, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
+      <p><strong>Why 80, not 400+?</strong> Most published models are research checkpoints, experimental fine-tunes, deprecated versions, or waitlisted previews with no stable public pricing. Tidus only tracks models that are commercially available today, priced per token with a public API, accessible without a waitlist, and stable enough for production routing. The catalog prioritises quality of routing over quantity of options.</p>
       <p>The catalog grows continuously. Adding a new model is 3 lines in <code>hardcoded_source.py</code> — the model ID, input price, and output price. Community pull requests are welcome. If a vendor releases a new stable model, open a PR and it will be tracked in the next weekly sync.</p>
       <div class="add-model">
         <span>➕ To add a model:</span>
@@ -1189,7 +1189,7 @@ response = client.chat.completions.create(
           <div class="src-badge always">Always Available</div>
           <div class="src-title">HardcodedSource</div>
           <div class="src-conf">confidence = 0.70</div>
-          <div class="src-desc">A built-in verified price table covering the hand-curated set (64 routing-critical models). Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
+          <div class="src-desc">A built-in verified price table covering the hand-curated set (68 routing-critical models). Prices are manually confirmed against official vendor pricing pages — not scraped, not inferred. This source always returns data, so routing continues even if all external sources fail. It is the ground-truth fallback for the entire system.</div>
         </div>
 
         <div class="src-card">
@@ -1470,7 +1470,7 @@ response = client.chat.completions.create(
             <span class="sd-title">Hard Constraints</span>
             <span class="sd-badge sd-badge-filter">Binary Filter</span>
           </div>
-          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 76 registered models.</p>
+          <p class="sd-lead">Every model in the registry is checked against four hard rules. Failing any single rule is enough to eliminate the model — there is no partial credit, no weighting, and no override. These checks happen in a single pass over all 80 registered models.</p>
           <div class="sd-checks-grid">
             <div class="sd-check">
               <div class="sd-ck-label">Check 1 — Is the model active?</div>

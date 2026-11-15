@@ -1830,3 +1830,109 @@ models:
   last_price_check: '2026-10-11'
   last_health_check: null
   released_at: '2025-03-01'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2026-11-15 weekly sync — new models confirmed against official vendor pages.
+# Prices USD per 1K tokens (= $/1M ÷ 1000).
+# ─────────────────────────────────────────────────────────────────────────────
+- model_id: claude-fable-5-2
+  vendor: anthropic
+  tier: 1
+  max_context: 1000000
+  input_price: 0.008
+  output_price: 0.04
+  tokenizer: anthropic
+  latency_p50_ms: 2100
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - creative
+  - agents
+  min_complexity: complex
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - claude-fable-5-1
+  - claude-opus-5-5
+  last_price_check: '2026-11-15'
+  last_health_check: null
+  released_at: '2026-11-09'
+- model_id: mistral-large-4
+  vendor: mistral
+  tier: 2
+  max_context: 262000
+  input_price: 0.00136
+  output_price: 0.00418
+  tokenizer: sentencepiece
+  latency_p50_ms: 1100
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  - multimodal
+  min_complexity: moderate
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - mistral-medium-3-5
+  - mistral-large-3
+  last_price_check: '2026-11-15'
+  last_health_check: null
+  released_at: '2026-10-06'
+- model_id: gemini-4-argon
+  vendor: google
+  tier: 2
+  max_context: 2000000
+  input_price: 0.002
+  output_price: 0.01
+  tokenizer: google
+  latency_p50_ms: 2000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-3.1-pro
+  - gemini-3.5-flash
+  last_price_check: '2026-11-15'
+  last_health_check: null
+  released_at: '2026-10-15'
+- model_id: gemini-3.6-flash
+  vendor: google
+  tier: 2
+  max_context: 1048000
+  input_price: 0.0015
+  output_price: 0.0075
+  tokenizer: google
+  latency_p50_ms: 800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  min_complexity: simple
+  max_complexity: complex
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-3.5-flash
+  - gemini-3.1-flash
+  last_price_check: '2026-11-15'
+  last_health_check: null
+  released_at: '2026-07-01'
