@@ -10,7 +10,7 @@ from datetime import UTC, date, datetime
 
 from tidus.sync.pricing.base import PriceQuote, PricingSource
 
-# Prices verified: 2026-11-15. Updated by host's sync_pricing.py script.
+# Prices verified: 2026-11-22. Updated by host's sync_pricing.py script.
 # Source: official vendor pricing pages (direct API prices, not OpenRouter).
 # All prices in $/1K tokens. $/1M = value * 1000.
 _KNOWN_PRICES: dict[str, dict[str, float]] = {
@@ -43,7 +43,9 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
 
     # ── Google ────────────────────────────────────────────────────────────────
     "gemini-4-argon":            {"input": 0.002,     "output": 0.01},     # $2/$10 per 1M (new Oct-15, promo rate through Nov-30)
-    "gemini-3.6-flash":          {"input": 0.0015,    "output": 0.0075},   # $1.50/$7.50 per 1M (new Jul-2026)
+    "gemini-4-carbon":           {"input": 0.002,     "output": 0.01},     # $2/$10 per 1M (promo until Nov-30-2026, then $4/$20; released ~Oct-2026)
+    "gemini-4-neon":             {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M (released Nov-18-2026)
+    "gemini-3.6-flash":          {"input": 0.00075,   "output": 0.00375},  # $0.75/$3.75 per 1M (promo through Dec-2026; standard $1.50/$7.50 from Jan-2027)
     "gemini-3.1-pro":            {"input": 0.002,     "output": 0.012},    # $2/$12 per 1M
     "gemini-3.1-flash":          {"input": 0.001,     "output": 0.004},    # $1/$4 per 1M
     "gemini-2.5-pro":            {"input": 0.00125,   "output": 0.01},     # $1.25/$10 per 1M
@@ -68,6 +70,8 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     # ── xAI ──────────────────────────────────────────────────────────────────
     "grok-4":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M (released Jul-2025)
     "grok-4.5":                  {"input": 0.002,     "output": 0.006},    # $2/$6 per 1M (new Jul-2026)
+    "grok-4.6":                  {"input": 0.002,     "output": 0.006},    # $2/$6 per 1M (released Aug-12-2026, 500K ctx)
+    "grok-4.7":                  {"input": 0.002,     "output": 0.006},    # $2/$6 per 1M (released Sep-21-2026, 500K ctx)
     "grok-3":                    {"input": 0.003,     "output": 0.015},    # $3/$15 per 1M
     "grok-3-fast":               {"input": 0.005,     "output": 0.025},    # $5/$25 per 1M
 
@@ -104,14 +108,14 @@ _KNOWN_PRICES: dict[str, dict[str, float]] = {
     "claude-fable-5":            {"input": 0.01,      "output": 0.05},     # $10/$50 per 1M
     "gemini-3.5-flash":          {"input": 0.0015,    "output": 0.009},    # $1.50/$9 per 1M
     "grok-4.3":                  {"input": 0.00125,   "output": 0.0025},   # $1.25/$2.50 per 1M
-    "deepseek-v4-pro":           {"input": 0.000435,  "output": 0.00087},  # $0.435/$0.87 per 1M
-    "deepseek-v4-flash":         {"input": 0.00009,   "output": 0.00018},  # $0.09/$0.18 per 1M
+    "deepseek-v4-pro":           {"input": 0.00066,   "output": 0.00198},  # $0.66/$1.98 per 1M off-peak (peak $1.32/$3.96; raised Aug-16-2026)
+    "deepseek-v4-flash":         {"input": 0.00015,   "output": 0.0006},   # $0.15/$0.60 per 1M off-peak (raised Aug-16-2026)
     "mistral-medium-3-5":        {"input": 0.0015,    "output": 0.0075},   # $1.50/$7.50 per 1M (OpenRouter: mistralai/mistral-medium-3.5)
-    "kimi-k2.6":                 {"input": 0.00066,   "output": 0.00341},  # $0.66/$3.41 per 1M
+    "kimi-k2.6":                 {"input": 0.00095,   "output": 0.004},    # $0.95/$4.00 per 1M (price increase Oct-2026)
     "qwen3.7-max":               {"input": 0.00125,   "output": 0.00375},  # $1.25/$3.75 per 1M
 }
 
-_EFFECTIVE_DATE = date(2026, 11, 15)
+_EFFECTIVE_DATE = date(2026, 11, 22)
 _CONFIDENCE = 0.7
 
 

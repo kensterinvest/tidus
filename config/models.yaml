@@ -1513,8 +1513,8 @@ models:
   vendor: deepseek
   tier: 2
   max_context: 1048000
-  input_price: 0.000435
-  output_price: 0.00087
+  input_price: 0.00066
+  output_price: 0.00198
   tokenizer: tiktoken_cl100k
   latency_p50_ms: 2200
   capabilities:
@@ -1537,8 +1537,8 @@ models:
   vendor: deepseek
   tier: 3
   max_context: 1048000
-  input_price: 0.00009
-  output_price: 0.00018
+  input_price: 0.00015
+  output_price: 0.0006
   tokenizer: tiktoken_cl100k
   latency_p50_ms: 1200
   capabilities:
@@ -1584,8 +1584,8 @@ models:
   vendor: moonshot
   tier: 2
   max_context: 262000
-  input_price: 0.00066
-  output_price: 0.00341
+  input_price: 0.00095
+  output_price: 0.004
   tokenizer: tiktoken_cl100k
   latency_p50_ms: 1700
   capabilities:
@@ -1913,10 +1913,10 @@ models:
   released_at: '2026-10-15'
 - model_id: gemini-3.6-flash
   vendor: google
-  tier: 2
+  tier: 3
   max_context: 1048000
-  input_price: 0.0015
-  output_price: 0.0075
+  input_price: 0.00075
+  output_price: 0.00375
   tokenizer: google
   latency_p50_ms: 800
   capabilities:
@@ -1936,3 +1936,107 @@ models:
   last_price_check: '2026-11-15'
   last_health_check: null
   released_at: '2026-07-01'
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 2026-11-22 weekly sync — new models confirmed against official vendor pages.
+# ─────────────────────────────────────────────────────────────────────────────
+- model_id: grok-4.6
+  vendor: xai
+  tier: 2
+  max_context: 500000
+  input_price: 0.002
+  output_price: 0.006
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-4.5
+  - grok-4
+  released_at: '2026-08-12'
+  last_price_check: '2026-11-22'
+  last_health_check: null
+- model_id: grok-4.7
+  vendor: xai
+  tier: 2
+  max_context: 500000
+  input_price: 0.002
+  output_price: 0.006
+  tokenizer: tiktoken_cl100k
+  latency_p50_ms: 1000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - grok-4.6
+  - grok-4.5
+  released_at: '2026-09-21'
+  last_price_check: '2026-11-22'
+  last_health_check: null
+- model_id: gemini-4-carbon
+  vendor: google
+  tier: 2
+  max_context: 2000000
+  input_price: 0.002
+  output_price: 0.01
+  tokenizer: google
+  latency_p50_ms: 2000
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-4-argon
+  - gemini-3.1-pro
+  released_at: '2026-10-15'
+  last_price_check: '2026-11-22'
+  last_health_check: null
+- model_id: gemini-4-neon
+  vendor: google
+  tier: 2
+  max_context: 2000000
+  input_price: 0.003
+  output_price: 0.015
+  tokenizer: google
+  latency_p50_ms: 1800
+  capabilities:
+  - chat
+  - code
+  - reasoning
+  - multimodal
+  - long_context
+  - agents
+  min_complexity: moderate
+  max_complexity: critical
+  is_local: false
+  enabled: true
+  deprecated: false
+  fallbacks:
+  - gemini-4-carbon
+  - gemini-4-argon
+  released_at: '2026-11-18'
+  last_price_check: '2026-11-22'
+  last_health_check: null
